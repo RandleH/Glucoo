@@ -687,8 +687,8 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 
 	unsigned int page_start   = GUI_LIMIT( (signed)((GUI_MIN(y1,y2)-Screen.penSize)>>3) ,0 ,GUI_PAGEs);
 	unsigned int page_end     = GUI_LIMIT( (signed)((GUI_MAX(y1,y2)+Screen.penSize)>>3) ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-Screen.penSize)      ,0 ,GUI_X_WIDTH);
-	unsigned int column_end   = GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+Screen.penSize)      ,0 ,GUI_X_WIDTH);
+	unsigned int column_start = GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
 
 	if(x1 != x2){
 		double K = ((double)(y1-y2)) / ((double)(x1-x2));
@@ -776,6 +776,125 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 #endif
 }
 
+void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...){
+	A = abs(A);
+	unsigned int page_start   = GUI_LIMIT( (y_level-A)>>3 ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (y_level+A)>>3 ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( (x_start  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( (x_end    )    ,0 ,GUI_X_WIDTH-1);
+
+	va_list ap;
+	va_start(ap,y_level);
+	const int clearScreen      = va_arg(ap,int);
+	const int onlyChangeBuffer = va_arg(ap,int);
+	va_end(ap);
+
+	if(clearScreen==true)
+		__clearFrameBuffer();
+
+
+	unsigned int x = x_start,x_old = x_start ,y_old = y_level,y = y_level;
+	for(;x<=x_end;x++){
+		y = (unsigned int)(y_level + A*sin(w*x+phi));
+		// if(Screen.penSize == 1)
+		// 	__insertPixel( x,(unsigned int)(y_level + A*sin(w*x+phi)) );
+		// else
+		// 	GUI_FillCircle(x,(unsigned int)(y_level + A*sin(w*x+phi)),Screen.penSize,false,true);
+
+		GUI_DrawLine(x_old,y_old,x,y,false,true);	
+		x_old = x;
+		y_old = y;
+	}
+
+	if(onlyChangeBuffer!=true){
+		if(clearScreen == true){
+			GUI_RefreashScreen();
+		}else{
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#endif			
+		}
+	}
+
+}
+
+void GUI_FillTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...){
+	
+
+    unsigned int y_start      = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+    unsigned int y_end        = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+
+	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+
+	va_list ap;
+	va_start(ap,y3);
+	const int clearScreen      = va_arg(ap,int);
+	const int onlyChangeBuffer = va_arg(ap,int);
+	va_end(ap);
+
+	if(clearScreen==true)
+		__clearFrameBuffer();
+
+	double K = ((double)(y1-y2)) / ((double)(x1-x2));
+	double B = y1-K*x1;
+
+	...// Haven't finished yet. Let's create an error.  //  :-(
+
+	if(onlyChangeBuffer!=true){
+		if(clearScreen==true)
+			GUI_RefreashScreen();
+		else
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#endif
+	}
+}
+
+void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...){
+	
+
+    unsigned int y_start      = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+    unsigned int y_end        = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+
+	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+
+	va_list ap;
+	va_start(ap,y3);
+	const int clearScreen      = va_arg(ap,int);
+	const int onlyChangeBuffer = va_arg(ap,int);
+	va_end(ap);
+
+	if(clearScreen==true)
+		__clearFrameBuffer();
+
+	GUI_DrawLine(x1,y1,x2,y2,false,true);
+	GUI_DrawLine(x2,y2,x3,y3,false,true);
+	GUI_DrawLine(x3,y3,x1,y1,false,true);
+
+	if(onlyChangeBuffer!=true){
+		if(clearScreen==true)
+			GUI_RefreashScreen();
+		else
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#endif
+	}
+}
+
+void GUI_CONTI_DrawLine(unsigned int (*p)[2],const size_t num,...){
+
+	for(size_t i=0;i<num-1;i++){
+		GUI_DrawLine((*p)[0],(*p)[1],(*(p+1))[0],(*(p+1))[1],false,false);
+		p++;
+	}
+}
+
 
 #if GUI_DEMO
 //Put the func into " While(1){ ... } "
@@ -857,30 +976,68 @@ inline void GUI_DEMO_MovingEllipse_2(void){
 	GUI_SetPenSize(3);
 	for(int a=1;a<=64-c;a++){
 		GUI_DrawEllipse(64,32,64-a,c,true,true);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		GUI_RefreashPageArea (1,6,a-1,64*2-a+1);
 #endif
 	}
 
 	for(int b=32-c;b>=0;b--){
 		GUI_DrawEllipse(64,32,c,32-b,true,true);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		GUI_RefreashPageArea (0,7,64-c,64+c);
 #endif
 	}
 
 	for(int b=0;b<=32-c;b++){
 		GUI_DrawEllipse(64,32,c,32-b,true,true);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		GUI_RefreashPageArea (0,7,64-c,64+c);
 #endif
 	}
 
 	for(int a=64-c;a>0;a--){
 		GUI_DrawEllipse(64,32,64-a,c,true,true);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		GUI_RefreashPageArea (1,6,a-1,64*2-a+1);
 #endif
+	}
+}
+
+inline void GUI_DEMO_MovingWave_1(void){
+	const int x_start = 0;
+	const int x_end   = GUI_X_WIDTH-1;
+	const int y_level = GUI_Y_WIDTH>>1;
+	const int A       = (int)(y_level/1.5);
+	GUI_SetPenSize(2); 
+	GUI_SetPenColor(GUI_WHITE);
+	GUI_SetBackColor(GUI_BLACK);
+	for(float w=0.0;w<1.5;w+=0.01){
+		GUI_DrawWave(A,w,0.0,x_start,x_end,y_level,true,true);
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+		GUI_RefreashPageArea(( (y_level-A)>>3),((y_level+A)>>3),x_start,x_end );
+#endif		
+	}
+	for(float w=1.5;w>0.0;w-=0.01){
+		GUI_DrawWave(A,w,0.0,x_start,x_end,32,true,true);
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)		
+		GUI_RefreashPageArea(( (y_level-A)>>3),((y_level+A)>>3),x_start,x_end );
+#endif		
+	}
+}
+
+inline void GUI_DEMO_MovingWave_2(void){
+	const int x_start = 0;
+	const int x_end   = GUI_X_WIDTH-1;
+	const int y_level = GUI_Y_WIDTH>>1;
+	const int A       = (int)(y_level/1.5);
+	const float w     = 0.2;
+	GUI_SetPenSize(1); 
+	GUI_SetPenColor(GUI_WHITE);
+	GUI_SetBackColor(GUI_BLACK);
+	
+	for(int phi=0;phi<=31;phi++){
+		GUI_DrawWave(A,w,phi,x_start,x_end,y_level,true,true);
+		GUI_RefreashPageArea(( (y_level-A)>>3),((y_level+A)>>3),x_start,x_end );
 	}
 }
 
