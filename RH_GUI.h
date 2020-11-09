@@ -19,6 +19,11 @@
 #define GUI_FONT_6X8        &GUI_Font6x8
 #define GUI_FONT_8X16       &GUI_Font8x16
 
+#define GUI_ALIGN_LEFT      (0)
+#define GUI_ALIGN_CENTER    (1)
+#define GUI_ALIGN_RIGHT     (2)
+
+
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
 extern void (*GUI_API_DrawPixel)      (unsigned int x ,unsigned int y ,const Pixel_t pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);
@@ -50,8 +55,8 @@ void    GUI_FillEllipse     (unsigned int x ,unsigned int y ,int rx, int ry,...)
 void    GUI_FillAll         (Pixel_t columnData); 
 void    GUI_ClearAll        (void);
 
-void    GUI_FillTriangle    (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...);
-     
+void    GUI_FillTriangle    (int x1,int y1,int x2,int y2,int x3,int y3,...);
+
 void    GUI_DrawPixel       (unsigned int x ,unsigned int y ,...);
 void    GUI_DrawLine        (int          x1,int          y1,int          x2 ,int          y2,...);
 void    GUI_DrawRect        (unsigned int x1,unsigned int y1,unsigned int x2 ,unsigned int y2,...);
@@ -61,6 +66,10 @@ void    GUI_DrawWave        (int          A ,float        w ,float        phi,in
 void    GUI_DrawTriangle    (unsigned int x1,unsigned int y1,unsigned int x2 ,unsigned int y2     ,unsigned int x3   ,unsigned int y3     ,...);
 
 void    GUI_CONTI_DrawLine  (unsigned int (*p)[2],const size_t num,...);
+
+void    GUI_DispChar        (unsigned char c,...);
+void    GUI_DispCharAt      (unsigned char c,int x,int y,...);//
+void    GUI_DispChars       (unsigned char c,int cnt);//
 
 #if GUI_DEMO
 void    GUI_DEMO_MovingRect_1      (void);
