@@ -16,12 +16,14 @@
 #define GUI_MAX(a,b)  ((a)>(b)?(a):(b))
 
 
-#define GUI_FONT_6X8        &GUI_Font6x8
-#define GUI_FONT_8X16       &GUI_Font8x16
+#define GUI_FONT_Standard_Small        0
+#define GUI_FONT_Standard_Middle       1
 
 #define GUI_ALIGN_LEFT      (0)
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
+
+typedef unsigned int uint;
 
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
@@ -37,12 +39,14 @@ extern void (*GUI_API_DrawPageColumn) (unsigned int page,unsigned int column_sta
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 #endif
 
-void    GUI_SetPenSize(unsigned int penSize);
-unsigned int GUI_GetPenSize(void);
-void    GUI_SetPenColor(Pixel_t color);
-Pixel_t GUI_GetPenColor(void);
-void    GUI_SetBackColor(Pixel_t color);
-Pixel_t GUI_GetBackColor(void);
+void    GUI_SetPenSize        (unsigned int penSize);
+unsigned int GUI_GetPenSize   (void);
+void    GUI_SetPenColor       (Pixel_t color);
+Pixel_t GUI_GetPenColor       (void);
+void    GUI_SetBackColor      (Pixel_t color);
+Pixel_t GUI_GetBackColor      (void);
+void    GUI_SetFont           (int GUI_FONT_xxx);
+void    GUI_SetTextPos        (unsigned int x,unsigned int y);
 
 void    GUI_ClearPageArea   (unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end,...);
 void    GUI_RefreashPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end);
