@@ -36,7 +36,7 @@ void (*GUI_API_AssertParam)   (bool expression,const char* WHAT_IS_WRONG )  = NU
 
 #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
 union PixelUnit_t{
-	struct{
+	struct __BYTE_BIT{
 		Pixel_t bit0 : 1;
 		Pixel_t bit1 : 1;
 		Pixel_t bit2 : 1;
@@ -193,6 +193,10 @@ static unsigned char __FONT_STD6X8__ASCII_32_88[] = {0x00, 0x44, 0x28, 0x10, 0x2
 static unsigned char __FONT_STD6X8__ASCII_32_89[] = {0x00, 0x1C, 0xA0, 0xA0, 0xA0, 0x7C};
 static unsigned char __FONT_STD6X8__ASCII_32_90[] = {0x00, 0x44, 0x64, 0x54, 0x4C, 0x44};
 static unsigned char __FONT_STD6X8__ASCII_32_91[] = {0x14, 0x14, 0x14, 0x14, 0x14, 0x14};
+static unsigned char __FONT_STD6X8__ASCII_32_92[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static unsigned char __FONT_STD6X8__ASCII_32_93[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static unsigned char __FONT_STD6X8__ASCII_32_94[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static unsigned char __FONT_STD6X8__ASCII_32_95[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
 
 static __FontChar_t __FONT_STD6X8[] = {
 	{ .c = ' ' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_0  },
@@ -287,10 +291,10 @@ static __FontChar_t __FONT_STD6X8[] = {
 	{ .c = 'y' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_89 },
 	{ .c = 'z' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_90 },
 	{ .c = '{' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_91 },
-	// { .c = '|' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_9 },
-	// { .c = '}' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_9 },
-	// { .c = '~' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_9 },
-	// { .c = 127 , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_9 },
+	{ .c = '|' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_92 },
+	{ .c = '}' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_93 },
+	{ .c = '~' , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_94 },
+	{ .c = 127 , .height = 8 , .width = 6 , .byte = __FONT_STD6X8__ASCII_32_95 },
 };
 
 static unsigned char __FONT_STD8X16__ASCII_32_0 [] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -388,6 +392,7 @@ static unsigned char __FONT_STD8X16__ASCII_32_91[] = {0x00,0x00,0x00,0x00,0x80,0
 static unsigned char __FONT_STD8X16__ASCII_32_92[] = {0x00,0x00,0x00,0x00,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0x00,0x00,0x00};
 static unsigned char __FONT_STD8X16__ASCII_32_93[] = {0x00,0x02,0x02,0x7C,0x80,0x00,0x00,0x00,0x00,0x40,0x40,0x3F,0x00,0x00,0x00,0x00};
 static unsigned char __FONT_STD8X16__ASCII_32_94[] = {0x00,0x06,0x01,0x01,0x02,0x02,0x04,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+static unsigned char __FONT_STD8X16__ASCII_32_95[] = {0xff,0x01,0x01,0x01,0x01,0x01,0x01,0xff,0xff,0x80,0x80,0x80,0x80,0x80,0x80,0xff};
 
 static __FontChar_t __FONT_STD8X16[] = {
 	{ .c = ' ' , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_0  },
@@ -485,7 +490,7 @@ static __FontChar_t __FONT_STD8X16[] = {
 	{ .c = '|' , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_92 },
 	{ .c = '}' , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_93 },
 	{ .c = '~' , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_94 },
-	// { .c = 127 , .height = 16 , .width = 8 , .byte = __FONT_STD6X8__ASCII_32_95 },
+	{ .c = 127 , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_95 },
 };
 
 //================================================ End of Font Config ================================================//
@@ -503,61 +508,62 @@ struct __GUI_XY_t{
 typedef struct __GUI_XY_t __GUI_XY_t;
 
 static struct __Screen_t{
-
 #if   ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	PixelUnit_t buffer[ GUI_PAGEs  ][ GUI_X_WIDTH ];
 #elif ( GUI_DISPLAY_MODE == GUI_SINGLE_PIXEL )
 	PixelUnit_t buffer[ GUI_Y_WIDTH][ GUI_X_WIDTH ];
 #endif
-	
+	Pixel_t          bkColor;
 	Pixel_t          penColor;
 	unsigned int     penSize;
-	Pixel_t          bkColor;
-
+	
 	__GUI_XY_t       txtPos;
 	__FontChar_t*    pFont;
+
+
+
 }Screen;
 
-
-
-static inline void __insertPixel(unsigned int x,unsigned int y){
+static void __insertPixel(unsigned int x,unsigned int y){
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	int temp = y&0x07;
 	switch(temp){
-		case 0:Screen.buffer[ y>>3 ][x].bit0 = (bool)Screen.penColor;break;
-		case 1:Screen.buffer[ y>>3 ][x].bit1 = (bool)Screen.penColor;break;
-		case 2:Screen.buffer[ y>>3 ][x].bit2 = (bool)Screen.penColor;break;
-		case 3:Screen.buffer[ y>>3 ][x].bit3 = (bool)Screen.penColor;break;
-		case 4:Screen.buffer[ y>>3 ][x].bit4 = (bool)Screen.penColor;break;
-		case 5:Screen.buffer[ y>>3 ][x].bit5 = (bool)Screen.penColor;break;
-		case 6:Screen.buffer[ y>>3 ][x].bit6 = (bool)Screen.penColor;break;
-		case 7:Screen.buffer[ y>>3 ][x].bit7 = (bool)Screen.penColor;break;
+		case 0:Screen.buffer[ y>>3 ][x].bit0 = (Screen.penColor&0x01);break;
+		case 1:Screen.buffer[ y>>3 ][x].bit1 = (Screen.penColor&0x01);break;
+		case 2:Screen.buffer[ y>>3 ][x].bit2 = (Screen.penColor&0x01);break;
+		case 3:Screen.buffer[ y>>3 ][x].bit3 = (Screen.penColor&0x01);break;
+		case 4:Screen.buffer[ y>>3 ][x].bit4 = (Screen.penColor&0x01);break;
+		case 5:Screen.buffer[ y>>3 ][x].bit5 = (Screen.penColor&0x01);break;
+		case 6:Screen.buffer[ y>>3 ][x].bit6 = (Screen.penColor&0x01);break;
+		case 7:Screen.buffer[ y>>3 ][x].bit7 = (Screen.penColor&0x01);break;
+		default:break;
 	}
 #else
 	Screen.buffer[y][x].data = Screen.penColor;
 #endif
 }
 
-static inline void __erasePixel(unsigned int x,unsigned int y){
+static void __erasePixel(unsigned int x,unsigned int y){
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	int temp = y&0x07;
 	switch(temp){
-		case 0:Screen.buffer[ y>>3 ][x].bit0 = (bool)Screen.bkColor;break;
-		case 1:Screen.buffer[ y>>3 ][x].bit1 = (bool)Screen.bkColor;break;
-		case 2:Screen.buffer[ y>>3 ][x].bit2 = (bool)Screen.bkColor;break;
-		case 3:Screen.buffer[ y>>3 ][x].bit3 = (bool)Screen.bkColor;break;
-		case 4:Screen.buffer[ y>>3 ][x].bit4 = (bool)Screen.bkColor;break;
-		case 5:Screen.buffer[ y>>3 ][x].bit5 = (bool)Screen.bkColor;break;
-		case 6:Screen.buffer[ y>>3 ][x].bit6 = (bool)Screen.bkColor;break;
-		case 7:Screen.buffer[ y>>3 ][x].bit7 = (bool)Screen.bkColor;break;
+		case 0:Screen.buffer[ y>>3 ][x].bit0 = (Screen.bkColor&0x01);break;
+		case 1:Screen.buffer[ y>>3 ][x].bit1 = (Screen.bkColor&0x01);break;
+		case 2:Screen.buffer[ y>>3 ][x].bit2 = (Screen.bkColor&0x01);break;
+		case 3:Screen.buffer[ y>>3 ][x].bit3 = (Screen.bkColor&0x01);break;
+		case 4:Screen.buffer[ y>>3 ][x].bit4 = (Screen.bkColor&0x01);break;
+		case 5:Screen.buffer[ y>>3 ][x].bit5 = (Screen.bkColor&0x01);break;
+		case 6:Screen.buffer[ y>>3 ][x].bit6 = (Screen.bkColor&0x01);break;
+		case 7:Screen.buffer[ y>>3 ][x].bit7 = (Screen.bkColor&0x01);break;
+		default:break;
 	}
 #else
 	Screen.buffer[y][x].data = Screen.bkColor;
 #endif
 }
 
-static inline void __clearFrameBuffer(void){
+static void __clearFrameBuffer(void){
 	if(sizeof(Pixel_t) == 1)
 #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
 		memset(Screen.buffer[0], Screen.bkColor ,(GUI_PAGEs   * GUI_X_WIDTH));
@@ -570,20 +576,20 @@ static inline void __clearFrameBuffer(void){
 	    }
 }
 #include <stdlib.h>
-static inline void* __mallocFrameBuffer(unsigned long size){
+static void* __mallocFrameBuffer(unsigned long size){
 	return malloc(size);
 }
 
 #define __free(p) free(p)
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-static inline void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
+static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
 	Pixel_t* p;
 	unsigned int length = column_end - column_start+1;
 	for(unsigned int page=page_start;page<=page_end;page++){
 		p  = (Pixel_t*)&Screen.buffer[page];
 		p += column_start;
-		memset(p, (Screen.penColor == GUI_WHITE)?(0x00):(0xff) ,(length)*sizeof(Screen.buffer[0][0].data));
+		memset(p, Screen.bkColor ,(length)*sizeof(Screen.buffer[0][0].data));
 	}
 }
 #endif
@@ -637,7 +643,7 @@ void GUI_RefreashArea(unsigned int x1,unsigned int y1,unsigned int x2,unsigned i
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 void GUI_RefreashPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){	
 	Pixel_t* p;
-	unsigned int column_num = column_end-column_start;
+	unsigned int column_num = column_end-column_start+1;
 	for(unsigned int page=page_start;page<=page_end;page++){
 		p  = (Pixel_t*)&Screen.buffer[ page ];
 		p += column_start;
@@ -810,7 +816,7 @@ void GUI_FillRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
 		}
-		memset(Screen.buffer[page]+column_start,(Screen.penColor == GUI_WHITE)?(0xff):(0x00),(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
+		memset(Screen.buffer[page]+column_start,Screen.penColor,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 	}
 
 #else
@@ -885,10 +891,8 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
 		}
-		memset(Screen.buffer[page]+column_start,(Screen.penColor == GUI_WHITE)?(0xff):(0x00),(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
+		memset(Screen.buffer[page]+column_start,Screen.penColor,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 	}
-
-	Screen.penColor = ~Screen.penColor;
 
 	unsigned char x3 = GUI_MIN(x1,x2)+penSize;
 	unsigned char x4 = GUI_MAX(x1,x2)-penSize;
@@ -907,19 +911,19 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 			unsigned char y_min = GUI_MIN(y3,y4);
 			if(page==page_start){
 				while( y_min < ((page+1)<<3) && y_min <= y_max)
-					__insertPixel(column_start,y_min++);
+					__erasePixel(column_start,y_min++);
 				
 				memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 				continue;
 			}
 			if(page==page_end){
 				while( y_max >= (page<<3) && y_max >= y_min)
-					__insertPixel(column_start,y_max--);
+					__erasePixel(column_start,y_max--);
 
 				memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 				continue;
 			}
-			memset(Screen.buffer[page]+column_start,(Screen.penColor == GUI_WHITE)?(0xff):(0x00),(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
+			memset(Screen.buffer[page]+column_start,Screen.bkColor,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 		}
 	}
 
@@ -939,7 +943,6 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 		}	
 	}
 
-	Screen.penColor = ~Screen.penColor;
 #endif
 }
 
@@ -1005,10 +1008,12 @@ void GUI_DrawCircle(unsigned int x, unsigned int y, int r,...){
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
+	Pixel_t penColor = Screen.penColor;
+	Pixel_t bkColor  = Screen.bkColor;
 	GUI_FillCircle(x,y,r,false,true);
-	Screen.penColor = ~Screen.penColor;
+	GUI_SetPenColor(bkColor);
 	GUI_FillCircle(x,y,r-Screen.penSize,false,true);
-	Screen.penColor = ~Screen.penColor;
+	GUI_SetPenColor(penColor);
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
 			GUI_RefreashScreen();
@@ -1097,10 +1102,13 @@ void GUI_DrawEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
+	Pixel_t penColor = Screen.penColor;
+	Pixel_t bkColor  = Screen.bkColor;
+
 	GUI_FillEllipse(x,y,rx               ,ry               ,false,true);
-	Screen.penColor = ~Screen.penColor;
+	GUI_SetPenColor(bkColor);
 	GUI_FillEllipse(x,y,rx-Screen.penSize,ry-Screen.penSize,false,true);
-	Screen.penColor = ~Screen.penColor;
+	GUI_SetPenColor(penColor);
 
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
@@ -1206,7 +1214,7 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 				memset(Screen.buffer[page]+column_start-offset,Screen.buffer[page][column_start].data,(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
 				continue;
 			}
-			memset(Screen.buffer[page]+column_start-offset,(Screen.penColor == GUI_WHITE)?(0xff):(0x00),(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
+			memset(Screen.buffer[page]+column_start-offset,Screen.bkColor,(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
 		}
 	}
 
@@ -1438,8 +1446,13 @@ void GUI_DispChar(unsigned char c,...){
 	struct __Screen_t*   s     = &Screen;
 	struct __FontChar_t* pChar = (s->pFont + c - 32);
 
-	s->txtPos.x = GUI_LIMIT( (s->txtPos.x) ,0 ,GUI_X_WIDTH );
-	s->txtPos.y = GUI_LIMIT( (s->txtPos.y) ,0 ,GUI_Y_WIDTH );
+	if(s->txtPos.x + pChar->width > GUI_X_WIDTH){
+		s->txtPos.x = 0;
+		s->txtPos.y += pChar->height;
+	}
+	if(s->txtPos.y >= GUI_Y_WIDTH){
+		s->txtPos.y = 0;
+	}
 
 	unsigned int page_start    = ((s->txtPos.y)>>3);
 	unsigned int page_end      = ((s->txtPos.y + pChar->height-1)>>3);
@@ -1457,7 +1470,12 @@ void GUI_DispChar(unsigned char c,...){
 
 	for(uint y=0;y < pChar->height;y++){
 		for(uint x=0;x < pChar->width ;x++){
-			if( ((*(pChar->byte + (y&0xfff8) + x)) >> (y&0x07))&0x01  )
+			if( (s->txtPos.x + x) >= GUI_X_WIDTH )
+				while(1);
+			if( (s->txtPos.y + y) >= GUI_Y_WIDTH )
+				while(1);
+
+			if(  ( ((*(pChar->byte + (y&0xfff8) + x))>>(y&0x07))&0x01  ) == 1 )
 		//  if( ((*(pChar->byte + (y/8)*8    + x)) >> (y%8   ))&0x01  )
 				__insertPixel(s->txtPos.x + x,s->txtPos.y + y);
 			else
@@ -1475,12 +1493,12 @@ void GUI_DispChar(unsigned char c,...){
 		}
 	}
 
-	s->txtPos.x += (pChar->width-1);
-	if( s->txtPos.x > GUI_X_WIDTH ){
+	s->txtPos.x += pChar->width;
+	if( s->txtPos.x >= GUI_X_WIDTH ){
 		s->txtPos.x = 0;
-		s->txtPos.y += (pChar->height-1);
+		s->txtPos.y += pChar->height;
 	}
-	if( s->txtPos.y + pChar->height > GUI_Y_WIDTH ){
+	if( s->txtPos.y >= GUI_Y_WIDTH ){
 		s->txtPos.y = 0;
 	}
 	 
