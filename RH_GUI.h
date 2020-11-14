@@ -19,6 +19,10 @@
 #define GUI_FONT_Standard_Small        0
 #define GUI_FONT_Standard_Middle       1
 
+#define GUI_FONT_Bradley_Large         2
+#define GUI_FONT_CourierNew_Middle     3
+#define GUI_FONT_CourierNew_Large      4
+
 #define GUI_ALIGN_LEFT      (0)
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
