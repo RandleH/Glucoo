@@ -1,5 +1,5 @@
 
-# GUI for OLED SSD1306
+# GUI for OLED 
 <p align="center">
 <img src="https://raw.githubusercontent.com/RandleH/GUI-for-OLED-SSD1306/main/Img/OLED.png" width="270" height="225" border="10">
  </p>
