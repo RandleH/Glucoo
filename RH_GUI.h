@@ -101,6 +101,11 @@ void    GUI_DEMO_Window98          (void);//
 void    GUI_DEMO_MacOS             (void);//
 void    GUI_DEMO_WindTurbine       (void);//
 void    GUI_DEMO_SUES              (void);//
+
+
+void    GUI_DEMO_Microsoft_1(void);
+
+
 #endif
 
 

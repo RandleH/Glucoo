@@ -1609,17 +1609,21 @@ void GUI_RefreashArea(unsigned int x1,unsigned int y1,unsigned int x2,unsigned i
     unsigned int y_width = y_end-y_start+1;
 
     if(GUI_API_DrawArea != NULL){
-    	Pixel_t* p = (Pixel_t*)__mallocFrameBuffer((x_width)*(y_width)*sizeof(Pixel_t));
+    	// Pixel_t* p = (Pixel_t*)__mallocFrameBuffer((x_width)*(y_width)*sizeof(Pixel_t));
+    	Pixel_t* p = (Pixel_t*)malloc((x_width)*(y_width)*sizeof(Pixel_t));
     	for(int y=0;y<y_width;y++){
 	        memcpy(&p[x_width*y], &Screen.buffer[y_start+y][x_start].data, x_width*sizeof(Pixel_t));
 	    }
 		(*GUI_API_DrawArea)(x_start,y_start,x_end,y_end,p);
+		// __free(p);
+		free(p);
     }
 	else{
 		for(int y=y_start;y<=y_end;y++)
 			for(int x=x_start;x<=x_end;x++)
 				(*GUI_API_DrawPixel)(x,y,Screen.buffer[y][x].data);
 	}
+
 }
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
@@ -1849,12 +1853,14 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 	va_start(ap,y2);
 	const int clearScreen = va_arg(ap,int);
 	va_end(ap);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
-	BYTE penSize      = Screen.penSize;
+	
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 
+	BYTE penSize      = Screen.penSize;
 	unsigned char page_start   = (GUI_MIN(y1,y2))>>3;
 	unsigned char page_end     = (GUI_MAX(y1,y2))>>3;
 	unsigned char column_start = (GUI_MIN(x1,x2));
@@ -1912,24 +1918,49 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 			memset(Screen.buffer[page]+column_start,Screen.bkColor,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 		}
 	}
-
 	page_start   = (GUI_MIN(y1,y2))/8;
 	page_end     = (GUI_MAX(y1,y2))/8;
 	column_start = (GUI_MIN(x1,x2));
 	column_end   = (GUI_MAX(x1,x2));
+#else
+	BYTE loop = 0;
+	unsigned int y_end   = GUI_MAX(y1,y2);
+	unsigned int y_start = GUI_MIN(y1,y2);
+	unsigned int x_end   = GUI_MAX(x1,x2);
+	unsigned int x_start = GUI_MIN(x1,x2);
+	while(loop < Screen.penSize){
+		uint x = x_start+loop, y = y_start+loop;
+
+		while(x<=(x_end-loop) && y<=(y_end-loop)){
+			if( x < (x_end-loop) ){
+				__insertPixel(x,y_start + loop);
+				__insertPixel(x,y_end   - loop);
+				x++;
+			}
+			else{
+				__insertPixel(x_start + loop,y);
+				__insertPixel(x_end   - loop,y);
+				y++;
+			}
+		}
+		loop++;
+	}
+#endif
 
 	if(clearScreen == true){
 		GUI_RefreashScreen();
 	}else{
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		Pixel_t* p;
 		for(unsigned int page=page_start;page<=page_end;page++){
 			p = (Pixel_t*)(&Screen.buffer[page]);
 			p += column_start;
 			(*GUI_API_DrawPageColumn)(page,column_start,column_end-column_start,p );
-		}	
+		}
+#else
+		GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif		
 	}
-
-#endif
 }
 
 void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
@@ -1943,34 +1974,61 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
 	const int clearScreen      = va_arg(ap,int);
 	const int onlyChangeBuffer = va_arg(ap,int);
 	va_end(ap);
+	if(clearScreen==true)
+		__clearFrameBuffer();
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	unsigned int page_start   = (GUI_LIMIT(y-r,0,GUI_Y_WIDTH))>>3;
 	unsigned int page_end     = (GUI_LIMIT(y+r,0,GUI_Y_WIDTH))>>3;
 	unsigned int column_start = (GUI_LIMIT(x-r,0,GUI_X_WIDTH));
 	unsigned int column_end   = (GUI_LIMIT(x+r,0,GUI_X_WIDTH));
 
-	if(clearScreen==true)
-		__clearFrameBuffer();
 	unsigned int r_2 = r*r;
 	for(int i = -r;i <= r;i++){
 		for(int j = -r;j <= r;j++){
-			if(  (x-i)<GUI_X_WIDTH && y-j<GUI_Y_WIDTH && i*i+j*j <= r_2 )
+			if(  (x-i)<GUI_X_WIDTH && (y-j)<GUI_Y_WIDTH && i*i+j*j <= r_2 )
 				__insertPixel(x-i,y-j);
 		}
 	}
+#else
+	
+	unsigned int x_start = GUI_LIMIT(((signed)(x-r)),0,GUI_X_WIDTH);
+	unsigned int x_end   = GUI_LIMIT(((signed)(x+r)),0,GUI_X_WIDTH);
+	unsigned int y_start = GUI_LIMIT(((signed)(y-r)),0,GUI_Y_WIDTH);	
+	unsigned int y_end   = GUI_LIMIT(((signed)(y+r)),0,GUI_Y_WIDTH);
+	unsigned int r_2 = r*r;
+	for(int i = 0;i <= r;i++){
+		for(int j = 0;j <= r;j++){
+			if(  i*i+j*j <= r_2 ){
+				if(x-i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
+					__insertPixel(x-i,y-j);
+				if(x-i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
+					__insertPixel(x-i,y+j);
+				if(x+i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
+					__insertPixel(x+i,y-j);
+				if(x+i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
+					__insertPixel(x+i,y+j);
+			}
+		}
+	}	
+#endif
+
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
 			GUI_RefreashScreen();
 		}else{
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 			Pixel_t* p;
 			for(unsigned int page=page_start;page<=page_end;page++){
 				p = (Pixel_t*)(&Screen.buffer[page]);
 				p += column_start;
-				(*GUI_API_DrawPageColumn)(page,column_start,column_end-column_start,p );
+				(*GUI_API_DrawPageColumn)(page,column_start,column_end-column_start,p );		
 			}
+#else
+			GUI_RefreashArea(x_start,y_start,x_end,y_end);	
+#endif	
 		}
 	}
-#endif
+
 }
 
 void GUI_DrawCircle(unsigned int x, unsigned int y, int r,...){
@@ -2524,12 +2582,11 @@ inline void GUI_DEMO_MovingRect_1(void){
 }
 
 inline void GUI_DEMO_MovingRect_2(void){
-	GUI_SetPenColor(GUI_WHITE);
 	GUI_SetPenSize(3);
-	for(unsigned int x = 0;x < 128;x++)
-		GUI_DrawRect(x,127-(x>>1),64,32,true,false);
-	for(unsigned int x = 0;x < 128;x++)
-		GUI_DrawRect(x,x>>1,64,32,true,false);
+	for(unsigned int x = 0;x < GUI_X_WIDTH;x++)
+		GUI_DrawRect(x,(GUI_Y_WIDTH-1)-(unsigned int)(x*(GUI_Y_WIDTH*1.0/GUI_X_WIDTH)),GUI_X_WIDTH>>1,GUI_Y_WIDTH>>1,true,false);
+	for(unsigned int x = 0;x < GUI_X_WIDTH;x++)
+		GUI_DrawRect(x,(unsigned int)(x*(GUI_Y_WIDTH*1.0/GUI_X_WIDTH))                ,GUI_X_WIDTH>>1,GUI_Y_WIDTH>>1,true,false);
 }
 #include <stdlib.h>
 inline void GUI_DEMO_MovingRect_3(void){
@@ -2684,6 +2741,20 @@ inline void GUI_DEMO_Pattern_1(void){
 	GUI_FillCircle(64,32,r);
 
 	GUI_SetPenSize(penSize);
+}
+
+inline void GUI_DEMO_Microsoft_1(void){
+	GUI_SetBackColor(GUI_BLACK);
+    GUI_SetPenSize(3);
+
+	GUI_SetPenColor(GUI_RED);
+    GUI_DrawRect(24,24,64,64,false,false);
+    GUI_SetPenColor(GUI_GREEN);
+    GUI_DrawRect(94,24,64,64,false,false);
+    GUI_SetPenColor(GUI_BLUE);
+    GUI_DrawRect(24,94,64,64,false,false);
+    GUI_SetPenColor(GUI_YELLOW);
+    GUI_DrawRect(94,94,64,64,false,false);
 }
 
 #endif
