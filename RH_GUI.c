@@ -2479,7 +2479,86 @@ void GUI_CONTI_DrawLine(unsigned int (*p)[2],const size_t num,...){
 //============================================== End of Graphic Function ==============================================//
 //============================================== End of Graphic Function ==============================================//
 //============================================== End of Graphic Function ==============================================//
+//====================================================== RGB Test =====================================================//
+//====================================================== RGB Test =====================================================//
+//====================================================== RGB Test =====================================================//
 
+void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
+	static double phi = 0.0;
+	WORD penColor = Screen.penColor;
+	const double π = 3.1415926;
+
+	if(phi >= 6.28318530717 )
+		phi = 0.0;
+
+	switch(GUI_TEST_RGB_xxxx){
+		case GUI_TEST_RGB_VER_RAINBOW:
+			for( uint x=0; x<GUI_X_WIDTH;x++ ){
+				BYTE R = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi + 2.0*π/3));
+				BYTE B = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi + 4.0*π/3));
+				
+				for( uint y=0; y<GUI_Y_WIDTH;y++){
+					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
+					__insertPixel(x,y);
+				}
+			}
+			break;
+		case GUI_TEST_RGB_HOR_RAINBOW:
+			for( uint y=0; y<GUI_Y_WIDTH;y++ ){
+				BYTE R = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi + 2.0*π/3));
+				BYTE B = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi + 4.0*π/3));
+				
+				for( uint x=0; x<GUI_X_WIDTH;x++){
+					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
+					__insertPixel(x,y);
+				}
+			}
+			break;
+
+		case GUI_TEST_RGB_ROL_RAINBOW:
+			const uint R_MAX = (uint)(1.414*GUI_MAX(GUI_Y_WIDTH,GUI_X_WIDTH));
+			for( uint r=0; r<R_MAX;r++ ){
+				uint r_2 = r*r;
+				uint x = GUI_X_WIDTH>>1;
+				uint y = GUI_Y_WIDTH>>1;
+
+				BYTE R = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 2.0*π/3));
+				BYTE B = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 4.0*π/3));
+				
+				Screen.penColor = GUI_MAKE_COLOR( R,G,B );
+				for(int i = 0;i <= r;i++){
+					for(int j = 0;j <= r;j++){
+						if(  i*i+j*j == r_2 ){
+							if(x-i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
+								__insertPixel(x-i,y-j);
+							if(x-i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
+								__insertPixel(x-i,y+j);
+							if(x+i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
+								__insertPixel(x+i,y-j);
+							if(x+i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
+								__insertPixel(x+i,y+j);
+						}
+					}
+				}	
+				__insertPixel(x,y);
+			
+			}
+			break;
+
+		default: 
+			break;
+	}
+	GUI_RefreashScreen();
+	Screen.penColor = penColor;
+	phi+=0.1;
+}
+
+//================================================== End of RGB Test ==================================================//
+//================================================== End of RGB Test ==================================================//
+//================================================== End of RGB Test ==================================================//
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
