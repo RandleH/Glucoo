@@ -68,7 +68,7 @@ void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3,...);
 void    GUI_DrawPixel         (unsigned int x ,unsigned int y ,...);
 void    GUI_DrawLine          (int          x1,int          y1,int          x2 ,int          y2,...);
 void    GUI_DrawRect          (unsigned int x1,unsigned int y1,unsigned int x2 ,unsigned int y2,...);
-void    GUI_DrawCircle        (unsigned int x ,unsigned int y ,int          r  ,...);
+void    GUI_DrawCircle        (int          x ,int          y ,int          r  ,...);
 void    GUI_DrawEllipse       (unsigned int x ,unsigned int y ,int          rx ,int          ry,...);
 void    GUI_DrawWave          (int          A ,float        w ,float        phi,int          x_start,int          x_end,int          y_level,...);
 void    GUI_DrawTriangle      (unsigned int x1,unsigned int y1,unsigned int x2 ,unsigned int y2     ,unsigned int x3   ,unsigned int y3     ,...);

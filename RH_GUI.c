@@ -1506,8 +1506,9 @@ static struct __Screen_t{
 
 }Screen;
 
-static void __insertPixel(unsigned int x,unsigned int y){
-
+static void __insertPixel(int x,int y){
+	if( x>=GUI_X_WIDTH || y>=GUI_Y_WIDTH || x<0 || y<0 )
+		return;
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	int temp = y&0x07;
 	switch(temp){
@@ -1558,11 +1559,9 @@ static void __clearFrameBuffer(void){
 	    }
 }
 #include <stdlib.h>
-static void* __mallocFrameBuffer(unsigned long size){
-	return malloc(size);
-}
 
-#define __free(p) free(p)
+#define __malloc(size)  malloc(size)
+#define __free(p)       free(p)
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
@@ -1575,6 +1574,44 @@ static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsign
 	}
 }
 #endif
+
+static void __insertBresenhamCircle(unsigned int x, unsigned int y, int r,...){
+	
+	int r_ex  = r+(Screen.penSize>>1);
+	int r_in  = r-(Screen.penSize>>1)+((Screen.penSize&0x01)==0);	
+	
+	int x_ex_tmp = 0;
+	int y_ex_tmp = r_ex;
+	int x_in_tmp = 0;
+	int y_in_tmp = r_in;
+	int p_ex  = 3-2*r_ex;
+	int p_in  = 3-2*r_in;
+	for(;x_ex_tmp<=y_ex_tmp;x_ex_tmp++,x_in_tmp++){
+		for(int Y = y_in_tmp;Y<=y_ex_tmp;Y++){
+			__insertPixel(x+x_ex_tmp,y+Y);
+			__insertPixel(x-x_ex_tmp,y+Y);
+			__insertPixel(x+x_ex_tmp,y-Y);
+			__insertPixel(x-x_ex_tmp,y-Y);
+			__insertPixel(x+Y,y+x_ex_tmp);
+			__insertPixel(x-Y,y+x_ex_tmp);
+			__insertPixel(x+Y,y-x_ex_tmp);
+			__insertPixel(x-Y,y-x_ex_tmp);
+		}
+
+		if(p_ex <= 0){
+			p_ex += (x_ex_tmp<<2) + 6;
+		}else{
+			p_ex += ((x_ex_tmp-y_ex_tmp)<<2) + 10;
+			y_ex_tmp--;
+		}
+		if(p_in <= 0){
+			p_in += (x_in_tmp<<2) + 6;
+		}else{
+			p_in += ((x_in_tmp-y_in_tmp)<<2) + 10;
+			y_in_tmp--;
+		}
+	}
+}
 
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
@@ -2031,7 +2068,7 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
 
 }
 
-void GUI_DrawCircle(unsigned int x, unsigned int y, int r,...){
+void GUI_DrawCircle(int x,int y, int r,...){
 #if GUI_ASSERT
     (*GUI_API_AssertParam)(x<GUI_X_WIDTH,"X-Y cordination is out of range.");
     (*GUI_API_AssertParam)(y<GUI_Y_WIDTH,"X-Y cordination is out of range.");
@@ -2043,14 +2080,16 @@ void GUI_DrawCircle(unsigned int x, unsigned int y, int r,...){
 	const int clearScreen      = va_arg(ap,int);
 	const int onlyChangeBuffer = va_arg(ap,int);
 	va_end(ap);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	unsigned int page_start   = (GUI_LIMIT(y-r,0,GUI_Y_WIDTH))>>3;
-	unsigned int page_end     = (GUI_LIMIT(y+r,0,GUI_Y_WIDTH))>>3;
-	unsigned int column_start = (GUI_LIMIT(x-r,0,GUI_X_WIDTH));
-	unsigned int column_end   = (GUI_LIMIT(x+r,0,GUI_X_WIDTH));
 
 	if(clearScreen==true)
 		__clearFrameBuffer();
+
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	int page_start   = (GUI_LIMIT(y-r,0,GUI_Y_WIDTH))>>3;
+	int page_end     = (GUI_LIMIT(y+r,0,GUI_Y_WIDTH))>>3;
+	int column_start = (GUI_LIMIT(x-r,0,GUI_X_WIDTH-1));
+	int column_end   = (GUI_LIMIT(x+r,0,GUI_X_WIDTH-1));
 
 	Pixel_t penColor = Screen.penColor;
 	Pixel_t bkColor  = Screen.bkColor;
@@ -2058,20 +2097,33 @@ void GUI_DrawCircle(unsigned int x, unsigned int y, int r,...){
 	GUI_SetPenColor(bkColor);
 	GUI_FillCircle(x,y,r-Screen.penSize,false,true);
 	GUI_SetPenColor(penColor);
+#else
+	int x_end   = GUI_LIMIT(x+r,0,GUI_X_WIDTH-1);
+    int x_start = GUI_LIMIT(x-r,0,GUI_X_WIDTH-1);
+    int y_end   = GUI_LIMIT(y+r,0,GUI_Y_WIDTH-1);
+    int y_start = GUI_LIMIT(y-r,0,GUI_Y_WIDTH-1);
+
+    __insertBresenhamCircle(x,y,r);
+#endif
+
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
 			GUI_RefreashScreen();
 		}else{
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 			Pixel_t* p;
 			for(unsigned int page=page_start;page<=page_end;page++){
 				p = (Pixel_t*)(&Screen.buffer[page]);
 				p += column_start;
 				(*GUI_API_DrawPageColumn)(page,column_start,column_end-column_start,p );
 			}
+#else
+			GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif			
 		}
 	}
-#endif
 }
+
 
 void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 #if GUI_ASSERT
@@ -2323,9 +2375,9 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3,...){
 	
 // 	unsigned int x_start;
-//     unsigned int x_end;
-//     unsigned int y_start;
-//     unsigned int y_end;
+//  unsigned int x_end;
+//  unsigned int y_start;
+//  unsigned int y_end;
 
 // 	unsigned int page_start;
 // 	unsigned int page_end;
@@ -2485,7 +2537,9 @@ void GUI_CONTI_DrawLine(unsigned int (*p)[2],const size_t num,...){
 
 void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	static double phi = 0.0;
-	WORD penColor = Screen.penColor;
+	WORD penColor  = Screen.penColor;
+	WORD penSize   = Screen.penSize;
+	Screen.penSize = 2;
 	const double π = 3.1415926;
 
 	if(phi >= 6.28318530717 )
@@ -2516,35 +2570,15 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 				}
 			}
 			break;
-
 		case GUI_TEST_RGB_ROL_RAINBOW:
 			const uint R_MAX = (uint)(1.414*GUI_MAX(GUI_Y_WIDTH,GUI_X_WIDTH));
 			for( uint r=0; r<R_MAX;r++ ){
-				uint r_2 = r*r;
-				uint x = GUI_X_WIDTH>>1;
-				uint y = GUI_Y_WIDTH>>1;
-
 				BYTE R = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi          ));
 				BYTE G = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 2.0*π/3));
 				BYTE B = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 4.0*π/3));
-				
 				Screen.penColor = GUI_MAKE_COLOR( R,G,B );
-				for(int i = 0;i <= r;i++){
-					for(int j = 0;j <= r;j++){
-						if(  i*i+j*j == r_2 ){
-							if(x-i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
-								__insertPixel(x-i,y-j);
-							if(x-i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
-								__insertPixel(x-i,y+j);
-							if(x+i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
-								__insertPixel(x+i,y-j);
-							if(x+i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
-								__insertPixel(x+i,y+j);
-						}
-					}
-				}	
-				__insertPixel(x,y);
-			
+				__insertBresenhamCircle(GUI_X_WIDTH>>1,GUI_Y_WIDTH>>1,r);	
+				
 			}
 			break;
 
@@ -2553,6 +2587,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	}
 	GUI_RefreashScreen();
 	Screen.penColor = penColor;
+	Screen.penSize  = penSize;
 	phi+=0.1;
 }
 
@@ -2750,13 +2785,13 @@ inline void GUI_DEMO_MovingWave_1(void){
 	GUI_SetPenSize(2); 
 	GUI_SetPenColor(GUI_WHITE);
 	GUI_SetBackColor(GUI_BLACK);
-	for(float w=0.0;w<1.5;w+=0.01){
+	for(double w=0.0;w<1.5;w+=0.01){
 		GUI_DrawWave(A,w,0.0,x_start,x_end,y_level,true,true);
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 		GUI_RefreashPageArea(( (y_level-A)>>3),((y_level+A)>>3),x_start,x_end );
 #endif		
 	}
-	for(float w=1.5;w>0.0;w-=0.01){
+	for(double w=1.5;w>0.0;w-=0.01){
 		GUI_DrawWave(A,w,0.0,x_start,x_end,32,true,true);
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)		
 		GUI_RefreashPageArea(( (y_level-A)>>3),((y_level+A)>>3),x_start,x_end );
