@@ -494,7 +494,7 @@ static __FontChar_t __FONT_STD8X16[] = {
 	{ .c = 127 , .height = 16 , .width = 8 , .byte = __FONT_STD8X16__ASCII_32_95 },
 };
 
-#if GUI_ENABLE_FONT_EXTENTION
+#if GUI_FONT_EXTENTION
 
 const unsigned char __FONT_BRADLEY__ASCII_32_0 [] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 const unsigned char __FONT_BRADLEY__ASCII_32_1 [] = { 0x00,0x00,0xFC,0xFC,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x13,0x13,0x10,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
@@ -696,7 +696,7 @@ static __FontChar_t __FONT_BRADLEY_LARGE[] = {
 #endif
 
 
-#if GUI_ENABLE_FONT_EXTENTION
+#if GUI_FONT_EXTENTION
 
 static const unsigned char __FONT_COURIERNEW13X16__ASCII_32_0 [] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\
                                                                      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
@@ -1086,7 +1086,7 @@ static __FontChar_t __FONT_COURIERNEW13X16[] = {
 };
 #endif
 
-#if GUI_ENABLE_FONT_EXTENTION
+#if GUI_FONT_EXTENTION
 /* 0x20 [ ] */
 static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_0 [] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\
 	                                                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
@@ -1373,8 +1373,8 @@ static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_93[] = { 0x00,0x00,0
 static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_94[] = { 0x00,0x40,0x20,0x20,0x40,0x80,0x80,0x40,0x00,0x00,\
 	                                                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 /* 0x7F */
-static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_95[] = { 0xFF,0x01,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\
-	                                                                 0x03,0x02,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_95[] = { 0xFF,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0xFF,\
+	                                                                 0xFF,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0xFF };
 
 static __FontChar_t __FONT_COURIERNEW10X12[] = {
 	{ .c = ' ' , .height = 12 , .width = 10, .byte = __FONT_COURIERNEW10X12__ASCII_32_0  },
@@ -1743,7 +1743,7 @@ void GUI_SetFont(int GUI_FONT_xxx){
 	switch(GUI_FONT_xxx){
 		case GUI_FONT_Standard_Small   : Screen.pFont = __FONT_STD6X8;          break;
 		case GUI_FONT_Standard_Middle  : Screen.pFont = __FONT_STD8X16;         break;
-#if GUI_ENABLE_FONT_EXTENTION
+#if GUI_FONT_EXTENTION
 		case GUI_FONT_Bradley_Large    : Screen.pFont = __FONT_BRADLEY_LARGE;   break;
 		case GUI_FONT_CourierNew_Middle: Screen.pFont = __FONT_COURIERNEW10X12; break;
 		case GUI_FONT_CourierNew_Large : Screen.pFont = __FONT_COURIERNEW13X16; break;
@@ -2332,10 +2332,6 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 
 void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...){
 	A = abs(A);
-	unsigned int page_start   = GUI_LIMIT( (y_level-A)>>3 ,0 ,GUI_PAGEs);
-	unsigned int page_end     = GUI_LIMIT( (y_level+A)>>3 ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( (x_start  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int column_end   = GUI_LIMIT( (x_end    )    ,0 ,GUI_X_WIDTH-1);
 
 	va_list ap;
 	va_start(ap,y_level);
@@ -2346,15 +2342,14 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
+	unsigned int page_start   = GUI_LIMIT( (y_level-A)>>3 ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (y_level+A)>>3 ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( (x_start  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( (x_end    )    ,0 ,GUI_X_WIDTH-1);
 
 	unsigned int x = x_start,x_old = x_start ,y_old = y_level,y = y_level;
 	for(;x<=x_end;x++){
 		y = (unsigned int)(y_level + A*sin(w*x+phi));
-		// if(Screen.penSize == 1)
-		// 	__insertPixel( x,(unsigned int)(y_level + A*sin(w*x+phi)) );
-		// else
-		// 	GUI_FillCircle(x,(unsigned int)(y_level + A*sin(w*x+phi)),Screen.penSize,false,true);
-
 		GUI_DrawLine(x_old,y_old,x,y,false,true);	
 		x_old = x;
 		y_old = y;
@@ -2534,13 +2529,15 @@ void GUI_CONTI_DrawLine(unsigned int (*p)[2],const size_t num,...){
 //====================================================== RGB Test =====================================================//
 //====================================================== RGB Test =====================================================//
 //====================================================== RGB Test =====================================================//
-
+#if GUI_TEST_EXTENTION
 void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	static double phi = 0.0;
-	WORD penColor  = Screen.penColor;
-	WORD penSize   = Screen.penSize;
-	Screen.penSize = 2;
-	const double π = 3.1415926;
+	WORD penColor   = Screen.penColor;
+	WORD penSize    = Screen.penSize;
+	Screen.penSize  = 2;
+	const double pi = 3.1415926;
+
+	const uint R_MAX = (uint)(1.414*GUI_MAX(GUI_Y_WIDTH,GUI_X_WIDTH));
 
 	if(phi >= 6.28318530717 )
 		phi = 0.0;
@@ -2548,9 +2545,9 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	switch(GUI_TEST_RGB_xxxx){
 		case GUI_TEST_RGB_VER_RAINBOW:
 			for( uint x=0; x<GUI_X_WIDTH;x++ ){
-				BYTE R = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi          ));
-				BYTE G = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi + 2.0*π/3));
-				BYTE B = (BYTE)(128+128*sin(2*π*x/GUI_X_WIDTH + phi + 4.0*π/3));
+				BYTE R = (BYTE)(128+128*sin(2*pi*x/GUI_X_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*pi*x/GUI_X_WIDTH + phi + 2.0*pi/3));
+				BYTE B = (BYTE)(128+128*sin(2*pi*x/GUI_X_WIDTH + phi + 4.0*pi/3));
 				
 				for( uint y=0; y<GUI_Y_WIDTH;y++){
 					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
@@ -2560,9 +2557,9 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 			break;
 		case GUI_TEST_RGB_HOR_RAINBOW:
 			for( uint y=0; y<GUI_Y_WIDTH;y++ ){
-				BYTE R = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi          ));
-				BYTE G = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi + 2.0*π/3));
-				BYTE B = (BYTE)(128+128*sin(2*π*y/GUI_Y_WIDTH + phi + 4.0*π/3));
+				BYTE R = (BYTE)(128+128*sin(2*pi*y/GUI_Y_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*pi*y/GUI_Y_WIDTH + phi + 2.0*pi/3));
+				BYTE B = (BYTE)(128+128*sin(2*pi*y/GUI_Y_WIDTH + phi + 4.0*pi/3));
 				
 				for( uint x=0; x<GUI_X_WIDTH;x++){
 					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
@@ -2571,11 +2568,11 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 			}
 			break;
 		case GUI_TEST_RGB_ROL_RAINBOW:
-			const uint R_MAX = (uint)(1.414*GUI_MAX(GUI_Y_WIDTH,GUI_X_WIDTH));
+			
 			for( uint r=0; r<R_MAX;r++ ){
-				BYTE R = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi          ));
-				BYTE G = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 2.0*π/3));
-				BYTE B = (BYTE)(128+128*sin(2*π*r/GUI_Y_WIDTH + phi + 4.0*π/3));
+				BYTE R = (BYTE)(128+128*sin(2*pi*r/GUI_Y_WIDTH + phi          ));
+				BYTE G = (BYTE)(128+128*sin(2*pi*r/GUI_Y_WIDTH + phi + 2.0*pi/3));
+				BYTE B = (BYTE)(128+128*sin(2*pi*r/GUI_Y_WIDTH + phi + 4.0*pi/3));
 				Screen.penColor = GUI_MAKE_COLOR( R,G,B );
 				__insertBresenhamCircle(GUI_X_WIDTH>>1,GUI_Y_WIDTH>>1,r);	
 				
@@ -2590,7 +2587,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	Screen.penSize  = penSize;
 	phi+=0.1;
 }
-
+#endif
 //================================================== End of RGB Test ==================================================//
 //================================================== End of RGB Test ==================================================//
 //================================================== End of RGB Test ==================================================//
@@ -2598,25 +2595,35 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
 
+static void __insertChar(struct __FontChar_t* pChar){
+	for(uint y=0;y < pChar->height;y++){
+		for(uint x=0;x < pChar->width ;x++){
+			if( (Screen.txtPos.x + x) >= GUI_X_WIDTH )
+				while(1);
+			if( (Screen.txtPos.y + y) >= GUI_Y_WIDTH )
+				while(1);
+
+			if(  ( ((*(pChar->byte + (y>>3)*(pChar->width) + x))>>(y&0x07))&0x01  ) == 1 )
+		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  )
+				__insertPixel(Screen.txtPos.x + x,Screen.txtPos.y + y);
+			else
+				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y);
+		}
+	}
+}
 
 void GUI_DispChar(unsigned char c,...){
 
-	c = GUI_LIMIT( (c) , ' ' , '~' );
+	c = GUI_LIMIT( (c) , ' ' , 127 );
 	struct __Screen_t*   s     = &Screen;
 	struct __FontChar_t* pChar = (s->pFont + c - 32);
 
-	if(s->txtPos.x + pChar->width > GUI_X_WIDTH){
-		s->txtPos.x = 0;
-		s->txtPos.y += pChar->height;
-	}
-	if(s->txtPos.y >= GUI_Y_WIDTH){
-		s->txtPos.y = 0;
-	}
-
-	unsigned int page_start    = ((s->txtPos.y)>>3);
-	unsigned int page_end      = ((s->txtPos.y + pChar->height-1)>>3);
-	unsigned int column_start  = s->txtPos.x;
-	unsigned int column_end    = s->txtPos.x + pChar->width -1;
+	if(s->txtPos.x > GUI_X_WIDTH - pChar->width){
+        s->txtPos.x = 0;
+        s->txtPos.y += pChar->height;
+        if(s->txtPos.y > GUI_Y_WIDTH - pChar->height)
+            s->txtPos.y = 0;
+    }
 
 	va_list ap;
 	va_start(ap,c);
@@ -2627,20 +2634,18 @@ void GUI_DispChar(unsigned char c,...){
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
-	for(uint y=0;y < pChar->height;y++){
-		for(uint x=0;x < pChar->width ;x++){
-			if( (s->txtPos.x + x) >= GUI_X_WIDTH )
-				while(1);
-			if( (s->txtPos.y + y) >= GUI_Y_WIDTH )
-				while(1);
-
-			if(  ( ((*(pChar->byte + (y>>3)*(pChar->width) + x))>>(y&0x07))&0x01  ) == 1 )
-		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  )
-				__insertPixel(s->txtPos.x + x,s->txtPos.y + y);
-			else
-				__erasePixel (s->txtPos.x + x,s->txtPos.y + y);
-		}
-	}
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	uint page_start    = ((s->txtPos.y)>>3);
+	uint page_end      = ((s->txtPos.y + pChar->height-1)>>3);
+	uint column_start  = s->txtPos.x;
+	uint column_end    = s->txtPos.x + pChar->width -1;
+#else
+	uint x_start       = s->txtPos.x;
+	uint y_start       = s->txtPos.y;
+	uint x_end         = s->txtPos.x + pChar->width -1;
+	uint y_end         = s->txtPos.y + pChar->height-1;
+#endif
+	__insertChar(pChar);
 
 	if(onlyChangeBuffer!=true){
 		if(clearScreen==true)
@@ -2648,28 +2653,86 @@ void GUI_DispChar(unsigned char c,...){
 		else{
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+			GUI_RefreashArea(x_start,y_start,x_end,y_end);			
 #endif
 		}
 	}
 
 	s->txtPos.x += pChar->width;
-	if( s->txtPos.x >= GUI_X_WIDTH ){
-		s->txtPos.x = 0;
-		s->txtPos.y += pChar->height;
-	}
-	if( s->txtPos.y >= GUI_Y_WIDTH ){
-		s->txtPos.y = 0;
-	}
-	 
+}
+
+void GUI_DispCharAt(unsigned char c,int x,int y,...){
+	Screen.txtPos.x = x;
+	Screen.txtPos.y = y;
+	GUI_DispChar(c);
+}
+
+void GUI_DispWord(const char* word,...){
+	size_t pos = strcspn(word, " ");
+    int    num = 0;
+    while(pos--){
+        GUI_DispChar(*(word+num),false,true);
+        num++;...
+    }
 }
 
 //================================================ End of Text Function ================================================//
 //================================================ End of Text Function ================================================//
 //================================================ End of Text Function ================================================//
+//================================================= Dialog Box Function ================================================//
+//================================================= Dialog Box Function ================================================//
+//================================================= Dialog Box Function ================================================//
 
-//=================================================== Demo Function ===================================================//
-//=================================================== Demo Function ===================================================//
-//=================================================== Demo Function ===================================================//
+#if GUI_DIALOG_DISPLAY
+#define __BAR_HEIGHT__    (uint)((10*GUI_Y_WIDTH)>>7) // 10
+#define __BUT_SIZE__      (uint)(__BAR_HEIGHT__*0.6)  // 3
+#define __BUT_INTERVAL__  (uint)((__BUT_SIZE__)+(__BUT_SIZE__>>1))// 9
+#define __BUT_INDENT__    (uint)(__BAR_HEIGHT__*0.7)//7
+
+static void __insertButton(const char* name,Pixel_t color){
+
+}
+
+void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
+//Save the previous configuration
+	uint penColor = Screen.penColor;
+	uint penSize  = Screen.penSize;
+//Draw Edge
+	Screen.penColor = GUI_MAKE_COLOR(232,232,232);
+	Screen.penSize  = 1;
+	GUI_DrawRect( p->x_start , p->y_start , p->x_end , p->y_end      ,true ,true);
+//Draw Bar	
+	GUI_FillRect( p->x_start , p->y_start , p->x_end , p->y_start+__BAR_HEIGHT__  ,false,true);
+//Draw Box Button
+	Screen.penColor = GUI_MAKE_COLOR(224,99 ,88 );
+	GUI_FillCircle( p->x_start+__BUT_INDENT__                    , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1),false,true );
+	Screen.penColor = GUI_MAKE_COLOR(224,193,75 );
+	GUI_FillCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__   , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1),false,true );
+	Screen.penColor = GUI_MAKE_COLOR(104,102,98 );
+	GUI_FillCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__*2 , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1),false,true );
+//Draw User Button
+	struct GUI_DialogBox_Button_t* pButton = p->firstButton;
+	while(pButton != NULL){
+		Screen.penColor = GUI_MAKE_COLOR(232,232,232);
+		__insertButton(pButton->name,GUI_BLUE);
+		pButton = pButton->nextButton;
+	}
+//Restore the previous configuration
+	Screen.penColor = penColor;
+	Screen.penSize  = penSize;	
+//Display
+	GUI_RefreashArea(p->x_start , p->y_start , p->x_end , p->y_end);	
+}
+	
+#endif
+
+//============================================== End of Dialog Box Function ============================================//
+//============================================== End of Dialog Box Function ============================================//
+//============================================== End of Dialog Box Function ============================================//
+//=================================================== Demo Function ====================================================//
+//=================================================== Demo Function ====================================================//
+//=================================================== Demo Function ====================================================//
 
 #if GUI_DEMO
 //Put the func into " While(1){ ... } "
