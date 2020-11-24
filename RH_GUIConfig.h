@@ -7,6 +7,14 @@
 
 #define GUI_DEMO             1   // 0=Disable   1=Enable
 
+#define GUI_DIALOG_DISPLAY   1   // 0=Disable   1=Enable
+
+#define GUI_ICON_DISPLAY     1   // 0=Disable   1=Enable
+
+#define GUI_FONT_EXTENTION   1   // 0=Disable   1=Enable
+
+#define GUI_TEST_EXTENTION   1   // 0=Disable   1=Enable
+
 #define GUI_Y_WIDTH          128
 #define GUI_X_WIDTH          128
 #define GUI_PAGEs            16
@@ -29,7 +37,7 @@
 #define GUI_SINGLE_PIXEL     (1<<0)
 #define GUI_DISPLAY_MODE     GUI_SINGLE_PIXEL // Choose one of above
 
-#define GUI_ENABLE_FONT_EXTENTION      0 // 0=Disable   1=Enable
+
 
 #define GUI_GRAM_STORAGE_MODE            // 0=Internal  1=External 
 

@@ -12,9 +12,21 @@
 //==================================================== API Handle =====================================================//
 //==================================================== API Handle =====================================================//
 
-void (*GUI_API_DrawArea)      (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData) = NULL; 
+void __attribute__((weak)) GUI_DrawArea(uint x1,uint y1,uint x2,uint y2,const Pixel_t* pixData){
+// THIS MAY COST SOME TIME.
+}
 
-void (*GUI_API_DrawPixel)     (unsigned int x,unsigned int y,const Pixel_t pixData) = NULL;
+void __attribute__((weak)) GUI_DummyDrawPixel(uint x,uint y,const Pixel_t pixData){
+// IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
+}
+
+void __attribute__((weak)) GUI_AsserParam(bool expression,const char* WHAT_IS_WRONG){
+// DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
+}
+
+void (*GUI_API_DrawArea)      (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData) = GUI_DrawArea; 
+
+void (*GUI_API_DrawPixel)     (unsigned int x,unsigned int y,const Pixel_t pixData) = GUI_DummyDrawPixel;
 
 void (*GUI_API_DelayMs)       (unsigned long ms) = NULL;
 
@@ -25,6 +37,7 @@ void (*GUI_API_DrawPageColumn)(unsigned int page,unsigned int column_start,unsig
 #if GUI_ASSERT
 void (*GUI_API_AssertParam)   (bool expression,const char* WHAT_IS_WRONG )  = NULL;
 #endif
+
 
 //================================================ End of API Handle ==================================================//
 //================================================ End of API Handle ==================================================//
@@ -1562,6 +1575,7 @@ static void __clearFrameBuffer(void){
 
 #define __malloc(size)  malloc(size)
 #define __free(p)       free(p)
+#define __exit(express) if(express) return
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
@@ -1758,7 +1772,7 @@ void GUI_SetFont(int GUI_FONT_xxx){
 
 void GUI_SetTextPos(unsigned int x,unsigned int y){
 	Screen.txtPos.x = x;
-	Screen.txtPos.x = y;
+	Screen.txtPos.y = y;
 }
 
 //=============================================== End of Display Config ==============================================//
@@ -2594,6 +2608,46 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
+struct __WordPiece{
+    char* sentence;
+    char* text;
+    struct __WordPiece* nextWord;
+};
+
+static struct __WordPiece* __creatTextSocket(const char* const_sentence){
+	char* sentence = (char*)malloc(strlen(const_sentence));
+    strcpy(sentence, const_sentence);
+    
+    char* p = strtok(sentence," ");
+
+    struct __WordPiece* pHeadWord        = (struct __WordPiece*)malloc(sizeof(struct __WordPiece));
+    struct __WordPiece* pWord            = pHeadWord;
+
+    pWord->sentence = sentence;
+    pWord->text = p;
+    pWord->nextWord = NULL;
+    while( (p = strtok(NULL," ")) != NULL ){
+        pWord->nextWord = (struct __WordPiece*)malloc(sizeof(struct __WordPiece));
+        pWord           = pWord->nextWord;
+        pWord->sentence = sentence;
+        pWord->text     = p;
+        pWord->nextWord = NULL;
+    }
+
+    return pHeadWord;
+}
+
+static void __deleteTextSocket(struct __WordPiece* p){
+    while(p != NULL){
+        struct __WordPiece* tmp = p;
+        
+        if(tmp->nextWord == NULL){
+            free(tmp->sentence);
+        }
+        p = tmp->nextWord;
+        free(tmp);
+    }
+}
 
 static void __insertChar(struct __FontChar_t* pChar){
 	for(uint y=0;y < pChar->height;y++){
@@ -2610,6 +2664,22 @@ static void __insertChar(struct __FontChar_t* pChar){
 				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y);
 		}
 	}
+}
+
+static void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
+
+}
+
+static void __insertLeftAlignText(const char* text,uint xs,uint ys,uint xe,uint ye){
+
+}
+
+static void __insertRightAlignText(const char* text,uint xs,uint ys,uint xe,uint ye){
+
+}
+
+static void __insertCenterText(const char* text,uint xs,uint ys,uint xe,uint ye){
+
 }
 
 void GUI_DispChar(unsigned char c,...){
@@ -2668,14 +2738,26 @@ void GUI_DispCharAt(unsigned char c,int x,int y,...){
 	GUI_DispChar(c);
 }
 
-void GUI_DispWord(const char* word,...){
-	size_t pos = strcspn(word, " ");
-    int    num = 0;
-    while(pos--){
-        GUI_DispChar(*(word+num),false,true);
-        num++;...
-    }
+void GUI_DispChars(unsigned char c,int num,...){
+	while(num--){
+		GUI_DispChar(c,false,true);
+	}
+
 }
+
+void GUI_DispWord(const char* word,...){
+	// size_t pos = strcspn(word, " ");
+ //    int    num = 0;
+ //    while(pos--){
+ //        GUI_DispChar(*(word+num),false,true);
+ //        num++;//
+ //    }
+
+	struct __WordPiece* pWord =  __creatTextSocket(word);
+	__deleteTextSocket(pWord);
+
+}
+
 
 //================================================ End of Text Function ================================================//
 //================================================ End of Text Function ================================================//
@@ -2730,6 +2812,18 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 //============================================== End of Dialog Box Function ============================================//
 //============================================== End of Dialog Box Function ============================================//
 //============================================== End of Dialog Box Function ============================================//
+//=================================================== Icon Function ====================================================//
+//=================================================== Icon Function ====================================================//
+//=================================================== Icon Function ====================================================//
+#if GUI_ICON_DISPLAY
+
+void GUI_Icon(struct GUI_Icon_t* p,...){
+
+}
+#endif
+//=============================================== End of Icon Function =================================================//
+//=============================================== End of Icon Function =================================================//
+//=============================================== End of Icon Function =================================================//
 //=================================================== Demo Function ====================================================//
 //=================================================== Demo Function ====================================================//
 //=================================================== Demo Function ====================================================//

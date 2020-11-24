@@ -85,9 +85,13 @@ void    GUI_TestRGB           (uint GUI_TEST_RGB_xxxx ,...);
 void    GUI_CONTI_DrawLine    (unsigned int (*p)[2],const size_t num,...);
 
 void    GUI_DispChar          (unsigned char c,...);
-void    GUI_DispCharAt        (unsigned char c,int x,int y,...);//
+void    GUI_DispCharAt        (unsigned char c,int x,int y,...);
+void    GUI_DispChars         (unsigned char c,int num,...);//
 void    GUI_DispWord          (const char* word,...);
+
+
 #if GUI_DIALOG_DISPLAY
+
 struct GUI_DialogBox_Button_t{
 	uint        width;
 	uint        height;
@@ -107,6 +111,18 @@ struct GUI_DialogBox_t{
 };
 
 void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...);
+
+#endif
+
+#if GUI_ICON_DISPLAY
+
+struct GUI_Icon_t{
+	uint       size_AxA;
+	uint       GUI_ICON_xxxx;
+	uint       x_left_top;
+	uint       y_left_top;
+};
+
 #endif
 
 #if GUI_DEMO
