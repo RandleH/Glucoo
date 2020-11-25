@@ -27,8 +27,10 @@
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
 
-typedef unsigned int uint;
 
+
+typedef unsigned int uint;
+typedef uint         Macro_t;
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
 extern void (*GUI_API_DrawPixel)      (unsigned int x ,unsigned int y ,const Pixel_t pixData);
@@ -111,6 +113,24 @@ struct GUI_DialogBox_t{
 };
 
 void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...);
+
+#endif
+
+#if GUI_ANIMATION_DISPLAY
+
+#define GUI_ANIM_ProgressBar
+
+struct GUI_Anim_t{
+	const char*  text;
+	Macro_t      GUI_ANIM_xxxx;
+	uint         ID;
+	uint         x_pos;
+	uint         y_pos;
+	uint         height;
+	uint         width;
+};
+
+
 
 #endif
 

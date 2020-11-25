@@ -11,6 +11,8 @@
 
 #define GUI_ICON_DISPLAY     1   // 0=Disable   1=Enable
 
+#define GUI_ANIMATION_DISPLAY 1  // 0=Disable   1=Enable
+
 #define GUI_FONT_EXTENTION   1   // 0=Disable   1=Enable
 
 #define GUI_TEST_EXTENTION   1   // 0=Disable   1=Enable

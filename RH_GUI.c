@@ -113,7 +113,6 @@ struct __FontChar_t{
 
 typedef struct __FontChar_t  __FontChar_t;
 
-
 static const unsigned char __FONT_STD6X8__ASCII_32_0 [] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 static const unsigned char __FONT_STD6X8__ASCII_32_1 [] = {0x00, 0x00, 0x00, 0x2f, 0x00, 0x00};
 static const unsigned char __FONT_STD6X8__ASCII_32_2 [] = {0x00, 0x00, 0x07, 0x00, 0x07, 0x00};
@@ -1291,7 +1290,7 @@ static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_62[] = { 0x00,0x10,0
 	                                                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 /* 0x5F [_] */
 static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_63[] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\
-	                                                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+	                                                                 0x00,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x00,0x00 };
 /* 0x60 [`] */
 static const unsigned char __FONT_COURIERNEW10X12__ASCII_32_64[] = { 0x00,0x00,0x00,0x01,0x02,0x04,0x00,0x00,0x00,0x00,\
 	                                                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
@@ -1502,6 +1501,15 @@ struct __GUI_XY_t{
 };
 typedef struct __GUI_XY_t __GUI_XY_t;
 
+#if GUI_ANIMATION_DISPLAY
+struct __AnimationConfigChain{
+	struct GUI_Anim_t config;
+	struct __AnimationConfigChain* nextConfig;
+};
+
+typedef struct __AnimationConfigChain __AnimationConfigChain;
+#endif
+
 static struct __Screen_t{
 #if   ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	PixelUnit_t buffer[ GUI_PAGEs  ][ GUI_X_WIDTH ];
@@ -1514,9 +1522,10 @@ static struct __Screen_t{
 	
 	__GUI_XY_t       txtPos;
 	__FontChar_t*    pFont;
-
-
-
+//仅适用于动画功能	
+#if GUI_ANIMATION_DISPLAY
+	__AnimationConfigChain*  cfgAnimationHeadNode;
+#endif
 }Screen;
 
 static void __insertPixel(int x,int y){
@@ -2608,38 +2617,38 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
 //=================================================== Text Function ===================================================//
-struct __WordPiece{
+struct __WordChain{
     char* sentence;
-    char* text;
-    struct __WordPiece* nextWord;
+    char* word;
+    struct __WordChain* nextWord;
 };
 
-static struct __WordPiece* __creatTextSocket(const char* const_sentence){
-	char* sentence = (char*)malloc(strlen(const_sentence));
-    strcpy(sentence, const_sentence);
+static struct __WordChain* __creatTextSocket(const char* const_pSentence){
+	char* pSentence = (char*)malloc(strlen(const_pSentence));
+    strcpy(pSentence, const_pSentence);
     
-    char* p = strtok(sentence," ");
+    char* p = strtok(pSentence," ");
 
-    struct __WordPiece* pHeadWord        = (struct __WordPiece*)malloc(sizeof(struct __WordPiece));
-    struct __WordPiece* pWord            = pHeadWord;
+    struct __WordChain* pHeadWord        = (struct __WordChain*)malloc(sizeof(struct __WordChain));
+    struct __WordChain* pWord            = pHeadWord;
 
-    pWord->sentence = sentence;
-    pWord->text = p;
+    pWord->sentence = pSentence;
+    pWord->word = p;
     pWord->nextWord = NULL;
     while( (p = strtok(NULL," ")) != NULL ){
-        pWord->nextWord = (struct __WordPiece*)malloc(sizeof(struct __WordPiece));
+        pWord->nextWord = (struct __WordChain*)malloc(sizeof(struct __WordChain));
         pWord           = pWord->nextWord;
-        pWord->sentence = sentence;
-        pWord->text     = p;
+        pWord->sentence = pSentence;
+        pWord->word     = p;
         pWord->nextWord = NULL;
     }
 
     return pHeadWord;
 }
 
-static void __deleteTextSocket(struct __WordPiece* p){
+static void __deleteTextSocket(struct __WordChain* p){
     while(p != NULL){
-        struct __WordPiece* tmp = p;
+        struct __WordChain* tmp = p;
         
         if(tmp->nextWord == NULL){
             free(tmp->sentence);
@@ -2658,7 +2667,7 @@ static void __insertChar(struct __FontChar_t* pChar){
 				while(1);
 
 			if(  ( ((*(pChar->byte + (y>>3)*(pChar->width) + x))>>(y&0x07))&0x01  ) == 1 )
-		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  )
+		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  ) Same effect.
 				__insertPixel(Screen.txtPos.x + x,Screen.txtPos.y + y);
 			else
 				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y);
@@ -2666,8 +2675,21 @@ static void __insertChar(struct __FontChar_t* pChar){
 	}
 }
 
-static void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
+static void __insertWord(const char* word){
+	size_t pos = strcspn(word, " ");
+	int    num = 0;
+    while(pos--){
+        struct __FontChar_t* pChar = (Screen.pFont + (*(word+num)) - 32);
+        __insertChar(pChar);
+        Screen.txtPos.x += pChar->width;
+        num++;
+    }
+}
 
+static void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
+	struct __WordChain* pSentence =  __creatTextSocket(text);
+
+	__deleteTextSocket(pSentence);
 }
 
 static void __insertLeftAlignText(const char* text,uint xs,uint ys,uint xe,uint ye){
@@ -2742,19 +2764,63 @@ void GUI_DispChars(unsigned char c,int num,...){
 	while(num--){
 		GUI_DispChar(c,false,true);
 	}
-
 }
 
 void GUI_DispWord(const char* word,...){
-	// size_t pos = strcspn(word, " ");
- //    int    num = 0;
- //    while(pos--){
- //        GUI_DispChar(*(word+num),false,true);
- //        num++;//
- //    }
+	struct __Screen_t*   s = &Screen;
 
-	struct __WordPiece* pWord =  __creatTextSocket(word);
-	__deleteTextSocket(pWord);
+	const char* p = word;
+	struct __FontChar_t* pChar;
+	size_t      pixLength = 0;
+	while(*p!='\0'){
+		pChar      = Screen.pFont + (*p - 32);
+		pixLength += pChar->width;
+		p++;
+	}
+
+	if(s->txtPos.x > GUI_X_WIDTH - pixLength){
+        s->txtPos.x = 0;
+        s->txtPos.y += pChar->height;
+        if(s->txtPos.y > GUI_Y_WIDTH - pChar->height)
+            s->txtPos.y = 0;
+    }
+
+	va_list ap;
+	va_start(ap,word);
+	const int clearScreen      = va_arg(ap,int);
+	const int onlyChangeBuffer = va_arg(ap,int);
+	va_end(ap);
+
+	if(clearScreen==true)
+		__clearFrameBuffer();
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	uint page_start    = ((s->txtPos.y)>>3);
+	uint page_end      = ((s->txtPos.y + pChar->height-1)>>3);
+	uint column_start  = s->txtPos.x;
+	uint column_end    = s->txtPos.x + pChar->width -1;
+#else
+	uint x_start       = s->txtPos.x;
+	uint y_start       = s->txtPos.y;
+	uint x_end         = s->txtPos.x + pixLength -1;
+	uint y_end         = s->txtPos.y + pChar->height-1;
+#endif
+	__insertWord(word);
+
+	if(onlyChangeBuffer!=true){
+		if(clearScreen==true)
+			GUI_RefreashScreen();
+		else{
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+			GUI_RefreashArea(x_start,y_start,x_end,y_end);			
+#endif
+		}
+	}
+
+	// struct __WordChain* pWord =  __creatTextSocket(word);
+	// __deleteTextSocket(pWord);
 
 }
 
@@ -2807,6 +2873,31 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 	GUI_RefreashArea(p->x_start , p->y_start , p->x_end , p->y_end);	
 }
 	
+#endif
+
+#if GUI_ANIMATION_DISPLAY
+// 创建一个动画插件
+void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
+	struct __AnimationConfigChain* p = (struct __AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+	p->config     = *config;	
+	p->nextConfig = NULL;
+}
+
+// 显示动画插件
+void GUI_ShowAnimation(BYTE ID,uint fp_0_255_){
+
+}
+
+// 隐藏动画插件
+void GUI_HideAnimation(BYTE ID){
+
+}
+
+// 删除动画插件
+void GUI_DeleteAnimationSocket(BYTE ID){
+
+}
+
 #endif
 
 //============================================== End of Dialog Box Function ============================================//
