@@ -44,6 +44,7 @@ extern void (*GUI_API_DrawPageColumn) (unsigned int page,unsigned int column_sta
 #if GUI_ASSERT
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 #endif
+void    GUI_Init              (void);
 
 void    GUI_SetPenSize        (uint penSize);
 uint    GUI_GetPenSize        (void);
@@ -118,7 +119,7 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 
 #if GUI_ANIMATION_DISPLAY
 
-#define GUI_ANIM_ProgressBar
+#define GUI_ANIM_ProgressBar   (0)
 
 struct GUI_Anim_t{
 	const char*  text;
@@ -130,6 +131,8 @@ struct GUI_Anim_t{
 	uint         width;
 };
 
+void   GUI_CreateAnimationSocket   (struct GUI_Anim_t* config);
+void   GUI_ShowAnimation           (BYTE ID,uint fp_0_255_);
 
 
 #endif

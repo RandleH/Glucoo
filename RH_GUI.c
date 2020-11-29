@@ -1505,6 +1505,7 @@ typedef struct __GUI_XY_t __GUI_XY_t;
 struct __AnimationConfigChain{
 	struct GUI_Anim_t config;
 	struct __AnimationConfigChain* nextConfig;
+	uint  cnt;
 };
 
 typedef struct __AnimationConfigChain __AnimationConfigChain;
@@ -1522,9 +1523,12 @@ static struct __Screen_t{
 	
 	__GUI_XY_t       txtPos;
 	__FontChar_t*    pFont;
+
+	size_t           allocated_byte;
 //仅适用于动画功能	
 #if GUI_ANIMATION_DISPLAY
 	__AnimationConfigChain*  cfgAnimationHeadNode;
+	size_t                   cfgAnimationNodeCnt;
 #endif
 }Screen;
 
@@ -1643,6 +1647,27 @@ static void __insertBresenhamCircle(unsigned int x, unsigned int y, int r,...){
 //================================================== Display Config ==================================================//
 //================================================== Display Config ==================================================//
 //================================================== Display Config ==================================================//
+
+void GUI_Init(void){
+
+	Screen.allocated_byte = 0;
+
+	Screen.txtPos.x = 0;
+	Screen.txtPos.y = 0;
+	Screen.pFont    = __FONT_STD6X8;
+	Screen.penColor = GUI_WHITE;
+	Screen.bkColor  = GUI_BLACK;
+	Screen.penSize  = 1;
+
+	__clearFrameBuffer();
+
+#if GUI_ANIMATION_DISPLAY
+	Screen.cfgAnimationHeadNode = NULL;
+	Screen.cfgAnimationNodeCnt  = 0;
+#endif
+
+	GUI_RefreashScreen();
+}
 
 void GUI_RefreashScreen(void){
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
@@ -2876,16 +2901,106 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 #endif
 
 #if GUI_ANIMATION_DISPLAY
+void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+	uint x_end   = x_start + p->config.width  - 1;
+	uint y_end   = y_start + p->config.height - 1;
+// Clear Area
+	{
+		int cnt = p->config.height;
+		while(cnt--)
+			memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+	}
+// Draw Edge
+	{
+		uint x = x_start, y = y_start;
+		while( x<=x_end && y<=y_end ){
+			if( x < x_end ){
+				// __insertPixel(x,y_start );
+				Screen.buffer[y_start][x].data = GUI_WHITE;
+				// __insertPixel(x,y_end   );
+				Screen.buffer[y_end][x].data   = GUI_WHITE;
+				x++;
+			}
+			else{
+				// __insertPixel(x_start ,y);
+				Screen.buffer[y][x_start].data = GUI_WHITE;
+				// __insertPixel(x_end   ,y);
+				Screen.buffer[y][x_end].data   = GUI_WHITE;
+				y++;
+			}
+		}
+	}
+
+// Fill Rect
+	{
+		uint progress = (fp_0_255_ * p->config.width)>>8;	
+		for(uint y=y_start;y<=y_end;y++){
+			for(uint x=0;x<progress;x++)
+				Screen.buffer[y][x_start+x].data = GUI_WHITE;
+		}
+	}
+}
+
+__AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
+	__AnimationConfigChain* p = Screen.cfgAnimationHeadNode;
+
+	while(p != NULL){
+		if(p->config.ID == ID)
+			break;
+
+		p = p->nextConfig;
+	}
+
+	return p;
+}
+
 // 创建一个动画插件
 void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
-	struct __AnimationConfigChain* p = (struct __AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
-	p->config     = *config;	
-	p->nextConfig = NULL;
+	__AnimationConfigChain* pConfig = Screen.cfgAnimationHeadNode;
+	__AnimationConfigChain* pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+	pTmpConfig->config     = *config;	
+	pTmpConfig->nextConfig = NULL;
+
+// ID should be unique.
+	if( NULL != __searchAnimationConfigChain(config->ID) )
+		return;
+
+	if(pConfig == NULL)
+		Screen.cfgAnimationHeadNode = pTmpConfig;
+	else{
+		do{
+			if(pConfig->nextConfig == NULL){
+				pConfig->nextConfig = pTmpConfig;
+				break;
+			}
+			pConfig = pConfig->nextConfig;
+		}while(1);
+	}
 }
 
 // 显示动画插件
 void GUI_ShowAnimation(BYTE ID,uint fp_0_255_){
+	__AnimationConfigChain* pConfig = __searchAnimationConfigChain(ID);
 
+	switch(pConfig->config.GUI_ANIM_xxxx){
+		case GUI_ANIM_ProgressBar:
+			__insertProgressBar(pConfig,fp_0_255_);
+			break;
+		default: 
+			break;
+	}
+
+	uint x_start = pConfig->config.x_pos;
+	uint y_start = pConfig->config.y_pos;
+	uint x_end   = pConfig->config.x_pos + pConfig->config.width  - 1;
+	uint y_end   = pConfig->config.y_pos + pConfig->config.height - 1;
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+#else
+	GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif
 }
 
 // 隐藏动画插件
