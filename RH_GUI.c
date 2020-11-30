@@ -1,9 +1,11 @@
 
+#include "RH_GUI.h"
+
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
 #include <stdbool.h>
-#include "RH_GUI.h"
+
 
 
 #pragma anon_unions
@@ -1902,8 +1904,14 @@ void GUI_FillRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
     unsigned int y_start = GUI_MIN(y1,y2);
 
 	for(unsigned int y=y_start;y<=y_end;y++){
-		for(unsigned int x=x_start;x<=x_end;x++)
-			Screen.buffer[y][x].data = Screen.penColor;
+		if(y == y_start){
+			for(unsigned int x=x_start;x<=x_end;x++)
+				Screen.buffer[y][x].data = Screen.penColor;
+		}else{
+			memcpy(&(Screen.buffer[y      ][x_start].data),\
+                   &(Screen.buffer[y_start][x_start].data),\
+                   ((x_end-x_start+1)*sizeof(Pixel_t)) );
+		}
 	}
 
 #endif
@@ -2901,7 +2909,17 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 #endif
 
 #if GUI_ANIMATION_DISPLAY
-void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
+
+static void __removeProgressBar(__AnimationConfigChain* p){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+
+	int cnt = p->config.height;
+	while(cnt--)
+		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+}
+
+static void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	uint x_end   = x_start + p->config.width  - 1;
@@ -2917,16 +2935,12 @@ void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
 		uint x = x_start, y = y_start;
 		while( x<=x_end && y<=y_end ){
 			if( x < x_end ){
-				// __insertPixel(x,y_start );
 				Screen.buffer[y_start][x].data = GUI_WHITE;
-				// __insertPixel(x,y_end   );
 				Screen.buffer[y_end][x].data   = GUI_WHITE;
 				x++;
 			}
 			else{
-				// __insertPixel(x_start ,y);
 				Screen.buffer[y][x_start].data = GUI_WHITE;
-				// __insertPixel(x_end   ,y);
 				Screen.buffer[y][x_end].data   = GUI_WHITE;
 				y++;
 			}
@@ -2935,15 +2949,23 @@ void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
 
 // Fill Rect
 	{
-		uint progress = (fp_0_255_ * p->config.width)>>8;	
-		for(uint y=y_start;y<=y_end;y++){
-			for(uint x=0;x<progress;x++)
-				Screen.buffer[y][x_start+x].data = GUI_WHITE;
+		uint progress = (fp_0_255_ * (p->config.width-2))>>8;	
+		for(uint y=y_start+1;y<y_end;y++){
+			if(y == y_start+1){
+				for(uint x=1;x<=progress;x++)
+					Screen.buffer[y][x_start+x].data = p->config.themeColor;
+			}else{
+				memcpy(&(Screen.buffer[y        ][x_start+1].data),\
+					   &(Screen.buffer[y_start+1][x_start+1].data),\
+					   progress*sizeof(Pixel_t) );
+			}
 		}
 	}
 }
 
-__AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
+
+
+static __AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
 	__AnimationConfigChain* p = Screen.cfgAnimationHeadNode;
 
 	while(p != NULL){
@@ -2964,8 +2986,12 @@ void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 	pTmpConfig->nextConfig = NULL;
 
 // ID should be unique.
-	if( NULL != __searchAnimationConfigChain(config->ID) )
+	if( NULL != __searchAnimationConfigChain(config->ID) ){
+#if GUI_ASSERT
+		//...//
+#endif		
 		return;
+	}
 
 	if(pConfig == NULL)
 		Screen.cfgAnimationHeadNode = pTmpConfig;
@@ -2981,23 +3007,31 @@ void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 }
 
 // 显示动画插件
-void GUI_ShowAnimation(BYTE ID,uint fp_0_255_){
-	__AnimationConfigChain* pConfig = __searchAnimationConfigChain(ID);
+void GUI_ShowAnimation(BYTE ID,uint fp_0_255_,...){
+	__AnimationConfigChain* pNow = __searchAnimationConfigChain(ID);
 
-	switch(pConfig->config.GUI_ANIM_xxxx){
+	if(pNow == NULL){
+#if GUI_ASSERT
+		//...//
+#endif		
+		return;
+	}
+
+	switch(pNow->config.GUI_ANIM_xxxx){
 		case GUI_ANIM_ProgressBar:
-			__insertProgressBar(pConfig,fp_0_255_);
+			__insertProgressBar(pNow,fp_0_255_);
 			break;
 		default: 
 			break;
 	}
 
-	uint x_start = pConfig->config.x_pos;
-	uint y_start = pConfig->config.y_pos;
-	uint x_end   = pConfig->config.x_pos + pConfig->config.width  - 1;
-	uint y_end   = pConfig->config.y_pos + pConfig->config.height - 1;
+	uint x_start = pNow->config.x_pos;
+	uint y_start = pNow->config.y_pos;
+	uint x_end   = pNow->config.x_pos + pNow->config.width  - 1;
+	uint y_end   = pNow->config.y_pos + pNow->config.height - 1;
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	//...//
 #else
 	GUI_RefreashArea(x_start,y_start,x_end,y_end);
 #endif
@@ -3005,11 +3039,62 @@ void GUI_ShowAnimation(BYTE ID,uint fp_0_255_){
 
 // 隐藏动画插件
 void GUI_HideAnimation(BYTE ID){
+	__AnimationConfigChain* pNow = __searchAnimationConfigChain(ID);
 
+	if(pNow == NULL){
+#if GUI_ASSERT
+		//...//
+#endif		
+		return;
+	}
+
+	switch(pNow->config.GUI_ANIM_xxxx){
+		case GUI_ANIM_ProgressBar:
+			__removeProgressBar(pNow);
+			break;
+		default: 
+			break;
+	}
+	
+	uint x_start = pNow->config.x_pos;
+	uint y_start = pNow->config.y_pos;
+	uint x_end   = pNow->config.x_pos + pNow->config.width  - 1;
+	uint y_end   = pNow->config.y_pos + pNow->config.height - 1;
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	//...//
+#else
+	GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif
 }
 
 // 删除动画插件
 void GUI_DeleteAnimationSocket(BYTE ID){
+	uint x_start = 0;
+	uint y_start = 0;
+	uint x_end   = 0;
+	uint y_end   = 0;
+	__AnimationConfigChain* pNow  = Screen.cfgAnimationHeadNode;
+	__AnimationConfigChain* pLast = Screen.cfgAnimationHeadNode;
+	while(pNow != NULL){
+		if(pNow->config.ID == ID){
+			pLast->nextConfig = pNow->nextConfig;
+			__removeProgressBar(pNow);
+			x_start = pNow->config.x_pos;
+			y_start = pNow->config.y_pos;
+			x_end   = pNow->config.x_pos + pNow->config.width  - 1;
+			y_end   = pNow->config.y_pos + pNow->config.height - 1;
+			__free(pNow);
+			break;
+		}
+		pLast = pNow;
+		pNow  = pNow->nextConfig;
+	}
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	//...//
+#else
+	GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif
 
 }
 
@@ -3236,6 +3321,55 @@ inline void GUI_DEMO_Microsoft_1(void){
 
 #endif
 
+#if GUI_ANIMATION_DISPLAY
+inline void GUI_DEMO_ANIM_ProgressBar(void){
+	static bool initFlag = false;
+	if(initFlag == false){
+		struct GUI_Anim_t config = {
+	        .GUI_ANIM_xxxx = GUI_ANIM_ProgressBar,
+	        .ID            = 0x01,
+	        .x_pos         = 20,
+	        .y_pos         = 40,
+	        .height        = 15,
+	        .width         = 90,
+	        .text          = "Progress Bar",
+	    };
+	    GUI_CreateAnimationSocket(&config);
+
+	    config.ID     = 0x02;
+	    config.height = 4;
+	    config.width  = 90;
+	    config.x_pos  = 20;
+	    config.y_pos  = 10;
+	    GUI_CreateAnimationSocket(&config);
+
+	    config.ID     = 0x03;
+	    config.height = 5;
+	    config.width  = 70;
+	    config.x_pos  = 20;
+	    config.y_pos  = 24;
+	    GUI_CreateAnimationSocket(&config);
+
+	    config.ID     = 0x04;
+	    config.height = 11;
+	    config.width  = 90;
+	    config.x_pos  = 20;
+	    config.y_pos  = 60;
+	    GUI_CreateAnimationSocket(&config);
+	}
+
+	initFlag = true;
+
+    int i = 0;
+    while(i++ < 255){
+        GUI_ShowAnimation(0x01,i);
+        GUI_ShowAnimation(0x02,i);
+        GUI_ShowAnimation(0x03,i);
+        GUI_ShowAnimation(0x04,i);
+    }
+}
+#endif
+
 //================================================ End of Demo Function ================================================//
 //================================================ End of Demo Function ================================================//
 //================================================ End of Demo Function ================================================//
@@ -3245,6 +3379,8 @@ inline void GUI_DEMO_Microsoft_1(void){
 
 #endif
 
-
+//===================================================== End of File ====================================================//
+//===================================================== End of File ====================================================//
+//===================================================== End of File ====================================================//
 
 

@@ -129,11 +129,13 @@ struct GUI_Anim_t{
 	uint         y_pos;
 	uint         height;
 	uint         width;
+	Pixel_t      themeColor;
 };
 
 void   GUI_CreateAnimationSocket   (struct GUI_Anim_t* config);
-void   GUI_ShowAnimation           (BYTE ID,uint fp_0_255_);
-
+void   GUI_ShowAnimation           (BYTE ID,uint fp_0_255_,...);
+void   GUI_HideAnimation           (BYTE ID);
+void   GUI_DeleteAnimationSocket   (BYTE ID);
 
 #endif
 
@@ -172,9 +174,12 @@ void    GUI_DEMO_WindTurbine       (void);//
 void    GUI_DEMO_SUES              (void);//
 
 
-void    GUI_DEMO_Microsoft_1(void);
+void    GUI_DEMO_Microsoft_1       (void);
 
-void    GUI_DEMO_ColorfulPenis(void);//
+
+#if GUI_ANIMATION_DISPLAY
+void    GUI_DEMO_ANIM_ProgressBar  (void);
+#endif
 
 
 #endif
