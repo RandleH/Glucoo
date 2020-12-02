@@ -1604,7 +1604,7 @@ static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsign
 }
 #endif
 
-static void __insertBresenhamCircle(unsigned int x, unsigned int y, int r,...){
+static void __insertBresenhamCircle(int x, int y, int r,...){
 	
 	int r_ex  = r+(Screen.penSize>>1);
 	int r_in  = r-(Screen.penSize>>1)+((Screen.penSize&0x01)==0);	
@@ -1642,6 +1642,39 @@ static void __insertBresenhamCircle(unsigned int x, unsigned int y, int r,...){
 	}
 }
 
+static void __insertBresenhamLine(int x1,int y1,int x2,int y2){
+	int x_min = (int)(GUI_MIN(x1,x2));
+	int x_max = (int)(GUI_MAX(x1,x2));
+	int y_min = (int)(GUI_MIN(y1,y2));
+	int y_max = (int)(GUI_MAX(y1,y2));
+	int ∆x    = (int)( x_max - x_min );
+	int ∆y    = (int)( y_max - y_min );
+
+	int type = (int)(( ((y2-y1)*(x2-x1)<0) << 1 ) | (∆y > ∆x));
+
+	if(∆y > ∆x){
+		int temp = ∆x;
+		∆x = ∆y;
+		∆y = temp;
+	}
+	
+	int j = 0;
+	int e = 0;
+	for(int i = 0;i < ∆x;i++){	
+		switch(type){
+			case 0:__insertPixel(x_min+i,y_min+j);break;
+			case 1:__insertPixel(x_min+j,y_min+i);break;
+			case 2:__insertPixel(x_min+i,y_max-j);break;
+			case 3:__insertPixel(x_min+j,y_max-i);break;
+		}
+		e += ∆y;
+		if( 2*( e + ∆y ) > ∆x){
+			j++;
+			e -= ∆x;
+		}
+	}
+}
+
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
@@ -1659,7 +1692,7 @@ void GUI_Init(void){
 	Screen.pFont    = __FONT_STD6X8;
 	Screen.penColor = GUI_WHITE;
 	Screen.bkColor  = GUI_BLACK;
-	Screen.penSize  = 1;
+	Screen.penSize  = 3;
 
 	__clearFrameBuffer();
 
@@ -2290,16 +2323,13 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 	const int clearScreen      = va_arg(ap,int);
 	const int onlyChangeBuffer = va_arg(ap,int); 
 	va_end(ap);
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	if(clearScreen==true)
 		__clearFrameBuffer();
-
-
-	unsigned int page_start   = GUI_LIMIT( (signed)((GUI_MIN(y1,y2)-Screen.penSize)>>3) ,0 ,GUI_PAGEs);
-	unsigned int page_end     = GUI_LIMIT( (signed)((GUI_MAX(y1,y2)+Screen.penSize)>>3) ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
-	unsigned int column_end   = GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
-
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	uint page_start   = GUI_LIMIT( (signed)((GUI_MIN(y1,y2)-Screen.penSize)>>3) ,0 ,GUI_PAGEs);
+	uint page_end     = GUI_LIMIT( (signed)((GUI_MAX(y1,y2)+Screen.penSize)>>3) ,0 ,GUI_PAGEs);
+	uint column_start = GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
+	uint column_end   = GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
 	if(x1 != x2){
 		double K = ((double)(y1-y2)) / ((double)(x1-x2));
 		double B = y1-K*x1;
@@ -2369,21 +2399,26 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 			memset(Screen.buffer[page]+column_start-offset,Screen.bkColor,(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
 		}
 	}
+#else
+	__insertBresenhamLine(x1,y1,x2,y2);
+#endif
 
-	if(Screen.penSize>=3){
-		GUI_FillCircle(x1,y1,Screen.penSize>>1,false,true);
-		GUI_FillCircle(x2,y2,Screen.penSize>>1,false,true);
-	}
+	// if(Screen.penSize>=3){
+	// 	GUI_FillCircle(x1,y1,Screen.penSize>>1,false,true);
+	// 	GUI_FillCircle(x2,y2,Screen.penSize>>1,false,true);
+	// }
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
 			GUI_RefreashScreen();
 		}else{
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+			GUI_RefreashArea(x1,y1,x2,y2);		
 #endif			
 		}
 	}
-#endif
+
 }
 
 void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...){
@@ -2424,116 +2459,7 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 }
 
 void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3,...){
-	
-// 	unsigned int x_start;
-//  unsigned int x_end;
-//  unsigned int y_start;
-//  unsigned int y_end;
-
-// 	unsigned int page_start;
-// 	unsigned int page_end;
-// 	unsigned int column_start;
-// 	unsigned int column_end;
-
-// 	va_list ap;
-// 	va_start(ap,y3);
-// 	const int clearScreen      = va_arg(ap,int);
-// 	const int onlyChangeBuffer = va_arg(ap,int);
-// 	va_end(ap);
-
-// 	if(clearScreen==true)
-// 		__clearFrameBuffer();
-
-// 	int XY[3][2] = {{x1,y1},{x2,y2},{x3,y3}};
-
-// 	int XY_x[3][2],XY_y[3][2];
-// 	if(x1 > x2){
-// 		if(x1 > x3){
-// 			XY_x[0][0] = x1; 
-// 			XY_x[0][1] = y1;
-// 			if(x2 > x3)  {XY_x[1][0] = x2;XY_x[1][1] = y2;XY_x[2][0] = x3;XY_x[2][1] = y3;}
-// 			else         {XY_x[1][0] = x3;XY_x[1][1] = y3;XY_x[2][0] = x2;XY_x[2][1] = y2;}
-// 		}else{    
-// 			XY_x[0][0] = x3; 
-// 			XY_x[0][1] = y3;
-// 			if(x2 > x1)  {XY_x[1][0] = x2;XY_x[1][1] = y2;XY_x[2][0] = x1;XY_x[2][1] = y1;}
-// 			else         {XY_x[1][0] = x1;XY_x[1][1] = y1;XY_x[2][0] = x2;XY_x[2][1] = y2;}
-// 		}
-// 	}else{
-// 		if(x2 > x3){
-// 			XY_x[0][0] = x2; 
-// 			XY_x[0][1] = y2;
-// 			if(x1 > x3)  {XY_x[1][0] = x1;XY_x[1][1] = y1;XY_x[2][0] = x3;XY_x[2][1] = y3;}
-// 			else         {XY_x[1][0] = x3;XY_x[1][1] = y3;XY_x[2][0] = x1;XY_x[2][1] = y1;}
-// 		}else{    
-// 			XY_x[0][0] = x3; 
-// 			XY_x[0][1] = y3;
-// 			XY_x[1][0] = x2;
-// 			XY_x[1][1] = y2;
-// 			XY_x[2][0] = x1;
-// 			XY_x[2][1] = y1;
-// 		}
-// 	}
-
-// 	if(y1 > y2){
-// 		if(y1 > y3){
-// 			XY_y[0][0] = x1; 
-// 			XY_y[0][1] = y1;
-// 			if(y2 > y3)  {XY_y[1][0] = x2;XY_y[1][1] = y2;XY_y[2][0] = x3;XY_y[2][1] = y3;}
-// 			else         {XY_y[1][0] = x3;XY_y[1][1] = y3;XY_y[2][0] = x2;XY_y[2][1] = y2;}
-// 		}else{    
-// 			XY_y[0][0] = x3; 
-// 			XY_y[0][1] = y3;
-// 			if(y2 > y1)  {XY_y[1][0] = x2;XY_y[1][1] = y2;XY_y[2][0] = x1;XY_y[2][1] = y1;}
-// 			else         {XY_y[1][0] = x1;XY_y[1][1] = y1;XY_y[2][0] = x2;XY_y[2][1] = y2;}
-// 		}
-// 	}else{
-// 		if(y2 > y3){
-// 			XY_y[0][0] = x2; 
-// 			XY_y[0][1] = y2;
-// 			if(y1 > y3)  {XY_y[1][0] = x1;XY_y[1][1] = y1;XY_y[2][0] = x3;XY_y[2][1] = y3;}
-// 			else         {XY_y[1][0] = x3;XY_y[1][1] = y3;XY_y[2][0] = x1;XY_y[2][1] = y1;}
-// 		}else{    
-// 			XY_y[0][0] = x3; 
-// 			XY_y[0][1] = y3;
-// 			XY_y[1][0] = x2;
-// 			XY_y[1][1] = y2;
-// 			XY_y[2][0] = x1;
-// 			XY_y[2][1] = y1;
-// 		}
-// 	}
-
-// 	column_start = x_start = XY_x[2][0];
-// 	column_end   = x_end   = XY_x[0][0];
-// 	y_start                = XY_y[2][1];
-// 	y_end                  = XY_y[0][1];
-// 	page_start   = ((y_start)>>3);
-// 	page_end     = ((y_end)>>3);
-
-// 	for(int y=y_start;y<=y_end;y++){
-// 		for(int x=x_start;x<=x_end;x++){
-// 			int j=0,i=2;
-// 			for(;j<3;i=j++){
-// 				int px = XY[i][1] - XY[j][1];
-// 				int py = XY[j][0] - XY[i][0];
-// 				int qx = x        - XY[i][0];
-// 				int qy = y        - XY[i][1];
-// 				if(px*qx+py*qy <= 0){
-// 					__insertPixel(x,y);
-// 					break;
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	if(onlyChangeBuffer!=true){
-// 		if(clearScreen==true)
-// 			GUI_RefreashScreen();
-// 		else
-// #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-// 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
-// #endif
-// 	}
+	//...//
 }
 
 void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...){
@@ -2725,18 +2651,6 @@ static void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint 
 	__deleteTextSocket(pSentence);
 }
 
-static void __insertLeftAlignText(const char* text,uint xs,uint ys,uint xe,uint ye){
-
-}
-
-static void __insertRightAlignText(const char* text,uint xs,uint ys,uint xe,uint ye){
-
-}
-
-static void __insertCenterText(const char* text,uint xs,uint ys,uint xe,uint ye){
-
-}
-
 void GUI_DispChar(unsigned char c,...){
 
 	c = GUI_LIMIT( (c) , ' ' , 127 );
@@ -2852,9 +2766,6 @@ void GUI_DispWord(const char* word,...){
 		}
 	}
 
-	// struct __WordChain* pWord =  __creatTextSocket(word);
-	// __deleteTextSocket(pWord);
-
 }
 
 
@@ -2963,6 +2874,33 @@ static void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
 	}
 }
 
+static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
+	uint x_center = p->config.x_pos + ((p->config.width)>>1);
+	uint y_center = p->config.x_pos + ((p->config.height)>>1);
+	uint radius   = (p->config.width>>1)-2;
+	uint phi      = ((fp_0_255_*360)>>8);
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+
+// Clear Area
+	int cnt = p->config.height;
+	while(cnt--)
+		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+// Draw a Circle
+	__insertBresenhamCircle(x_center,y_center,radius);
+// Erase part of it
+	if(phi > 180){
+		
+
+	}else if(phi < 180){
+
+	}else{
+		int cnt = p->config.height;
+		while(cnt--)
+			memset(&(Screen.buffer[y_start+cnt][x_start].data),0,radius*sizeof(Pixel_t) );
+	}
+
+}
 
 
 static __AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
@@ -3021,6 +2959,8 @@ void GUI_ShowAnimation(BYTE ID,uint fp_0_255_,...){
 		case GUI_ANIM_ProgressBar:
 			__insertProgressBar(pNow,fp_0_255_);
 			break;
+		case GUI_ANIM_ProgressLoop:
+			__insertProgressLoop(pNow,fp_0_255_);
 		default: 
 			break;
 	}
@@ -3266,18 +3206,28 @@ inline void GUI_DEMO_MovingWave_2(void){
 }
 
 inline void GUI_DEMO_Rotation_1(void){
+	
+	const unsigned int radius = (int)(((GUI_MIN(GUI_X_WIDTH,GUI_Y_WIDTH))>>2)-2);
+	const unsigned int x      = GUI_X_WIDTH>>1;
+	const unsigned int y      = GUI_Y_WIDTH>>1;
 	GUI_SetPenColor(GUI_WHITE);
 	GUI_SetPenSize(3);
 	for(double Ø=0;Ø<360;Ø+=0.1){
 		const float π = 3.1415926;
-		GUI_SetPenSize(3);
-		GUI_DrawCircle(64,32,31,true,true);
-		GUI_SetPenSize(1);
-		GUI_DrawLine (64,32,64-23*cos(Ø)       ,32-23*sin(Ø)       ,false,true);
-		GUI_DrawLine (64,32,64-23*cos(Ø+2*π/3) ,32-23*sin(Ø+2*π/3) ,false,true);
-		GUI_DrawLine (64,32,64-23*cos(Ø-2*π/3) ,32-23*sin(Ø-2*π/3) ,false,true);
+		GUI_SetPenSize (3);
+		GUI_DrawCircle (x,y,radius,true,true);
+		GUI_SetPenSize (1);
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(Ø)       ,y-(radius-2)*sin(Ø)       ,false,true);
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(Ø+2*π/3) ,y-(radius-2)*sin(Ø+2*π/3) ,false,true);
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(Ø-2*π/3) ,y-(radius-2)*sin(Ø-2*π/3) ,false,true);
+		GUI_SetPenSize (3);
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
 		GUI_RefreashPageArea(0,7,64-30,64+30);
+#else
+		GUI_RefreashArea(x-radius-GUI_GetPenSize(),\
+			             y-radius-GUI_GetPenSize(),\
+			             x+radius+GUI_GetPenSize(),\
+			             y+radius+GUI_GetPenSize());		
 #endif
 	}
 }
@@ -3327,6 +3277,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 	if(initFlag == false){
 		struct GUI_Anim_t config = {
 	        .GUI_ANIM_xxxx = GUI_ANIM_ProgressBar,
+	        .themeColor    = GUI_LIGHTGREEN,
 	        .ID            = 0x01,
 	        .x_pos         = 20,
 	        .y_pos         = 40,
@@ -3336,25 +3287,28 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 	    };
 	    GUI_CreateAnimationSocket(&config);
 
-	    config.ID     = 0x02;
-	    config.height = 4;
-	    config.width  = 90;
-	    config.x_pos  = 20;
-	    config.y_pos  = 10;
+	    config.themeColor = GUI_LIGHTGRAY;
+	    config.ID         = 0x02;
+	    config.height     = 4;
+	    config.width      = 90;
+	    config.x_pos      = 20;
+	    config.y_pos      = 10;
 	    GUI_CreateAnimationSocket(&config);
 
-	    config.ID     = 0x03;
-	    config.height = 5;
-	    config.width  = 70;
-	    config.x_pos  = 20;
-	    config.y_pos  = 24;
+	    config.themeColor = GUI_LBBLUE;
+	    config.ID         = 0x03;
+	    config.height     = 5;
+	    config.width      = 70;
+	    config.x_pos      = 20;
+	    config.y_pos      = 24;
 	    GUI_CreateAnimationSocket(&config);
 
-	    config.ID     = 0x04;
-	    config.height = 11;
-	    config.width  = 90;
-	    config.x_pos  = 20;
-	    config.y_pos  = 60;
+	    config.themeColor = GUI_RED;
+	    config.ID         = 0x04;
+	    config.height     = 11;
+	    config.width      = 90;
+	    config.x_pos      = 20;
+	    config.y_pos      = 60;
 	    GUI_CreateAnimationSocket(&config);
 	}
 

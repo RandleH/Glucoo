@@ -120,7 +120,7 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 #if GUI_ANIMATION_DISPLAY
 
 #define GUI_ANIM_ProgressBar   (0)
-
+#define GUI_ANIM_ProgressLoop  (1)
 struct GUI_Anim_t{
 	const char*  text;
 	Macro_t      GUI_ANIM_xxxx;
