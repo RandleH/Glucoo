@@ -10,6 +10,24 @@
 
 #pragma anon_unions
 
+//===================================================== Utility =======================================================//
+//===================================================== Utility =======================================================//
+//===================================================== Utility =======================================================//
+
+//#define __map(val,i_min,i_max,o_min,o_max)   (int)(((o_max)*((val)-(i_min))+(o_min)*((i_max)-(val)))/((i_max)-(i_min)))
+#define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
+
+#define __round(a)       (int)((a)+0.5)>(int)(a)?((int)(a)+1):((int)(a))
+#define __round1000(a)   (double)((__round((a)*1000.0))/1000.0)
+
+#define _PI    (3.141592654) 
+#define _2xPI  (6.283185307)
+#define _EXP   (2.718281828)
+
+//================================================= End of Utility ====================================================//
+//================================================= End of Utility ====================================================//
+//================================================= End of Utility ====================================================//
+
 //==================================================== API Handle =====================================================//
 //==================================================== API Handle =====================================================//
 //==================================================== API Handle =====================================================//
@@ -2878,7 +2896,7 @@ static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_center = p->config.x_pos + ((p->config.width)>>1);
 	uint y_center = p->config.x_pos + ((p->config.height)>>1);
 	uint radius   = (p->config.width>>1)-2;
-	uint phi      = ((fp_0_255_*360)>>8);
+	double  phi      = __map(fp_0_255_,0,255,0,_2xPI);
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 
@@ -2887,18 +2905,17 @@ static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	while(cnt--)
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 // Draw a Circle
+	Screen.penSize = 3;
 	__insertBresenhamCircle(x_center,y_center,radius);
-// Erase part of it
-	if(phi > 180){
-		
+// Draw Line
 
-	}else if(phi < 180){
+	int x1 = (int)(x_center);
+	int y1 = (int)(y_center);
 
-	}else{
-		int cnt = p->config.height;
-		while(cnt--)
-			memset(&(Screen.buffer[y_start+cnt][x_start].data),0,radius*sizeof(Pixel_t) );
-	}
+
+	int x2 = (int)(x_center + ((radius<<3)/10)*(__round1000(sin(phi))));
+	int y2 = (int)(y_center - ((radius<<3)/10)*(__round1000(cos(phi))));
+	__insertBresenhamLine(x1,y1,x2,y2);
 
 }
 
