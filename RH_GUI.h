@@ -12,8 +12,9 @@
 #define GUI_DISPLAY_ON
 
 #define GUI_LIMIT(a, lowerbound, upperbound)  (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
-#define GUI_MIN(a,b)  ((a)<(b)?(a):(b))
-#define GUI_MAX(a,b)  ((a)>(b)?(a):(b))
+#define GUI_MIN(a,b)     (((a)<(b))?(a):(b))
+#define GUI_MAX(a,b)     (((a)>(b))?(a):(b))
+#define GUI_CENTER(a,b)  (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
 
 
 #define GUI_FONT_Standard_Small        0
@@ -119,16 +120,19 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 
 #if GUI_ANIMATION_DISPLAY
 
-#define GUI_ANIM_ProgressBar   (0)
-#define GUI_ANIM_ProgressLoop  (1)
+#define GUI_ANIM_PROGRESSBAR_STD_LR   (0)
+#define GUI_ANIM_PROGRESSBAR_STD_UD   (1)
+#define GUI_ANIM_VALUEBAR_IOS_LR      (2)
+#define GUI_ANIM_VALUEBAR_IOS_UD      (3)
+#define GUI_ANIM_PROGRESSLOOP         (4)
 struct GUI_Anim_t{
 	const char*  text;
 	Macro_t      GUI_ANIM_xxxx;
-	uint         ID;
-	uint         x_pos;
-	uint         y_pos;
-	uint         height;
-	uint         width;
+	BYTE         ID;
+	unsigned int x_pos;
+	unsigned int y_pos;
+	unsigned int height;
+	unsigned int width;
 	Pixel_t      themeColor;
 };
 
@@ -141,14 +145,31 @@ void   GUI_DeleteAnimationSocket   (BYTE ID);
 
 #if GUI_ICON_DISPLAY
 
+#define GUI_ICON_ARROW_UP    (0)
+#define GUI_ICON_ARROW_DN    (1)
+#define GUI_ICON_ARROW_LF    (2)
+#define GUI_ICON_ARROW_RG    (3)
 struct GUI_Icon_t{
-	uint       size_AxA;
-	uint       GUI_ICON_xxxx;
-	uint       x_left_top;
-	uint       y_left_top;
+	const char*  text;
+	Macro_t      GUI_ICON_xxxx;
+	BYTE         ID;
+	unsigned int x_pos;
+	unsigned int y_pos;
+	unsigned int size;
+	Pixel_t      themeColor;
+	bool         dispFrame;
 };
 
+void   GUI_CreateIconSocket        (struct GUI_Icon_t* config);
+void   GUI_ShowIcon                (BYTE ID);
+
+
 #endif
+
+
+
+
+
 
 #if GUI_DEMO
 void    GUI_DEMO_MovingRect_1      (void);

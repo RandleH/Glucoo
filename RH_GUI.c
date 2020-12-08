@@ -14,15 +14,34 @@
 //===================================================== Utility =======================================================//
 //===================================================== Utility =======================================================//
 
-//#define __map(val,i_min,i_max,o_min,o_max)   (int)(((o_max)*((val)-(i_min))+(o_min)*((i_max)-(val)))/((i_max)-(i_min)))
+
 #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
 
 #define __round(a)       (int)((a)+0.5)>(int)(a)?((int)(a)+1):((int)(a))
 #define __round1000(a)   (double)((__round((a)*1000.0))/1000.0)
 
-#define _PI    (3.141592654) 
-#define _2xPI  (6.283185307)
-#define _EXP   (2.718281828)
+#define _PI              (3.141592654) 
+#define _2xPI            (6.283185307)
+#define _EXP             (2.718281828)
+
+static int __sqrt(int x){
+    if(x <= 0) return 0;
+    int l   = 1;
+    int r   = x;
+    int res = 0;
+    while(l <= r){
+        int mid=(l+r)>>1;
+        if(mid <= x/mid){
+          l   = mid+1;
+          res = mid;
+      }else{
+          r = mid-1;
+      }
+    }
+    if( ((res+1)*(res+1) - x) > (x - res*res) )
+        return res;
+    return (res+1);
+}
 
 //================================================= End of Utility ====================================================//
 //================================================= End of Utility ====================================================//
@@ -1525,10 +1544,22 @@ typedef struct __GUI_XY_t __GUI_XY_t;
 struct __AnimationConfigChain{
 	struct GUI_Anim_t config;
 	struct __AnimationConfigChain* nextConfig;
-	uint  cnt;
+	void (*insertFunc)(struct __AnimationConfigChain*,uint fp);
+	void (*removeFunc)(struct __AnimationConfigChain*);
 };
 
 typedef struct __AnimationConfigChain __AnimationConfigChain;
+#endif
+
+#if GUI_ICON_DISPLAY
+struct __IconConfigChain{
+	struct GUI_Icon_t  config;
+	struct __IconConfigChain* nextConfig;
+	void (*insertFunc)(struct __IconConfigChain*);
+	void (*removeFunc)(struct __IconConfigChain*);
+};
+
+typedef struct __IconConfigChain __IconConfigChain;
 #endif
 
 static struct __Screen_t{
@@ -1550,7 +1581,15 @@ static struct __Screen_t{
 	__AnimationConfigChain*  cfgAnimationHeadNode;
 	size_t                   cfgAnimationNodeCnt;
 #endif
+//仅适用于图标功能
+#if GUI_ICON_DISPLAY
+	__IconConfigChain*            cfgIconHeadNode;
+	size_t                   cfgIconNodeCnt;
+#endif	
 }Screen;
+
+
+
 
 static void __insertPixel(int x,int y){
 	if( x>=GUI_X_WIDTH || y>=GUI_Y_WIDTH || x<0 || y<0 )
@@ -1606,9 +1645,10 @@ static void __clearFrameBuffer(void){
 }
 #include <stdlib.h>
 
-#define __malloc(size)  malloc(size)
-#define __free(p)       free(p)
-#define __exit(express) if(express) return
+#define __malloc(size)             malloc(size)
+#define __free(p)                  free(p)
+#define __exit(express)            if(express) return
+#define __exitReturn(express,res)  if(express) return res
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
@@ -1621,6 +1661,35 @@ static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsign
 	}
 }
 #endif
+
+static void __insertBresenhamFilledCircle(int x, int y, int r,...){
+	int p = 3-(r<<1);
+	int x_tmp = 0,y_tmp = r;
+	for(;x_tmp<=y_tmp;x_tmp++){
+		int cnt = y_tmp+1;
+		while(cnt--){
+			__insertPixel(x+x_tmp,y+cnt);
+			__insertPixel(x-x_tmp,y+cnt);
+			__insertPixel(x+x_tmp,y-cnt);
+			__insertPixel(x-x_tmp,y-cnt);
+		}
+
+		cnt = x_tmp+1;
+		while(cnt--){
+			__insertPixel(x+y_tmp,y+cnt);
+			__insertPixel(x-y_tmp,y+cnt);
+			__insertPixel(x+y_tmp,y-cnt);
+			__insertPixel(x-y_tmp,y-cnt);
+		}
+
+		if(p <= 0){
+			p += (x_tmp<<2) + 6;
+		}else{
+			p += ((x_tmp-y_tmp)<<2) + 10;
+			y_tmp--;
+		}
+	}
+}
 
 static void __insertBresenhamCircle(int x, int y, int r,...){
 	
@@ -1693,6 +1762,27 @@ static void __insertBresenhamLine(int x1,int y1,int x2,int y2){
 	}
 }
 
+static void __insertRectangularFrame(int x1,int y1,int x2,int y2){
+	int loop = 0;
+	while(loop < Screen.penSize){
+		uint x = x1+loop, y = y1+loop;
+
+		while(x<=(x2-loop) && y<=(y2-loop)){
+			if( x < (x2-loop) ){
+				__insertPixel(x,y1 + loop);
+				__insertPixel(x,y2 - loop);
+				x++;
+			}
+			else{
+				__insertPixel(x1 + loop,y);
+				__insertPixel(x2 - loop,y);
+				y++;
+			}
+		}
+		loop++;
+	}
+}
+
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
@@ -1718,6 +1808,10 @@ void GUI_Init(void){
 	Screen.cfgAnimationHeadNode = NULL;
 	Screen.cfgAnimationNodeCnt  = 0;
 #endif
+#if GUI_ICON_DISPLAY
+	Screen.cfgIconHeadNode      = NULL;
+	Screen.cfgIconNodeCnt       = 0;
+#endif	
 
 	GUI_RefreashScreen();
 }
@@ -2134,26 +2228,12 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
 		}
 	}
 #else
-	
 	unsigned int x_start = GUI_LIMIT(((signed)(x-r)),0,GUI_X_WIDTH);
 	unsigned int x_end   = GUI_LIMIT(((signed)(x+r)),0,GUI_X_WIDTH);
 	unsigned int y_start = GUI_LIMIT(((signed)(y-r)),0,GUI_Y_WIDTH);	
 	unsigned int y_end   = GUI_LIMIT(((signed)(y+r)),0,GUI_Y_WIDTH);
-	unsigned int r_2 = r*r;
-	for(int i = 0;i <= r;i++){
-		for(int j = 0;j <= r;j++){
-			if(  i*i+j*j <= r_2 ){
-				if(x-i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
-					__insertPixel(x-i,y-j);
-				if(x-i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
-					__insertPixel(x-i,y+j);
-				if(x+i<=GUI_X_WIDTH && y-j<=GUI_Y_WIDTH)
-					__insertPixel(x+i,y-j);
-				if(x+i<=GUI_X_WIDTH && y+j<=GUI_Y_WIDTH)
-					__insertPixel(x+i,y+j);
-			}
-		}
-	}	
+
+	__insertBresenhamFilledCircle(x,y,r);
 #endif
 
 	if(onlyChangeBuffer != true){
@@ -2420,11 +2500,47 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 #else
 	__insertBresenhamLine(x1,y1,x2,y2);
 #endif
+	int x_offset = 0;
+    int y_offset = 0; 
 
-	// if(Screen.penSize>=3){
-	// 	GUI_FillCircle(x1,y1,Screen.penSize>>1,false,true);
-	// 	GUI_FillCircle(x2,y2,Screen.penSize>>1,false,true);
-	// }
+	if(x1 != x2 && Screen.penSize > 1){
+		x_offset = (int)sqrt( (0.25*(y1-y2)*(y1-y2)*Screen.penSize*Screen.penSize/((x1-x2)*(x1-x2)))/(1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) );
+		y_offset = (int)sqrt( 0.25*Screen.penSize*Screen.penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) );
+		
+		__insertPixel(x1+x_offset,y1-y_offset);
+		__insertPixel(x1-x_offset,y1+y_offset);
+
+		__insertPixel(x2-x_offset,y2+y_offset);
+		__insertPixel(x2+x_offset,y2-y_offset);
+
+
+		// for(int i = 0;i <= x_offset;i++){
+		// 	__insertBresenhamLine(x1+i,y1,x2+i,y2);
+		// }
+		// for(int i = 0;i <= x_offset;i++){
+		// 	__insertBresenhamLine(x1-i,y1,x2-i,y2);
+		// }
+
+		// for(int j = 0;j <= y_offset;j++){
+		// 	__insertBresenhamLine(x1,y1+j,x2,y2+j);
+		// }
+
+		// for(int i = 0;i <= x_offset;i++){
+		// 	__insertBresenhamLine(x1+i,y1,x2+i,y2);
+		// }
+
+		// for(int j = 0;j <= y_offset;j++){
+		// 	__insertBresenhamLine(x1,y1+j,x2,y2+j);
+		// }
+	}
+	GUI_RefreashScreen();
+	size_t tmp = Screen.penSize>>1;
+	Screen.penSize = 1;
+	__insertBresenhamCircle(x1,y1,tmp);
+	GUI_RefreashScreen();
+	__insertBresenhamCircle(x2,y2,tmp);
+	GUI_RefreashScreen();
+
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
 			GUI_RefreashScreen();
@@ -2432,7 +2548,7 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
 #else
-			GUI_RefreashArea(x1,y1,x2,y2);		
+			GUI_RefreashArea(x1-x_offset,y1-y_offset,x2+x_offset,y2+y_offset);		
 #endif			
 		}
 	}
@@ -2587,6 +2703,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	Screen.penSize  = penSize;
 	phi+=0.1;
 }
+
 #endif
 //================================================== End of RGB Test ==================================================//
 //================================================== End of RGB Test ==================================================//
@@ -2839,7 +2956,7 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 
 #if GUI_ANIMATION_DISPLAY
 
-static void __removeProgressBar(__AnimationConfigChain* p){
+static void __remove_animationProgressBar_LR(__AnimationConfigChain* p){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 
@@ -2848,35 +2965,35 @@ static void __removeProgressBar(__AnimationConfigChain* p){
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 }
 
-static void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
+static void __insert_animationProgressBar_LR(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	uint x_end   = x_start + p->config.width  - 1;
 	uint y_end   = y_start + p->config.height - 1;
-// Clear Area
+    // Clear Area ===================//
 	{
 		int cnt = p->config.height;
 		while(cnt--)
 			memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 	}
-// Draw Edge
+    // Draw Edge ===================//
 	{
 		uint x = x_start, y = y_start;
 		while( x<=x_end && y<=y_end ){
 			if( x < x_end ){
-				Screen.buffer[y_start][x].data = GUI_WHITE;
-				Screen.buffer[y_end][x].data   = GUI_WHITE;
+				Screen.buffer[y_start][x].data = GUI_WHITE;//...//
+				Screen.buffer[y_end][x].data   = GUI_WHITE;//...//
 				x++;
 			}
 			else{
-				Screen.buffer[y][x_start].data = GUI_WHITE;
-				Screen.buffer[y][x_end].data   = GUI_WHITE;
+				Screen.buffer[y][x_start].data = GUI_WHITE;//...//
+				Screen.buffer[y][x_end].data   = GUI_WHITE;//...//
 				y++;
 			}
 		}
 	}
 
-// Fill Rect
+    // Fill Rect ===================//
 	{
 		uint progress = (fp_0_255_ * (p->config.width-2))>>8;	
 		for(uint y=y_start+1;y<y_end;y++){
@@ -2892,7 +3009,67 @@ static void __insertProgressBar(__AnimationConfigChain* p,uint fp_0_255_){
 	}
 }
 
-static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
+static void __remove_animationProgressBar_UD(__AnimationConfigChain* p){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+	int cnt = p->config.height;
+	while(cnt--)
+		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+}
+
+static void __insert_animationProgressBar_UD(__AnimationConfigChain* p,uint fp_0_255_){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+	uint x_end   = x_start + p->config.width  - 1;
+	uint y_end   = y_start + p->config.height - 1;
+
+	// Clear Area ===================//
+	{
+		int cnt = p->config.height;
+		while(cnt--)
+			memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+	}
+	// Draw Edge ===================//
+	{
+		uint x = x_start, y = y_start;
+		while( x<=x_end && y<=y_end ){
+			if( x < x_end ){
+				Screen.buffer[y_start][x].data = GUI_WHITE;//...//
+				Screen.buffer[y_end][x].data   = GUI_WHITE;//...//
+				x++;
+			}
+			else{
+				Screen.buffer[y][x_start].data = GUI_WHITE;//...//
+				Screen.buffer[y][x_end].data   = GUI_WHITE;//...//
+				y++;
+			}
+		}
+	}
+	// Fill Rect ===================//
+	{
+		uint progress = (fp_0_255_ * (p->config.height-2))>>8;
+		for(uint y=(y_end-progress-1);y<y_end;y++){
+			if(y == (y_end-progress-1)){
+				for(uint x=1;x<(p->config.width)-1;x++)
+					Screen.buffer[y][x_start+x].data = p->config.themeColor;
+			}else{
+				memcpy(&(Screen.buffer[y               ][x_start+1].data),\
+					   &(Screen.buffer[y_end-progress-1][x_start+1].data),\
+					   ((p->config.width)-2)*sizeof(Pixel_t) );
+			}
+		}
+	}
+}
+
+static void __remove_animationProgressLoop(__AnimationConfigChain* p){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+	int cnt = p->config.height;
+	while(cnt--)
+		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+}
+
+static void __insert_animationProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_center = p->config.x_pos + ((p->config.width)>>1);
 	uint y_center = p->config.x_pos + ((p->config.height)>>1);
 	uint radius   = (p->config.width>>1)-2;
@@ -2900,14 +3077,14 @@ static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 
-// Clear Area
+    // Clear Aream =====================//
 	int cnt = p->config.height;
 	while(cnt--)
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
-// Draw a Circle
+    // Draw a Circle ===================//
 	Screen.penSize = 3;
 	__insertBresenhamCircle(x_center,y_center,radius);
-// Draw Line
+    // Draw Line =======================//
 
 	int x1 = (int)(x_center);
 	int y1 = (int)(y_center);
@@ -2916,7 +3093,71 @@ static void __insertProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	int x2 = (int)(x_center + ((radius<<3)/10)*(__round1000(sin(phi))));
 	int y2 = (int)(y_center - ((radius<<3)/10)*(__round1000(cos(phi))));
 	__insertBresenhamLine(x1,y1,x2,y2);
+}
 
+void __remove_animationValueBar_iOS(__AnimationConfigChain* p){
+
+}
+
+void __insert_animationValueBar_iOS(__AnimationConfigChain* p,uint fp_0_255_){
+	Pixel_t penColor = Screen.penColor;
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+	uint x_end   = x_start + p->config.width  - 1;
+	uint y_end   = y_start + p->config.height - 1;
+
+		
+
+	// Remove Bar ==============================//
+    {
+	    uint x_start = p->config.x_pos;
+	    uint y_start = p->config.y_pos;
+	    int cnt = p->config.height;
+	    while(cnt--)
+	    	memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
+	}
+
+	// Add Slider
+	int  sliderRadius   = (int)(((p->config.height)>>1)*0.8);
+	int  sliderDiameter = sliderRadius<<1;
+	uint progress       = (fp_0_255_ * (p->config.width-2*sliderRadius))>>8;
+
+	int  sliderX        = x_start + sliderRadius + progress;
+	int  sliderY        = ((y_start+y_end)>>1); 
+	Screen.penColor = p->config.themeColor;
+	__insertBresenhamFilledCircle(sliderX,sliderY,sliderRadius);
+	
+	// Add marginal point
+	// __insertBresenhamFilledCircle();
+	// __insertBresenhamFilledCircle();
+
+	// Add Active Bar
+	int  barHeight = ((sliderRadius/2)<3)?(3):(sliderRadius/2);
+	int  barStart  = (y_start+y_end-barHeight)/2;
+	int  barEnd    = (y_start+y_end+barHeight)/2;
+	for(uint y=barStart;y<barEnd;y++){
+		if(y == barStart){
+			for(uint x=0;x<=progress;x++)
+				Screen.buffer[y][x_start+x].data = p->config.themeColor;
+		}else{
+			memcpy(&(Screen.buffer[y       ][x_start].data),\
+				   &(Screen.buffer[barStart][x_start].data),\
+				   progress*sizeof(Pixel_t) );
+		}
+	}
+
+	// Add Inactive Bar
+	for(int y=barStart;y<barEnd;y++){
+		if(y == barStart){
+			for(int x=x_start+progress+sliderDiameter+1;x<=x_end;x++)
+				Screen.buffer[y][x].data = GUI_DARKEN_COLOR_2Bit(p->config.themeColor);
+		}else{
+			memcpy(&(Screen.buffer[y       ][x_start+progress+sliderDiameter+1].data),\
+				   &(Screen.buffer[barStart][x_start+progress+sliderDiameter+1].data),\
+				   (x_end-progress-sliderDiameter)*sizeof(Pixel_t) );
+		}
+	}	
+	Screen.penColor = penColor;
 }
 
 
@@ -2936,17 +3177,38 @@ static __AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
 // 创建一个动画插件
 void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 	__AnimationConfigChain* pConfig = Screen.cfgAnimationHeadNode;
-	__AnimationConfigChain* pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+	__AnimationConfigChain* pTmpConfig;
+// ID should be unique.
+	__exit( NULL != __searchAnimationConfigChain(config->ID) );
+
+	switch((int)(config->GUI_ANIM_xxxx)){
+		case GUI_ANIM_PROGRESSBAR_STD_LR:
+			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+			pTmpConfig->insertFunc = __insert_animationProgressBar_LR;
+			pTmpConfig->removeFunc = __remove_animationProgressBar_LR;
+			break;
+		case GUI_ANIM_PROGRESSBAR_STD_UD:
+			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+			pTmpConfig->insertFunc = __insert_animationProgressBar_UD;
+			pTmpConfig->removeFunc = __remove_animationProgressBar_UD;
+			break;
+		case GUI_ANIM_VALUEBAR_IOS_LR:
+			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+			pTmpConfig->insertFunc = __insert_animationValueBar_iOS;
+			pTmpConfig->removeFunc = __remove_animationValueBar_iOS;
+			break;
+		// case GUI_ANIM_VALUEBAR_IOS_UD:
+		// 	break;
+		case GUI_ANIM_PROGRESSLOOP:
+			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+			pTmpConfig->insertFunc = __insert_animationProgressLoop;
+			pTmpConfig->removeFunc = __remove_animationProgressLoop;
+			break;
+		default:__exit(true);
+	}
+
 	pTmpConfig->config     = *config;	
 	pTmpConfig->nextConfig = NULL;
-
-// ID should be unique.
-	if( NULL != __searchAnimationConfigChain(config->ID) ){
-#if GUI_ASSERT
-		//...//
-#endif		
-		return;
-	}
 
 	if(pConfig == NULL)
 		Screen.cfgAnimationHeadNode = pTmpConfig;
@@ -2965,22 +3227,9 @@ void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 void GUI_ShowAnimation(BYTE ID,uint fp_0_255_,...){
 	__AnimationConfigChain* pNow = __searchAnimationConfigChain(ID);
 
-	if(pNow == NULL){
-#if GUI_ASSERT
-		//...//
-#endif		
-		return;
-	}
+	__exit(pNow == NULL);
 
-	switch(pNow->config.GUI_ANIM_xxxx){
-		case GUI_ANIM_ProgressBar:
-			__insertProgressBar(pNow,fp_0_255_);
-			break;
-		case GUI_ANIM_ProgressLoop:
-			__insertProgressLoop(pNow,fp_0_255_);
-		default: 
-			break;
-	}
+	(*(pNow->insertFunc))(pNow,fp_0_255_);
 
 	uint x_start = pNow->config.x_pos;
 	uint y_start = pNow->config.y_pos;
@@ -2990,7 +3239,7 @@ void GUI_ShowAnimation(BYTE ID,uint fp_0_255_,...){
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	//...//
 #else
-	GUI_RefreashArea(x_start,y_start,x_end,y_end);
+	GUI_RefreashArea(x_start,y_start,x_end,y_end);	
 #endif
 }
 
@@ -2998,20 +3247,9 @@ void GUI_ShowAnimation(BYTE ID,uint fp_0_255_,...){
 void GUI_HideAnimation(BYTE ID){
 	__AnimationConfigChain* pNow = __searchAnimationConfigChain(ID);
 
-	if(pNow == NULL){
-#if GUI_ASSERT
-		//...//
-#endif		
-		return;
-	}
+	__exit(pNow == NULL);
 
-	switch(pNow->config.GUI_ANIM_xxxx){
-		case GUI_ANIM_ProgressBar:
-			__removeProgressBar(pNow);
-			break;
-		default: 
-			break;
-	}
+	(*(pNow->removeFunc))(pNow);
 	
 	uint x_start = pNow->config.x_pos;
 	uint y_start = pNow->config.y_pos;
@@ -3027,32 +3265,18 @@ void GUI_HideAnimation(BYTE ID){
 
 // 删除动画插件
 void GUI_DeleteAnimationSocket(BYTE ID){
-	uint x_start = 0;
-	uint y_start = 0;
-	uint x_end   = 0;
-	uint y_end   = 0;
 	__AnimationConfigChain* pNow  = Screen.cfgAnimationHeadNode;
 	__AnimationConfigChain* pLast = Screen.cfgAnimationHeadNode;
 	while(pNow != NULL){
 		if(pNow->config.ID == ID){
 			pLast->nextConfig = pNow->nextConfig;
-			__removeProgressBar(pNow);
-			x_start = pNow->config.x_pos;
-			y_start = pNow->config.y_pos;
-			x_end   = pNow->config.x_pos + pNow->config.width  - 1;
-			y_end   = pNow->config.y_pos + pNow->config.height - 1;
+			GUI_HideAnimation(ID);
 			__free(pNow);
 			break;
 		}
 		pLast = pNow;
 		pNow  = pNow->nextConfig;
 	}
-#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	//...//
-#else
-	GUI_RefreashArea(x_start,y_start,x_end,y_end);
-#endif
-
 }
 
 #endif
@@ -3065,9 +3289,156 @@ void GUI_DeleteAnimationSocket(BYTE ID){
 //=================================================== Icon Function ====================================================//
 #if GUI_ICON_DISPLAY
 
-void GUI_Icon(struct GUI_Icon_t* p,...){
+void __remove_iconArrow_UP(struct __IconConfigChain* p){
+	uint x_start = p->config.x_pos;
+	uint y_start = p->config.y_pos;
+
+	int cnt = p->config.size;
+	while(cnt--)
+		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.size)*sizeof(Pixel_t) );
 
 }
+
+void __insert_iconArrow_UP(struct __IconConfigChain* p){
+	Pixel_t penColor = Screen.penColor;
+	int x_start      = (int)(p->config.x_pos);
+	int x_end        = (int)((p->config.x_pos)+(p->config.size)-1);
+	int y_start      = (int)(p->config.y_pos);
+	int y_end        = (int)((p->config.y_pos)+(p->config.size)-1);
+
+	int width        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
+	int halfWidth    = (int)(width>>1);
+
+	int x_center     = GUI_CENTER(x_start,x_end);
+
+	Screen.penColor  = p->config.themeColor;
+	for(int i = (x_center - halfWidth);i <= (x_center + halfWidth);i++){
+		for(int j = (y_start + halfWidth);j <= (y_end - halfWidth);j++)
+			__insertPixel(i,j);
+	}
+	__insertBresenhamFilledCircle(x_center,y_start+halfWidth,halfWidth);
+	__insertBresenhamFilledCircle(x_center,y_end  -halfWidth,halfWidth);
+
+	for(int i = 0; i < halfWidth;i++){
+		__insertBresenhamLine(x_start+halfWidth + i    ,y_start+x_center-x_start + i,x_center + i    ,y_start+halfWidth + i);
+		__insertBresenhamLine(x_start+halfWidth + i - 1,y_start+x_center-x_start + i,x_center + i - 1,y_start+halfWidth + i);
+		__insertBresenhamLine(x_start+halfWidth - i    ,y_start+x_center-x_start - i,x_center - i    ,y_start+halfWidth - i);
+		__insertBresenhamLine(x_start+halfWidth - i + 1,y_start+x_center-x_start - i,x_center - i + 1,y_start+halfWidth - i);
+
+		__insertBresenhamLine(x_end  -halfWidth + i    ,y_start+x_center-x_start - i,x_center + i    ,y_start+halfWidth - i);
+		__insertBresenhamLine(x_end  -halfWidth + i - 1,y_start+x_center-x_start - i,x_center + i - 1,y_start+halfWidth - i);
+		__insertBresenhamLine(x_end  -halfWidth - i    ,y_start+x_center-x_start + i,x_center - i    ,y_start+halfWidth + i);
+		__insertBresenhamLine(x_end  -halfWidth - i + 1,y_start+x_center-x_start + i,x_center - i + 1,y_start+halfWidth + i);
+	}
+
+	__insertBresenhamFilledCircle(x_start+halfWidth ,y_start+x_center-x_start ,halfWidth);
+	__insertBresenhamFilledCircle(x_end  -halfWidth ,y_start+x_center-x_start ,halfWidth);
+
+	Screen.penColor = penColor;
+}
+
+static __IconConfigChain* __searchIconConfigChain(BYTE ID){
+	__IconConfigChain* p = Screen.cfgIconHeadNode;
+
+	while(p != NULL){
+		if(p->config.ID == ID)
+			break;
+
+		p = p->nextConfig;
+	}
+
+	return p;
+}
+
+// 创建一个图标插件
+void GUI_CreateIconSocket(struct GUI_Icon_t* config){
+	__IconConfigChain* pConfig;  
+	__IconConfigChain* curConfig = Screen.cfgIconHeadNode;
+
+	// ID should be unique.
+	__exit( NULL != __searchIconConfigChain(config->ID) );
+
+	switch((int)(config->GUI_ICON_xxxx)){
+		case GUI_ICON_ARROW_UP: 
+			pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
+			pConfig->insertFunc = __insert_iconArrow_UP;
+			pConfig->removeFunc = __remove_iconArrow_UP;
+			break;
+		default: __exit(true);
+	}
+
+	pConfig->config     = (*config);
+	pConfig->nextConfig = NULL; 
+
+	if(curConfig == NULL)
+		Screen.cfgIconHeadNode = pConfig;
+	else{
+		do{
+			if(curConfig->nextConfig == NULL){
+				curConfig->nextConfig = pConfig;
+				break;
+			}else{
+				curConfig = curConfig->nextConfig;
+			}
+		}while(1);
+	} 
+}
+
+// 显示图标
+void GUI_ShowIcon(BYTE ID){
+	Pixel_t penColor = Screen.penColor;
+	size_t  penSize  = Screen.penSize;
+	__IconConfigChain* pNow = __searchIconConfigChain(ID);
+
+	__exit(pNow == NULL);
+
+	
+
+	uint x_start = pNow->config.x_pos;
+	uint y_start = pNow->config.y_pos;
+	uint x_end   = pNow->config.x_pos + pNow->config.size - 1;
+	uint y_end   = pNow->config.y_pos + pNow->config.size - 1;
+
+	if(pNow->config.dispFrame == true){
+		Screen.penSize  = 1;
+		Screen.penColor = GUI_WHITE;
+		__insertRectangularFrame(x_start,y_start,x_end,y_end);
+	}
+	(*(pNow->insertFunc))(pNow);
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	//...//
+#else
+	GUI_RefreashArea(x_start,y_start,x_end,y_end);
+#endif
+	Screen.penColor = penColor;
+	Screen.penSize  = penSize; 
+}
+
+// 隐藏图标
+void GUI_HideIcon(BYTE ID){
+	__IconConfigChain* pNow = __searchIconConfigChain(ID);
+
+	__exit(pNow == NULL);
+
+}
+
+// 删除一个图标插件
+void GUI_DeleteIconScoket(BYTE ID){
+	__IconConfigChain* pNow  = Screen.cfgIconHeadNode;
+	__IconConfigChain* pLast = Screen.cfgIconHeadNode;
+	while(pNow != NULL){
+		if(pNow->config.ID == ID){
+			pLast->nextConfig = pNow->nextConfig;
+			GUI_HideIcon(ID);
+			__free(pNow);
+			break;
+		}
+		pLast = pNow;
+		pNow  = pNow->nextConfig;
+	}
+}
+
 #endif
 //=============================================== End of Icon Function =================================================//
 //=============================================== End of Icon Function =================================================//
@@ -3293,7 +3664,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 	static bool initFlag = false;
 	if(initFlag == false){
 		struct GUI_Anim_t config = {
-	        .GUI_ANIM_xxxx = GUI_ANIM_ProgressBar,
+	        .GUI_ANIM_xxxx = GUI_ANIM_PROGRESSBAR_STD_LR,
 	        .themeColor    = GUI_LIGHTGREEN,
 	        .ID            = 0x01,
 	        .x_pos         = 20,
@@ -3348,7 +3719,20 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 
 #if 0
 
+void GUI_Debug(void){
+	static int i = 0;
+	const r = 5;
+	__insertBresenhamFilledCircle(10,10,r);
+	__insertBresenhamFilledCircle(20,10,r);
+	__insertBresenhamFilledCircle(30,10,r);
+	__insertBresenhamFilledCircle(40,10,r);
+	__insertBresenhamFilledCircle(50,10,r);
+	GUI_RefreashScreen();
+
+}
 #endif
+
+
 
 //===================================================== End of File ====================================================//
 //===================================================== End of File ====================================================//
