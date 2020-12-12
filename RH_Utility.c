@@ -1,4 +1,6 @@
 #include "RH_Utility.h"
+#include <string.h>
+#include <stdint.h>
 
 int __sqrt(int x){
     if(x <= 0) return 0;
@@ -81,6 +83,25 @@ int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
 // int __Point_toRectangular(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
 
 // }
+
+
+typedef uint16_t WORD;
+void* __memsetWORD(void* __b,WORD value,size_t num){
+    WORD* src = (WORD*)__b;
+    size_t remain = num;
+    (*((WORD*)src)) = value;
+    remain--;
+    while(1){
+        if(num<(remain<<1)){
+            memmove((src+(num-remain)),src, (num-remain)*sizeof(WORD));
+            remain-=(num-remain);
+        }else{
+            memmove((src+(num-remain)),src, remain*sizeof(WORD));
+            break;
+        }
+    }
+    return __b;
+}
 
 
 
