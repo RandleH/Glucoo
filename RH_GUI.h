@@ -28,10 +28,25 @@
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
 
+void __insertFilledQuadrilateral  (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4);
 
-
+// 声明: 无符号整型
 typedef unsigned int uint;
-typedef uint         Macro_t;
+
+// 声明: 以宏形式的索引或功能号
+typedef unsigned int Macro_t;
+
+// 声明: 某片区域的缓存信息
+struct __BufferInfo_t{
+	void*   pBuffer;
+	size_t  width;
+	size_t  height;
+};
+typedef struct __BufferInfo_t BufferInfo_t;
+
+// 声明: 插入一个像素点的函数接口
+typedef void (*func_InsertPixel)(int x,int y,BufferInfo_t* pBufferInfo);
+
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
 extern void (*GUI_API_DrawPixel)      (unsigned int x ,unsigned int y ,const Pixel_t pixData);
@@ -45,6 +60,8 @@ extern void (*GUI_API_DrawPageColumn) (unsigned int page,unsigned int column_sta
 #if GUI_ASSERT
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 #endif
+
+// 声明: 通用绘图函数
 void    GUI_Init              (void);
 
 void    GUI_SetPenSize        (uint penSize);
@@ -78,20 +95,25 @@ void    GUI_DrawEllipse       (uint x ,uint  y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
 void    GUI_DrawTriangle      (uint x1,uint  y1,uint  x2 ,uint y2     ,uint x3   ,uint y3     ,...);
 
-#define GUI_TEST_RGB_HOR_RAINBOW    (0)
-#define GUI_TEST_RGB_VER_RAINBOW    (1)
-#define GUI_TEST_RGB_ROL_RAINBOW    (2)
-#define GUI_TEST_RGB_HOR_BAR        (3)
-#define GUI_TEST_RGB_VER_BAR        (4)
-#define GUI_TEST_RGB_STEP           (5)     
-void    GUI_TestRGB           (uint GUI_TEST_RGB_xxxx ,...);
-
 void    GUI_CONTI_DrawLine    (unsigned int (*p)[2],const size_t num,...);
 
 void    GUI_DispChar          (unsigned char c,...);
 void    GUI_DispCharAt        (unsigned char c,int x,int y,...);
 void    GUI_DispChars         (unsigned char c,int num,...);//
 void    GUI_DispWord          (const char* word,...);
+
+
+// 声明: RGB测试功能号
+#define GUI_TEST_RGB_HOR_RAINBOW    (0)
+#define GUI_TEST_RGB_VER_RAINBOW    (1)
+#define GUI_TEST_RGB_ROL_RAINBOW    (2)
+#define GUI_TEST_RGB_HOR_BAR        (3)
+#define GUI_TEST_RGB_VER_BAR        (4)
+#define GUI_TEST_RGB_STEP           (5)     
+// 声明: RGB测试的函数
+void    GUI_TestRGB           (uint GUI_TEST_RGB_xxxx ,...);
+
+
 
 
 #if GUI_DIALOG_DISPLAY
@@ -120,11 +142,14 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 
 #if GUI_ANIMATION_DISPLAY
 
+// 声明: 动画演示的功能号
 #define GUI_ANIM_PROGRESSBAR_STD_LR   (0)
 #define GUI_ANIM_PROGRESSBAR_STD_UD   (1)
 #define GUI_ANIM_VALUEBAR_IOS_LR      (2)
 #define GUI_ANIM_VALUEBAR_IOS_UD      (3)
 #define GUI_ANIM_PROGRESSLOOP         (4)
+
+// 声明: 绘制动画插件所需要的信息
 struct GUI_Anim_t{
 	const char*  text;
 	Macro_t      GUI_ANIM_xxxx;
@@ -136,6 +161,7 @@ struct GUI_Anim_t{
 	Pixel_t      themeColor;
 };
 
+// 声明: 动画功能的函数
 void   GUI_CreateAnimationSocket   (struct GUI_Anim_t* config);
 void   GUI_ShowAnimation           (BYTE ID,uint fp_0_255_,...);
 void   GUI_HideAnimation           (BYTE ID);
@@ -145,10 +171,13 @@ void   GUI_DeleteAnimationSocket   (BYTE ID);
 
 #if GUI_ICON_DISPLAY
 
+// 声明: 图标演示的功能号
 #define GUI_ICON_ARROW_UP    (0)
 #define GUI_ICON_ARROW_DN    (1)
 #define GUI_ICON_ARROW_LF    (2)
 #define GUI_ICON_ARROW_RG    (3)
+
+// 声明: 绘制图标插件所需要的信息
 struct GUI_Icon_t{
 	const char*  text;
 	Macro_t      GUI_ICON_xxxx;
@@ -160,6 +189,7 @@ struct GUI_Icon_t{
 	bool         dispFrame;
 };
 
+// 声明: 图标功能的函数
 void   GUI_CreateIconSocket        (struct GUI_Icon_t* config);
 void   GUI_ShowIcon                (BYTE ID);
 
@@ -170,7 +200,7 @@ void   GUI_ShowIcon                (BYTE ID);
 
 
 
-
+// 声明: 示例函数
 #if GUI_DEMO
 void    GUI_DEMO_MovingRect_1      (void);
 void    GUI_DEMO_MovingRect_2      (void);

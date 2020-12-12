@@ -1,5 +1,7 @@
 
 #include "RH_GUI.h"
+#include "RH_Utility.h"
+
 
 #include <string.h>
 #include <stdarg.h>
@@ -15,33 +17,7 @@
 //===================================================== Utility =======================================================//
 
 
-#define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
 
-#define __round(a)       (int)((a)+0.5)>(int)(a)?((int)(a)+1):((int)(a))
-#define __round1000(a)   (double)((__round((a)*1000.0))/1000.0)
-
-#define _PI              (3.141592654) 
-#define _2xPI            (6.283185307)
-#define _EXP             (2.718281828)
-
-static int __sqrt(int x){
-    if(x <= 0) return 0;
-    int l   = 1;
-    int r   = x;
-    int res = 0;
-    while(l <= r){
-        int mid=(l+r)>>1;
-        if(mid <= x/mid){
-          l   = mid+1;
-          res = mid;
-      }else{
-          r = mid-1;
-      }
-    }
-    if( ((res+1)*(res+1) - x) > (x - res*res) )
-        return res;
-    return (res+1);
-}
 
 //================================================= End of Utility ====================================================//
 //================================================= End of Utility ====================================================//
@@ -1534,6 +1510,13 @@ static __FontChar_t __FONT_COURIERNEW10X12[] = {
 //================================================= Internal Config ==================================================//
 //================================================= Internal Config ==================================================//
 
+#include <stdlib.h>
+
+#define __malloc(size)             malloc(size)
+#define __free(p)                  free(p)
+#define __exit(express)            if(express) return
+#define __exitReturn(express,res)  if(express) return res
+
 struct __GUI_XY_t{
 	unsigned int x;
 	unsigned int y;
@@ -1589,30 +1572,47 @@ static struct __Screen_t{
 }Screen;
 
 
+static void __insertPixelPosition(int x,int y,BufferInfo_t* pBufferInfo){
+	bool* p        = pBufferInfo->pBuffer;
+	size_t width   = pBufferInfo->width;
+	size_t height  = pBufferInfo->height;
 
+	__exit( x>=width || y>=height || x<0 || y<0 );
 
-static void __insertPixel(int x,int y){
-	if( x>=GUI_X_WIDTH || y>=GUI_Y_WIDTH || x<0 || y<0 )
-		return;
+	*(p+(y*width)+x) = 1;
+}
+
+static void __insertPixel(int x,int y,BufferInfo_t* pBufferInfo){
+	
+	PixelUnit_t* p = pBufferInfo->pBuffer;
+	size_t width   = pBufferInfo->width;
+	size_t height  = pBufferInfo->height;
+
+	__exit( x>=width || y>=height || x<0 || y<0 );
+
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	int temp = y&0x07;
 	switch(temp){
-		case 0:Screen.buffer[ y>>3 ][x].bit0 = (Screen.penColor&0x01);break;
-		case 1:Screen.buffer[ y>>3 ][x].bit1 = (Screen.penColor&0x01);break;
-		case 2:Screen.buffer[ y>>3 ][x].bit2 = (Screen.penColor&0x01);break;
-		case 3:Screen.buffer[ y>>3 ][x].bit3 = (Screen.penColor&0x01);break;
-		case 4:Screen.buffer[ y>>3 ][x].bit4 = (Screen.penColor&0x01);break;
-		case 5:Screen.buffer[ y>>3 ][x].bit5 = (Screen.penColor&0x01);break;
-		case 6:Screen.buffer[ y>>3 ][x].bit6 = (Screen.penColor&0x01);break;
-		case 7:Screen.buffer[ y>>3 ][x].bit7 = (Screen.penColor&0x01);break;
+		case 0:p[ y>>3 ][x].bit0 = (Screen.penColor&0x01);break;
+		case 1:p[ y>>3 ][x].bit1 = (Screen.penColor&0x01);break;
+		case 2:p[ y>>3 ][x].bit2 = (Screen.penColor&0x01);break;
+		case 3:p[ y>>3 ][x].bit3 = (Screen.penColor&0x01);break;
+		case 4:p[ y>>3 ][x].bit4 = (Screen.penColor&0x01);break;
+		case 5:p[ y>>3 ][x].bit5 = (Screen.penColor&0x01);break;
+		case 6:p[ y>>3 ][x].bit6 = (Screen.penColor&0x01);break;
+		case 7:p[ y>>3 ][x].bit7 = (Screen.penColor&0x01);break;
 		default:break;
 	}
 #else
-	Screen.buffer[y][x].data = Screen.penColor;
+	// p[y][x].data = Screen.penColor;
+	(p+(y*height)+x)->data = Screen.penColor;
 #endif
 }
 
-static void __erasePixel(unsigned int x,unsigned int y){
+static void __erasePixel(int x,int y,void* pBuffer){
+	if( x>=GUI_X_WIDTH || y>=GUI_Y_WIDTH || x<0 || y<0 )
+		return;
+	PixelUnit_t(*p)[GUI_X_WIDTH] = pBuffer;
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	int temp = y&0x07;
 	switch(temp){
@@ -1627,7 +1627,7 @@ static void __erasePixel(unsigned int x,unsigned int y){
 		default:break;
 	}
 #else
-	Screen.buffer[y][x].data = Screen.bkColor;
+	p[y][x].data = Screen.bkColor;
 #endif
 }
 
@@ -1643,12 +1643,6 @@ static void __clearFrameBuffer(void){
 	        *(&(Screen.buffer[0][0].data)+i) = Screen.bkColor;
 	    }
 }
-#include <stdlib.h>
-
-#define __malloc(size)             malloc(size)
-#define __free(p)                  free(p)
-#define __exit(express)            if(express) return
-#define __exitReturn(express,res)  if(express) return res
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsigned int column_start,unsigned int column_end){
@@ -1663,23 +1657,28 @@ static void __clearPageArea(unsigned int page_start,unsigned int page_end,unsign
 #endif
 
 static void __insertBresenhamFilledCircle(int x, int y, int r,...){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	int p = 3-(r<<1);
 	int x_tmp = 0,y_tmp = r;
+
 	for(;x_tmp<=y_tmp;x_tmp++){
 		int cnt = y_tmp+1;
 		while(cnt--){
-			__insertPixel(x+x_tmp,y+cnt);
-			__insertPixel(x-x_tmp,y+cnt);
-			__insertPixel(x+x_tmp,y-cnt);
-			__insertPixel(x-x_tmp,y-cnt);
+			__insertPixel(x+x_tmp,y+cnt,&BufferInfo );
+			__insertPixel(x-x_tmp,y+cnt,&BufferInfo );
+			__insertPixel(x+x_tmp,y-cnt,&BufferInfo );
+			__insertPixel(x-x_tmp,y-cnt,&BufferInfo );
 		}
 
 		cnt = x_tmp+1;
 		while(cnt--){
-			__insertPixel(x+y_tmp,y+cnt);
-			__insertPixel(x-y_tmp,y+cnt);
-			__insertPixel(x+y_tmp,y-cnt);
-			__insertPixel(x-y_tmp,y-cnt);
+			__insertPixel(x+y_tmp,y+cnt,&BufferInfo );
+			__insertPixel(x-y_tmp,y+cnt,&BufferInfo );
+			__insertPixel(x+y_tmp,y-cnt,&BufferInfo );
+			__insertPixel(x-y_tmp,y-cnt,&BufferInfo );
 		}
 
 		if(p <= 0){
@@ -1692,7 +1691,11 @@ static void __insertBresenhamFilledCircle(int x, int y, int r,...){
 }
 
 static void __insertBresenhamCircle(int x, int y, int r,...){
-	
+
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	int r_ex  = r+(Screen.penSize>>1);
 	int r_in  = r-(Screen.penSize>>1)+((Screen.penSize&0x01)==0);	
 	
@@ -1704,14 +1707,14 @@ static void __insertBresenhamCircle(int x, int y, int r,...){
 	int p_in  = 3-2*r_in;
 	for(;x_ex_tmp<=y_ex_tmp;x_ex_tmp++,x_in_tmp++){
 		for(int Y = y_in_tmp;Y<=y_ex_tmp;Y++){
-			__insertPixel(x+x_ex_tmp,y+Y);
-			__insertPixel(x-x_ex_tmp,y+Y);
-			__insertPixel(x+x_ex_tmp,y-Y);
-			__insertPixel(x-x_ex_tmp,y-Y);
-			__insertPixel(x+Y,y+x_ex_tmp);
-			__insertPixel(x-Y,y+x_ex_tmp);
-			__insertPixel(x+Y,y-x_ex_tmp);
-			__insertPixel(x-Y,y-x_ex_tmp);
+			__insertPixel(x+x_ex_tmp,y+Y ,&BufferInfo );
+			__insertPixel(x-x_ex_tmp,y+Y ,&BufferInfo );
+			__insertPixel(x+x_ex_tmp,y-Y ,&BufferInfo );
+			__insertPixel(x-x_ex_tmp,y-Y ,&BufferInfo );
+			__insertPixel(x+Y,y+x_ex_tmp ,&BufferInfo );
+			__insertPixel(x-Y,y+x_ex_tmp ,&BufferInfo );
+			__insertPixel(x+Y,y-x_ex_tmp ,&BufferInfo );
+			__insertPixel(x-Y,y-x_ex_tmp ,&BufferInfo );
 		}
 
 		if(p_ex <= 0){
@@ -1729,7 +1732,7 @@ static void __insertBresenhamCircle(int x, int y, int r,...){
 	}
 }
 
-static void __insertBresenhamLine(int x1,int y1,int x2,int y2){
+static void __insertBresenhamLine(int x1,int y1,int x2,int y2,BufferInfo_t* pBufferInfo ,func_InsertPixel Call_insertPointFunc){
 	int x_min = (int)(GUI_MIN(x1,x2));
 	int x_max = (int)(GUI_MAX(x1,x2));
 	int y_min = (int)(GUI_MIN(y1,y2));
@@ -1747,12 +1750,12 @@ static void __insertBresenhamLine(int x1,int y1,int x2,int y2){
 	
 	int j = 0;
 	int e = 0;
-	for(int i = 0;i < ∆x;i++){	
+	for(int i = 0;i <= ∆x;i++){	
 		switch(type){
-			case 0:__insertPixel(x_min+i,y_min+j);break;
-			case 1:__insertPixel(x_min+j,y_min+i);break;
-			case 2:__insertPixel(x_min+i,y_max-j);break;
-			case 3:__insertPixel(x_min+j,y_max-i);break;
+			case 0:(*Call_insertPointFunc)(x_min+i,y_min+j,pBufferInfo);break;
+			case 1:(*Call_insertPointFunc)(x_min+j,y_min+i,pBufferInfo);break;
+			case 2:(*Call_insertPointFunc)(x_min+i,y_max-j,pBufferInfo);break;
+			case 3:(*Call_insertPointFunc)(x_min+j,y_max-i,pBufferInfo);break;
 		}
 		e += ∆y;
 		if( 2*( e + ∆y ) > ∆x){
@@ -1763,24 +1766,118 @@ static void __insertBresenhamLine(int x1,int y1,int x2,int y2){
 }
 
 static void __insertRectangularFrame(int x1,int y1,int x2,int y2){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 	int loop = 0;
 	while(loop < Screen.penSize){
 		uint x = x1+loop, y = y1+loop;
 
 		while(x<=(x2-loop) && y<=(y2-loop)){
 			if( x < (x2-loop) ){
-				__insertPixel(x,y1 + loop);
-				__insertPixel(x,y2 - loop);
+				__insertPixel(x,y1 + loop,&BufferInfo );
+				__insertPixel(x,y2 - loop,&BufferInfo );
 				x++;
 			}
 			else{
-				__insertPixel(x1 + loop,y);
-				__insertPixel(x2 - loop,y);
+				__insertPixel(x1 + loop,y,&BufferInfo );
+				__insertPixel(x2 - loop,y,&BufferInfo );
 				y++;
 			}
 		}
 		loop++;
 	}
+}
+
+void __insertFilledQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4){
+	
+	BufferInfo_t BufferInfo;
+
+	int tmp_y[] = {y1,y2,y3,y4};
+	int tmp_x[] = {x1,x2,x3,x4};
+	struct IntArray_t tmp;
+// 分析四边形正交化后的长与宽
+	tmp = __findMin_INT(tmp_y,4);
+	int top_y = tmp.value;
+	// int top_x = *((&x1)+((tmp.index)<<1));
+
+	tmp = __findMax_INT(tmp_y,4);
+	int bottom_y = tmp.value;
+	// int bottom_x = *((&x1)+((tmp.index)<<1));
+
+	tmp = __findMin_INT(tmp_x,4);
+	// int left_y = *((&y1)+((tmp.index)<<1));
+	int left_x = tmp.value;
+
+	tmp = __findMax_INT(tmp_x,4);
+	// int right_y = *((&y1)+((tmp.index)<<1));
+	int right_x = tmp.value;
+
+	int area_width  = right_x  - left_x + 1;
+	int area_height = bottom_y - top_y  + 1;
+// 分析四边形的边框,任意两点组合去除对角线
+	int x11 = x1;
+    int y11 = y1;
+    int x22,y22,x33,y33,x44,y44;
+    
+    int tmp_P1P2 = __Point_toLine(x1,y1,x2,y2, x3,y3) + __Point_toLine(x1,y1,x2,y2, x4,y4);
+    int tmp_P1P3 = __Point_toLine(x1,y1,x3,y3, x2,y2) + __Point_toLine(x1,y1,x3,y3, x4,y4);
+
+    if(tmp_P1P2 == 0){
+        x22 = x3; y22 = y3;
+        x33 = x2; y33 = y2;
+        x44 = x4; y44 = y4;
+    }else if(tmp_P1P3 == 0){
+        x22 = x2; y22 = y2;
+        x33 = x3; y33 = y3;
+        x44 = x4; y44 = y4;
+    }else{
+        x22 = x2; y22 = y2;
+        x33 = x4; y33 = y4;
+        x44 = x3; y44 = y3;
+    }
+
+// 创建临时空画布，大小取决于上述分析结果
+	bool* pBuffer = (bool*)calloc((area_height*area_width),1); 
+
+// 绘制四边形边框，通过画线程序实现
+	BufferInfo.pBuffer = pBuffer;
+	BufferInfo.height  = area_height;
+	BufferInfo.width   = area_width;
+	__insertBresenhamLine( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&BufferInfo,__insertPixelPosition);
+	__insertBresenhamLine( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&BufferInfo,__insertPixelPosition);
+	__insertBresenhamLine( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&BufferInfo,__insertPixelPosition);
+	__insertBresenhamLine( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&BufferInfo,__insertPixelPosition);
+
+// 从顶点开始，向下左右画点并搜寻,直到找到边线为止,随后填充
+	for(int j = 0;j < area_height;j++){
+		int LF = 0,RH = area_width - 1;
+		for(;LF < RH;LF++){
+			if( *(pBuffer + (j*area_width) + LF) == 1 )
+				break;
+		}
+
+		for(;RH > LF;RH--){
+			if( *(pBuffer + (j*area_width) + RH) == 1 )
+				break;
+		}
+		memset((pBuffer + (j*area_width) + LF) ,1 ,RH-LF );
+	}
+
+// 将画布上的点，存入图像显存，注意偏移量
+	BufferInfo.pBuffer = Screen.buffer;
+	BufferInfo.height  = GUI_Y_WIDTH;
+	BufferInfo.width   = GUI_X_WIDTH;
+
+	for(int j = 0;j < area_height;j++){
+		for(int i = 0;i < area_width;i++){
+			if( (*(pBuffer + area_width*j + i)) == 1 )
+				__insertPixel( i+left_x , j+top_y , &BufferInfo );
+		}
+	}
+
+// 释放临时画布
+	free(pBuffer);
 }
 
 //============================================= End of Internal Config ===============================================//
@@ -1970,6 +2067,9 @@ void GUI_DrawPixel(unsigned int x,unsigned int y,...){
 	(*GUI_API_AssertParam)(x < GUI_X_WIDTH,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(y < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 #endif
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 
 	va_list ap;
 	va_start(ap,y);
@@ -1980,7 +2080,7 @@ void GUI_DrawPixel(unsigned int x,unsigned int y,...){
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
-	__insertPixel(x,y);
+	__insertPixel(x,y,&BufferInfo );
 
 	if(onlyChangeBuffer != true){
 		if(clearScreen==true){
@@ -2014,8 +2114,13 @@ void GUI_FillRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 
 	if(clearScreen==true)
 		__clearFrameBuffer();
+	
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 
 	unsigned char page_start   = (GUI_MIN(y1,y2))>>3;
 	unsigned char page_end     = (GUI_MAX(y1,y2))>>3;
@@ -2026,14 +2131,14 @@ void GUI_FillRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 		unsigned char y_min = GUI_MIN(y1,y2);
 		if(page==page_start){
 			while( y_min < ((page+1)<<3) && y_min <= y_max)
-				__insertPixel(column_start,y_min++);
+				__insertPixel(column_start,y_min++ ,&BufferInfo );
 			
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
 		}
 		if(page==page_end){
 			while( y_max >= (page<<3) && y_max >= y_min)
-				__insertPixel(column_start,y_max--);
+				__insertPixel(column_start,y_max-- ,&BufferInfo );
 
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
@@ -2094,7 +2199,9 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 
 	if(clearScreen==true)
 		__clearFrameBuffer();
-
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 	
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 
@@ -2109,14 +2216,14 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 		unsigned char y_min = GUI_MIN(y1,y2);
 		if(page==page_start){
 			while( y_min < ((page+1)<<3) && y_min <= y_max)
-				__insertPixel(column_start,y_min++);
+				__insertPixel(column_start,y_min++,&BufferInfo );
 			
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
 		}
 		if(page==page_end){
 			while( y_max >= (page<<3) && y_max >= y_min)
-				__insertPixel(column_start,y_max--);
+				__insertPixel(column_start,y_max--,&BufferInfo );
 
 			memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 			continue;
@@ -2141,14 +2248,14 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 			unsigned char y_min = GUI_MIN(y3,y4);
 			if(page==page_start){
 				while( y_min < ((page+1)<<3) && y_min <= y_max)
-					__erasePixel(column_start,y_min++);
+					__erasePixel(column_start,y_min++,Screen.buffer);
 				
 				memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 				continue;
 			}
 			if(page==page_end){
 				while( y_max >= (page<<3) && y_max >= y_min)
-					__erasePixel(column_start,y_max--);
+					__erasePixel(column_start,y_max--,Screen.buffer);
 
 				memset(Screen.buffer[page]+column_start,Screen.buffer[page][column_start].data,(column_end-column_start+1)*sizeof(Screen.buffer[0][0].data));
 				continue;
@@ -2171,13 +2278,13 @@ void GUI_DrawRect(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y
 
 		while(x<=(x_end-loop) && y<=(y_end-loop)){
 			if( x < (x_end-loop) ){
-				__insertPixel(x,y_start + loop);
-				__insertPixel(x,y_end   - loop);
+				__insertPixel(x,y_start + loop,&BufferInfo );
+				__insertPixel(x,y_end   - loop,&BufferInfo );
 				x++;
 			}
 			else{
-				__insertPixel(x_start + loop,y);
-				__insertPixel(x_end   - loop,y);
+				__insertPixel(x_start + loop,y,&BufferInfo );
+				__insertPixel(x_end   - loop,y,&BufferInfo );
 				y++;
 			}
 		}
@@ -2207,6 +2314,10 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
 	(*GUI_API_AssertParam)(y<GUI_Y_WIDTH ,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(r >= 0        ,"Radius should be bigger than zero.");
 #endif
+	// BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+	// 							.height  = GUI_Y_WIDTH  ,
+	// 							.width   = GUI_X_WIDTH };
+
 	va_list ap;
 	va_start(ap,r);
 	const int clearScreen      = va_arg(ap,int);
@@ -2224,7 +2335,7 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r,...){
 	for(int i = -r;i <= r;i++){
 		for(int j = -r;j <= r;j++){
 			if(  (x-i)<GUI_X_WIDTH && (y-j)<GUI_Y_WIDTH && i*i+j*j <= r_2 )
-				__insertPixel(x-i,y-j);
+				__insertPixel(x-i,y-j,&BufferInfo );
 		}
 	}
 #else
@@ -2319,6 +2430,7 @@ void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
     (*GUI_API_AssertParam)(rx >= 0      ,"Radius X should be bigger than zero."); 
     (*GUI_API_AssertParam)(ry >= 0      ,"Radius Y should be bigger than zero.");
 #endif
+    
 
 	va_list ap;
 	va_start(ap,ry);
@@ -2327,6 +2439,10 @@ void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 	va_end(ap);
 
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 
 	unsigned int page_start   = (GUI_LIMIT(y-ry,0,GUI_Y_WIDTH))>>3;
 	unsigned int page_end     = (GUI_LIMIT(y+ry,0,GUI_Y_WIDTH))>>3;
@@ -2343,7 +2459,7 @@ void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 	for(int i = -rx;i <= rx;i++){
 		for(int j = -ry;j <= ry;j++){
 			if(  (x-i)<GUI_X_WIDTH && y-j<GUI_Y_WIDTH && ry_2*i*i+rx_2*j*j < rxry_2 )
-				__insertPixel(x-i,y-j);
+				__insertPixel(x-i,y-j,&BufferInfo );
 		}
 	}
 
@@ -2416,6 +2532,10 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 	(*GUI_API_AssertParam)(y1 < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(y2 < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 #endif
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	va_list ap;
 	va_start(ap,y2);
 	const int clearScreen      = va_arg(ap,int);
@@ -2449,7 +2569,7 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 				if(Screen.penSize%2==0) 
 					offset++;
 				for(;offset<=cnt;offset++ ){
-					__insertPixel(x, (unsigned char)(K*x+B+offset) );
+					__insertPixel(x, (unsigned char)(K*x+B+offset) ,&BufferInfo);
 				}
 			}
 		}else{
@@ -2466,7 +2586,7 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 				if(Screen.penSize%2==0) 
 					offset++;
 				for(;offset<=cnt;offset++ ){
-					__insertPixel((unsigned char)((y-B)/K+offset),y );
+					__insertPixel((unsigned char)((y-B)/K+offset),y ,&BufferInfo );
 				}
 			}
 		}
@@ -2482,14 +2602,14 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 			unsigned char y_min = GUI_MIN(y1,y2);
 			if(page==page_start){
 				while( y_min < ((page+1)<<3) && y_min <= y_max)
-					__insertPixel(column_start,y_min++);
+					__insertPixel(column_start,y_min++,&BufferInfo );
 				
 				memset(Screen.buffer[page]+column_start-offset,Screen.buffer[page][column_start].data,(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
 				continue;
 			}
 			if(page==page_end){
 				while( y_max >= (page<<3) && y_max >= y_min)
-					__insertPixel(column_start,y_max--);
+					__insertPixel(column_start,y_max--,&BufferInfo );
 
 				memset(Screen.buffer[page]+column_start-offset,Screen.buffer[page][column_start].data,(Screen.penSize)*sizeof(Screen.buffer[0][0].data));
 				continue;
@@ -2498,7 +2618,7 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 		}
 	}
 #else
-	__insertBresenhamLine(x1,y1,x2,y2);
+	__insertBresenhamLine(x1,y1,x2,y2,&BufferInfo,__insertPixel);
 #endif
 	int x_offset = 0;
     int y_offset = 0; 
@@ -2507,39 +2627,24 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 		x_offset = (int)sqrt( (0.25*(y1-y2)*(y1-y2)*Screen.penSize*Screen.penSize/((x1-x2)*(x1-x2)))/(1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) );
 		y_offset = (int)sqrt( 0.25*Screen.penSize*Screen.penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) );
 		
-		__insertPixel(x1+x_offset,y1-y_offset);
-		__insertPixel(x1-x_offset,y1+y_offset);
+		__insertPixel(x1+x_offset,y1-y_offset,&BufferInfo );
+		__insertPixel(x1-x_offset,y1+y_offset,&BufferInfo );
 
-		__insertPixel(x2-x_offset,y2+y_offset);
-		__insertPixel(x2+x_offset,y2-y_offset);
+		__insertPixel(x2-x_offset,y2+y_offset,&BufferInfo );
+		__insertPixel(x2+x_offset,y2-y_offset,&BufferInfo );
 
-
-		// for(int i = 0;i <= x_offset;i++){
-		// 	__insertBresenhamLine(x1+i,y1,x2+i,y2);
-		// }
-		// for(int i = 0;i <= x_offset;i++){
-		// 	__insertBresenhamLine(x1-i,y1,x2-i,y2);
-		// }
-
-		// for(int j = 0;j <= y_offset;j++){
-		// 	__insertBresenhamLine(x1,y1+j,x2,y2+j);
-		// }
-
-		// for(int i = 0;i <= x_offset;i++){
-		// 	__insertBresenhamLine(x1+i,y1,x2+i,y2);
-		// }
-
-		// for(int j = 0;j <= y_offset;j++){
-		// 	__insertBresenhamLine(x1,y1+j,x2,y2+j);
-		// }
+		__insertFilledQuadrilateral(  x1+x_offset,y1-y_offset, \
+			                          x1-x_offset,y1+y_offset, \
+			                          x2-x_offset,y2+y_offset, \
+			                          x2+x_offset,y2-y_offset  );
 	}
 	GUI_RefreashScreen();
 	size_t tmp = Screen.penSize>>1;
 	Screen.penSize = 1;
 	__insertBresenhamCircle(x1,y1,tmp);
-	GUI_RefreashScreen();
+	// GUI_RefreashScreen();
 	__insertBresenhamCircle(x2,y2,tmp);
-	GUI_RefreashScreen();
+	// GUI_RefreashScreen();
 
 	if(onlyChangeBuffer != true){
 		if(clearScreen == true){
@@ -2567,6 +2672,7 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 	if(clearScreen==true)
 		__clearFrameBuffer();
 
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	unsigned int page_start   = GUI_LIMIT( (y_level-A)>>3 ,0 ,GUI_PAGEs);
 	unsigned int page_end     = GUI_LIMIT( (y_level+A)>>3 ,0 ,GUI_PAGEs);
 	unsigned int column_start = GUI_LIMIT( (x_start  )    ,0 ,GUI_X_WIDTH-1);
@@ -2579,6 +2685,8 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 		x_old = x;
 		y_old = y;
 	}
+#else
+#endif	
 
 	if(onlyChangeBuffer!=true){
 		if(clearScreen == true){
@@ -2586,6 +2694,8 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 		}else{
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+			//...//
 #endif			
 		}
 	}
@@ -2599,14 +2709,19 @@ void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3,...){
 void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...){
 	
 
-    unsigned int y_start      = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
-    unsigned int y_end        = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
 
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
 	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
 	unsigned int column_start = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
 	unsigned int column_end   = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-
+#else
+	unsigned int x_start      = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int x_end        = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int y_start      = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+    unsigned int y_end        = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+#endif
 	va_list ap;
 	va_start(ap,y3);
 	const int clearScreen      = va_arg(ap,int);
@@ -2626,6 +2741,8 @@ void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned i
 		else{
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+			GUI_RefreashArea(x_start,x_end,y_start,y_end);			
 #endif
 		}
 	}
@@ -2647,6 +2764,10 @@ void GUI_CONTI_DrawLine(unsigned int (*p)[2],const size_t num,...){
 //====================================================== RGB Test =====================================================//
 #if GUI_TEST_EXTENTION
 void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	static double phi = 0.0;
 	WORD penColor   = Screen.penColor;
 	WORD penSize    = Screen.penSize;
@@ -2667,7 +2788,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 				
 				for( uint y=0; y<GUI_Y_WIDTH;y++){
 					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
-					__insertPixel(x,y);
+					__insertPixel(x,y,&BufferInfo );
 				}
 			}
 			break;
@@ -2679,7 +2800,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 				
 				for( uint x=0; x<GUI_X_WIDTH;x++){
 					Screen.penColor = GUI_MAKE_COLOR( R,G,B );
-					__insertPixel(x,y);
+					__insertPixel(x,y,&BufferInfo );
 				}
 			}
 			break;
@@ -2753,6 +2874,9 @@ static void __deleteTextSocket(struct __WordChain* p){
 }
 
 static void __insertChar(struct __FontChar_t* pChar){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
 	for(uint y=0;y < pChar->height;y++){
 		for(uint x=0;x < pChar->width ;x++){
 			if( (Screen.txtPos.x + x) >= GUI_X_WIDTH )
@@ -2762,9 +2886,9 @@ static void __insertChar(struct __FontChar_t* pChar){
 
 			if(  ( ((*(pChar->byte + (y>>3)*(pChar->width) + x))>>(y&0x07))&0x01  ) == 1 )
 		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  ) Same effect.
-				__insertPixel(Screen.txtPos.x + x,Screen.txtPos.y + y);
+				__insertPixel(Screen.txtPos.x + x,Screen.txtPos.y + y,&BufferInfo );
 			else
-				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y);
+				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y,Screen.buffer);
 		}
 	}
 }
@@ -2780,7 +2904,8 @@ static void __insertWord(const char* word){
     }
 }
 
-static void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
+//...//
+void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
 	struct __WordChain* pSentence =  __creatTextSocket(text);
 
 	__deleteTextSocket(pSentence);
@@ -3070,6 +3195,10 @@ static void __remove_animationProgressLoop(__AnimationConfigChain* p){
 }
 
 static void __insert_animationProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	uint x_center = p->config.x_pos + ((p->config.width)>>1);
 	uint y_center = p->config.x_pos + ((p->config.height)>>1);
 	uint radius   = (p->config.width>>1)-2;
@@ -3092,7 +3221,7 @@ static void __insert_animationProgressLoop(__AnimationConfigChain* p,uint fp_0_2
 
 	int x2 = (int)(x_center + ((radius<<3)/10)*(__round1000(sin(phi))));
 	int y2 = (int)(y_center - ((radius<<3)/10)*(__round1000(cos(phi))));
-	__insertBresenhamLine(x1,y1,x2,y2);
+	__insertBresenhamLine(x1,y1,x2,y2,&BufferInfo,__insertPixel);
 }
 
 void __remove_animationValueBar_iOS(__AnimationConfigChain* p){
@@ -3300,6 +3429,10 @@ void __remove_iconArrow_UP(struct __IconConfigChain* p){
 }
 
 void __insert_iconArrow_UP(struct __IconConfigChain* p){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
 	Pixel_t penColor = Screen.penColor;
 	int x_start      = (int)(p->config.x_pos);
 	int x_end        = (int)((p->config.x_pos)+(p->config.size)-1);
@@ -3314,21 +3447,21 @@ void __insert_iconArrow_UP(struct __IconConfigChain* p){
 	Screen.penColor  = p->config.themeColor;
 	for(int i = (x_center - halfWidth);i <= (x_center + halfWidth);i++){
 		for(int j = (y_start + halfWidth);j <= (y_end - halfWidth);j++)
-			__insertPixel(i,j);
+			__insertPixel(i,j,&BufferInfo );
 	}
 	__insertBresenhamFilledCircle(x_center,y_start+halfWidth,halfWidth);
 	__insertBresenhamFilledCircle(x_center,y_end  -halfWidth,halfWidth);
 
 	for(int i = 0; i < halfWidth;i++){
-		__insertBresenhamLine(x_start+halfWidth + i    ,y_start+x_center-x_start + i,x_center + i    ,y_start+halfWidth + i);
-		__insertBresenhamLine(x_start+halfWidth + i - 1,y_start+x_center-x_start + i,x_center + i - 1,y_start+halfWidth + i);
-		__insertBresenhamLine(x_start+halfWidth - i    ,y_start+x_center-x_start - i,x_center - i    ,y_start+halfWidth - i);
-		__insertBresenhamLine(x_start+halfWidth - i + 1,y_start+x_center-x_start - i,x_center - i + 1,y_start+halfWidth - i);
+		__insertBresenhamLine(x_start+halfWidth + i    ,y_start+x_center-x_start + i,x_center + i    ,y_start+halfWidth + i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_start+halfWidth + i - 1,y_start+x_center-x_start + i,x_center + i - 1,y_start+halfWidth + i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_start+halfWidth - i    ,y_start+x_center-x_start - i,x_center - i    ,y_start+halfWidth - i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_start+halfWidth - i + 1,y_start+x_center-x_start - i,x_center - i + 1,y_start+halfWidth - i,&BufferInfo,__insertPixel);
 
-		__insertBresenhamLine(x_end  -halfWidth + i    ,y_start+x_center-x_start - i,x_center + i    ,y_start+halfWidth - i);
-		__insertBresenhamLine(x_end  -halfWidth + i - 1,y_start+x_center-x_start - i,x_center + i - 1,y_start+halfWidth - i);
-		__insertBresenhamLine(x_end  -halfWidth - i    ,y_start+x_center-x_start + i,x_center - i    ,y_start+halfWidth + i);
-		__insertBresenhamLine(x_end  -halfWidth - i + 1,y_start+x_center-x_start + i,x_center - i + 1,y_start+halfWidth + i);
+		__insertBresenhamLine(x_end  -halfWidth + i    ,y_start+x_center-x_start - i,x_center + i    ,y_start+halfWidth - i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_end  -halfWidth + i - 1,y_start+x_center-x_start - i,x_center + i - 1,y_start+halfWidth - i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_end  -halfWidth - i    ,y_start+x_center-x_start + i,x_center - i    ,y_start+halfWidth + i,&BufferInfo,__insertPixel);
+		__insertBresenhamLine(x_end  -halfWidth - i + 1,y_start+x_center-x_start + i,x_center - i + 1,y_start+halfWidth + i,&BufferInfo,__insertPixel);
 	}
 
 	__insertBresenhamFilledCircle(x_start+halfWidth ,y_start+x_center-x_start ,halfWidth);

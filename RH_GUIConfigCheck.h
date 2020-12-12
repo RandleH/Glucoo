@@ -86,6 +86,12 @@ typedef uint32_t DWORD;
   #define GUI_LBBLUE          0x2B12 //浅棕蓝色(选择条目的反色)
 
   #define GUI_MAKE_COLOR(R_255,G_255,B_255)  (WORD)(((R_255>>3)<<11)|((G_255>>2)<<5)|(B_255>>3))
+  #define GUI_RED_MASK        GUI_RED
+  #define GUI_GREEN_MASK      GUI_GREEN
+  #define GUI_BLUE_MASK       GUI_BLUE
+
+  #define GUI_DARKEN_COLOR_1Bit(C)    (WORD)( ((((C)&GUI_RED_MASK)>>1)&(GUI_RED_MASK))|((((C)&GUI_GREEN_MASK)>>1)&(GUI_GREEN_MASK))|((((C)&GUI_BLUE_MASK)>>1)&(GUI_BLUE_MASK)) )
+  #define GUI_DARKEN_COLOR_2Bit(C)    (WORD)( ((((C)&GUI_RED_MASK)>>2)&(GUI_RED_MASK))|((((C)&GUI_GREEN_MASK)>>2)&(GUI_GREEN_MASK))|((((C)&GUI_BLUE_MASK)>>2)&(GUI_BLUE_MASK)) )
 
 #elif (GUI_COLOR_TYPE == GUI_RGB888)
   #error "RGB888 is not supported yet. :-("
