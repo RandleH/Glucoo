@@ -64,6 +64,9 @@ extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG
 // 声明: 通用绘图函数
 void    GUI_Init              (void);
 
+void    GUI_AutoDisplayMode   (void);
+void    GUI_ManualDisplayMode (void);
+
 void    GUI_SetPenSize        (uint penSize);
 uint    GUI_GetPenSize        (void);
 void    GUI_SetPenColor       (Pixel_t color);
@@ -78,19 +81,19 @@ void    GUI_RefreashPageArea  (uint page_start,uint page_end,uint column_start,u
 void    GUI_RefreashScreen    (void);
 
 
-void    GUI_FillRect          (uint x1,uint y1,uint x2,uint y2,...);
-void    GUI_FillCircle        (uint x ,uint y ,int r ,...);
-void    GUI_FillEllipse       (uint x ,uint y ,int rx, int ry,...);
+void    GUI_FillRect          (int  x1,int  y1,int x2,int y2);
+void    GUI_FillCircle        (uint x ,uint y ,int r );
+void    GUI_FillEllipse       (uint x ,uint y ,int rx,int ry,...);
 void    GUI_FillAll           (Pixel_t columnData); 
-void    GUI_ClearAll          (void);
-void    GUI_ClearBuffer       (void);
+void    GUI_ClearScreen       (void);
+void    GUI_ClearFrameBuffer  (void);
   
 void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3,...);
   
-void    GUI_DrawPixel         (uint x ,uint  y ,...);
+void    GUI_DrawPixel         (int  x ,int   y);
 void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2,...);
-void    GUI_DrawRect          (uint x1,uint  y1,uint  x2 ,uint y2,...);
-void    GUI_DrawCircle        (int  x ,int   y ,int   r  ,...);
+void    GUI_DrawRect          (int  x1,int   y1,int   x2 ,int  y2);
+void    GUI_DrawCircle        (int  x ,int   y ,int   r  );
 void    GUI_DrawEllipse       (uint x ,uint  y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
 void    GUI_DrawTriangle      (uint x1,uint  y1,uint  x2 ,uint y2     ,uint x3   ,uint y3     ,...);
