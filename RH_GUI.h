@@ -28,8 +28,6 @@
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
 
-void __insertFilledQuadrilateral  (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4);
-
 // 声明: 无符号整型
 typedef unsigned int uint;
 
@@ -179,7 +177,7 @@ void   GUI_DeleteAnimationSocket   (BYTE ID);
 #define GUI_ICON_ARROW_DN    (1)
 #define GUI_ICON_ARROW_LF    (2)
 #define GUI_ICON_ARROW_RG    (3)
-
+#define GUI_ICON_WIN10       (4)
 // 声明: 绘制图标插件所需要的信息
 struct GUI_Icon_t{
 	const char*  text;

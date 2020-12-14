@@ -192,7 +192,7 @@ static struct __Screen_t{
 #endif
 	Pixel_t          bkColor;
 	Pixel_t          penColor;
-	unsigned int     penSize;
+	uint             penSize;
 	
 	__GUI_XY_t       txtPos;
 	__FontChar_t*    pFont;
@@ -463,9 +463,7 @@ static void __insertBresenhamLine(int x1 ,int y1 ,int x2 ,int y2 ,BufferInfo_t* 
 /*====================================
  > 插入一个空心长方形,线宽随设定
 =====================================*/
-static void __insertRectangularFrame(   int xs,int ys,int xe,int ye  ,\
-	                                    BufferInfo_t*     pBufferInfo,\
-	                                    func_InsertPixel  Call_insertPointFunc    ){
+static void __insertRectangularFrame(   int xs,int ys,int xe,int ye ,BufferInfo_t* pBufferInfo,func_InsertPixel  Call_insertPointFunc){
 
 	int loop = 0;
 	while(loop < Screen.penSize){
@@ -498,7 +496,7 @@ static void __insertRectangularFrame(   int xs,int ys,int xe,int ye  ,\
 /*====================================
  > 插入一个填充四边形
 =====================================*/
-void __insertFilledQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4){
+void __insertFilledQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,BufferInfo_t* pBufferInfo,func_InsertPixel  Call_insertPointFunc){
 	
 	BufferInfo_t BufferInfo;
 
@@ -1333,7 +1331,8 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 		__insertFilledQuadrilateral(  x1+x_offset,y1-y_offset, \
 			                          x1-x_offset,y1+y_offset, \
 			                          x2-x_offset,y2+y_offset, \
-			                          x2+x_offset,y2-y_offset  );
+			                          x2+x_offset,y2-y_offset, \
+			                          &BufferInfo,__insertPixel  );
 	}
 	GUI_RefreashScreen();
 	size_t tmp = Screen.penSize>>1;
@@ -1792,7 +1791,7 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 
 #if GUI_ANIMATION_DISPLAY
 
-static void __remove_animationProgressBar_LR(__AnimationConfigChain* p){
+static void __remove_animation_ProgressBar_LR(__AnimationConfigChain* p){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 
@@ -1801,7 +1800,7 @@ static void __remove_animationProgressBar_LR(__AnimationConfigChain* p){
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 }
 
-static void __insert_animationProgressBar_LR(__AnimationConfigChain* p,uint fp_0_255_){
+static void __insert_animation_ProgressBar_LR(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	uint x_end   = x_start + p->config.width  - 1;
@@ -1845,7 +1844,7 @@ static void __insert_animationProgressBar_LR(__AnimationConfigChain* p,uint fp_0
 	}
 }
 
-static void __remove_animationProgressBar_UD(__AnimationConfigChain* p){
+static void __remove_animation_ProgressBar_UD(__AnimationConfigChain* p){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	int cnt = p->config.height;
@@ -1853,7 +1852,7 @@ static void __remove_animationProgressBar_UD(__AnimationConfigChain* p){
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 }
 
-static void __insert_animationProgressBar_UD(__AnimationConfigChain* p,uint fp_0_255_){
+static void __insert_animation_ProgressBar_UD(__AnimationConfigChain* p,uint fp_0_255_){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	uint x_end   = x_start + p->config.width  - 1;
@@ -1897,7 +1896,7 @@ static void __insert_animationProgressBar_UD(__AnimationConfigChain* p,uint fp_0
 	}
 }
 
-static void __remove_animationProgressLoop(__AnimationConfigChain* p){
+static void __remove_animation_ProgressLoop(__AnimationConfigChain* p){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	int cnt = p->config.height;
@@ -1905,7 +1904,7 @@ static void __remove_animationProgressLoop(__AnimationConfigChain* p){
 		memset(&(Screen.buffer[y_start+cnt][x_start].data),0,(p->config.width)*sizeof(Pixel_t) );
 }
 
-static void __insert_animationProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
+static void __insert_animation_ProgressLoop(__AnimationConfigChain* p,uint fp_0_255_){
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
@@ -1935,11 +1934,11 @@ static void __insert_animationProgressLoop(__AnimationConfigChain* p,uint fp_0_2
 	__insertBresenhamLine(x1,y1,x2,y2,&BufferInfo,__insertPixel);
 }
 
-void __remove_animationValueBar_iOS(__AnimationConfigChain* p){
+void __remove_animation_ValueBar_iOS(__AnimationConfigChain* p){
 
 }
 
-void __insert_animationValueBar_iOS(__AnimationConfigChain* p,uint fp_0_255_){
+void __insert_animation_ValueBar_iOS(__AnimationConfigChain* p,uint fp_0_255_){
 
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
@@ -2029,25 +2028,25 @@ void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 	switch((int)(config->GUI_ANIM_xxxx)){
 		case GUI_ANIM_PROGRESSBAR_STD_LR:
 			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
-			pTmpConfig->insertFunc = __insert_animationProgressBar_LR;
-			pTmpConfig->removeFunc = __remove_animationProgressBar_LR;
+			pTmpConfig->insertFunc = __insert_animation_ProgressBar_LR;
+			pTmpConfig->removeFunc = __remove_animation_ProgressBar_LR;
 			break;
 		case GUI_ANIM_PROGRESSBAR_STD_UD:
 			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
-			pTmpConfig->insertFunc = __insert_animationProgressBar_UD;
-			pTmpConfig->removeFunc = __remove_animationProgressBar_UD;
+			pTmpConfig->insertFunc = __insert_animation_ProgressBar_UD;
+			pTmpConfig->removeFunc = __remove_animation_ProgressBar_UD;
 			break;
 		case GUI_ANIM_VALUEBAR_IOS_LR:
 			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
-			pTmpConfig->insertFunc = __insert_animationValueBar_iOS;
-			pTmpConfig->removeFunc = __remove_animationValueBar_iOS;
+			pTmpConfig->insertFunc = __insert_animation_ValueBar_iOS;
+			pTmpConfig->removeFunc = __remove_animation_ValueBar_iOS;
 			break;
 		// case GUI_ANIM_VALUEBAR_IOS_UD:
 		// 	break;
 		case GUI_ANIM_PROGRESSLOOP:
 			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
-			pTmpConfig->insertFunc = __insert_animationProgressLoop;
-			pTmpConfig->removeFunc = __remove_animationProgressLoop;
+			pTmpConfig->insertFunc = __insert_animation_ProgressLoop;
+			pTmpConfig->removeFunc = __remove_animation_ProgressLoop;
 			break;
 		default:__exit(true);
 	}
@@ -2134,7 +2133,7 @@ void GUI_DeleteAnimationSocket(BYTE ID){
 //=================================================== Icon Function ====================================================//
 #if GUI_ICON_DISPLAY
 
-void __remove_iconArrow_UP(struct __IconConfigChain* p){
+void __remove_icon_Arrow_UP(struct __IconConfigChain* p){
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 
@@ -2144,7 +2143,7 @@ void __remove_iconArrow_UP(struct __IconConfigChain* p){
 
 }
 
-void __insert_iconArrow_UP(struct __IconConfigChain* p){
+void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
@@ -2186,6 +2185,46 @@ void __insert_iconArrow_UP(struct __IconConfigChain* p){
 	Screen.penColor = penColor;
 }
 
+void __remove_icon_Windows10(struct __IconConfigChain* p){
+	
+
+}
+
+void __insert_icon_Windows10(struct __IconConfigChain* p){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
+	Pixel_t penColor = Screen.penColor;
+	uint    penSize  = Screen.penSize;
+	
+	int x2 = (int)(p->config.x_pos + p->config.size*69.0/71) - 1;
+	int y2 = p->config.y_pos;
+
+	int x1 = p->config.x_pos;
+	int y1 = (int)(y2 + p->config.size*9.0/79) - 1;
+	
+	int x3 = x2;
+	int y3 = y2 + p->config.size-1;
+	
+	int x4 = x1;
+	int y4 = (int)(y1 + p->config.size*54.0/72) - 1;
+
+	int line_0  = (int)((y1+y4)>>1);
+	int line_90 = (int)((2.5*x2+3*x1)/(2.5+3));
+
+	Screen.penColor = p->config.themeColor;
+	__insertFilledQuadrilateral(x1,y1,x2,y2,x3,y3,x4,y4,&BufferInfo,__insertPixel);
+	
+	Screen.penColor = GUI_BLACK;
+	Screen.penSize  = (p->config.size)>33 ? (int)((p->config.size)*3/100):1;
+	__insertBresenhamLine(p->config.x_pos,line_0,p->config.x_pos+p->config.size-1,line_0,&BufferInfo,__insertPixel);
+	__insertBresenhamLine(line_90,p->config.y_pos,line_90,p->config.y_pos+p->config.size-1,&BufferInfo,__insertPixel);
+	
+	Screen.penSize  = penSize; 
+	Screen.penColor = penColor;
+}
+
 static __IconConfigChain* __searchIconConfigChain(BYTE ID){
 	__IconConfigChain* p = Screen.cfgIconHeadNode;
 
@@ -2199,7 +2238,7 @@ static __IconConfigChain* __searchIconConfigChain(BYTE ID){
 	return p;
 }
 
-// 创建一个图标插件
+ // 创建一个图标插件
 void GUI_CreateIconSocket(struct GUI_Icon_t* config){
 	__IconConfigChain* pConfig;  
 	__IconConfigChain* curConfig = Screen.cfgIconHeadNode;
@@ -2210,8 +2249,13 @@ void GUI_CreateIconSocket(struct GUI_Icon_t* config){
 	switch((int)(config->GUI_ICON_xxxx)){
 		case GUI_ICON_ARROW_UP: 
 			pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
-			pConfig->insertFunc = __insert_iconArrow_UP;
-			pConfig->removeFunc = __remove_iconArrow_UP;
+			pConfig->insertFunc = __insert_icon_Arrow_UP;
+			pConfig->removeFunc = __remove_icon_Arrow_UP;
+			break;
+		case GUI_ICON_WIN10:
+			pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
+			pConfig->insertFunc = __insert_icon_Windows10;
+			pConfig->removeFunc = __remove_icon_Windows10;
 			break;
 		default: __exit(true);
 	}
@@ -2299,6 +2343,7 @@ void GUI_DeleteIconScoket(BYTE ID){
 //=================================================== Demo Function ====================================================//
 
 #if GUI_DEMO
+
 //Put the func into " While(1){ ... } "
 
 inline void GUI_DEMO_MovingRect_1(void){
