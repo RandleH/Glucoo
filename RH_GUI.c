@@ -351,7 +351,7 @@ static void __addAreaNeedRefreash(int xs,int ys,int xe,int ye){
 /*====================================
  > 插入一个填充圆
 =====================================*/
-static void __insertBresenhamFilledCircle(int x, int y, int r,BufferInfo_t* pBufferInfo,func_InsertPixel Call_insertPointFunc){
+static void __insertFilledBresenhamCircle(int x, int y, int r,BufferInfo_t* pBufferInfo,func_InsertPixel Call_insertPointFunc){
 
 	int p = 3-(r<<1);
 	int x_tmp = 0,y_tmp = r;
@@ -388,7 +388,7 @@ static void __insertBresenhamFilledCircle(int x, int y, int r,BufferInfo_t* pBuf
 static void __insertBresenhamCircle(int x, int y, int r,BufferInfo_t* pBufferInfo,func_InsertPixel  Call_insertPointFunc){
 
 	int r_ex  = r;
-	int r_in  = r-Screen.penSize+((Screen.penSize&0x01)==0);	
+	int r_in  = r-Screen.penSize;//+((Screen.penSize&0x01)==0);	
 	
 	int x_ex_tmp = 0;
 	int y_ex_tmp = r_ex;
@@ -396,8 +396,8 @@ static void __insertBresenhamCircle(int x, int y, int r,BufferInfo_t* pBufferInf
 	int y_in_tmp = r_in;
 	int p_ex  = 3-2*r_ex;
 	int p_in  = 3-2*r_in;
-	for(;x_ex_tmp<=y_ex_tmp;x_ex_tmp++,x_in_tmp++){
-		for(int Y = y_in_tmp;Y<=y_ex_tmp;Y++){
+	for(;x_ex_tmp<y_ex_tmp;x_ex_tmp++,x_in_tmp++){
+		for(int Y = y_in_tmp;Y<y_ex_tmp;Y++){
 			(*Call_insertPointFunc)(x+x_ex_tmp,y+Y ,pBufferInfo );
 			(*Call_insertPointFunc)(x-x_ex_tmp,y+Y ,pBufferInfo );
 			(*Call_insertPointFunc)(x+x_ex_tmp,y-Y ,pBufferInfo );
@@ -445,7 +445,7 @@ static void __insertBresenhamLine(int x1 ,int y1 ,int x2 ,int y2 ,BufferInfo_t* 
 	
 	int j = 0;
 	int e = 0;
-	for(int i = 0;i <= ∆x;i++){	
+	for(int i = 0;i < ∆x;i++){	
 		switch(type){
 			case 0:(*Call_insertPointFunc)(x_min+i,y_min+j,pBufferInfo);break;
 			case 1:(*Call_insertPointFunc)(x_min+j,y_min+i,pBufferInfo);break;
@@ -551,10 +551,38 @@ void __insertFilledQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x
 	BufferInfo.pBuffer = pBuffer;
 	BufferInfo.height  = area_height;
 	BufferInfo.width   = area_width;
+
 	__insertBresenhamLine( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&BufferInfo,__insertPixelPosition);
+	
 	__insertBresenhamLine( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&BufferInfo,__insertPixelPosition);
+
 	__insertBresenhamLine( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&BufferInfo,__insertPixelPosition);
+	
 	__insertBresenhamLine( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&BufferInfo,__insertPixelPosition);
+
+	// BufferInfo.pBuffer = Screen.buffer;
+	// BufferInfo.height  = GUI_Y_WIDTH;
+	// BufferInfo.width   = GUI_X_WIDTH;
+
+
+	// __insertBresenhamLine( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&BufferInfo,__insertPixel);
+	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+
+	// Screen.penColor = GUI_RED;
+	// __insertBresenhamLine( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&BufferInfo,__insertPixel);
+	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+
+	// Screen.penColor = GUI_BLUE;
+	// __insertBresenhamLine( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&BufferInfo,__insertPixel);
+	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+
+	// Screen.penColor = GUI_YELLOW;
+	// __insertBresenhamLine( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&BufferInfo,__insertPixel);
+	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+
+	// Screen.penColor = GUI_WHITE;
+
+
 
  // 从顶点开始，向下左右画点并搜寻,直到找到边线为止,随后填充
 	for(int j = 0;j < area_height;j++){
@@ -1052,7 +1080,7 @@ void GUI_FillCircle(unsigned int x, unsigned int y, int r){
 	unsigned int ys = GUI_LIMIT(((signed)(y-r)),0,GUI_Y_WIDTH);	
 	unsigned int ye = GUI_LIMIT(((signed)(y+r)),0,GUI_Y_WIDTH);
 
-	__insertBresenhamFilledCircle(x,y,r,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x,y,r,&BufferInfo,__insertPixel);
 #endif
 
 	if(Screen.autoDisplayMode == true){
@@ -1091,7 +1119,7 @@ void GUI_DrawCircle(int x,int y, int r){
 
 	Pixel_t penColor = Screen.penColor;
 	Pixel_t bkColor  = Screen.bkColor;
-	__insertBresenhamFilledCircle(x,y,r,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x,y,r,&BufferInfo,__insertPixel);
 #else
 	int x_end   = GUI_LIMIT(x+r,0,GUI_X_WIDTH-1);
     int x_start = GUI_LIMIT(x-r,0,GUI_X_WIDTH-1);
@@ -1227,6 +1255,9 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 	(*GUI_API_AssertParam)(y1 < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(y2 < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 #endif
+
+	size_t penSize = Screen.penSize;
+	
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
@@ -1315,44 +1346,86 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 #else
 	__insertBresenhamLine(x1,y1,x2,y2,&BufferInfo,__insertPixel);
 #endif
+
 	int x_offset = 0;
     int y_offset = 0; 
+    int x11,y11,x22,y22,x33,y33,x44,y44;
 
 	if(x1 != x2 && Screen.penSize > 1){
-		x_offset = (int)sqrt( (0.25*(y1-y2)*(y1-y2)*Screen.penSize*Screen.penSize/((x1-x2)*(x1-x2)))/(1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) );
+
+		//                -----------------------------------         ----------------------------------------------
+		//              /       penSize * penSize * K^2              /     0.25 * penSize * penSize * (y1-y2)^2
+		// x_offset =  /    -------------------------------    =    /   -----------------------------------------
+		//           \/             4 * ( K^2 + 1 )               \/        ( K^2 + 1 ) * (x1-x2)^2
+		
+		//                -----------------------------------
+		//              /         penSize * penSize
+		// y_offset =  /    -------------------------------    
+		//           \/             4 * ( K^2 + 1 )
+
+
+		x_offset = (int)sqrt( (0.25*(y1-y2)*(y1-y2)*Screen.penSize*Screen.penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) );
 		y_offset = (int)sqrt( 0.25*Screen.penSize*Screen.penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) );
 		
-		__insertPixel(x1+x_offset,y1-y_offset,&BufferInfo );
-		__insertPixel(x1-x_offset,y1+y_offset,&BufferInfo );
+		switch(__Dir_Line(x1,y1,x2,y2)){
+			case  1:
+			case  0:
+				x11 = x1+x_offset; y11 = y1-y_offset;
+				x22 = x1-x_offset; y22 = y1+y_offset;
+				x33 = x2-x_offset; y33 = y2+y_offset;
+				x44 = x2+x_offset; y44 = y2-y_offset;
+				break;
+			case -1:
+				x11 = x1+x_offset; y11 = y1+y_offset;
+				x22 = x1-x_offset; y22 = y1-y_offset;
+				x33 = x2-x_offset; y33 = y2-y_offset;
+				x44 = x2+x_offset; y44 = y2+y_offset;
+				break;
+			case 65535:
+				x11 = x1-Screen.penSize>>1; y11 = y1;
+				x22 = x1+Screen.penSize>>1; y22 = y1;
+				x33 = x2-Screen.penSize>>1; y33 = y2;
+				x44 = x2+Screen.penSize>>1; y44 = y2;
+				break;
+		}
+		__insertPixel(x11,y11,&BufferInfo );
+		__insertPixel(x22,y22,&BufferInfo );
+		__insertPixel(x33,y33,&BufferInfo );
+		__insertPixel(x44,y44,&BufferInfo );
 
-		__insertPixel(x2-x_offset,y2+y_offset,&BufferInfo );
-		__insertPixel(x2+x_offset,y2-y_offset,&BufferInfo );
-
-		__insertFilledQuadrilateral(  x1+x_offset,y1-y_offset, \
-			                          x1-x_offset,y1+y_offset, \
-			                          x2-x_offset,y2+y_offset, \
-			                          x2+x_offset,y2-y_offset, \
+		__insertFilledQuadrilateral(  x11,y11, \
+			                          x22,y22, \
+			                          x33,y33, \
+			                          x44,y44, \
 			                          &BufferInfo,__insertPixel  );
+		// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);		
+
 	}
-	GUI_RefreashScreen();
+
 	size_t tmp = Screen.penSize>>1;
 	Screen.penSize = 1;
-	__insertBresenhamCircle(x1,y1,tmp, &BufferInfo,__insertPixel);
-	// GUI_RefreashScreen();
-	__insertBresenhamCircle(x2,y2,tmp, &BufferInfo,__insertPixel);
-	// GUI_RefreashScreen();
+	__insertFilledBresenhamCircle(x1,y1,tmp-1, &BufferInfo,__insertPixel);
 
-	if(onlyChangeBuffer != true){
-		if(clearScreen == true){
-			GUI_RefreashScreen();
-		}else{
+	__insertFilledBresenhamCircle(x2,y2,tmp-1, &BufferInfo,__insertPixel);
+
+
+	if(Screen.autoDisplayMode == true){
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
-			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+		GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
 #else
-			GUI_RefreashArea(x1-x_offset,y1-y_offset,x2+x_offset,y2+y_offset);		
+		GUI_RefreashArea(    GUI_MIN(x1,x2)-tmp, \
+			                 GUI_MIN(y1,y1)-tmp, \
+			                 GUI_MAX(x1,x2)+tmp, \
+			                 GUI_MAX(x1,x2)+tmp    );		
 #endif			
-		}
+	}else{
+		__addAreaNeedRefreash(    GUI_MIN(x1,x2)-tmp, \
+			                      GUI_MIN(y1,y1)-tmp, \
+			                      GUI_MAX(x1,x2)+tmp, \
+			                      GUI_MAX(x1,x2)+tmp    );	
 	}
+
+	Screen.penSize = penSize;
 
 }
 
@@ -1404,9 +1477,6 @@ void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3,...){
 
 void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,...){
 	
-
-
-
 #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
 	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
@@ -1441,6 +1511,34 @@ void GUI_DrawTriangle(unsigned int x1,unsigned int y1,unsigned int x2,unsigned i
 			GUI_RefreashArea(x_start,x_end,y_start,y_end);			
 #endif
 		}
+	}
+}
+
+void GUI_FillQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4){
+#if GUI_ASSERT
+	//...//
+#endif
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+	int tmp_y[] = {y1,y2,y3,y4};
+	int tmp_x[] = {x1,x2,x3,x4};
+
+	int xs = __findMin_INT(tmp_x,4).value;
+	int xe = __findMax_INT(tmp_x,4).value;
+	int ys = __findMin_INT(tmp_y,4).value;
+	int ye = __findMax_INT(tmp_y,4).value;
+
+
+	__insertFilledQuadrilateral(x1,y1,x2,y2,x3,y3,x4,y4,&BufferInfo,__insertPixel);
+	if( Screen.autoDisplayMode == true ){
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+	//...//
+#else
+		GUI_RefreashArea(xs,ys,xe,ye);
+#endif	
+	}else{
+		__addAreaNeedRefreash(xs,ys,xe,ye);
 	}
 }
 
@@ -1768,11 +1866,11 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
 	}
  // Draw Box Button
 	Screen.penColor = GUI_MAKE_COLOR(224,99 ,88 );
-	__insertBresenhamFilledCircle( p->x_start+__BUT_INDENT__                    , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
+	__insertFilledBresenhamCircle( p->x_start+__BUT_INDENT__                    , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
 	Screen.penColor = GUI_MAKE_COLOR(224,193,75 );
-	__insertBresenhamFilledCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__   , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
+	__insertFilledBresenhamCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__   , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
 	Screen.penColor = GUI_MAKE_COLOR(104,102,98 );
-	__insertBresenhamFilledCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__*2 , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
+	__insertFilledBresenhamCircle( p->x_start+__BUT_INDENT__+__BUT_INTERVAL__*2 , p->y_start+(__BAR_HEIGHT__>>1),(__BUT_SIZE__>>1), &BufferInfo,__insertPixel );
  // Draw User Button
 	struct GUI_DialogBox_Button_t* pButton = p->firstButton;
 	while(pButton != NULL){
@@ -1967,11 +2065,11 @@ void __insert_animation_ValueBar_iOS(__AnimationConfigChain* p,uint fp_0_255_){
 	int  sliderX        = x_start + sliderRadius + progress;
 	int  sliderY        = ((y_start+y_end)>>1); 
 	Screen.penColor = p->config.themeColor;
-	__insertBresenhamFilledCircle(sliderX,sliderY,sliderRadius,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(sliderX,sliderY,sliderRadius,&BufferInfo,__insertPixel);
 	
 	// Add marginal point
-	// __insertBresenhamFilledCircle();
-	// __insertBresenhamFilledCircle();
+	// __insertFilledBresenhamCircle();
+	// __insertFilledBresenhamCircle();
 
 	// Add Active Bar
 	int  barHeight = ((sliderRadius/2)<3)?(3):(sliderRadius/2);
@@ -2164,8 +2262,8 @@ void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
 		for(int j = (y_start + halfWidth);j <= (y_end - halfWidth);j++)
 			__insertPixel(i,j,&BufferInfo );
 	}
-	__insertBresenhamFilledCircle(x_center,y_start+halfWidth,halfWidth,&BufferInfo,__insertPixel);
-	__insertBresenhamFilledCircle(x_center,y_end  -halfWidth,halfWidth,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x_center,y_start+halfWidth,halfWidth,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x_center,y_end  -halfWidth,halfWidth,&BufferInfo,__insertPixel);
 
 	for(int i = 0; i < halfWidth;i++){
 		__insertBresenhamLine(x_start+halfWidth + i    ,y_start+x_center-x_start + i,x_center + i    ,y_start+halfWidth + i,&BufferInfo,__insertPixel);
@@ -2179,8 +2277,8 @@ void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
 		__insertBresenhamLine(x_end  -halfWidth - i + 1,y_start+x_center-x_start + i,x_center - i + 1,y_start+halfWidth + i,&BufferInfo,__insertPixel);
 	}
 
-	__insertBresenhamFilledCircle(x_start+halfWidth ,y_start+x_center-x_start ,halfWidth,&BufferInfo,__insertPixel);
-	__insertBresenhamFilledCircle(x_end  -halfWidth ,y_start+x_center-x_start ,halfWidth,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x_start+halfWidth ,y_start+x_center-x_start ,halfWidth,&BufferInfo,__insertPixel);
+	__insertFilledBresenhamCircle(x_end  -halfWidth ,y_start+x_center-x_start ,halfWidth,&BufferInfo,__insertPixel);
 
 	Screen.penColor = penColor;
 }

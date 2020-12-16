@@ -82,9 +82,12 @@ void    GUI_RefreashScreen    (void);
 void    GUI_FillRect          (int  x1,int  y1,int x2,int y2);
 void    GUI_FillCircle        (uint x ,uint y ,int r );
 void    GUI_FillEllipse       (uint x ,uint y ,int rx,int ry,...);
+void    GUI_FillQuadrilateral (int  x1,int  y1,int x2,int y2,int x3,int y3,int x4,int y4);
+
 void    GUI_FillAll           (Pixel_t columnData); 
 void    GUI_ClearScreen       (void);
 void    GUI_ClearFrameBuffer  (void);
+
   
 void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3,...);
   

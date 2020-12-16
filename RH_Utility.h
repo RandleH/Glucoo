@@ -2,6 +2,7 @@
 #define RH_UTILITY_H 
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
 
@@ -12,11 +13,15 @@
 #define _2xPI                                (6.283185307)
 #define _EXP                                 (2.718281828)
 
+/*=====================================================================
+ > Algebra Reference 
+======================================================================*/
+int     __sign    (int x);
 int     __sqrt    (int x);
-// double  __sin     (int angle); 
 
-
-
+/*=====================================================================
+ > Quantity Reference 
+======================================================================*/
 struct IntArray_t{
 	size_t  index;
 	int     value;
@@ -33,10 +38,19 @@ typedef struct UintArray_t UintArray_t;
 // struct UintArray_t inline __findMax_INT(const unsigned int* pValue,size_t num);
 // struct UintArray_t inline __findMin_INT(const unsigned int* pValue,size_t num);
 
-
-int __Point_toLine  (int xs,int ys,int xe,int ye,                                 int px,int py);
+/*=====================================================================
+ > Geometry Reference 
+======================================================================*/
+int __Dir_Line      (int xs,int ys,int xe,int ye);
+int __Point_toLine  (int xs,int ys,int xe,int ye, int px,int py);
 // int __Point_toRect  (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,     int px,int py);
 
+
+/*=====================================================================
+ > Memory Programming Reference 
+======================================================================*/
+typedef uint16_t WORD;
+void* __memsetWORD(void* __b,WORD value,size_t num);
 
 #endif
 
