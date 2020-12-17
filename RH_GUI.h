@@ -195,6 +195,7 @@ struct GUI_Icon_t{
 
 // 声明: 图标功能的函数
 void   GUI_CreateIconSocket        (struct GUI_Icon_t* config);
+void   GUI_ChangeIconSocket        (struct GUI_Icon_t* newConfig,BYTE ID);
 void   GUI_ShowIcon                (BYTE ID);
 
 
