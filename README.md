@@ -54,7 +54,7 @@ __【第二步】配置宏参数__
 
 ## 接口层(API)
 | Function | Synopsis  |
-| ---- | --- | --- |
+| -------- | --------- |
 | GUI_API_DrawArea  | void(\*)(uint x1,uint y1,uint x2,uint y2,const Pixel_t* pixData)  |
 | GUI_API_DrawPixel | void(\*)(uint x,uint y,const Pixel_t pixData) |
 | GUI_API_DelayMs   | void(\*)(unsigned long ms) |
