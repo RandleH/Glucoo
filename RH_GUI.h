@@ -42,8 +42,6 @@ struct __BufferInfo_t{
 };
 typedef struct __BufferInfo_t BufferInfo_t;
 
-// 声明: 插入一个像素点的函数接口
-typedef void (*func_InsertPixel)(int x,int y,BufferInfo_t* pBufferInfo);
 
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
