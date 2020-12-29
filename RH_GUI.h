@@ -42,8 +42,6 @@ struct __BufferInfo_t{
 };
 typedef struct __BufferInfo_t BufferInfo_t;
 
-// 声明: 插入一个像素点的函数接口
-typedef void (*func_InsertPixel)(int x,int y,BufferInfo_t* pBufferInfo);
 
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
@@ -89,7 +87,7 @@ void    GUI_ClearScreen       (void);
 void    GUI_ClearFrameBuffer  (void);
 
   
-void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3,...);
+void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3);
   
 void    GUI_DrawPixel         (int  x ,int   y);
 void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2,...);
@@ -97,9 +95,7 @@ void    GUI_DrawRect          (int  x1,int   y1,int   x2 ,int  y2);
 void    GUI_DrawCircle        (int  x ,int   y ,int   r  );
 void    GUI_DrawEllipse       (uint x ,uint  y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
-void    GUI_DrawTriangle      (uint x1,uint  y1,uint  x2 ,uint y2     ,uint x3   ,uint y3     ,...);
-
-void    GUI_CONTI_DrawLine    (unsigned int (*p)[2],const size_t num,...);
+void    GUI_DrawTriangle      (int  x1,int   y1,int    x2,int       y2,int     x3,int  y3);
 
 void    GUI_DispChar          (unsigned char c,...);
 void    GUI_DispCharAt        (unsigned char c,int x,int y,...);

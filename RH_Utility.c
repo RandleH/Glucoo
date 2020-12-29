@@ -64,10 +64,25 @@ struct IntArray_t __findMin_INT(const int* pValue,size_t num){
  > Geometry Reference 
 ==========================================*/
 
+int __Vect2D_Dot(const Vector2D_t* vect1,const Vector2D_t* vect2){
+    return (int)((vect1->x*vect2->x)+(vect1->y*vect2->y));
+}
+
+int __Vect3D_Dot(const Vector3D_t* vect1,const Vector3D_t* vect2){
+    return (int)((vect1->x*vect2->x)+(vect1->y*vect2->y)+(vect1->z*vect2->z));
+}
+
+Vector3D_t __Vect3D_Cross(const Vector3D_t* vect1,const Vector3D_t* vect2){
+    Vector3D_t vecResult = {.x = ( vect1->y*vect2->z - vect1->z*vect2->y),\
+                            .y = ( vect1->z*vect2->x - vect1->x*vect2->z),\
+                            .z = ( vect1->x*vect2->y - vect1->y*vect2->x)};
+    return vecResult;
+}
+
 // -1    = Line is negative.
 //  0    = Line is horizontal.
 //  1    = Line is positive.
-// 65535 = Line is vertical
+// 65535 = Line is vertical.
 int __Dir_Line(int xs,int ys,int xe,int ye){
     if(xs==xe)
         return 65535;
@@ -95,31 +110,158 @@ int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
 // -1 = (px,py) is outside the triangle
 //  0 = (px,py) is at the edge of triangle
 //  1 = (px,py) is inside the triangle
-// int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
+int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
+// Condition:
+// P = A + u*(CA) + v*(BA)
+// u >= 0 && v >= 0 && u+v <= 1
 
-// }
+// Any point can be represented by: (PA) = u*(CA) + v*(BA)
+// 
+// When both multiply by (CA) and (BA):
+// (PA)·(CA) = u*[(CA)·(CA)] + v*[(BA)·(CA)]   
+// (PA)·(BA) = u*[(BA)·(CA)] + v*[(BA)·(BA)]  
+
+// Then:
+//         [(BA)·(BA)]*[(PA)·(CA)] - [(BA)·(CA)]*[(PA)·(BA)]
+// u = ---------------------------------------------------------
+//         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
+
+//         [(CA)·(CA)]*[(PA)·(BA)] - [(CA)·(CA)]*[(PA)·(CA)]
+// v = ---------------------------------------------------------
+//         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
+
+// Assume A = (x1,y1) | B = (x2,y2) | C = (x3,y3) :
+    struct Vector2D_t v0 = {.x = x3-x1,.y = y3-y1};
+    struct Vector2D_t v1 = {.x = x2-x1,.y = y2-y1};
+    struct Vector2D_t v2 = {.x = px-x1,.y = py-y1};
+
+    int v00 = __Vect2D_Dot(&v0,&v0);
+    int v01 = __Vect2D_Dot(&v0,&v1);
+    int v02 = __Vect2D_Dot(&v0,&v2);
+    int v11 = __Vect2D_Dot(&v1,&v1);
+    int v12 = __Vect2D_Dot(&v1,&v2);
+
+    int u = v11*v02-v01*v12;
+    int v = v00*v12-v01*v02;
+    int d = v00*v11-v01*v01;
+    if(u<0 || v<0)
+        return -1;
+    else if(u==0 || v==0)
+        return 0;
+
+    if(u+v > d)
+        return -1;
+    else if(u+v < d)
+        return 1;
+    else
+        return 0;
+}
 
 // -1 = (px,py) is outside the circle
 //  0 = (px,py) is at the edge of circle
 //  1 = (px,py) is inside the circle
-// int __Point_toCircle(int xc,int yc,int radius,int px,int py){
+int __Point_toCircle(int xc,int yc,int radius,int px,int py){
+    int key = (xc-px)*(xc-px)+(yc-py)*(yc-py);
+    int r_2 = radius*radius;
+    if(key > r_2)
+        return -1;
+    else if(key < r_2)
+        return 1;
+    else
+        return 0;
+}
 
-// }
+/*=========================================
+ > Image Processing Reference 
+==========================================*/
 
-// -1 = (px,py) is outside the rectangular
-//  0 = (px,py) is at the edge of rectangular
-//  1 = (px,py) is inside the rectangular
-// int __Point_toRectangular(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
+void __Conv2D_ImgRGB565(const __ImageRGB565_t* in,const __Kernel_t* k,__ImageRGB565_t* out,int coe){
+    if( in == NULL || k == NULL || out == NULL)
+        return;
 
-// }
+    for(int j=0;j<in->height;j++){
+        for(int i=0;i<in->width;i++){
+            unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0;
+            for(int n=0;n<k->order;n++){
+                for(int m=0;m<k->order;m++){
+                    int offset_y = j-(k->order>>1)+n;
+                    int offset_x = i-(k->order>>1)+m;
+                    if(offset_x<0||offset_y<0||offset_x>=in->width||offset_y>=in->height){
+                        //...//
+                        continue;
+                    }
+                    unsigned int select_R  = (in->pBuffer + offset_y*in->width + offset_x)->R;
+                    unsigned int select_G  = (in->pBuffer + offset_y*in->width + offset_x)->G;
+                    unsigned int select_B  = (in->pBuffer + offset_y*in->width + offset_x)->B;
+                    int       selectKernel = *( k->pBuffer + n       * k->order + m       );
+                    tmp_R += ( (select_R) * (selectKernel) );
+                    tmp_G += ( (select_G) * (selectKernel) );
+                    tmp_B += ( (select_B) * (selectKernel) );
+                }
+            }
+            int offset = (j*in->width)+i;
+            if(offset < out->width*out->height){
+                (out->pBuffer+offset)->R = (coe==0)?(1<<5-1):tmp_R/coe;
+                (out->pBuffer+offset)->G = (coe==0)?(1<<6-1):tmp_G/coe;
+                (out->pBuffer+offset)->B = (coe==0)?(1<<5-1):tmp_B/coe;
+            }
+        }
+    }
+}
 
+void __Conv2D_ImgRGB888(const __ImageRGB888_t* in,const __Kernel_t* k,__ImageRGB888_t* out,int coe){
+    if( in == NULL || k == NULL || out == NULL)
+        return;
 
-
+    for(int j=0;j<in->height;j++){
+        for(int i=0;i<in->width;i++){
+            unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0;
+            for(int n=0;n<k->order;n++){
+                for(int m=0;m<k->order;m++){
+                    int offset_y = j-(k->order>>1)+n;
+                    int offset_x = i-(k->order>>1)+m;
+                    if(offset_x<0||offset_y<0||offset_x>=in->width||offset_y>=in->height){
+                        //...//
+                        continue;
+                    }
+                    unsigned int select_R  = (in->pBuffer + offset_y*in->width + offset_x)->R;
+                    unsigned int select_G  = (in->pBuffer + offset_y*in->width + offset_x)->G;
+                    unsigned int select_B  = (in->pBuffer + offset_y*in->width + offset_x)->B;
+                    int       selectKernel = *( k->pBuffer + n       * k->order + m       );
+                    tmp_R += ( (select_R) * (selectKernel) );
+                    tmp_G += ( (select_G) * (selectKernel) );
+                    tmp_B += ( (select_B) * (selectKernel) );
+                }
+            }
+            int offset = (j*in->width)+i;
+            if(offset < out->width*out->height){
+                (out->pBuffer+offset)->R = (coe==0)?(1<<8-1):tmp_R/coe;
+                (out->pBuffer+offset)->G = (coe==0)?(1<<8-1):tmp_G/coe;
+                (out->pBuffer+offset)->B = (coe==0)?(1<<8-1):tmp_B/coe;
+            }
+        }
+    }
+}
 
 /*=========================================
  > Memory Programming Reference 
 ==========================================*/
+// unsigned char __VERTUAL_HEAP[ __VIRTUAL_HEAP_SIZE_BYTE ];//__attribute__((at()));
 
+// void* __mallocHEAP(size_t size){
+//     static size_t byteCNT = 0;
+//     if( byteCNT+size > __VIRTUAL_HEAP_SIZE_BYTE )
+//         return NULL;
+//     else{
+//         byteCNT+=size;
+//         //...//
+//         return NULL;
+//     }
+// }
+
+// void __freeHEAP(void* ptr){
+
+// }
 
 void* __memsetWORD(void* __b,WORD value,size_t num){
     WORD* src = (WORD*)__b;
