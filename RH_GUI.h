@@ -149,6 +149,9 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 #define GUI_ANIM_VALUEBAR_IOS_UD      (3)
 #define GUI_ANIM_PROGRESSLOOP         (4)
 
+#define GUI_ANIM_SLIDESWITCH          (5)
+
+
 // 声明: 绘制动画插件所需要的信息
 struct GUI_Anim_t{
 	const char*  text;

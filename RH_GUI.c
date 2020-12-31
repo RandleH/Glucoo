@@ -835,6 +835,29 @@ static void __insertRectangular(int xs,int ys,int xe,int ye,Pixel_t penColor,Buf
 	}
 }
 
+static void __insertFilledRectangular(int xs,int ys,int xe,int ye,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_insertPointFunc){
+
+	if(pBufferInfo->pBuffer == Screen.buffer && Call_insertPointFunc == __insertPixel){
+		for(unsigned int y = ys;y <= ye;y++){
+			if(y == ys){
+				for(unsigned int x = xs;x <= xe;x++)
+					Screen.buffer[y][x].data = penColor;
+			}else{
+				memcpy(&(Screen.buffer[y ][xs].data),\
+	                   &(Screen.buffer[ys][xs].data),\
+	                   ((xe-xs+1)*sizeof(Pixel_t)) );
+			}
+		}
+	}else{
+		for(unsigned int y = ys;y <= ye;y++){
+			for(unsigned int x = xs;x <= xe;x++){
+				(*Call_insertPointFunc)(x,y,penColor,pBufferInfo);
+			}
+		}
+	}
+}
+
+
 /*====================================
  > 插入一个空心长方形,线宽随设定
 =====================================*/
@@ -2384,6 +2407,54 @@ static void __insert_animation_ValueBar_iOS(__AnimationConfigChain* p,uint fp_0_
 	Screen.penColor = penColor;
 }
 
+static void __remove_animation_SlideSwitch(__AnimationConfigChain* p){
+
+}
+
+static void __insert_animation_SlideSwitch(__AnimationConfigChain* p, uint fp_0_255_){
+	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+	int           eps    = 1;
+	const int     height = p->config.height - eps;
+	const int     width  = p->config.width  - eps;
+	
+
+	int radius = (height- eps )>>1;
+	int x1     = p->config.x_pos + radius;
+	int y1     = p->config.y_pos + radius;
+
+	int x2     = p->config.x_pos + width  - 1 - radius;
+	int y2     = y1;
+
+	int ys     = p->config.y_pos;
+	int ye     = p->config.y_pos + height - 1;
+
+	uint progress = ( fp_0_255_ * (x2-x1+1) )>>8;
+
+	PixelUnit_t ON_color  = {.data = p->config.themeColor};
+	PixelUnit_t OFF_color = {.data = GUI_MAKE_COLOR(10,10,10)};
+	PixelUnit_t color;
+	Pixel_t R_max = GUI_MAX(ON_color.R,OFF_color.R);
+	Pixel_t R_min = GUI_MIN(ON_color.R,OFF_color.R);
+	Pixel_t G_max = GUI_MAX(ON_color.G,OFF_color.G);
+	Pixel_t G_min = GUI_MIN(ON_color.G,OFF_color.G);
+	Pixel_t B_max = GUI_MAX(ON_color.B,OFF_color.B);
+	Pixel_t B_min = GUI_MIN(ON_color.B,OFF_color.B);
+	color.R = R_min+(((R_max - R_min)*(fp_0_255_+2))/(255+2)); 
+	color.G = G_min+(((G_max - G_min)*(fp_0_255_+2))/(255+2));
+	color.B = B_min+(((B_max - B_min)*(fp_0_255_+2))/(255+2));
+
+	__insertFilledCircle(x1,y1,radius,color.data,&BufferInfo,__insertPixel);
+	
+	__insertFilledCircle(x2,y2,radius,color.data,&BufferInfo,__insertPixel);
+	 
+	__insertFilledRectangular(x1,ys,x2,ye,color.data,&BufferInfo,__insertPixel);
+
+	eps = 2;
+	__insertFilledCircle(x1+progress,y1,radius-eps,GUI_LIGHTGRAY,&BufferInfo,__insertPixel);
+
+}
 
 static __AnimationConfigChain* __searchAnimationConfigChain(BYTE ID){
 	__AnimationConfigChain* p = Screen.cfgAnimationHeadNode;
@@ -2429,6 +2500,11 @@ void GUI_CreateAnimationSocket(struct GUI_Anim_t* config){
 			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
 			pTmpConfig->insertFunc = __insert_animation_ProgressLoop;
 			pTmpConfig->removeFunc = __remove_animation_ProgressLoop;
+			break;
+		case GUI_ANIM_SLIDESWITCH:
+			pTmpConfig = (__AnimationConfigChain*)__malloc(sizeof(struct __AnimationConfigChain));
+			pTmpConfig->insertFunc = __insert_animation_SlideSwitch;
+			pTmpConfig->removeFunc = __remove_animation_SlideSwitch;
 			break;
 		default:__exit(true);
 	}
