@@ -1,6 +1,7 @@
 #include "RH_Utility.h"
 #include <string.h>
 #include <stdint.h>
+#include <math.h>
 
 /*=========================================
  > Algebra Reference 
@@ -63,6 +64,28 @@ struct IntArray_t __findMin_INT(const int* pValue,size_t num){
 /*=========================================
  > Geometry Reference 
 ==========================================*/
+
+Point3D_t __findPoint_VectorDistance (const Point3D_t*  A,const Point3D_t*  B,int dist_AP){ 
+    int dist_AB = lroundl(sqrt( (B->x - A->x)*(B->x - A->x) + \
+                                (B->y - A->y)*(B->y - A->y) + \
+                                (B->z - A->z)*(B->z - A->z)  ));
+    Point3D_t result = {
+        .x = (B->x - A->x)*dist_AP/dist_AB + A->x ,
+        .y = (B->y - A->y)*dist_AP/dist_AB + A->y ,
+        .z = (B->z - A->z)*dist_AP/dist_AB + A->z ,
+    };
+
+    return result;
+}
+
+Point3D_t __findPoint_VectorProportion (const Point3D_t*  A,const Point3D_t*  B,double scale){ 
+    Point3D_t result = {
+        .x = (B->x - A->x)*scale + A->x ,
+        .y = (B->y - A->y)*scale + A->y ,
+        .z = (B->z - A->z)*scale + A->z ,
+    };
+    return result;
+}
 
 int __Vect2D_Dot(const Vector2D_t* vect1,const Vector2D_t* vect2){
     return (int)((vect1->x*vect2->x)+(vect1->y*vect2->y));

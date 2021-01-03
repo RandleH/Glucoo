@@ -3,19 +3,21 @@
 #ifndef _RH_GUI_CONFIG_H
 #define _RH_GUI_CONFIG_H
 
-#define GUI_ASSERT           1   // 0=Disable   1=Enable
+#define GUI_ASSERT                  1   // 0=Disable   1=Enable
 
-#define GUI_DEMO             1   // 0=Disable   1=Enable
+#define GUI_DEMO                    1   // 0=Disable   1=Enable
 
-#define GUI_DIALOG_DISPLAY   1   // 0=Disable   1=Enable
+#define GUI_DIALOG_DISPLAY          1   // 0=Disable   1=Enable
 
-#define GUI_ICON_DISPLAY     1   // 0=Disable   1=Enable
+#define GUI_ICON_DISPLAY            1   // 0=Disable   1=Enable
 
-#define GUI_ANIMATION_DISPLAY 1  // 0=Disable   1=Enable
+#define GUI_TRACE_WATCH_DISPLAY     1   // 0=Disable   1=Enable
 
-#define GUI_FONT_EXTENTION   1   // 0=Disable   1=Enable
+#define GUI_ANIMATION_DISPLAY       1   // 0=Disable   1=Enable
 
-#define GUI_TEST_EXTENTION   1   // 0=Disable   1=Enable
+#define GUI_FONT_EXTENTION          1   // 0=Disable   1=Enable
+
+#define GUI_TEST_EXTENTION          1   // 0=Disable   1=Enable
 
 #define GUI_Y_WIDTH          128
 #define GUI_X_WIDTH          128

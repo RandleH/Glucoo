@@ -73,7 +73,7 @@ typedef uint32_t DWORD;
   #define GUI_YELLOW        	0xFFE0
   #define GUI_BROWN 			    0xBC40 //棕色
   #define GUI_BRRED 			    0xFC07 //棕红色
-  #define GUI_GRAY  			    0x8430 //灰色
+  #define GUI_GRAY  			    0x2945 //灰色
  
   #define GUI_DARKBLUE      	0x01CF //深蓝色
   #define GUI_LIGHTBLUE      	0x7D7C //浅蓝色  

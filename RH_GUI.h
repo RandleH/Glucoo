@@ -6,6 +6,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 #define GUI_CLEAN
 #define GUI_OVERLAP
 #define GUI_DISPLAY_OFF
@@ -153,7 +157,7 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 
 
 // 声明: 绘制动画插件所需要的信息
-struct GUI_Anim_t{
+struct GUI_AnimConfig_t{
 	const char*  text;
 	Macro_t      GUI_ANIM_xxxx;
 	BYTE         ID;
@@ -162,10 +166,11 @@ struct GUI_Anim_t{
 	unsigned int height;
 	unsigned int width;
 	Pixel_t      themeColor;
+	Pixel_t      backColor;
 };
 
 // 声明: 动画功能的函数
-void   GUI_CreateAnimationSocket   (struct GUI_Anim_t* config);
+void   GUI_CreateAnimationSocket   (struct GUI_AnimConfig_t* config);
 void   GUI_ShowAnimation           (BYTE ID,uint fp_0_255_,...);
 void   GUI_HideAnimation           (BYTE ID);
 void   GUI_DeleteAnimationSocket   (BYTE ID);
@@ -181,7 +186,7 @@ void   GUI_DeleteAnimationSocket   (BYTE ID);
 #define GUI_ICON_ARROW_RG    (3)
 #define GUI_ICON_WIN10       (4)
 // 声明: 绘制图标插件所需要的信息
-struct GUI_Icon_t{
+struct GUI_IconConfig_t{
 	const char*  text;
 	Macro_t      GUI_ICON_xxxx;
 	BYTE         ID;
@@ -193,9 +198,55 @@ struct GUI_Icon_t{
 };
 
 // 声明: 图标功能的函数
-void   GUI_CreateIconSocket        (struct GUI_Icon_t* config);
-void   GUI_ChangeIconSocket        (struct GUI_Icon_t* newConfig,BYTE ID);
+void   GUI_CreateIconSocket        (struct GUI_IconConfig_t* config);
+void   GUI_ChangeIconSocket        (struct GUI_IconConfig_t* newConfig,BYTE ID);
 void   GUI_ShowIcon                (BYTE ID);
+
+
+#endif
+
+#if GUI_TRACE_WATCH_DISPLAY
+
+// 声明: 数据跟踪演示的功能号
+#define GUI_TRACE_LINEAR    (0)
+#define GUI_TRACE_FILL      (1)
+#define GUI_TRACE_COLUMN    (2)
+#define GUI_TRACE_SCATTER   (3)
+
+struct GUI_TraceData_t{
+	int         *dataSource;
+	const char  *dataName; 
+	Pixel_t     dataColor;
+	bool        displayON;
+};
+typedef struct GUI_TraceData_t GUI_TraceData_t;
+
+struct GUI_TraceConfig_t{
+	BYTE                     ID;
+	Macro_t                  GUI_TRACE_xxxx;
+	const char*              text;
+  
+	size_t                   recordSize; // !!!
+
+	size_t                   dataNum;
+	struct GUI_TraceData_t*  data;
+
+	unsigned int             x_pos;
+	unsigned int             y_pos;
+	unsigned int             height;
+	unsigned int             width;  // !!!
+  
+	bool                     GridON;
+	bool                     LegacyON;
+	bool                     ScaleON;
+  
+	Pixel_t                  themeColor;
+    Pixel_t                  backColor;            
+};
+typedef struct GUI_TraceConfig_t GUI_TraceConfig_t;
+
+void GUI_CreateTraceWatchSocket(struct GUI_TraceConfig_t* config);
+void GUI_ShowTraceWatch(BYTE ID,size_t probe);
 
 
 #endif
@@ -240,6 +291,9 @@ void    GUI_DEMO_ANIM_ProgressBar  (void);
 #endif
 
 
+#ifdef __cplusplus
+ }
+#endif
 
 #endif
 
