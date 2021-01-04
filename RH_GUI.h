@@ -10,11 +10,6 @@
  extern "C" {
 #endif
 
-#define GUI_CLEAN
-#define GUI_OVERLAP
-#define GUI_DISPLAY_OFF
-#define GUI_DISPLAY_ON
-
 #define GUI_LIMIT(a, lowerbound, upperbound)  (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
 #define GUI_MIN(a,b)     (((a)<(b))?(a):(b))
 #define GUI_MAX(a,b)     (((a)>(b))?(a):(b))
@@ -46,7 +41,11 @@ struct __BufferInfo_t{
 };
 typedef struct __BufferInfo_t BufferInfo_t;
 
-
+enum GUI_DrawMode_t{
+	kInsertPixelMode,
+	kAddPixelMode,
+};
+typedef enum GUI_DrawMode_t GUI_DrawMode_t;
 
 extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
 extern void (*GUI_API_DrawPixel)      (unsigned int x ,unsigned int y ,const Pixel_t pixData);
