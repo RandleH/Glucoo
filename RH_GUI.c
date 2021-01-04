@@ -370,6 +370,25 @@ static void __clearFrameBuffer(void){
 	    }
 }
 
+static void __clearFrameBufferArea(uint xs,uint ys,uint xe,uint ye){
+	if(sizeof(Pixel_t) == 1 || Screen.bkColor == GUI_BLACK)
+ #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
+		//...//
+#else
+		for(size_t y=ys;y<=ye;y++){
+			memset(&(Screen.buffer[y][xs].data), Screen.bkColor ,sizeof(Pixel_t)*(xe-xs+1));
+		}
+#endif
+	else	
+		for(int y=ys;y<=ye;y++){
+#if (GUI_COLOR_TYPE == GUI_RGB565)
+			__memsetWORD(&(Screen.buffer[y][xs].data),Screen.bkColor,xe-xs+1);
+#else
+			//...//
+#endif				    	
+	    }
+}
+
 /*====================================
  > 清空显存,仅限Page-Column模式
 =====================================*/
@@ -2856,15 +2875,132 @@ void GUI_DeleteIconScoket(BYTE ID){
 
 #if GUI_TRACE_WATCH_DISPLAY
 
-void __remove_trace_Fill(struct __TraceWatchConfigChain* p){
+static void __remove_trace_Fill(struct __TraceWatchConfigChain* p){
 
 }
 
-void __insert_trace_Fill(struct __TraceWatchConfigChain* p){
+static void __insert_trace_Fill(struct __TraceWatchConfigChain* p){
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
-	__insertFilledCircle(64,64,20,GUI_WHITE,&BufferInfo,__insertPixel);
+	// __clearFrameBuffer();
+	__clearFrameBufferArea( p->config.x_pos                        ,\
+		                    p->config.y_pos                        ,\
+		                    p->config.x_pos + p->config.width  - 1 ,\
+		                    p->config.y_pos + p->config.height - 1 );
+
+ //画图表框
+	__insertLine( p->config.x_pos                    ,\
+		          p->config.y_pos                    ,\
+		          p->config.x_pos                    ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel);								
+	__insertLine( p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos                    ,\
+		          p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel );	
+	__insertLine( p->config.x_pos                    ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel );
+
+ //自适应数据窗口,横向步长取决于记录数据次数RecordSize,纵向步长取决于数据buffer中的最值
+	size_t x_step_pixel = 1,y_step_pixel = 1;
+	int    x_step_eps   = 0;//,y_step_eps   = 0;
+	y_step_pixel = lround(__findMax_INT(p->buffer,p->config.recordSize).value*1.3/p->config.height);
+	if(y_step_pixel==0) y_step_pixel = 1;
+
+	x_step_pixel = p->config.width / (p->config.recordSize-1);
+	x_step_eps   = p->config.width % (p->config.recordSize-1);
+	if(x_step_pixel==0) x_step_pixel = 1;
+	// y_step_eps = p->config.height % y_step_pixel;
+
+	size_t cnt = 0;
+	int    x   = p->config.x_pos     ,y = p->config.y_pos+p->config.height-1;
+
+	do{
+        __insertLine( x                                                    ,\
+        	          y - lround(*(p->buffer+cnt)/(double)y_step_pixel)    ,\
+        	          x + x_step_pixel + (x_step_eps > cnt)-1              ,\
+        	          y - lround(*(p->buffer+cnt+1)/(double)y_step_pixel)  ,\
+        	          p->config.themeColor                                 ,\
+        	          &BufferInfo                                          ,\
+				      __insertPixel );
+		x += (x_step_pixel + (x_step_eps > cnt));
+    }while(++cnt < p->config.recordSize-1);
+}
+
+static void __remove_trace_Column(struct __TraceWatchConfigChain* p){
+
+}
+
+static void __insert_trace_Column(struct __TraceWatchConfigChain* p){
+		BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
+								.height  = GUI_Y_WIDTH  ,
+								.width   = GUI_X_WIDTH };
+
+	__clearFrameBufferArea( p->config.x_pos                        ,\
+		                    p->config.y_pos                        ,\
+		                    p->config.x_pos + p->config.width  - 1 ,\
+		                    p->config.y_pos + p->config.height - 1 );
+
+ //画图表框
+	__insertLine( p->config.x_pos                    ,\
+		          p->config.y_pos                    ,\
+		          p->config.x_pos                    ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel);								
+	__insertLine( p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos                    ,\
+		          p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel );	
+	__insertLine( p->config.x_pos                    ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.x_pos+p->config.width -1 ,\
+		          p->config.y_pos+p->config.height-1 ,\
+		          p->config.backColor                ,\
+		          &BufferInfo                        ,\
+				  __insertPixel );
+
+	//自适应数据窗口,横向步长取决于记录数据次数RecordSize,纵向步长取决于数据buffer中的最值
+	size_t x_step_pixel = 1,y_step_pixel = 1;
+	int    x_step_eps   = 0;//,y_step_eps   = 0;
+	y_step_pixel = lround(__findMax_INT(p->buffer,p->config.recordSize).value*1.3/p->config.height);
+	if(y_step_pixel==0) y_step_pixel = 1;
+
+	x_step_pixel = p->config.width / (p->config.recordSize-1);
+	x_step_eps   = p->config.width % (p->config.recordSize-1);
+	if(x_step_pixel==0) x_step_pixel = 1;
+	// y_step_eps = p->config.height % y_step_pixel;
+
+	size_t cnt = 0;
+	int    x   = p->config.x_pos     ,y = p->config.y_pos+p->config.height-1;
+
+
+	do{
+		int temp = y - lround(*(p->buffer+cnt)/(double)y_step_pixel);
+        __insertRectangular( x                                                    ,\
+        	                 temp ,\
+        	                 x + x_step_pixel + (x_step_eps > cnt)   ,\
+        	                 y    ,\
+        	                 p->config.themeColor                                 ,\
+        	                 &BufferInfo                                          ,\
+				             __insertPixel );
+		x += (x_step_pixel + (x_step_eps > cnt));
+    }while(++cnt < p->config.recordSize-1);
 }
 
 struct __TraceWatchConfigChain* __searchTraceConfigChain(BYTE ID){
@@ -2896,6 +3032,10 @@ void GUI_CreateTraceWatchSocket(struct GUI_TraceConfig_t* config){
 			pTmpConfig->removeFunc = __remove_trace_Fill;
 			break;
 		case GUI_TRACE_COLUMN:
+			pTmpConfig = (__TraceWatchConfigChain*)__malloc(sizeof(struct __TraceWatchConfigChain));
+			pTmpConfig->buffer     = (int*)calloc(config->dataNum*config->recordSize,sizeof(int));
+			pTmpConfig->insertFunc = __insert_trace_Column;
+			pTmpConfig->removeFunc = __remove_trace_Column;
 			break;
 		case GUI_TRACE_SCATTER:
 			break;
