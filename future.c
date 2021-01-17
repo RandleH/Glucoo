@@ -11,8 +11,8 @@ struct GUI_Trace_t{
 	Macro_t      GUI_TRACE_xxxx;
 
 	size_t       recordSize; // !!!
-	int*         *ptrDataSource;
-	const char*  *ptrDataName; 
+	int*         *dataSource;
+	const char*  *dataName; 
 	size_t       dataNum;
 
 	unsigned int x_pos;
@@ -28,14 +28,9 @@ typedef struct GUI_Trace_t GUI_Trace_t;
 
 struct __TraceWatchConfigChain{
 	struct GUI_Trace_t config;
-	int*   dataBuffer;   
 	struct __TraceWatchConfigChain* nextConfig;
 
 };
-
-static __TraceWatchConfigChain* __searchIconConfigChain(BYTE ID){
-	
-}
 
 void GUI_CreateTraceWatchSocket(struct GUI_Trace_t* config){
 

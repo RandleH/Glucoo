@@ -127,8 +127,10 @@ void __Conv2D_ImgRGB888(const __ImageRGB888_t* in,const __Kernel_t* k,__ImageRGB
 ======================================================================*/
 #define __VIRTUAL_HEAP_SIZE_BYTE    1//32768
 
-typedef uint16_t WORD;
-void* __memsetWORD(void* __b,WORD value,size_t num);
+
+// typedef uint16_t uint16_t;
+
+void* __memsetWORD(void* __b,uint16_t value,size_t num);
 
 #ifdef __cplusplus
  }

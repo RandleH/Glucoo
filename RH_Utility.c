@@ -80,9 +80,9 @@ Point3D_t __findPoint_VectorDistance (const Point3D_t*  A,const Point3D_t*  B,in
 
 Point3D_t __findPoint_VectorProportion (const Point3D_t*  A,const Point3D_t*  B,double scale){ 
     Point3D_t result = {
-        .x = (B->x - A->x)*scale + A->x ,
-        .y = (B->y - A->y)*scale + A->y ,
-        .z = (B->z - A->z)*scale + A->z ,
+        .x = lround((B->x - A->x)*scale + A->x) ,
+        .y = lround((B->y - A->y)*scale + A->y) ,
+        .z = lround((B->z - A->z)*scale + A->z) ,
     };
     return result;
 }
@@ -286,17 +286,17 @@ void __Conv2D_ImgRGB888(const __ImageRGB888_t* in,const __Kernel_t* k,__ImageRGB
 
 // }
 
-void* __memsetWORD(void* __b,WORD value,size_t num){
-    WORD* src = (WORD*)__b;
+void* __memsetWORD(void* __b,uint16_t value,size_t num){
+    uint16_t* src = (uint16_t*)__b;
     size_t remain = num;
-    (*((WORD*)src)) = value;
+    (*((uint16_t*)src)) = value;
     remain--;
     while(1){
         if(num<(remain<<1)){
-            memmove((src+(num-remain)),src, (num-remain)*sizeof(WORD));
+            memmove((src+(num-remain)),src, (num-remain)*sizeof(uint16_t));
             remain-=(num-remain);
         }else{
-            memmove((src+(num-remain)),src, remain*sizeof(WORD));
+            memmove((src+(num-remain)),src, remain*sizeof(uint16_t));
             break;
         }
     }
