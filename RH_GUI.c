@@ -142,11 +142,25 @@ extern __FontChar_t __FONT_COURIERNEW10X12[];
 
  #include <stdlib.h>
 
+#ifndef __malloc
  #define __malloc(size)             malloc(size)
+#endif
+
+#ifndef __memcpy
  #define __memcpy(des,src,size)     memcpy(des,src,size)
+#endif
+
+#ifndef __free
  #define __free(p)                  free(p)
+#endif
+
+#ifndef __exit
  #define __exit(express)            if(express) return
+#endif
+
+#ifndef __exitReturn
  #define __exitReturn(express,res)  if(express) return res
+#endif
 
 struct __GUI_XY_t{
 	unsigned int x;
@@ -533,7 +547,7 @@ static void __insertFilledCircle(int x, int y, int r,Pixel_t penColor,BufferInfo
 static void __insertWidenedCircle(int x, int y, int r,size_t penSize,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_insertPointFunc){
 
 	int r_ex  = r;
-	int r_in  = r-penSize;
+	int r_in  = (int)(r-penSize);
 	
 	int x_ex_tmp = 0;
 	int y_ex_tmp = r_ex;
@@ -652,12 +666,12 @@ static void __insertWidenedLine(int x1,int y1,int x2,int y2,size_t penSize,Pixel
 
 		int x_offset = 0;
     	int y_offset = 0; 
-    	int x11,y11,x22,y22,x33,y33,x44,y44;
+    	int x11=0,y11=0,x22=0,y22=0,x33=0,y33=0,x44=0,y44=0;
 		switch(__Dir_Line(x1,y1,x2,y2)){
 			case  1://斜率为正
 			case  0://水平直线
-				x_offset = lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
 		
 				x11 = x1+x_offset; y11 = y1-y_offset;
 				x22 = x1-x_offset; y22 = y1+y_offset;
@@ -665,8 +679,8 @@ static void __insertWidenedLine(int x1,int y1,int x2,int y2,size_t penSize,Pixel
 				x44 = x2+x_offset; y44 = y2-y_offset;
 				break;
 			case -1://斜率为负
-				x_offset = lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
 		
 				x11 = x1+x_offset; y11 = y1+y_offset;
 				x22 = x1-x_offset; y22 = y1-y_offset;
@@ -674,10 +688,10 @@ static void __insertWidenedLine(int x1,int y1,int x2,int y2,size_t penSize,Pixel
 				x44 = x2+x_offset; y44 = y2+y_offset;
 				break;
 			case 65535://垂直直线
-				x11 = x1-(penSize>>1); y11 = y1;
-				x22 = x1+(penSize>>1); y22 = y1;
-				x33 = x2-(penSize>>1); y33 = y2;
-				x44 = x2+(penSize>>1); y44 = y2;
+				x11 = (int)(x1-(penSize>>1)); y11 = y1;
+				x22 = (int)(x1+(penSize>>1)); y22 = y1;
+				x33 = (int)(x2-(penSize>>1)); y33 = y2;
+				x44 = (int)(x2+(penSize>>1)); y44 = y2;
 				break;
 		}
 		(*Call_insertPointFunc)(x11,y11,penColor,pBufferInfo );
@@ -810,7 +824,7 @@ static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,
 
 	int x_offset = 0;
     int y_offset = 0; 
-    int x11,y11,x22,y22,x33,y33,x44,y44;
+    int x11=0,y11=0,x22=0,y22=0,x33=0,y33=0,x44=0,y44=0;
 
     __insertLine(x1,y1,x2,y2,penColor,pBufferInfo,Call_insertPointFunc);
 	if(penSize > 1){
@@ -829,8 +843,8 @@ static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,
 		switch(__Dir_Line(x1,y1,x2,y2)){
 			case  1:
 			case  0:
-				x_offset = lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
 		
 				x11 = x1+x_offset; y11 = y1-y_offset;
 				x22 = x1-x_offset; y22 = y1+y_offset;
@@ -838,8 +852,8 @@ static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,
 				x44 = x2+x_offset; y44 = y2-y_offset;
 				break;
 			case -1:
-				x_offset = lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
 		
 				x11 = x1+x_offset; y11 = y1+y_offset;
 				x22 = x1-x_offset; y22 = y1-y_offset;
@@ -847,10 +861,10 @@ static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,
 				x44 = x2+x_offset; y44 = y2+y_offset;
 				break;
 			case 65535:
-				x11 = x1-(penSize>>1); y11 = y1;
-				x22 = x1+(penSize>>1); y22 = y1;
-				x33 = x2-(penSize>>1); y33 = y2;
-				x44 = x2+(penSize>>1); y44 = y2;
+				x11 = (int)(x1-(penSize>>1)); y11 = y1;
+				x22 = (int)(x1+(penSize>>1)); y22 = y1;
+				x33 = (int)(x2-(penSize>>1)); y33 = y2;
+				x44 = (int)(x2+(penSize>>1)); y44 = y2;
 				break;
 		}
 		(*Call_insertPointFunc)(x11,y11,penColor,pBufferInfo );
@@ -869,9 +883,9 @@ static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,
 
 	size_t tmp = penSize>>1;
 	penSize = 1;
-	__insertFilledCircle(x1,y1,tmp, penColor, pBufferInfo,Call_insertPointFunc);
+	__insertFilledCircle(x1,y1,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
 	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-	__insertFilledCircle(x2,y2,tmp, penColor, pBufferInfo,Call_insertPointFunc);
+	__insertFilledCircle(x2,y2,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
 	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
 
 }
@@ -1481,7 +1495,7 @@ void GUI_DrawRect(int x1,int y1,int x2,int y2){
 	
 }
 
-void GUI_FillCircle(unsigned int x, unsigned int y, int r){
+void GUI_FillCircle(int x,int y, int r){
 #if GUI_ASSERT
 	(*GUI_API_AssertParam)(x<GUI_X_WIDTH ,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(y<GUI_Y_WIDTH ,"X-Y cordination is out of range.");
@@ -1577,7 +1591,7 @@ void GUI_DrawCircle(int x,int y, int r){
 }
 
 
-void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
+void GUI_FillEllipse(int x, int y,int rx, int ry,...){
 #if GUI_ASSERT
     (*GUI_API_AssertParam)(x<GUI_X_WIDTH,"X-Y cordination is out of range.");
     (*GUI_API_AssertParam)(y<GUI_Y_WIDTH,"X-Y cordination is out of range.");
@@ -1629,7 +1643,7 @@ void GUI_FillEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 #endif
 }
 
-void GUI_DrawEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
+void GUI_DrawEllipse(int x, int y,int rx, int ry,...){
 #if GUI_ASSERT
     (*GUI_API_AssertParam)(x<GUI_X_WIDTH      ,"X-Y cordination is out of range.");
     (*GUI_API_AssertParam)(y<GUI_Y_WIDTH      ,"X-Y cordination is out of range.");
@@ -1638,41 +1652,8 @@ void GUI_DrawEllipse(unsigned int x, unsigned int y,int rx, int ry,...){
 	(*GUI_API_AssertParam)(Screen.penSize < rx,"Graphic size should be bigger than Pen size or maybe pen size is too big");
 	(*GUI_API_AssertParam)(Screen.penSize < ry,"Graphic size should be bigger than Pen size or maybe pen size is too big");
 #endif
-
-	va_list ap;
-	va_start(ap,ry);
-	const int clearScreen      = va_arg(ap,int);
-	const int onlyChangeBuffer = va_arg(ap,int);
-	va_end(ap);
-
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-
-	unsigned int page_start   = (GUI_LIMIT(y-ry,0,GUI_Y_WIDTH))>>3;
-	unsigned int page_end     = (GUI_LIMIT(y+ry,0,GUI_Y_WIDTH))>>3;
-	unsigned int column_start = (GUI_LIMIT(x-rx,0,GUI_X_WIDTH));
-	unsigned int column_end   = (GUI_LIMIT(x+rx,0,GUI_X_WIDTH));
-
-	if(clearScreen==true)
-		__clearFrameBuffer();
-
-	Pixel_t penColor = Screen.penColor;
-	Pixel_t bkColor  = Screen.bkColor;
-
-	GUI_FillEllipse(x,y,rx               ,ry               ,false,true);
-	GUI_SetPenColor(bkColor);
-	GUI_FillEllipse(x,y,rx-Screen.penSize,ry-Screen.penSize,false,true);
-	GUI_SetPenColor(penColor);
-
-	if(onlyChangeBuffer != true){
-		if(clearScreen == true){
-			GUI_RefreashScreen();
-		}else{
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
-			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
-#endif			
-		}
-	}
-#endif
+    // This part has not been well developed.
+    while(1);
 }
 
 void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
@@ -1687,20 +1668,14 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 	(*GUI_API_AssertParam)(y2 < GUI_Y_WIDTH,"X-Y cordination is out of range.");
 #endif
 
-	size_t penSize = Screen.penSize;
+	uint penSize = Screen.penSize;
 	
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
 
-	va_list ap;
-	va_start(ap,y2);
-	const int clearScreen      = va_arg(ap,int);
-	const int onlyChangeBuffer = va_arg(ap,int); 
-	va_end(ap);
-	if(clearScreen==true)
-		__clearFrameBuffer();
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	uint page_start   = GUI_LIMIT( (signed)((GUI_MIN(y1,y2)-Screen.penSize)>>3) ,0 ,GUI_PAGEs);
 	uint page_end     = GUI_LIMIT( (signed)((GUI_MAX(y1,y2)+Screen.penSize)>>3) ,0 ,GUI_PAGEs);
 	uint column_start = GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-Screen.penSize)      ,0 ,GUI_X_WIDTH-1);
@@ -1785,16 +1760,16 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 		GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
 #else
-		GUI_RefreashArea(    GUI_MIN(x1,x2)-tmp, \
-			                 GUI_MIN(y1,y1)-tmp, \
-			                 GUI_MAX(x1,x2)+tmp, \
-			                 GUI_MAX(y1,y2)+tmp    );		
+		GUI_RefreashArea(    (int)(GUI_MIN(x1,x2)-tmp), \
+                             (int)(GUI_MIN(y1,y1)-tmp), \
+                             (int)(GUI_MAX(x1,x2)+tmp), \
+                             (int)(GUI_MAX(y1,y2)+tmp)    );
 #endif			
 	}else{
-		__addAreaNeedRefreash(    GUI_MIN(x1,x2)-tmp, \
-			                      GUI_MIN(y1,y1)-tmp, \
-			                      GUI_MAX(x1,x2)+tmp, \
-			                      GUI_MAX(y1,y2)+tmp    );	
+		__addAreaNeedRefreash(    (int)(GUI_MIN(x1,x2)-tmp), \
+			                      (int)(GUI_MIN(y1,y1)-tmp), \
+			                      (int)(GUI_MAX(x1,x2)+tmp), \
+			                      (int)(GUI_MAX(y1,y2)+tmp)    );	
 	}
 
 	Screen.penSize = penSize;
@@ -1948,7 +1923,7 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 
 	static double phi = 0.0;
 	WORD   penColor   = Screen.penColor;
-	size_t penSize;
+	uint   penSize    = Screen.penSize;
 
 	const double pi = 3.1415926;
 
@@ -2154,8 +2129,8 @@ void GUI_DispWord(const char* word,...){
 	struct __Screen_t*   s = &Screen;
 
 	const char* p = word;
-	struct __FontChar_t* pChar;
-	size_t      pixLength = 0;
+	struct __FontChar_t* pChar = NULL;
+	uint8_t pixLength = 0;
 	while(*p!='\0'){
 		pChar      = Screen.pFont + (*p - 32);
 		pixLength += pChar->width;
@@ -2184,10 +2159,10 @@ void GUI_DispWord(const char* word,...){
 	uint column_start  = s->txtPos.x;
 	uint column_end    = s->txtPos.x + pChar->width -1;
 #else
-	uint x_start       = s->txtPos.x;
-	uint y_start       = s->txtPos.y;
-	uint x_end         = s->txtPos.x + pixLength -1;
-	uint y_end         = s->txtPos.y + pChar->height-1;
+	int x_start       = s->txtPos.x;
+	int y_start       = s->txtPos.y;
+	int x_end         = s->txtPos.x + pixLength -1;
+	int y_end         = s->txtPos.y + pChar->height-1;
 #endif
 	__insertWord(word);
 
@@ -2399,7 +2374,7 @@ static void __insert_animation_ProgressLoop(__AnimationConfigChain* p,uint fp_0_
 	uint x_center = p->config.x_pos + ((p->config.width)>>1);
 	uint y_center = p->config.x_pos + ((p->config.height)>>1);
 	uint radius   = (p->config.width>>1)-2;
-	double  phi   = __map(fp_0_255_,0,255,0,_2xPI);
+	double  phi   = __map(fp_0_255_,0,255,0,M_2_PI);
 	uint x_start = p->config.x_pos;
 	uint y_start = p->config.y_pos;
 	size_t penSize;
@@ -2416,8 +2391,8 @@ static void __insert_animation_ProgressLoop(__AnimationConfigChain* p,uint fp_0_
 	int y1 = (int)(y_center);
 
 
-	int x2 = (int)(x_center + ((radius<<3)/10)*(__round1000(sin(phi))));
-	int y2 = (int)(y_center - ((radius<<3)/10)*(__round1000(cos(phi))));
+	int x2 = (int)(x_center + ((radius<<3)/10)*(lround(sin(phi))));
+	int y2 = (int)(y_center - ((radius<<3)/10)*(lround(cos(phi))));
 	__insertLine(x1,y1,x2,y2,p->config.themeColor,&BufferInfo,__insertPixel);
 }
 
@@ -2699,7 +2674,7 @@ static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
 								.width   = GUI_X_WIDTH };
 
 	Pixel_t penColor = Screen.penColor;
-	size_t  penSize  = Screen.penSize;
+	uint    penSize  = Screen.penSize;
 
 	int xs = (int)(p->config.x_pos);
 	int xe = (int)((p->config.x_pos)+(p->config.size)-2);
@@ -2926,8 +2901,8 @@ static void __insert_trace_Linear(struct __TraceWatchConfigChain* p){
 		                    p->config.y_pos + p->config.height - 1 );
 
  //自适应数据窗口,横向步长取决于记录数据次数RecordSize,纵向步长取决于数据buffer中的最值
-	size_t x_step_pixel = p->config.width / (p->config.recordSize-1);
-	int    x_step_eps   = p->config.width % (p->config.recordSize-1);
+	int x_step_pixel = p->config.width / (p->config.recordSize-1);
+	int x_step_eps   = p->config.width % (p->config.recordSize-1);
 	if(x_step_pixel==0) x_step_pixel = 1;
 
 	double y_step_pixel = __findMax_INT(p->buffer,p->config.dataNum*p->config.recordSize).value*1.3/p->config.height;
@@ -2938,9 +2913,9 @@ static void __insert_trace_Linear(struct __TraceWatchConfigChain* p){
 		int    x   = p->config.x_pos     ,y = p->config.y_pos+p->config.height-1;
 		do{
 	        __insertLine( x                                            ,\
-	        	          y - lround(*(p->buffer+dataIndex*p->config.recordSize+cnt)/y_step_pixel)    ,\
+	        	          y - (int)lround(*(p->buffer+dataIndex*p->config.recordSize+cnt)/y_step_pixel)    ,\
 	        	          x + x_step_pixel + (x_step_eps > cnt)-1      ,\
-	        	          y - lround(*(p->buffer+dataIndex*p->config.recordSize+cnt+1)/y_step_pixel)  ,\
+	        	          y - (int)lround(*(p->buffer+dataIndex*p->config.recordSize+cnt+1)/y_step_pixel)  ,\
 	        	          p->config.data[dataIndex].dataColor          ,\
 	        	          &BufferInfo                                  ,\
 					      __insertPixel );
@@ -2989,8 +2964,8 @@ static void __insert_trace_Column(struct __TraceWatchConfigChain* p){
 
 	//自适应数据窗口,横向步长取决于记录数据次数RecordSize,纵向步长取决于数据buffer中的最值
 
-	size_t x_step_pixel = p->config.width / (p->config.recordSize-1);
-	int    x_step_eps   = p->config.width % (p->config.recordSize-1);
+	int x_step_pixel = p->config.width / (p->config.recordSize-1);
+	int x_step_eps   = p->config.width % (p->config.recordSize-1);
 	if(x_step_pixel==0) x_step_pixel = 1;
 
 	double y_step_pixel = __findMax_INT(p->buffer,p->config.dataNum*p->config.recordSize).value*1.3/p->config.height;
@@ -2999,7 +2974,7 @@ static void __insert_trace_Column(struct __TraceWatchConfigChain* p){
 		size_t cnt = 0;
 		int    x   = p->config.x_pos     ,y = p->config.y_pos+p->config.height-1;
 		do{
-			int temp = y - lround(*(p->buffer+dataIndex*p->config.recordSize+cnt)/y_step_pixel);
+			int temp = y - (int)lround(*(p->buffer+dataIndex*p->config.recordSize+cnt)/y_step_pixel);
 	        __insertRectangular( x                                       ,\
 	        	                 temp ,\
 	        	                 x + x_step_pixel + (x_step_eps > cnt)   ,\
@@ -3049,8 +3024,8 @@ struct __TraceWatchConfigChain* __searchTraceConfigChain(BYTE ID){
 }
 
 void GUI_CreateTraceWatchSocket(struct GUI_TraceConfig_t* config){
-	__TraceWatchConfigChain* pConfig = Screen.cfgTraceHeadNode;
-	__TraceWatchConfigChain* pTmpConfig;
+	__TraceWatchConfigChain* pConfig    = Screen.cfgTraceHeadNode;
+	__TraceWatchConfigChain* pTmpConfig = NULL;
  // ID should be unique.
 	__exit( NULL != __searchTraceConfigChain(config->ID) );
 

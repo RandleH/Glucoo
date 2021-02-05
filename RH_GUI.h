@@ -81,8 +81,8 @@ void    GUI_RefreashScreen    (void);
 
 
 void    GUI_FillRect          (int  x1,int  y1,int x2,int y2);
-void    GUI_FillCircle        (uint x ,uint y ,int r );
-void    GUI_FillEllipse       (uint x ,uint y ,int rx,int ry,...);
+void    GUI_FillCircle        (int  x ,int  y ,int r );
+void    GUI_FillEllipse       (int  x ,int  y ,int rx,int ry,...);
 void    GUI_FillQuadrilateral (int  x1,int  y1,int x2,int y2,int x3,int y3,int x4,int y4);
 
 void    GUI_FillAll           (Pixel_t columnData); 
@@ -96,7 +96,7 @@ void    GUI_DrawPixel         (int  x ,int   y);
 void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2,...);
 void    GUI_DrawRect          (int  x1,int   y1,int   x2 ,int  y2);
 void    GUI_DrawCircle        (int  x ,int   y ,int   r  );
-void    GUI_DrawEllipse       (uint x ,uint  y ,int   rx ,int  ry,...);
+void    GUI_DrawEllipse       (int  x ,int   y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
 void    GUI_DrawTriangle      (int  x1,int   y1,int    x2,int       y2,int     x3,int  y3);
 
