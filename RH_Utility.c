@@ -1079,6 +1079,13 @@ void* __memsetDWORD(void* __b,uint32_t value,size_t num){
     return __b;
 }
 
+void* __memset_Area(void* __b,int value,size_t xs,size_t ys,size_t xe,size_t ye){
+    return NULL;
+}
+     
+void* __memcpy_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t xs,size_t ys,size_t xe,size_t ye){
+    return NULL;
+}
      
 #ifdef __cplusplus
  }

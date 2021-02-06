@@ -10,11 +10,17 @@
  extern "C" {
 #endif
 
-#define GUI_LIMIT(a, lowerbound, upperbound)  (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
-#define GUI_MIN(a,b)     (((a)<(b))?(a):(b))
-#define GUI_MAX(a,b)     (((a)>(b))?(a):(b))
-#define GUI_CENTER(a,b)  (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
-
+#ifndef RH_UTILITY_H
+  #define GUI_LIMIT(a, lowerbound, upperbound)  (((double)(a) >= (upperbound)) ? upperbound : (((double)(a) <= (lowerbound)) ? (lowerbound) : (a) ))
+  #define GUI_MIN(a,b)     (((a)<(b))?(a):(b))
+  #define GUI_MAX(a,b)     (((a)>(b))?(a):(b))
+  #define GUI_CENTER(a,b)  (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+#else
+  #define GUI_LIMIT        __limit
+  #define GUI_MIN          __min
+  #define GUI_MAX          __max
+  #define GUI_CENTER       __mid
+#endif
 
 #define GUI_FONT_Standard_Small        0
 #define GUI_FONT_Standard_Middle       1
@@ -26,6 +32,8 @@
 #define GUI_ALIGN_LEFT      (0)
 #define GUI_ALIGN_CENTER    (1)
 #define GUI_ALIGN_RIGHT     (2)
+ 
+ 
 
 // 声明: 无符号整型
 typedef unsigned int uint;
@@ -47,18 +55,16 @@ enum GUI_DrawMode_t{
 };
 typedef enum GUI_DrawMode_t GUI_DrawMode_t;
 
-extern void (*GUI_API_DrawArea)       (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData);
-extern void (*GUI_API_DrawPixel)      (unsigned int x ,unsigned int y ,const Pixel_t pixData);
+extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const Pixel_t* pixData);
+extern void (*GUI_API_DrawPixel)      (int x ,int y ,const Pixel_t pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);
 
 #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
 extern void (*GUI_API_DrawPageColumn) (unsigned int page,unsigned int column_start,unsigned int column_num,const Pixel_t* columnData);
 #endif
 
-
-#if GUI_ASSERT
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
-#endif
+
 
 // 声明: 通用绘图函数
 void    GUI_Init              (void);
@@ -76,6 +82,7 @@ void    GUI_SetFont           (int GUI_FONT_xxx);
 void    GUI_SetTextPos        (uint x,uint y);
 
 void    GUI_ClearPageArea     (uint page_start,uint page_end,uint column_start,uint column_end,...);
+void    GUI_RefreashArea      (int x1,int y1,int x2,int y2);
 void    GUI_RefreashPageArea  (uint page_start,uint page_end,uint column_start,uint column_end);
 void    GUI_RefreashScreen    (void);
 
@@ -93,14 +100,14 @@ void    GUI_ClearFrameBuffer  (void);
 void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3);
   
 void    GUI_DrawPixel         (int  x ,int   y);
-void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2,...);
+void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2);
 void    GUI_DrawRect          (int  x1,int   y1,int   x2 ,int  y2);
 void    GUI_DrawCircle        (int  x ,int   y ,int   r  );
 void    GUI_DrawEllipse       (int  x ,int   y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
 void    GUI_DrawTriangle      (int  x1,int   y1,int    x2,int       y2,int     x3,int  y3);
 
-void    GUI_DispChar          (unsigned char c,...);
+void    GUI_DispChar          (unsigned char c);
 void    GUI_DispCharAt        (unsigned char c,int x,int y,...);
 void    GUI_DispChars         (unsigned char c,int num,...);//
 void    GUI_DispWord          (const char* word,...);
@@ -115,8 +122,6 @@ void    GUI_DispWord          (const char* word,...);
 #define GUI_TEST_RGB_STEP           (5)     
 // 声明: RGB测试的函数
 void    GUI_TestRGB           (uint GUI_TEST_RGB_xxxx ,...);
-
-
 
 
 #if GUI_DIALOG_DISPLAY

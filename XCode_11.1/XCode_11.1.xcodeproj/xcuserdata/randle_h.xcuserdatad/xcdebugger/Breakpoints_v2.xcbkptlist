@@ -1,65 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-   uuid = "97AB6B79-3DD9-4032-B716-D532B9A63A04"
+   uuid = "7263B1AF-CBBE-433F-AF80-D4EF23D90BB2"
    type = "1"
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3BFAD08C-11D7-496C-B7F6-BCC1E49E2B0D"
+            uuid = "B27944A4-7A31-4418-B850-175C8C2FDD83"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "507"
-            endingLineNumber = "507"
-            landmarkName = "__insertFilledCircle(x, y, r, penColor, pBufferInfo, Call_insertPointFunc)"
+            startingLineNumber = "1409"
+            endingLineNumber = "1409"
+            landmarkName = "GUI_FillRect(x1, y1, x2, y2)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4D350B19-3420-4F46-A385-0D0BB00EC9E6"
+            uuid = "6B9524CE-A0E5-4F51-9BA2-6CFF7A9922C8"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "515"
-            endingLineNumber = "515"
-            landmarkName = "__insertFilledCircle(x, y, r, penColor, pBufferInfo, Call_insertPointFunc)"
+            startingLineNumber = "1778"
+            endingLineNumber = "1778"
+            landmarkName = "GUI_DrawLine(x1, y1, x2, y2)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DC1B19B0-BD2A-4764-AF9D-553F58EE6317"
+            uuid = "C2744EBA-A822-4E96-ADD5-FFA12B2162F2"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "XCode_12.4/main.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
-            landmarkName = "main(argc, argv)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5904E1A3-AC93-4EDA-9B85-C045096881BC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "XCode_12.4/main.c"
+            filePath = "XCode_11.1/main.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "51"
@@ -71,48 +55,96 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "856E9763-9D26-4DA3-9960-05E9D1F9938F"
+            uuid = "2A8DBA7D-F312-41EE-9C02-5ECA13D4788B"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "316"
-            endingLineNumber = "316"
-            landmarkName = "__insertPixel(x, y, color, pBufferInfo)"
+            startingLineNumber = "1094"
+            endingLineNumber = "1094"
+            landmarkName = "GUI_RefreashArea(x1, y1, x2, y2)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "77D24277-139F-4D7C-8DD3-64E4D3F65BCC"
-            shouldBeEnabled = "Yes"
+            uuid = "A9F3CFD8-3090-43C8-9BC0-228EE951B3F5"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../RH_GUI.c"
+            filePath = "XCode_11.1/main.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "630"
-            endingLineNumber = "630"
-            landmarkName = "__insertLine(x1, y1, x2, y2, penColor, pBufferInfo, Call_insertPointFunc)"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "Simul_DrawArea(x1, y1, x2, y2, pixData)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "236DED22-3EC3-4465-93BE-B88C8211C3B9"
-            shouldBeEnabled = "Yes"
+            uuid = "1DFA3A0C-9346-4861-97A5-E9DEC05D30E2"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "628"
-            endingLineNumber = "628"
-            landmarkName = "__insertLine(x1, y1, x2, y2, penColor, pBufferInfo, Call_insertPointFunc)"
+            startingLineNumber = "554"
+            endingLineNumber = "554"
+            landmarkName = "__insertFilledCircle(x, y, r, penColor, pBufferInfo, Call_insertPointFunc)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "472F90DE-0700-4CC9-9991-056D7C882928"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "XCode_11.1/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "32857E4C-AF0D-4C50-8625-A5C66639AD88"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "XCode_11.1/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "Simul_DrawArea(x1, y1, x2, y2, pixData)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "54499AA4-58BE-4510-85F3-D46D5306DE77"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "XCode_11.1/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "Simul_DrawArea(x1, y1, x2, y2, pixData)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

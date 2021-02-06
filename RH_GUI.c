@@ -28,11 +28,11 @@
 //==================================================== API Handle =====================================================//
 //==================================================== API Handle =====================================================//
 
-void __attribute__((weak)) GUI_DrawArea(uint x1,uint y1,uint x2,uint y2,const Pixel_t* pixData){
+void __attribute__((weak)) GUI_DrawArea(int x1,int y1,int x2,int y2,const Pixel_t* pixData){
 // THIS MAY COST SOME TIME.
 }
 
-void __attribute__((weak)) GUI_DummyDrawPixel(uint x,uint y,const Pixel_t pixData){
+void __attribute__((weak)) GUI_DummyDrawPixel(int x,int y,const Pixel_t pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
 }
 
@@ -40,9 +40,9 @@ void __attribute__((weak)) GUI_AsserParam(bool expression,const char* WHAT_IS_WR
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
 }
 
-void (*GUI_API_DrawArea)      (unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,const Pixel_t* pixData) = GUI_DrawArea; 
+void (*GUI_API_DrawArea)      (int x1,int y1,int x2,int y2,const Pixel_t* pixData) = GUI_DrawArea;
 
-void (*GUI_API_DrawPixel)     (unsigned int x,unsigned int y,const Pixel_t pixData) = GUI_DummyDrawPixel;
+void (*GUI_API_DrawPixel)     (int x ,int y ,const Pixel_t pixData) = GUI_DummyDrawPixel;
 
 void (*GUI_API_DelayMs)       (unsigned long ms) = NULL;
 
@@ -50,9 +50,8 @@ void (*GUI_API_DelayMs)       (unsigned long ms) = NULL;
 void (*GUI_API_DrawPageColumn)(unsigned int page,unsigned int column_start,unsigned int column_num,const Pixel_t* data) = NULL;
 #endif
 
-#if GUI_ASSERT
 void (*GUI_API_AssertParam)   (bool expression,const char* WHAT_IS_WRONG )  = NULL;
-#endif
+
 
 
 //================================================ End of API Handle ==================================================//
@@ -63,7 +62,7 @@ void (*GUI_API_AssertParam)   (bool expression,const char* WHAT_IS_WRONG )  = NU
 //==================================================  Pixel Config ====================================================//
 //==================================================  Pixel Config ====================================================//
 
- #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
+#if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
 union PixelUnit_t{
 	struct __BYTE_BIT{
 		Pixel_t bit0 : 1;
@@ -78,39 +77,55 @@ union PixelUnit_t{
 	Pixel_t data;
 };
 typedef union PixelUnit_t PixelUnit_t;
- #elif ( GUI_DISPLAY_MODE == GUI_SINGLE_PIXEL )
+
+#elif ( GUI_DISPLAY_MODE == GUI_SINGLE_PIXEL )
 
 #if ( GUI_COLOR_TYPE == GUI_1Bit)
-union PixelUnit_t{
-	struct{
-		Pixel_t bit : 1;
-	};
-  	Pixel_t data;
-};
-typedef union PixelUnit_t PixelUnit_t;
- #elif ( GUI_COLOR_TYPE == GUI_RGB565 ) 
-union PixelUnit_t{
-	struct{
-		Pixel_t R : 5;
-		Pixel_t G : 6;
-		Pixel_t B : 5;
-	};
-  	Pixel_t data;
-};
-typedef union PixelUnit_t PixelUnit_t;
- #elif ( GUI_COLOR_TYPE == GUI_RGB888 )
-union PixelUnit_t{
-	struct{
-		Pixel_t R : 8;
-		Pixel_t G : 8;
-		Pixel_t B : 8;
-	};
-  	Pixel_t data;
-};
-typedef union PixelUnit_t PixelUnit_t;
-#endif
 
-#endif
+union PixelUnit_t{
+	struct{
+		uint8_t bit : 1;
+	};
+  	Pixel_t data;
+};
+typedef union PixelUnit_t PixelUnit_t;
+
+
+#elif ( GUI_COLOR_TYPE == GUI_RGB565 ) 
+
+#ifndef RH_UTILITY_H
+union PixelUnit_t{
+	struct{
+		uint8_t B : 5;
+		uint8_t G : 6;
+		uint8_t R : 5;
+	};
+  	Pixel_t data;
+};
+typedef union PixelUnit_t PixelUnit_t;
+#else
+typedef __UNION_PixelRGB565_t PixelUnit_t;
+#endif  //  <<-- Condition for < PixelUnit_t >
+
+#elif ( GUI_COLOR_TYPE == GUI_RGB888 )
+
+#ifndef RH_UTILITY_H
+union PixelUnit_t{
+	struct{
+		uint8_t B : 8;
+		uint8_t G : 8;
+		uint8_t R : 8;
+	};
+  	Pixel_t data;
+};
+typedef union PixelUnit_t PixelUnit_t;
+#else
+typedef __UNION_PixelRGB888_t PixelUnit_t;
+#endif  //  <<-- Condition for < PixelUnit_t >
+
+#endif  //  <<-- Condition for < GUI_COLOR_TYPE >
+
+#endif  //  <<-- Condition for < GUI_DISPLAY_MODE >
 
 //=============================================== End of Pixel Config ===============================================//
 //=============================================== End of Pixel Config ===============================================//
@@ -203,10 +218,10 @@ typedef struct __TraceWatchConfigChain __TraceWatchConfigChain;
 #endif
 
 struct __AreaRefreashChain{
-	uint xs;
-	uint ys;
-	uint xe;
-	uint ye;
+	int xs;
+	int ys;
+	int xe;
+	int ye;
 	struct __AreaRefreashChain* nextAreaRefreash;
 };
 typedef struct __AreaRefreashChain __AreaRefreashChain;
@@ -248,6 +263,7 @@ static struct __Screen_t{
 #endif	
 
 }Screen;
+
 
 // 声明: 插入一个像素点的函数接口
 typedef void    (*func_ApplyPixelMethod)   (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
@@ -297,7 +313,7 @@ static void __insertPixel(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
 		default:break;
 	}
 #else
-	(p+(y*height)+x)->data = color;
+    p[y*width+x].data = color;
 #endif
 }
 
@@ -315,11 +331,15 @@ static void __addPixel(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 	//...//
 #else
-  #if (GUI_COLOR_TYPE == GUI_RGB565 )
+  #if ( GUI_COLOR_TYPE == GUI_RGB565 )
 
-	(p+(y*height)+x)->R = GUI_LIMIT( ((p+(y*height)+x)->R|colorPixel.R),0,((1<<5)-1));
-	(p+(y*height)+x)->G = GUI_LIMIT( ((p+(y*height)+x)->G|colorPixel.G),0,((1<<6)-1));
-	(p+(y*height)+x)->B = GUI_LIMIT( ((p+(y*height)+x)->B|colorPixel.B),0,((1<<5)-1));
+	(p+(y*height)+x)->R = GUI_LIMIT( (signed)((p+(y*height)+x)->R|colorPixel.R),0,((1<<5)-1));
+	(p+(y*height)+x)->G = GUI_LIMIT( (signed)((p+(y*height)+x)->G|colorPixel.G),0,((1<<6)-1));
+	(p+(y*height)+x)->B = GUI_LIMIT( (signed)((p+(y*height)+x)->B|colorPixel.B),0,((1<<5)-1));
+  #elif ( GUI_COLOR_TYPE == GUI_RGB888 )
+    (p+(y*height)+x)->R = GUI_LIMIT( (signed)((p+(y*height)+x)->R|colorPixel.R),0,((1<<8)-1));
+    (p+(y*height)+x)->G = GUI_LIMIT( (signed)((p+(y*height)+x)->G|colorPixel.G),0,((1<<8)-1));
+    (p+(y*height)+x)->B = GUI_LIMIT( (signed)((p+(y*height)+x)->B|colorPixel.B),0,((1<<8)-1));
   #else
     //...//	
   #endif	
@@ -363,47 +383,9 @@ static void __erasePixel(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
 		default:break;
 	}
 #else
-	(p+(y*height)+x)->data = color;
+	p[(y*height)+x].data = color;
 #endif
 }
-
-// static Pixel_t __convPixel(int x,int y,__Kernel_t* k,BufferInfo_t* pBufferInfo,int div){
-	
-// 	PixelUnit_t* p = pBufferInfo->pBuffer;
-// 	PixelUnit_t result;
-// 	size_t width   = pBufferInfo->width;
-// 	size_t height  = pBufferInfo->height;
-
-// 	unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0;
-// 	for(int n=0;n<k->order;n++){
-//         for(int m=0;m<k->order;m++){
-//             int offset_y = y-(k->order>>1)+n;
-//             int offset_x = x-(k->order>>1)+m;
-//             if(offset_x<0||offset_y<0||offset_x>=width||offset_y>=height){
-//                 //...//
-//                 continue;
-//             }
-//             unsigned int select_R  = (p + offset_y*width + offset_x)->R;
-//             unsigned int select_G  = (p + offset_y*width + offset_x)->G;
-//             unsigned int select_B  = (p + offset_y*width + offset_x)->B;
-//             int       selectKernel = *( k->pBuffer + n       * k->order + m       );
-//             tmp_R += ( (select_R) * (selectKernel) );
-//             tmp_G += ( (select_G) * (selectKernel) );
-//             tmp_B += ( (select_B) * (selectKernel) );
-//         }
-//     }
-// #if( GUI_COLOR_TYPE == GUI_RGB565 )
-//     result.R = (div==0)?(1<<5-1):(GUI_LIMIT(tmp_R/div,0,((1<<5)-1)));
-//     result.G = (div==0)?(1<<6-1):(GUI_LIMIT(tmp_G/div,0,((1<<6)-1)));
-//     result.B = (div==0)?(1<<5-1):(GUI_LIMIT(tmp_B/div,0,((1<<5)-1)));
-//  #elif( GUI_COLOR_TYPE == GUI_RGB888 )  
-//  	result.R = (div==0)?(1<<8-1):(GUI_LIMIT(tmp_R/div,0,(1<<8-1)));
-//     result.G = (div==0)?(1<<8-1):(GUI_LIMIT(tmp_G/div,0,(1<<8-1)));
-//     result.B = (div==0)?(1<<8-1):(GUI_LIMIT(tmp_B/div,0,(1<<8-1)));
-// #endif 
-// 	return result.data;
-// }
-
 
 /*====================================
  > 清空显存
@@ -643,6 +625,7 @@ static void __insertLine(int x1 ,int y1 ,int x2 ,int y2 ,Pixel_t penColor,Buffer
 			j++;
 			e -= delta_x;
 		}
+        GUI_RefreashArea(0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1);
 	}
 }
 
@@ -1012,66 +995,31 @@ static void __insertQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int 
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
 //============================================= End of Internal Config ===============================================//
-//...//
-// void GUI_BlurArea(void){
-// 	bool*    p_pos  = (bool*)   calloc(49*49,sizeof(bool));
-// 	Pixel_t* p_conv = (Pixel_t*)calloc(49*49,sizeof(Pixel_t));
-// 	BufferInfo_t BufferInfo = {
-// 		.pBuffer = p_pos,
-// 		.width  = 49,
-// 		.height = 49
-// 	};
 
-// 	int k_array[20*20];
-// 	int i = 20*20;
-// 	while(i--)
-// 		k_array[i] = 1; 
-
-// 	__Kernel_t k = {   .pBuffer = k_array,
-// 					   .order   = 20    };
-
-// 	__insertFilledCircle(24,24,23,0,&BufferInfo,__insertPixelPosition);
-// 	BufferInfo_t BufferInfo_2;
-// 	BufferInfo_2.pBuffer = Screen.buffer;
-// 	BufferInfo_2.height  = GUI_Y_WIDTH;
-// 	BufferInfo_2.width   = GUI_X_WIDTH;
-// 	for(int y=0;y<BufferInfo.height;y++){
-// 		for(int x=0;x<BufferInfo.width;x++){
-// 			if(*(p_pos + y*BufferInfo.width+x) == 1){
-// 				*(p_conv+y*BufferInfo.width+x) = __convPixel(x+30,y+30,&k,&BufferInfo_2,300);
-// 			}
-// 		}
-// 	}
-// 	PixelUnit_t textPixel = {.data = GUI_RED};
-// 	for(int y=0;y<BufferInfo.height;y++){
-// 		for(int x=0;x<BufferInfo.width;x++){
-// 			if(*(p_pos + y*BufferInfo.width+x) == 1){
-// 				Screen.buffer[y+30][x+30].data = *(p_conv+y*BufferInfo.width+x);
-// 			}
-// 		}
-// 	}
-// 	GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-// 	free(p_pos);
-// 	free(p_conv);
-// }
 //================================================== Display Config ==================================================//
 //================================================== Display Config ==================================================//
 //================================================== Display Config ==================================================//
 
-void GUI_RefreashArea(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2){
-	unsigned int x_end   = GUI_MAX(x1,x2);
-    unsigned int x_start = GUI_MIN(x1,x2);
-    unsigned int y_end   = GUI_MAX(y1,y2);
-    unsigned int y_start = GUI_MIN(y1,y2);
-    unsigned int x_width = x_end-x_start+1;
-    unsigned int y_width = y_end-y_start+1;
+void GUI_RefreashArea(int x1,int y1,int x2,int y2){
+	int x_end   = GUI_MAX(x1,x2);
+    int x_start = GUI_MIN(x1,x2);
+    int y_end   = GUI_MAX(y1,y2);
+    int y_start = GUI_MIN(y1,y2);
+    int x_width = x_end-x_start+1;
+    int y_width = y_end-y_start+1;
 
     if(GUI_API_DrawArea != NULL){
     	// Pixel_t* p = (Pixel_t*)__mallocFrameBuffer((x_width)*(y_width)*sizeof(Pixel_t));
-    	Pixel_t* p = (Pixel_t*)malloc((x_width)*(y_width)*sizeof(Pixel_t));
-    	for(int y=0;y<y_width;y++){
-	        memcpy(&p[x_width*y], &Screen.buffer[y_start+y][x_start].data, x_width*sizeof(Pixel_t));
-	    }
+    	Pixel_t* p = (Pixel_t*)__malloc((x_width)*(y_width)*sizeof(Pixel_t));
+//    	for(int y=0;y<y_width;y++){
+//	        memcpy(&p[x_width*y], &Screen.buffer[y_start+y][x_start].data, x_width*sizeof(Pixel_t));
+//	    }
+        for(int y=y_start ; y<=y_end;y++){
+            for(int x=x_start;x<=x_end;x++){
+                p[x_width*(y-y_start)+(x-x_start)] = Screen.buffer[y][x].data;
+            }
+        }
+        
 		(*GUI_API_DrawArea)(x_start,y_start,x_end,y_end,p);
 		__free(p);
     }
@@ -1083,7 +1031,6 @@ void GUI_RefreashArea(unsigned int x1,unsigned int y1,unsigned int x2,unsigned i
 }
 
 void GUI_Init(void){
-
 	Screen.allocated_byte = 0;
 
 	Screen.txtPos.x = 0;
@@ -1281,14 +1228,14 @@ void inline GUI_ManualDisplayMode(void){
 	Screen.autoDisplayMode = false;
 }
 
-//=============================================== End of Display Config ==============================================//
-//=============================================== End of Display Config ==============================================//
-//=============================================== End of Display Config ==============================================//
+//============================================= End of Display Config ==============================================//
+//============================================= End of Display Config ==============================================//
+//============================================= End of Display Config ==============================================//
 
 
-//================================================= Graphic Function =================================================//
-//================================================= Graphic Function =================================================//
-//================================================= Graphic Function =================================================//
+//=============================================== Graphic Function =================================================//
+//=============================================== Graphic Function =================================================//
+//=============================================== Graphic Function =================================================//
 
 void GUI_DrawPixel(int x,int y){
 #if GUI_ASSERT
@@ -1357,10 +1304,10 @@ void GUI_FillRect(int x1,int y1,int x2,int y2){
 
 #else
 
-	unsigned int xe = GUI_MAX(x1,x2);
-    unsigned int xs = GUI_MIN(x1,x2);
-    unsigned int ye = GUI_MAX(y1,y2);
-    unsigned int ys = GUI_MIN(y1,y2);
+	int xe = GUI_MAX(x1,x2);
+    int xs = GUI_MIN(x1,x2);
+    int ye = GUI_MAX(y1,y2);
+    int ys = GUI_MIN(y1,y2);
 
 	for(unsigned int y = ys;y <= ye;y++){
 		if(y == ys){
@@ -1506,12 +1453,12 @@ void GUI_FillCircle(int x,int y, int r){
 								.width   = GUI_X_WIDTH };
 
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	unsigned int page_start   = (GUI_LIMIT(y-r,0,GUI_Y_WIDTH))>>3;
-	unsigned int page_end     = (GUI_LIMIT(y+r,0,GUI_Y_WIDTH))>>3;
-	unsigned int column_start = (GUI_LIMIT(x-r,0,GUI_X_WIDTH));
-	unsigned int column_end   = (GUI_LIMIT(x+r,0,GUI_X_WIDTH));
+	int page_start   = (GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH))>>3;
+	int page_end     = (GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH))>>3;
+	int column_start = (GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH));
+	int column_end   = (GUI_LIMIT((signed)(x+r),0,GUI_X_WIDTH));
 
-	unsigned int r_2 = r*r;
+	int r_2 = r*r;
 	for(int i = -r;i <= r;i++){
 		for(int j = -r;j <= r;j++){
 			if(  (x-i)<GUI_X_WIDTH && (y-j)<GUI_Y_WIDTH && i*i+j*j <= r_2 )
@@ -1519,10 +1466,10 @@ void GUI_FillCircle(int x,int y, int r){
 		}
 	}
 #else
-	unsigned int xs = GUI_LIMIT(((signed)(x-r)),0,GUI_X_WIDTH);
-	unsigned int xe = GUI_LIMIT(((signed)(x+r)),0,GUI_X_WIDTH);
-	unsigned int ys = GUI_LIMIT(((signed)(y-r)),0,GUI_Y_WIDTH);	
-	unsigned int ye = GUI_LIMIT(((signed)(y+r)),0,GUI_Y_WIDTH);
+	int xs = GUI_LIMIT(((signed)(x-r)),0,GUI_X_WIDTH);
+	int xe = GUI_LIMIT(((signed)(x+r)),0,GUI_X_WIDTH);
+	int ys = GUI_LIMIT(((signed)(y-r)),0,GUI_Y_WIDTH);	
+	int ye = GUI_LIMIT(((signed)(y+r)),0,GUI_Y_WIDTH);
 
 	__insertFilledCircle(x,y,r,Screen.penColor,&BufferInfo,__insertPixel);
 #endif
@@ -1554,19 +1501,19 @@ void GUI_DrawCircle(int x,int y, int r){
 								.width   = GUI_X_WIDTH };
 
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	int page_start   = (GUI_LIMIT(y-r,0,GUI_Y_WIDTH))>>3;
-	int page_end     = (GUI_LIMIT(y+r,0,GUI_Y_WIDTH))>>3;
-	int column_start = (GUI_LIMIT(x-r,0,GUI_X_WIDTH-1));
-	int column_end   = (GUI_LIMIT(x+r,0,GUI_X_WIDTH-1));
+	int page_start   = (GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH))>>3;
+	int page_end     = (GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH))>>3;
+	int column_start = (GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH-1));
+	int column_end   = (GUI_LIMIT((signed)(x+r),0,GUI_X_WIDTH-1));
 
 	Pixel_t penColor = Screen.penColor;
 	Pixel_t bkColor  = Screen.bkColor;
 	__insertFilledCircle(x,y,r,Screen.penColor,&BufferInfo,__insertPixel);
 #else
-	int x_end   = GUI_LIMIT(x+r,0,GUI_X_WIDTH-1);
-    int x_start = GUI_LIMIT(x-r,0,GUI_X_WIDTH-1);
-    int y_end   = GUI_LIMIT(y+r,0,GUI_Y_WIDTH-1);
-    int y_start = GUI_LIMIT(y-r,0,GUI_Y_WIDTH-1);
+	int x_end   = GUI_LIMIT((signed)(x+r),0,GUI_X_WIDTH-1);
+    int x_start = GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH-1);
+    int y_end   = GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH-1);
+    int y_start = GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH-1);
 
     if(Screen.penSize == 1)
     	__insertCircle(x,y,r,Screen.penColor,&BufferInfo,__insertPixel);
@@ -1598,27 +1545,20 @@ void GUI_FillEllipse(int x, int y,int rx, int ry,...){
     (*GUI_API_AssertParam)(rx >= 0      ,"Radius X should be bigger than zero."); 
     (*GUI_API_AssertParam)(ry >= 0      ,"Radius Y should be bigger than zero.");
 #endif
-    
-
-	va_list ap;
-	va_start(ap,ry);
-	const int clearScreen      = va_arg(ap,int);
-	const int onlyChangeBuffer = va_arg(ap,int);
-	va_end(ap);
-
+    int xs = x-rx;
+    int ys = y-ry;
+    int xe = x+rx;
+    int ye = y+ry;
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
 
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
 
-	unsigned int page_start   = (GUI_LIMIT(y-ry,0,GUI_Y_WIDTH))>>3;
-	unsigned int page_end     = (GUI_LIMIT(y+ry,0,GUI_Y_WIDTH))>>3;
-	unsigned int column_start = (GUI_LIMIT(x-rx,0,GUI_X_WIDTH));
-	unsigned int column_end   = (GUI_LIMIT(x+rx,0,GUI_X_WIDTH));
-
-	if(clearScreen==true)
-		__clearFrameBuffer();
+	unsigned int page_start   = (GUI_LIMIT((signed)(y-ry),0,GUI_Y_WIDTH))>>3;
+	unsigned int page_end     = (GUI_LIMIT((signed)(y+ry),0,GUI_Y_WIDTH))>>3;
+	unsigned int column_start = (GUI_LIMIT((signed)(x-rx),0,GUI_X_WIDTH));
+	unsigned int column_end   = (GUI_LIMIT((signed)(x+rx),0,GUI_X_WIDTH));
 
 	unsigned int rx_2   = rx*rx;
 	unsigned int ry_2   = ry*ry;
@@ -1630,17 +1570,14 @@ void GUI_FillEllipse(int x, int y,int rx, int ry,...){
 				__insertPixel(x-i,y-j,Screen.penColor,&BufferInfo );
 		}
 	}
-
-	if(onlyChangeBuffer != true){
-		if(clearScreen == true){
-			GUI_RefreashScreen();
-		}else{
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
+#else
+    
 #endif
-		}
-	}
-#endif
+    if( Screen.autoDisplayMode == true ){
+        GUI_RefreashArea(xs, ys, xe, ye);
+    }else{
+        __addAreaNeedRefreash(xs, ys, xe, ye);
+    }
 }
 
 void GUI_DrawEllipse(int x, int y,int rx, int ry,...){
@@ -1656,7 +1593,7 @@ void GUI_DrawEllipse(int x, int y,int rx, int ry,...){
     while(1);
 }
 
-void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
+void GUI_DrawLine(int x1,int y1,int x2,int y2){
 #if GUI_ASSERT
 	(*GUI_API_AssertParam)(0 <= x1         ,"X-Y cordination is out of range.");
 	(*GUI_API_AssertParam)(0 <= x2         ,"X-Y cordination is out of range.");
@@ -1750,8 +1687,8 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
 		}
 	}
 #else
-	// __insertLine(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__insertPixel);
-	__insertSausageLine(x1,y1,x2,y2,Screen.penSize,Screen.penColor,&BufferInfo,__insertPixel);
+	 __insertLine(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__insertPixel);
+//	__insertSausageLine(x1,y1,x2,y2,Screen.penSize,Screen.penColor,&BufferInfo,__insertPixel);
 #endif
 
 	size_t tmp = Screen.penSize>>1;
@@ -1760,16 +1697,16 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2,...){
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)			
 		GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
 #else
-		GUI_RefreashArea(    (int)(GUI_MIN(x1,x2)-tmp), \
-                             (int)(GUI_MIN(y1,y1)-tmp), \
-                             (int)(GUI_MAX(x1,x2)+tmp), \
-                             (int)(GUI_MAX(y1,y2)+tmp)    );
+		GUI_RefreashArea(    (int)GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-tmp) , 0 , GUI_X_WIDTH ), \
+                             (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y1)-tmp) , 0 , GUI_Y_WIDTH ), \
+                             (int)GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+tmp) , 0 , GUI_X_WIDTH ), \
+                             (int)GUI_LIMIT( (signed)(GUI_MAX(y1,y2)+tmp) , 0 , GUI_Y_WIDTH )    );
 #endif			
 	}else{
-		__addAreaNeedRefreash(    (int)(GUI_MIN(x1,x2)-tmp), \
-			                      (int)(GUI_MIN(y1,y1)-tmp), \
-			                      (int)(GUI_MAX(x1,x2)+tmp), \
-			                      (int)(GUI_MAX(y1,y2)+tmp)    );	
+		__addAreaNeedRefreash(    (int)GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-tmp) , 0 ,GUI_X_WIDTH ), \
+			                      (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y1)-tmp) , 0 ,GUI_Y_WIDTH ), \
+			                      (int)GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+tmp) , 0 ,GUI_X_WIDTH ), \
+			                      (int)GUI_LIMIT( (signed)(GUI_MAX(y1,y2)+tmp) , 0 ,GUI_Y_WIDTH )    );	
 	}
 
 	Screen.penSize = penSize;
@@ -1789,10 +1726,10 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 		__clearFrameBuffer();
 
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	unsigned int page_start   = GUI_LIMIT( (y_level-A)>>3 ,0 ,GUI_PAGEs);
-	unsigned int page_end     = GUI_LIMIT( (y_level+A)>>3 ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( (x_start  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int column_end   = GUI_LIMIT( (x_end    )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int page_start   = GUI_LIMIT( (signed)((y_level-A)>>3) ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (signed)((y_level+A)>>3) ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( (signed)((x_start  )   ) ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( (signed)((x_end    )   ) ,0 ,GUI_X_WIDTH-1);
 
 	unsigned int x = x_start,x_old = x_start ,y_old = y_level,y = y_level;
 	for(;x<=x_end;x++){
@@ -1821,22 +1758,25 @@ void GUI_DrawWave(int A,float w,float phi,int x_start,int x_end,int y_level,...)
 
 void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3){
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
-	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int column_end   = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+    int page_start   = GUI_LIMIT( (signed)((y_start)>>3) ,0 ,GUI_PAGEs);
+    int page_end     = GUI_LIMIT( (signed)((y_end  )>>3) ,0 ,GUI_PAGEs);
+    int column_start = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+    int column_end   = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
 #else
-	unsigned int xs           = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int xe           = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int ys           = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
-    unsigned int ye           = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+	int xs           = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+    int xe           = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+    int ys           = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+    int ye           = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
 #endif
     BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
 								.width   = GUI_X_WIDTH };
 	__insertLine(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__insertPixel);
 	__insertLine(x2,y2,x3,y3,Screen.penColor,&BufferInfo,__insertPixel);
-	__insertLine(x3,y3,x1,y1,Screen.penColor,&BufferInfo,__insertPixel);							
+	__insertLine(x3,y3,x1,y1,Screen.penColor,&BufferInfo,__insertPixel);
+    
+    GUI_RefreashArea(xs,ys,xe,ye);
+    
 	__insertFilledTriangle(x1,y1,x2,y2,x3,y3,Screen.penColor,&BufferInfo,__insertPixel);
 
 	if( Screen.autoDisplayMode == true ){
@@ -1853,15 +1793,15 @@ void GUI_FillTriangle(int x1,int y1,int x2,int y2,int x3,int y3){
 void GUI_DrawTriangle(int x1,int y1,int x2,int y2,int x3,int y3){
 	
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	unsigned int page_start   = GUI_LIMIT( (y_start)>>3 ,0 ,GUI_PAGEs);
-	unsigned int page_end     = GUI_LIMIT( (y_end  )>>3 ,0 ,GUI_PAGEs);
-	unsigned int column_start = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int column_end   = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int page_start   = GUI_LIMIT( (signed)((y_start)>>3) ,0 ,GUI_PAGEs);
+	unsigned int page_end     = GUI_LIMIT( (signed)((y_end  )>>3) ,0 ,GUI_PAGEs);
+	unsigned int column_start = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int column_end   = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
 #else
-	unsigned int xs           = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int xe           = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
-	unsigned int ys           = GUI_LIMIT( ( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
-    unsigned int ye           = GUI_LIMIT( ( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int xs           = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int xe           = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(x1,x2) ) ,x3)  )    ,0 ,GUI_X_WIDTH-1);
+	unsigned int ys           = GUI_LIMIT( (signed)( GUI_MIN( ( GUI_MIN(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
+    unsigned int ye           = GUI_LIMIT( (signed)( GUI_MAX( ( GUI_MAX(y1,y2) ) ,y3)  )    ,0 ,GUI_X_WIDTH-1);
 #endif
     BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
 								.height  = GUI_Y_WIDTH  ,
@@ -1909,12 +1849,12 @@ void GUI_FillQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y3,int x4,int 
 	}
 }
 
-//============================================== End of Graphic Function ==============================================//
-//============================================== End of Graphic Function ==============================================//
-//============================================== End of Graphic Function ==============================================//
-//====================================================== RGB Test =====================================================//
-//====================================================== RGB Test =====================================================//
-//====================================================== RGB Test =====================================================//
+//============================================ End of Graphic Function ==============================================//
+//============================================ End of Graphic Function ==============================================//
+//============================================ End of Graphic Function ==============================================//
+//==================================================== RGB Test =====================================================//
+//==================================================== RGB Test =====================================================//
+//==================================================== RGB Test =====================================================//
 #if GUI_TEST_EXTENTION
 void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 	BufferInfo_t BufferInfo = {	.pBuffer = Screen.buffer,
@@ -1978,12 +1918,12 @@ void GUI_TestRGB(unsigned int GUI_TEST_RGB_xxxx ,...){
 }
 
 #endif
-//================================================== End of RGB Test ==================================================//
-//================================================== End of RGB Test ==================================================//
-//================================================== End of RGB Test ==================================================//
-//=================================================== Text Function ===================================================//
-//=================================================== Text Function ===================================================//
-//=================================================== Text Function ===================================================//
+//================================================ End of RGB Test ==================================================//
+//================================================ End of RGB Test ==================================================//
+//================================================ End of RGB Test ==================================================//
+//================================================= Text Function ===================================================//
+//================================================= Text Function ===================================================//
+//================================================= Text Function ===================================================//
 struct __WordChain{
     char* sentence;
     char* word;
@@ -2039,8 +1979,8 @@ static void __insertChar(struct __FontChar_t* pChar){
 			if(  ( ((*(pChar->byte + (y>>3)*(pChar->width) + x))>>(y&0x07))&0x01  ) == 1 )
 		//  if(  (  (*(pChar->byte + (y/8 )*(pChar->width) + x))>>(y%8   ))&0x01  ) Same effect.
 				__insertPixel(Screen.txtPos.x + x,Screen.txtPos.y + y,Screen.penColor,&BufferInfo );
-			else
-				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y,Screen.bkColor,&BufferInfo );
+//			else
+//				__erasePixel (Screen.txtPos.x + x,Screen.txtPos.y + y,Screen.bkColor,&BufferInfo );
 		}
 	}
 }
@@ -2063,9 +2003,9 @@ void __insertJustifiedText(const char* text,uint xs,uint ys,uint xe,uint ye){
 	__deleteTextSocket(pSentence);
 }
 
-void GUI_DispChar(unsigned char c,...){
+void GUI_DispChar(unsigned char c){
 
-	c = GUI_LIMIT( (c) , ' ' , 127 );
+	c = GUI_LIMIT( (signed)(c) , ' ' , 127 );
 	struct __Screen_t*   s     = &Screen;
 	struct __FontChar_t* pChar = (s->pFont + c - 32);
 
@@ -2076,39 +2016,24 @@ void GUI_DispChar(unsigned char c,...){
             s->txtPos.y = 0;
     }
 
-	va_list ap;
-	va_start(ap,c);
-	const int clearScreen      = va_arg(ap,int);
-	const int onlyChangeBuffer = va_arg(ap,int);
-	va_end(ap);
-
-	if(clearScreen==true)
-		__clearFrameBuffer();
-
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-	uint page_start    = ((s->txtPos.y)>>3);
-	uint page_end      = ((s->txtPos.y + pChar->height-1)>>3);
-	uint column_start  = s->txtPos.x;
-	uint column_end    = s->txtPos.x + pChar->width -1;
+	int page_start    = ((s->txtPos.y)>>3);
+	int page_end      = ((s->txtPos.y + pChar->height-1)>>3);
+	int column_start  = s->txtPos.x;
+	int column_end    = s->txtPos.x + pChar->width -1;
 #else
-	uint x_start       = s->txtPos.x;
-	uint y_start       = s->txtPos.y;
-	uint x_end         = s->txtPos.x + pChar->width -1;
-	uint y_end         = s->txtPos.y + pChar->height-1;
+	int xs            = s->txtPos.x;
+	int ys            = s->txtPos.y;
+	int xe            = s->txtPos.x + pChar->width -1;
+	int ye            = s->txtPos.y + pChar->height-1;
 #endif
 	__insertChar(pChar);
-
-	if(onlyChangeBuffer!=true){
-		if(clearScreen==true)
-			GUI_RefreashScreen();
-		else{
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-			GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
-#else
-			GUI_RefreashArea(x_start,y_start,x_end,y_end);			
-#endif
-		}
-	}
+    
+    if( Screen.autoDisplayMode == true ){
+        GUI_RefreashArea(xs, ys, xe, ye);
+    }else{
+        __addAreaNeedRefreash(xs, ys, xe, ye);
+    }
 
 	s->txtPos.x += pChar->width;
 }
@@ -2121,7 +2046,7 @@ void GUI_DispCharAt(unsigned char c,int x,int y,...){
 
 void GUI_DispChars(unsigned char c,int num,...){
 	while(num--){
-		GUI_DispChar(c,false,true);
+		GUI_DispChar(c);
 	}
 }
 
@@ -2181,12 +2106,12 @@ void GUI_DispWord(const char* word,...){
 }
 
 
-//================================================ End of Text Function ================================================//
-//================================================ End of Text Function ================================================//
-//================================================ End of Text Function ================================================//
-//================================================= Dialog Box Function ================================================//
-//================================================= Dialog Box Function ================================================//
-//================================================= Dialog Box Function ================================================//
+//============================================== End of Text Function ================================================//
+//============================================== End of Text Function ================================================//
+//============================================== End of Text Function ================================================//
+//=============================================== Dialog Box Function ================================================//
+//=============================================== Dialog Box Function ================================================//
+//=============================================== Dialog Box Function ================================================//
 
 #if GUI_DIALOG_DISPLAY
  #define __BAR_HEIGHT__    (uint)((10*GUI_Y_WIDTH)>>7) // 10
@@ -3301,9 +3226,9 @@ inline void GUI_DEMO_Rotation_1(void){
 		GUI_ClearFrameBuffer();
 		GUI_DrawCircle (x,y,radius);
 		GUI_SetPenSize (1);
-		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi)       ,y-(radius-2)*sin(phi)       ,false,true);
-		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi+2*pi/3) ,y-(radius-2)*sin(phi+2*pi/3) ,false,true);
-		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi-2*pi/3) ,y-(radius-2)*sin(phi-2*pi/3) ,false,true);
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi)       ,y-(radius-2)*sin(phi)         );
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi+2*pi/3) ,y-(radius-2)*sin(phi+2*pi/3) );
+		GUI_DrawLine   (x,y,x-(radius-2)*cos(phi-2*pi/3) ,y-(radius-2)*sin(phi-2*pi/3) );
 		GUI_SetPenSize (3);
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN) && (GUI_COLOR_TYPE == GUI_1Bit)
 		GUI_RefreashPageArea(0,7,64-30,64+30);

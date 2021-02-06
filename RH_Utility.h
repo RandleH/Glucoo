@@ -42,6 +42,11 @@
 #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
 
 #define __abs(val)                           (((val)>0)?(val):(-(val)))
+#define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
+#define __min(a,b)                           (((a)<(b))?(a):(b))
+#define __max(a,b)                           (((a)>(b))?(a):(b))
+#define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+
  
 #pragma anon_unions
  
@@ -146,9 +151,9 @@ void      __cFFT_Float    (const float complex*    src, float_t* dst_m, float co
 void      __rIDFT_Float   (const float*            src, float_t* dst_m, float complex*    dst_c, size_t dftLen);
 void      __cIDFT_Float   (const float complex*    src, float_t* dst_m, float complex*    dst_c, size_t dftLen);
 
- /*===========================================================================================================================
+/*===========================================================================================================================
  > Image Processing Reference 
- ============================================================================================================================*/
+============================================================================================================================*/
 
 struct __PixelRGB565_t{
     uint16_t B : 5;

@@ -11,6 +11,7 @@
 #include "RH_GUI.h"
 #include <stdio.h>
 
+
 static void Simul_DrawArea(int x1,int y1,int x2,int y2,const Pixel_t* pixData){
     const char* dst_path = "/Users/randle_h/Desktop/screen.bmp";
     static __ImageRGB888_t* pTmpScreenShot = NULL;
@@ -31,24 +32,23 @@ static void Simul_AssertParam(bool expression,const char* WHAT_IS_WRONG){
     printf("%s\n",WHAT_IS_WRONG);
 }
 
+union TT_t{
+    struct{
+        uint8_t B : 8;
+        uint8_t G : 8;
+        uint8_t R : 8;
+    };
+    uint32_t data;
+};
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     GUI_API_DrawArea     = Simul_DrawArea;
     GUI_API_AssertParam  = Simul_AssertParam;
-    
     GUI_Init();
     GUI_ManualDisplayMode();
-    
     GUI_SetPenColor(GUI_RED);
-    GUI_FillCircle(GUI_X_WIDTH>>1, GUI_Y_WIDTH>>1, 50);
-    GUI_RefreashScreen();
-    
-    GUI_SetPenColor(GUI_GREEN);
-    GUI_FillRect(GUI_X_WIDTH/3, GUI_Y_WIDTH/6, GUI_X_WIDTH/2, GUI_Y_WIDTH/4);
-    GUI_RefreashScreen();
-    
-    GUI_SetPenColor(GUI_YELLOW);
-    GUI_DrawLine(10, 10, 50, 100);
+    GUI_FillCircle(200, 400, 40);
     GUI_RefreashScreen();
 //    GUI_SetPenSize(1);
 //    GUI_DrawLine(120, 20, 9, 114);
