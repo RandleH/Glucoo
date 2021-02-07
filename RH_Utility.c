@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <wchar.h>
 #include "RH_Utility.h"
-#ifdef __cplusplus
- extern "C" {
-#endif
+// #ifdef __cplusplus
+//  extern "C" {
+// #endif
      
 /*===========================================================================================================================
  > Standard
@@ -1079,17 +1079,56 @@ void* __memsetDWORD(void* __b,uint32_t value,size_t num){
     return __b;
 }
 
-void* __memset_Area(void* __b,int value,size_t xs,size_t ys,size_t xe,size_t ye){
-    return NULL;
+void* __memset_Area(void* __b,int value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye){
+    if(__b == NULL)
+        return __b;
+    
+    const size_t num_objs = (xe-xs+1)*size;
+    
+    for(size_t y = ys;y <= ye;y++){
+        size_t offset = size*(nmenb_line*y + xs);
+        memset( (__b + offset) , value, num_objs );
+    }
+    
+    return __b;
 }
      
-void* __memcpy_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t xs,size_t ys,size_t xe,size_t ye){
-    return NULL;
+void* __memcpy_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye){
+    if (__dst == NULL){
+        return __dst;
+    }
+
+    const size_t num_objs = (xe-xs+1)*size;
+
+    for(size_t y = ys;y <= ye;y++){
+        size_t offset = size*(nmenb_line*y + xs);
+        memcpy( (__dst + offset) , (__src + offset), num_objs );
+    }
+
+    return __dst;
 }
+
+void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye){
+    __exitReturn( __dst==NULL || __src==NULL , NULL);
+    __exitReturn( xs < 0 || xe < 0 || ys < 0 || ye < 0 , NULL);
+
+    const size_t num_objs = (xe-xs+1)*size;
+    char* p = __dst;
+    for(size_t y = ys;y <= ye;y++){
+        size_t offset = size*(nmenb_line*y + xs);
+
+        memmove( p , (__src+offset), num_objs );
+        p += num_objs;
+    }
+    
+    return __dst;
+}
+
+
      
-#ifdef __cplusplus
- }
-#endif
+// #ifdef __cplusplus
+//  }
+// #endif
      
 #if 0
 int main(int argc, char const *argv[])

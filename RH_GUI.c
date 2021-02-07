@@ -625,7 +625,6 @@ static void __insertLine(int x1 ,int y1 ,int x2 ,int y2 ,Pixel_t penColor,Buffer
 			j++;
 			e -= delta_x;
 		}
-        GUI_RefreashArea(0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1);
 	}
 }
 

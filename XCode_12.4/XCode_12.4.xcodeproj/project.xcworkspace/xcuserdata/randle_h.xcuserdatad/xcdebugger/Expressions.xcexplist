@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "Simul_DrawArea:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "Screen.buffer">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "main:main.c">
          <PersistentStrings>
             <PersistentString

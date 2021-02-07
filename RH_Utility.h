@@ -43,11 +43,27 @@
 
 #define __abs(val)                           (((val)>0)?(val):(-(val)))
 #define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
-#define __min(a,b)                           (((a)<(b))?(a):(b))
-#define __max(a,b)                           (((a)>(b))?(a):(b))
-#define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
 
+#ifndef __min
+#define __min(a,b)                           (((a)<(b))?(a):(b))
+#endif
+
+#ifndef __max
+#define __max(a,b)                           (((a)>(b))?(a):(b))
+#endif
+
+#ifndef __mid 
+#define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+#endif
  
+#ifndef __exit
+#define __exit(express)                      if( express )   return
+#endif
+
+#ifndef __exitReturn
+#define __exitReturn(express,res)            if( express )   return res
+#endif
+
 #pragma anon_unions
  
 /*===========================================================================================================================
@@ -237,7 +253,10 @@ void  __freeHEAP(void* ptr);
 
 void* __memsetWORD  (void* __b, uint16_t value, size_t num);
 void* __memsetDWORD (void* __b, uint32_t value, size_t num);
- 
+
+void* __memset_Area (void*                __b,int                      value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
+void* __memcpy_Area (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
+void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 //struct __AnyNode_t{
 //    void*   object;
 //    int     ID;
