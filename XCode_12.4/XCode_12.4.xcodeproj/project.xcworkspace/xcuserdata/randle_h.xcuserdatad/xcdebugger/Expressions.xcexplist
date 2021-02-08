@@ -35,5 +35,16 @@
       <ContextState
          contextName = "__insertLine:RH_GUI.c">
       </ContextState>
+      <ContextState
+         contextName = "__insertSausageLine:RH_GUI.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "x_offset">
+            </PersistentString>
+            <PersistentString
+               value = "y_offset">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

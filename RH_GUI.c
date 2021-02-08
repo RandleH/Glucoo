@@ -804,72 +804,76 @@ static void __insertFilledQuadrilateral(int x1,int y1,int x2,int y2,int x3,int y
 =====================================*/
 static void __insertSausageLine(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,Pixel_t penColor ,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_insertPointFunc){
 
-	int x_offset = 0;
-    int y_offset = 0; 
+    int x_offset = 0;
+    int y_offset = 0;
     int x11=0,y11=0,x22=0,y22=0,x33=0,y33=0,x44=0,y44=0;
 
     __insertLine(x1,y1,x2,y2,penColor,pBufferInfo,Call_insertPointFunc);
-	if(penSize > 1){
+    if(penSize > 1){
 
-		//                -----------------------------------         ----------------------------------------------
-		//              /       penSize * penSize * K^2              /     0.25 * penSize * penSize * (y1-y2)^2
-		// x_offset =  /    -------------------------------    =    /   -----------------------------------------
-		//           \/             4 * ( K^2 + 1 )               \/        ( K^2 + 1 ) * (x1-x2)^2
-		
-		//                -----------------------------------
-		//              /         penSize * penSize
-		// y_offset =  /    -------------------------------    
-		//           \/             4 * ( K^2 + 1 )
+        //                -----------------------------------
+        //              /       penSize * penSize * K^2
+        // x_offset =  /    -------------------------------
+        //           \/               K^2 + 1
+        
+        //                -----------------------------------
+        //              /         penSize * penSize
+        // y_offset =  /    -------------------------------
+        //           \/               K^2 + 1
 
-		
-		switch(__Dir_Line(x1,y1,x2,y2)){
-			case  1:
-			case  0:
-				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
-		
-				x11 = x1+x_offset; y11 = y1-y_offset;
-				x22 = x1-x_offset; y22 = y1+y_offset;
-				x33 = x2-x_offset; y33 = y2+y_offset;
-				x44 = x2+x_offset; y44 = y2-y_offset;
-				break;
-			case -1:
-				x_offset = (int)lround(sqrt( (0.25*(y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-				y_offset = (int)lround(sqrt( 0.25*penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
-		
-				x11 = x1+x_offset; y11 = y1+y_offset;
-				x22 = x1-x_offset; y22 = y1-y_offset;
-				x33 = x2-x_offset; y33 = y2-y_offset;
-				x44 = x2+x_offset; y44 = y2+y_offset;
-				break;
-			case 65535:
-				x11 = (int)(x1-(penSize>>1)); y11 = y1;
-				x22 = (int)(x1+(penSize>>1)); y22 = y1;
-				x33 = (int)(x2-(penSize>>1)); y33 = y2;
-				x44 = (int)(x2+(penSize>>1)); y44 = y2;
-				break;
-		}
-		(*Call_insertPointFunc)(x11,y11,penColor,pBufferInfo );
-		(*Call_insertPointFunc)(x22,y22,penColor,pBufferInfo );
-		(*Call_insertPointFunc)(x33,y33,penColor,pBufferInfo );
-		(*Call_insertPointFunc)(x44,y44,penColor,pBufferInfo );
+        
+        switch(__Dir_Line(x1,y1,x2,y2)){
+            case  0:
+                x11 = x1; y11 = (int)(y1-(penSize>>1)+(penSize%2==0));
+                x22 = x1; y22 = (int)(y1+(penSize>>1));
+                x33 = x2; y33 = (int)(y2-(penSize>>1)+(penSize%2==0));
+                x44 = x2; y44 = (int)(y2+(penSize>>1));
+                break;
+            case  1:
+                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+        
+                x11 = x1+(x_offset>>1)-(x_offset%2==0); y11 = y1-(y_offset>>1);
+                x22 = x1-(x_offset>>1)                ; y22 = y1+(y_offset>>1)-(y_offset%2==0);
+                x33 = x2-(x_offset>>1)                ; y33 = y2+(y_offset>>1)-(y_offset%2==0);
+                x44 = x2+(x_offset>>1)-(x_offset%2==0); y44 = y2-(y_offset>>1);
+                break;
+            case -1:
+                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+        
+                x11 = x1+(x_offset>>1)                ; y11 = y1+(y_offset>>1)-(y_offset%2==0);
+                x22 = x1-(x_offset>>1)+(x_offset%2==0); y22 = y1-(y_offset>>1)                ;
+                x33 = x2-(x_offset>>1)+(x_offset%2==0); y33 = y2-(y_offset>>1)                ;
+                x44 = x2+(x_offset>>1)                ; y44 = y2+(y_offset>>1)-(y_offset%2==0);
+                break;
+            case 65535:
+                x11 = (int)(x1-(penSize>>1)                ); y11 = y1;
+                x22 = (int)(x1+(penSize>>1)-(penSize%2==0)); y22 = y1;
+                x33 = (int)(x2-(penSize>>1)                ); y33 = y2;
+                x44 = (int)(x2+(penSize>>1)-(penSize%2==0)); y44 = y2;
+                break;
+        }
+        (*Call_insertPointFunc)(x11,y11,penColor,pBufferInfo );
+        (*Call_insertPointFunc)(x22,y22,penColor,pBufferInfo );
+        (*Call_insertPointFunc)(x33,y33,penColor,pBufferInfo );
+        (*Call_insertPointFunc)(x44,y44,penColor,pBufferInfo );
 
-		__insertFilledQuadrilateral(  x11,y11, \
-			                          x22,y22, \
-			                          x33,y33, \
-			                          x44,y44, \
-			                          penColor  , \
-			                          pBufferInfo,Call_insertPointFunc  );
-		// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-	}
+        __insertFilledQuadrilateral(  x11,y11, \
+                                      x22,y22, \
+                                      x33,y33, \
+                                      x44,y44, \
+                                      penColor  , \
+                                      pBufferInfo,Call_insertPointFunc  );
+        // GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+    }
 
-	size_t tmp = penSize>>1;
-	penSize = 1;
-	__insertFilledCircle(x1,y1,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
-	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-	__insertFilledCircle(x2,y2,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
-	// GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-
+    size_t tmp = (penSize>>1)-(penSize%2==0);
+    penSize = 1;
+    __insertFilledCircle(x1,y1,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
+    
+    __insertFilledCircle(x2,y2,(int)tmp, penColor, pBufferInfo,Call_insertPointFunc);
+    
 }
 
 static void __insertTriangle(int x1,int y1,int x2,int y2,int x3,int y3,Pixel_t penColor ,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_insertPointFunc){
@@ -1686,8 +1690,8 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2){
 		}
 	}
 #else
-	 __insertLine(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__insertPixel);
-//	__insertSausageLine(x1,y1,x2,y2,Screen.penSize,Screen.penColor,&BufferInfo,__insertPixel);
+//	 __insertLine(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__insertPixel);
+	__insertSausageLine(x1,y1,x2,y2,Screen.penSize,Screen.penColor,&BufferInfo,__insertPixel);
 #endif
 
 	size_t tmp = Screen.penSize>>1;
@@ -2440,7 +2444,7 @@ static void __insert_animation_SlideSwitch(__AnimationConfigChain* p, uint fp_0_
 
 	eps = (p->config.height<<1)/40;
 	if(eps == 0) eps = 1;
-	__insertFilledCircle(x1+progress,y1,radius-eps,GUI_LIGHTGRAY,&BufferInfo,__insertPixel);
+	__insertFilledCircle(x1+progress,y1,radius-eps,GUI_LIGHTSLATEGRAY,&BufferInfo,__insertPixel);
 
 }
 
@@ -3313,7 +3317,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 	    };
 	    GUI_CreateAnimationSocket(&config);
 
-	    config.themeColor = GUI_LIGHTGRAY;
+	    config.themeColor = GUI_LIGHTSLATEGRAY;
 	    config.ID         = 0x02;
 	    config.height     = 4;
 	    config.width      = 90;
@@ -3321,7 +3325,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
 	    config.y_pos      = 10;
 	    GUI_CreateAnimationSocket(&config);
 
-	    config.themeColor = GUI_LBBLUE;
+	    config.themeColor = GUI_PALETURQUOISE;
 	    config.ID         = 0x03;
 	    config.height     = 5;
 	    config.width      = 70;

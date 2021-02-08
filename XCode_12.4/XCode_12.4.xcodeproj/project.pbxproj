@@ -12,6 +12,7 @@
 		E37C0DF325CD5F5700A3FA08 /* RH_Font.c in Sources */ = {isa = PBXBuildFile; fileRef = E37C0DEC25CD5F5700A3FA08 /* RH_Font.c */; };
 		E37C0DF425CD5F5700A3FA08 /* RH_Dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E37C0DED25CD5F5700A3FA08 /* RH_Dummy.c */; };
 		E37C0DF525CD5F5700A3FA08 /* RH_Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E37C0DEE25CD5F5700A3FA08 /* RH_Utility.c */; };
+		E3898C5A25D145E7006BA1A2 /* API.c in Sources */ = {isa = PBXBuildFile; fileRef = E3898C5925D145E7006BA1A2 /* API.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +39,8 @@
 		E37C0DEF25CD5F5700A3FA08 /* RH_Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Utility.h; path = ../../RH_Utility.h; sourceTree = "<group>"; };
 		E37C0DF025CD5F5700A3FA08 /* RH_GUIConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfig.h; path = ../../RH_GUIConfig.h; sourceTree = "<group>"; };
 		E37C0DF125CD5F5700A3FA08 /* RH_GUIConfigCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfigCheck.h; path = ../../RH_GUIConfigCheck.h; sourceTree = "<group>"; };
+		E3898C5925D145E7006BA1A2 /* API.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = API.c; path = ../../API.c; sourceTree = "<group>"; };
+		E3898C5C25D147DF006BA1A2 /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../API.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 		E37C0DE025CD5F3E00A3FA08 /* XCode_12.4 */ = {
 			isa = PBXGroup;
 			children = (
+				E3898C5C25D147DF006BA1A2 /* API.h */,
+				E3898C5925D145E7006BA1A2 /* API.c */,
 				E37C0DED25CD5F5700A3FA08 /* RH_Dummy.c */,
 				E37C0DEC25CD5F5700A3FA08 /* RH_Font.c */,
 				E37C0DEB25CD5F5700A3FA08 /* RH_Font.h */,
@@ -140,6 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3898C5A25D145E7006BA1A2 /* API.c in Sources */,
 				E37C0DF525CD5F5700A3FA08 /* RH_Utility.c in Sources */,
 				E37C0DF425CD5F5700A3FA08 /* RH_Dummy.c in Sources */,
 				E37C0DF325CD5F5700A3FA08 /* RH_Font.c in Sources */,
