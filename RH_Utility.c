@@ -716,19 +716,19 @@ __ImageRGB888_t* __Trans_Mirror_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
     return NULL;
 }
 
-__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,unsigned int _0_65535_){
+__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage){
     static __Kernel_t gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
         .sum     = 0,
     };
-    static unsigned int old_value = 0;
+    static uint16_t radSize_old      = 0;
     
-    if( old_value != _0_65535_ ){
+    if( radSize_old != radSize ){
         if( gus_kernel.pBuffer != NULL ){
             __free( gus_kernel.pBuffer );
         }
-        double sigma  = __map(_0_65535_, 0, 65535, 0.0, 10.0); // convert a normal value to sigma
+        double sigma  = __map(radSize, 0, 65535, 0.0, 10.0); // convert a normal value to sigma
         size_t order  = lround(sigma*6); // 6 times sigma includes 99% area.
         gus_kernel.pBuffer = (uint16_t*)__malloc( order*order*sizeof(uint16_t) );
         
@@ -738,15 +738,16 @@ __ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
             order = 31;
         __gussianKernel(sigma,order,&gus_kernel);
     }
+
+    __ImageRGB888_t* pImg = __Conv2D_ImgRGB888(src, dst, &gus_kernel,brPersentage);
     
-    __ImageRGB888_t* pImg = __Conv2D_ImgRGB888(src, dst, &gus_kernel);
-    
-    old_value = _0_65535_;
+    radSize_old      = radSize;
+
     return pImg;
 
 }
 
-__ImageRGB888_t* __Blur_Average_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,unsigned int _0_65535_){
+__ImageRGB888_t* __Blur_Average_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage){
     return NULL;
 }
 
@@ -796,7 +797,7 @@ __ImageRGB888_t* __Interpo_NstNeighbor_ImgRGB888(const __ImageRGB888_t* src,__Im
     return dst;
 }
 
-__ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k){
+__ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t brPersentage){
     if( src == NULL || src->pBuffer == NULL || k == NULL){
         return dst;
     }
@@ -849,9 +850,9 @@ __ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* 
             }
             size_t offset = (j*src->width)+i;
             if(offset < dst->width*dst->height){
-                (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R/div);
-                (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G/div);
-                (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B/div);
+                (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R*brPersentage/(div*100));
+                (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G*brPersentage/(div*100));
+                (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B*brPersentage/(div*100));
             }
         }
     }
@@ -859,7 +860,7 @@ __ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* 
     return dst;
 }
 
-__ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k){
+__ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t brPersentage){
     if( src == NULL || src->pBuffer == NULL || k == NULL ){
         return dst;
     }
@@ -912,9 +913,9 @@ __ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* 
             }
             size_t offset = (j*src->width)+i;
             if(offset < dst->width*dst->height){
-                (dst->pBuffer+offset)->R = (div==0)?((1<<8)-1):(tmp_R/div);
-                (dst->pBuffer+offset)->G = (div==0)?((1<<8)-1):(tmp_G/div);
-                (dst->pBuffer+offset)->B = (div==0)?((1<<8)-1):(tmp_B/div);
+                (dst->pBuffer+offset)->R = (div==0)?((1<<8)-1):(tmp_R*brPersentage/(div*100));
+                (dst->pBuffer+offset)->G = (div==0)?((1<<8)-1):(tmp_G*brPersentage/(div*100));
+                (dst->pBuffer+offset)->B = (div==0)?((1<<8)-1):(tmp_B*brPersentage/(div*100));
             }
         }
     }

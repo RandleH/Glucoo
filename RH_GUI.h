@@ -106,6 +106,8 @@ void    GUI_DrawCircle        (int  x ,int   y ,int   r  );
 void    GUI_DrawEllipse       (int  x ,int   y ,int   rx ,int  ry,...);
 void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_end,int  y_level,...);
 void    GUI_DrawTriangle      (int  x1,int   y1,int    x2,int       y2,int     x3,int  y3);
+ 
+void    GUI_BlurRect          (int  x1,int  y1,int  x2,int  y2,uint16_t radSize, uint16_t brPersentage);
 
 void    GUI_DispChar          (unsigned char c);
 void    GUI_DispCharAt        (unsigned char c,int x,int y,...);
