@@ -16,7 +16,6 @@
 #include "RH_GUI.h"
 
 
-
 #if 1
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -76,29 +75,8 @@ int main(int argc, const char * argv[]) {
     blurSize = 60000 ; brPersentage = 60;
     GUI_BlurRect(213,121,451,324,blurSize,brPersentage);
     GUI_RefreashScreen();
-    
-//    __UNION_PixelRGB888_t img[4][4] = {
-//        {{.R = 4},{.G = 3},{.B = 9},{.data = 0x0233}},
-//        {{.R = 4},{.G = 3},{.B = 9},{.data = 0x0233}},
-//        {{.R = 4},{.G = 3},{.B = 9},{.data = 0x0233}},
-//        {{.R = 4},{.G = 3},{.B = 9},{.data = 0x0233}},
-//    };
-//
-//    uint32_t a[4][4] = {0};
-//
-//
-//
-////    memcpy(a, img, 16*sizeof(__UNION_PixelRGB888_t));
-//    __memgrab_Area(a, img, sizeof(__UNION_PixelRGB888_t), 4, 0, 0, 3, 3);
-//    for(int i=0;i<4;i++){
-//        for(int j=0;j<4;j++){
-//            printf("%d ",a[i][j]);
-//        }
-//        printf("\n");
-//    }
-//
  
-    printf("Hello, World! 0x%x\n",GUI_MAKE_COLOR(255,240,245));
+    
     return 0;
 }
 

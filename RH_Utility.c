@@ -5,11 +5,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <wchar.h>
 #include "RH_Utility.h"
-// #ifdef __cplusplus
-//  extern "C" {
-// #endif
+ #ifdef __cplusplus
+  extern "C" {
+ #endif
      
 /*===========================================================================================================================
  > Standard
@@ -74,6 +75,10 @@ inline size_t __sizeof_HEXs(uint32_t x){
 long __sign(long x){
     return (x>=0)?(1):(-1);
 }
+      
+long __step(long x){
+    return (long)( x >= 0 );
+}
 
 long __sqrt(long x){
     if(x <= 0) return 0;
@@ -92,6 +97,10 @@ long __sqrt(long x){
     if( ((res+1)*(res+1) - x) > (x - res*res) )
         return res;
     return (res+1);
+}
+      
+double __sigmold(double x){
+    return (double)(1.0/(1+exp(-x)));
 }
 
 double __gussian(long x,long __miu,double __sigma){
@@ -1126,10 +1135,69 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
 }
 
 
+
+__AnyNode_t* __createNode(void){
+    return (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
+}
+      
+__AnyNode_t* __createHeadNode(void){
+    __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
+    pNode->pNext = NULL;
+    pNode->pPrev = NULL;
+    return pNode;
+}
+
+void __addNode(const __AnyNode_t* pHeadNode,__AnyNode_t* pNode){
+
+}
+
+void __deleteNode(__AnyNode_t* pNode){
+
+}
+
+void __deleteAllNodes(const __AnyNode_t* pHeadNode){
+
+}
+      
+      
+static __AnyNode_t* pMessageHeadNode                             = NULL;
+static char         messageTmpBuffer[__MESSAGE_PER_MAXSIZE_BYTE] = {'\0'};
+      
+void __logMessage(const char* format,...){
+    va_list arg;
+    va_start(arg, format);
+    
+    size_t len = vsnprintf( messageTmpBuffer, __MESSAGE_PER_MAXSIZE_BYTE, format, arg );
+    char* message = (char*)__malloc(len);
+    strncpy(message,messageTmpBuffer,len);
+    
+    if( pMessageHeadNode == NULL ){
+        pMessageHeadNode          = __createHeadNode();
+        pMessageHeadNode->object  = (void*)(message);
+    }else{
+        __AnyNode_t* pMessageNode = __createNode();
+        pMessageNode->object      = (void*)(message);
+        __addNode(pMessageHeadNode, pMessageNode);
+    }
+    
+    va_end(arg);
+}
      
-// #ifdef __cplusplus
-//  }
-// #endif
+void __deleteMessage(void){
+    
+}
+
+void __showMessage( int(*PRINTF_METHOD)(const char* ,...)  ){
+    __exit( pMessageHeadNode == NULL );
+    
+}
+      
+      
+      
+      
+#ifdef __cplusplus
+}
+#endif
      
 #if 0
 int main(int argc, char const *argv[])

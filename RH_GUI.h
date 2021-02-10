@@ -12,26 +12,21 @@
 
 #ifndef RH_UTILITY_H
   #define GUI_LIMIT(a, lowerbound, upperbound)  (((double)(a) >= (upperbound)) ? upperbound : (((double)(a) <= (lowerbound)) ? (lowerbound) : (a) ))
-  #define GUI_MIN(a,b)     (((a)<(b))?(a):(b))
-  #define GUI_MAX(a,b)     (((a)>(b))?(a):(b))
-  #define GUI_CENTER(a,b)  (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+  #define GUI_MIN(a,b)                          (((a)<(b))?(a):(b))
+  #define GUI_MAX(a,b)                          (((a)>(b))?(a):(b))
+  #define GUI_CENTER(a,b)                       (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
 #else
-  #define GUI_LIMIT        __limit
-  #define GUI_MIN          __min
-  #define GUI_MAX          __max
-  #define GUI_CENTER       __mid
+  #define GUI_LIMIT                             __limit
+  #define GUI_MIN                               __min
+  #define GUI_MAX                               __max
+  #define GUI_CENTER                            __mid
 #endif
 
-#define GUI_FONT_Standard_Small        0
-#define GUI_FONT_Standard_Middle       1
-
-#define GUI_FONT_Bradley_Large         2
-#define GUI_FONT_CourierNew_Middle     3
-#define GUI_FONT_CourierNew_Large      4
-
-#define GUI_ALIGN_LEFT      (0)
-#define GUI_ALIGN_CENTER    (1)
-#define GUI_ALIGN_RIGHT     (2)
+#define GUI_FONT_Standard_Small        (0)
+#define GUI_FONT_Standard_Middle       (1)
+#define GUI_FONT_Bradley_Large         (2)
+#define GUI_FONT_CourierNew_Middle     (3)
+#define GUI_FONT_CourierNew_Large      (4)
  
  
 

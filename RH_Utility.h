@@ -63,6 +63,11 @@
 #ifndef __exitReturn
 #define __exitReturn(express,res)            if( express )   return res
 #endif
+ 
+typedef enum{
+    kStatus_Success ,
+    kStatus_Error   ,
+}B_Status_t;
 
 #pragma anon_unions
  
@@ -83,10 +88,12 @@ size_t      __sizeof_HEXs (uint32_t  x);
 /*===========================================================================================================================
  > Algebra Reference 
 ============================================================================================================================*/
-long    __sign       (long x);
-long    __sqrt       (long x);
-double  __gussian    (long x,long __miu  ,double __sigma);
-double  __gussian2D  (long x,long y      ,double __sigma);
+long    __sign       (long   x);
+long    __step       (long   x);
+long    __sqrt       (long   x);
+double  __sigmold    (double x);
+double  __gussian    (long   x,long __miu  ,double __sigma);
+double  __gussian2D  (long   x,long y      ,double __sigma);
 
 struct __Kernel_t{
     uint16_t*   pBuffer; //  <- This buffer array should only be created by "__malloc".
@@ -246,7 +253,34 @@ __ImageRGB888_t* __Conv2D_ImgRGB888              (const __ImageRGB888_t* src,__I
 ======================================================================*/
 #define __malloc(x)                    malloc(x)//__mallocHEAP(x)
 #define __free(x)                      free(x)//__freeHEAP(x)
-#define __VIRTUAL_HEAP_SIZE_BYTE       (1<<20)
+
+#define __MEM_BYTE( adr )              ( (*( (uint8_t* )(adr) )) )
+#define __MEM_WORD( adr )              ( (*( (uint16_t*)(adr) )) )
+ 
+#define __PTR_BYTE( var )              ( (uint8_t* ) (void* ) (&(var)) )
+#define __PTR_WORD( var )              ( (uint8_t* ) (void* ) (&(var)) )
+
+#define __WORD_HI( var )               ( (uint8_t)( (uint16_t)(var) >> 8   ) )
+#define __WORD_LO( var )               ( (uint8_t)( (uint16_t)(var) & 0xff ) )
+
+#define __RND4 ( x )                   ( ( ((x)+3)  >>2 )<<2 )
+#define __RND8 ( x )                   ( ( ((x)+7)  >>3 )<<3 )
+#define __RND16( x )                   ( ( ((x)+15) >>4 )<<4 )
+
+#define __UPCASE( c )                  ( ((c) >= 'a' && (c) <= 'z') ? ((c)-0x20) : (c) )
+
+#define __INC_SAT( val )               ( ( ((val)+1) > (val) ) ? ((val)+1) : (val) )
+
+#define __IN_BYTE  ( port )            ( *((volatile uint8_t*  )(port)) )
+#define __IN_WORD  ( port )            ( *((volatile uint16_t* )(port)) )
+#define __IN_DWORD ( port )            ( *((volatile uint32_t* )(port)) )
+
+#define __OUT_BYTE  ( port, val )      ( *((volatile uint8_t*  )(port)) = ((uint8_t )(val)) )
+#define __OUT_WORD  ( port, val )      ( *((volatile uint16_t* )(port)) = ((uint16_t)(val)) )
+#define __OUT_DWORD ( port, val )      ( *((volatile uint32_t* )(port)) = ((uint32_t)(val)) )
+
+#define __VIRTUAL_HEAP_SIZE_BYTE        (0)
+#define __MESSAGE_PER_MAXSIZE_BYTE         (255)
  
 void* __mallocHEAP(size_t size);
 void  __freeHEAP(void* ptr);
@@ -257,34 +291,22 @@ void* __memsetDWORD (void* __b, uint32_t value, size_t num);
 void* __memset_Area (void*                __b,int                      value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 void* __memcpy_Area (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
-//struct __AnyNode_t{
-//    void*   object;
-//    int     ID;
-//    struct __AnyNode_t* pNext;
-//    struct __AnyNode_t* pPrev;
-//};
-//typedef struct __AnyNode_t __AnyNode_t;
-//
-//__AnyNode_t* __createHeadNode(const __AnyNode_t* pHeadNode){
-//    return NULL;
-//}
-//
-//void __addNode(const __AnyNode_t* pHeadNode,__AnyNode_t* pNode){
-//
-//}
-//
-//void __deleteNode(__AnyNode_t* pNode){
-//
-//}
-//
-//void __deleteAllNodes(const __AnyNode_t* pHeadNode){
-//
-//}
- 
- 
+
+struct __AnyNode_t{
+    void*   object;
+    int     ID;
+    struct __AnyNode_t* pNext;
+    struct __AnyNode_t* pPrev;
+};
+typedef struct __AnyNode_t __AnyNode_t;
+
+
+void __logMessage     (const char* format,...);
+void __deleteMessage  (void);
+void __showMessage    (int(*PRINTF_METHOD)(const char* ,...));
  
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif
