@@ -25,57 +25,36 @@ int main(int argc, const char * argv[]) {
 
     GUI_ManualDisplayMode();
 
-    GUI_SetPenColor(GUI_RED);
-    GUI_FillCircle(GUI_X_WIDTH>>1, GUI_Y_WIDTH>>1, 50);
-    GUI_RefreashScreen();
-
-    GUI_SetPenColor(GUI_GREEN);
-    GUI_FillRect(GUI_X_WIDTH/3, GUI_Y_WIDTH/6, GUI_X_WIDTH/2, GUI_Y_WIDTH/4);
-    GUI_RefreashScreen();
-
-    GUI_SetPenColor(GUI_YELLOW);
-    GUI_SetPenSize(10);
+    __AnyNode_t* pHead = __createHeadNode(); //pHead->ID = 0;
+    __AnyNode_t* p1    = __createNode();     //p1->ID    = 1;
+    __AnyNode_t* p2    = __createNode();     //p2->ID    = 2;
+    __AnyNode_t* p3    = __createNode();     //p3->ID    = 3;
+    __AnyNode_t* p4    = __createNode();
+    __AnyNode_t* p5    = __createNode();
+    __AnyNode_t* p6    = __createNode();
+    __AnyNode_t* p7    = __createNode();
     
-    GUI_FillAll(GUI_DARKGRAY);
+    __addNode(pHead, p1);
+    __addNode(pHead, p2);
+    __addNode(pHead, p3);
+    __addNode(pHead, p4);
+    __addNode(pHead, p5);
+    __addNode(pHead, p6);
 
-    int ox = 30,oy = 30;
-    GUI_DrawLine(10+ox, 10+oy, 50+ox, 50+oy);
-    GUI_DrawLine(50+ox, 10+oy, 10+ox, 50+oy);
-    GUI_DrawLine(30+ox, 10+oy, 30+ox, 50+oy);
-    GUI_DrawLine(10+ox, 30+oy, 50+ox, 30+oy);
-
-    GUI_SetPenSize(3);GUI_SetPenColor(GUI_PINK);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(4);GUI_SetPenColor(GUI_SILVER);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(5);GUI_SetPenColor(GUI_LAVENDERBLUSH);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(6);GUI_SetPenColor(GUI_PALEVIOLATRED);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(7);GUI_SetPenColor(GUI_HOTPINK);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(8);GUI_SetPenColor(GUI_MEDIUMVIOLATRED);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(9);GUI_SetPenColor(GUI_ORCHID);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(10);GUI_SetPenColor(GUI_THISTLE);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(11);GUI_SetPenColor(GUI_PLUM);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(12);GUI_SetPenColor(GUI_OLIVE);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(13);GUI_SetPenColor(GUI_DARKVOILET);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(14);GUI_SetPenColor(GUI_PURPLE);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    GUI_SetPenSize(15);GUI_SetPenColor(GUI_PALETURQUOISE);
-    GUI_DrawLine(rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH, rand()%GUI_X_WIDTH, rand()%GUI_Y_WIDTH);
-    uint16_t blurSize = 60000 , brPersentage = 90;
-    GUI_BlurRect(600,150,750,270,blurSize,brPersentage);
-    blurSize = 60000 ; brPersentage = 60;
-    GUI_BlurRect(213,121,451,324,blurSize,brPersentage);
-    GUI_RefreashScreen();
- 
+    __deleteNode(pHead, p4);
+    __deleteNode(pHead, p2);
+    __deleteNode(pHead, p6);
+    
+    __addNode(pHead, p3);
+    __addNode(pHead, p3);
+    __addNode(pHead, p7);
+    __AnyNode_t* pTmp = pHead;
+    
+    // Search the entire chain.
+    do{
+        printf("ID = %d\n",pTmp->ID);
+        pTmp = pTmp->pNext;
+    }while(pTmp != pHead);
     
     return 0;
 }

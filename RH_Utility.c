@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <wchar.h>
+#include <setjmp.h>
+#include <signal.h>
 #include "RH_Utility.h"
  #ifdef __cplusplus
   extern "C" {
@@ -1134,7 +1136,21 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
     return __dst;
 }
 
-
+static bool __checkNode(const __AnyNode_t* pHeadNode,const __AnyNode_t* pNewNode){
+    __exitReturn(pHeadNode == NULL || pNewNode == NULL, false);
+    
+    const __AnyNode_t* pTmp = pHeadNode;
+    bool         res  = true;
+    // Search the entire chain.
+    do{
+        if(pTmp == pNewNode)
+            res = false;
+        
+        pTmp = pTmp->pNext;
+    }while(pTmp != pHeadNode);
+    
+    return res;
+}
 
 __AnyNode_t* __createNode(void){
     return (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
@@ -1142,21 +1158,79 @@ __AnyNode_t* __createNode(void){
       
 __AnyNode_t* __createHeadNode(void){
     __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-    pNode->pNext = NULL;
-    pNode->pPrev = NULL;
+    __SET_STRUCT_MB(__AnyNode_t,int,pNode,ID,0);
+    pNode->pNext = pNode;
+    pNode->pPrev = pNode;
     return pNode;
 }
 
-void __addNode(const __AnyNode_t* pHeadNode,__AnyNode_t* pNode){
+void __addNode(__AnyNode_t* pHeadNode,__AnyNode_t* pNode){
+    __exit(pHeadNode == NULL || pNode == NULL);
+    __exit(false == __checkNode(pHeadNode,pNode));
+    
+    static int ID_Num = 0;
+    
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__AnyNode_t,         int,pNode,   ID,          ID_Num); // Same Effect: pNode->ID    = ID_Num;           // But to cope with <const>.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev,pHeadNode->pPrev); // Same Effect: pNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext,       pHeadNode); // Same Effect: pNode->pNext = pHeadNode;        // But to cope with <const>.
 
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNode); // Same Effect: pHeadNode->pPrev->pNext = pNode; // But to cope with <const>.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNode); // Same Effect: pHeadNode->pPrev        = pNode; // But to cope with <const>.
+    
+    
+    ID_Num++;
 }
 
-void __deleteNode(__AnyNode_t* pNode){
-
+void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
+    __exit(pHeadNode == NULL || pNode == NULL);
+    
+    if(pNode == pHeadNode)
+        __deleteAllNodes(pHeadNode);
+    else{
+        __AnyNode_t* pTmp = pHeadNode;
+        
+        // Check whether <pNode> belongs to the chain with the head of <pHeadNode>.
+        while(pTmp->pNext != pNode){
+            pTmp = pTmp->pNext;
+            if(pTmp == pHeadNode){
+                return; // The Node that given by is not found. There is nothing to delete.
+            }
+        }
+        pTmp = pTmp->pNext;
+        
+        // Connect the neighbour and isolate the <pTmp> which is <pNode>.
+        pTmp->pPrev->pNext = pTmp->pNext;
+        pTmp->pNext->pPrev = pTmp->pPrev;
+        pTmp->pNext = NULL;
+        pTmp->pPrev = NULL;
+        __free(pTmp); // You should release anything in this node before deleting it.
+        pTmp = NULL;
+    }
+    
 }
 
-void __deleteAllNodes(const __AnyNode_t* pHeadNode){
-
+void __deleteAllNodes(__AnyNode_t* pHeadNode){
+    __exit(pHeadNode == NULL);
+    __AnyNode_t* pTmpCur  = pHeadNode->pNext;
+    __AnyNode_t* pTmpNxt  = pTmpCur->pNext;
+    while(pTmpCur != pHeadNode){
+        pTmpCur->pNext  = NULL;
+        pTmpCur->pPrev  = NULL;
+        pTmpCur->object = NULL;
+        __free(pTmpCur);
+        pTmpCur = pTmpNxt;
+        pTmpNxt = pTmpNxt->pNext;
+    }
+    
+    pHeadNode->pNext  = NULL;
+    pHeadNode->pPrev  = NULL;
+    pHeadNode->object = NULL;
+    __free(pHeadNode);
+    
+    pHeadNode = NULL;
+    
 }
       
       

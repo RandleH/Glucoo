@@ -251,7 +251,7 @@ __ImageRGB888_t* __Conv2D_ImgRGB888              (const __ImageRGB888_t* src,__I
 /*=====================================================================
  > Memory Programming Reference 
 ======================================================================*/
-#define __malloc(x)                    malloc(x)//__mallocHEAP(x)
+#define __malloc(x)                    malloc(x)  //__mallocHEAP(x)
 #define __free(x)                      free(x)//__freeHEAP(x)
 
 #define __MEM_BYTE( adr )              ( (*( (uint8_t* )(adr) )) )
@@ -270,6 +270,8 @@ __ImageRGB888_t* __Conv2D_ImgRGB888              (const __ImageRGB888_t* src,__I
 #define __UPCASE( c )                  ( ((c) >= 'a' && (c) <= 'z') ? ((c)-0x20) : (c) )
 
 #define __INC_SAT( val )               ( ( ((val)+1) > (val) ) ? ((val)+1) : (val) )
+ 
+#define __SET_STRUCT_MB( s_type, var_type, s_ptr, s_mem, val )   *( (var_type*) ( ((unsigned char*)(s_ptr))+(offsetof(s_type, s_mem)) ) ) = (var_type)(val)
 
 #define __IN_BYTE  ( port )            ( *((volatile uint8_t*  )(port)) )
 #define __IN_WORD  ( port )            ( *((volatile uint16_t* )(port)) )
@@ -294,13 +296,19 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
 
 struct __AnyNode_t{
     void*   object;
-    int     ID;
-    struct __AnyNode_t* pNext;
+    const int           ID;
+    struct __AnyNode_t* pNext; 
     struct __AnyNode_t* pPrev;
 };
 typedef struct __AnyNode_t __AnyNode_t;
 
-
+__AnyNode_t* __createNode       (void);
+__AnyNode_t* __createHeadNode   (void);
+void         __addNode          (__AnyNode_t* pHeadNode ,__AnyNode_t* pNode);
+void         __deleteNode       (__AnyNode_t* pHeadNode ,__AnyNode_t* pNode);
+void         __deleteAllNodes   (__AnyNode_t* pHeadNode);
+ 
+ 
 void __logMessage     (const char* format,...);
 void __deleteMessage  (void);
 void __showMessage    (int(*PRINTF_METHOD)(const char* ,...));
