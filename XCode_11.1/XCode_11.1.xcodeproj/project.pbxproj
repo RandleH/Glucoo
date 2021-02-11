@@ -12,6 +12,7 @@
 		E32996EC25CE76BE00A44224 /* RH_GUI.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E425CE76BD00A44224 /* RH_GUI.c */; };
 		E32996ED25CE76BE00A44224 /* RH_Font.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E625CE76BD00A44224 /* RH_Font.c */; };
 		E32996EE25CE76BE00A44224 /* RH_Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E925CE76BD00A44224 /* RH_Utility.c */; };
+		E330AC6625D566A200AD2292 /* API.c in Sources */ = {isa = PBXBuildFile; fileRef = E330AC6525D566A200AD2292 /* API.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +39,8 @@
 		E32996E825CE76BD00A44224 /* RH_Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Font.h; path = ../../RH_Font.h; sourceTree = "<group>"; };
 		E32996E925CE76BD00A44224 /* RH_Utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Utility.c; path = ../../RH_Utility.c; sourceTree = "<group>"; };
 		E32996EA25CE76BE00A44224 /* RH_Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Utility.h; path = ../../RH_Utility.h; sourceTree = "<group>"; };
+		E330AC6425D566A200AD2292 /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../API.h; sourceTree = "<group>"; };
+		E330AC6525D566A200AD2292 /* API.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = API.c; path = ../../API.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 		E32996DA25CE767900A44224 /* XCode_11.1 */ = {
 			isa = PBXGroup;
 			children = (
+				E330AC6525D566A200AD2292 /* API.c */,
+				E330AC6425D566A200AD2292 /* API.h */,
 				E32996E325CE76BD00A44224 /* RH_Dummy.c */,
 				E32996E625CE76BD00A44224 /* RH_Font.c */,
 				E32996E825CE76BD00A44224 /* RH_Font.h */,
@@ -141,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E330AC6625D566A200AD2292 /* API.c in Sources */,
 				E32996EE25CE76BE00A44224 /* RH_Utility.c in Sources */,
 				E32996EC25CE76BE00A44224 /* RH_GUI.c in Sources */,
 				E32996EB25CE76BE00A44224 /* RH_Dummy.c in Sources */,

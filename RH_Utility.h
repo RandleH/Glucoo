@@ -297,8 +297,8 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
 struct __AnyNode_t{
     void*   object;
     const int           ID;
-    struct __AnyNode_t* pNext; 
-    struct __AnyNode_t* pPrev;
+    const struct __AnyNode_t* pNext;
+    const struct __AnyNode_t* pPrev;
 };
 typedef struct __AnyNode_t __AnyNode_t;
 

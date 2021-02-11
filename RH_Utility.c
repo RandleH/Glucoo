@@ -1158,9 +1158,13 @@ __AnyNode_t* __createNode(void){
       
 __AnyNode_t* __createHeadNode(void){
     __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-    __SET_STRUCT_MB(__AnyNode_t,int,pNode,ID,0);
-    pNode->pNext = pNode;
-    pNode->pPrev = pNode;
+    __SET_STRUCT_MB(__AnyNode_t,int         ,pNode,ID   ,0    );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext,pNode);
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev,pNode);
+
+    // Same Effect: pNode->ID    = 0;      // But to cope with <const>.
+    // Same Effect: pNode->pNext = pNode;  // But to cope with <const>.
+    // Same Effect: pNode->pPrev = pNode;  // But to cope with <const>.
     return pNode;
 }
 
@@ -1168,19 +1172,25 @@ void __addNode(__AnyNode_t* pHeadNode,__AnyNode_t* pNode){
     __exit(pHeadNode == NULL || pNode == NULL);
     __exit(false == __checkNode(pHeadNode,pNode));
     
-    static int ID_Num = 0;
+    static int ID_Num = 1;
     
     // Things to do for the new Node.
-    __SET_STRUCT_MB(__AnyNode_t,         int,pNode,   ID,          ID_Num); // Same Effect: pNode->ID    = ID_Num;           // But to cope with <const>.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev,pHeadNode->pPrev); // Same Effect: pNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext,       pHeadNode); // Same Effect: pNode->pNext = pHeadNode;        // But to cope with <const>.
+    __SET_STRUCT_MB(__AnyNode_t,int         ,pNode           ,ID   ,ID_Num          );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode           ,pPrev,pHeadNode->pPrev);
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode           ,pNext,pHeadNode       );
 
     // Things to do for the neighbour.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNode); // Same Effect: pHeadNode->pPrev->pNext = pNode; // But to cope with <const>.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNode); // Same Effect: pHeadNode->pPrev        = pNode; // But to cope with <const>.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNode           );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNode           );
     
+    // Same Effect: pNode->ID    = ID_Num;           // But to cope with <const>.
+    // Same Effect: pNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
+    // Same Effect: pNode->pNext = pHeadNode;        // But to cope with <const>.
     
-    ID_Num++;
+    // Same Effect: pHeadNode->pPrev->pNext = pNode; // But to cope with <const>.
+    // Same Effect: pHeadNode->pPrev        = pNode; // But to cope with <const>.
+    
+    ID_Num++; // This is a bug. ID_Num will turn back to 0.
 }
 
 void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
@@ -1189,11 +1199,12 @@ void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
     if(pNode == pHeadNode)
         __deleteAllNodes(pHeadNode);
     else{
-        __AnyNode_t* pTmp = pHeadNode;
+        const __AnyNode_t* pTmp = pHeadNode;
         
         // Check whether <pNode> belongs to the chain with the head of <pHeadNode>.
         while(pTmp->pNext != pNode){
             pTmp = pTmp->pNext;
+            
             if(pTmp == pHeadNode){
                 return; // The Node that given by is not found. There is nothing to delete.
             }
@@ -1201,11 +1212,17 @@ void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
         pTmp = pTmp->pNext;
         
         // Connect the neighbour and isolate the <pTmp> which is <pNode>.
-        pTmp->pPrev->pNext = pTmp->pNext;
-        pTmp->pNext->pPrev = pTmp->pPrev;
-        pTmp->pNext = NULL;
-        pTmp->pPrev = NULL;
-        __free(pTmp); // You should release anything in this node before deleting it.
+        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp->pPrev, pNext, pTmp->pNext);
+        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp->pNext, pPrev, pTmp->pPrev);
+        // Same Effect: pTmp->pPrev->pNext = pTmp->pNext; // But to cope with <const>.
+        // Same Effect: pTmp->pNext->pPrev = pTmp->pPrev; // But to cope with <const>.
+        
+        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp, pNext, NULL);
+        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp, pPrev, NULL);
+        // Same Effect: pTmp->pNext = NULL; // But to cope with <const>.
+        // Same Effect: pTmp->pPrev = NULL; // But to cope with <const>.
+
+        __free((__AnyNode_t*)pTmp); // You should release anything in this node before deleting it.
         pTmp = NULL;
     }
     
@@ -1213,23 +1230,21 @@ void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
 
 void __deleteAllNodes(__AnyNode_t* pHeadNode){
     __exit(pHeadNode == NULL);
-    __AnyNode_t* pTmpCur  = pHeadNode->pNext;
-    __AnyNode_t* pTmpNxt  = pTmpCur->pNext;
+    __AnyNode_t* pTmpCur  = (__AnyNode_t*)(pHeadNode->pNext);
+    __AnyNode_t* pTmpNxt  = (__AnyNode_t*)(pTmpCur->pNext);
     while(pTmpCur != pHeadNode){
         pTmpCur->pNext  = NULL;
         pTmpCur->pPrev  = NULL;
         pTmpCur->object = NULL;
         __free(pTmpCur);
         pTmpCur = pTmpNxt;
-        pTmpNxt = pTmpNxt->pNext;
+        pTmpNxt = (__AnyNode_t*)(pTmpNxt->pNext);
     }
     
     pHeadNode->pNext  = NULL;
     pHeadNode->pPrev  = NULL;
     pHeadNode->object = NULL;
     __free(pHeadNode);
-    
-    pHeadNode = NULL;
     
 }
       
