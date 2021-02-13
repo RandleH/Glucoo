@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <math.h>
 #include <complex.h>
 
@@ -11,6 +10,7 @@
  extern "C" {
 #endif
 
+#define SHOW_BUG 0
 
 /*===========================================================================================================================
 > Common
@@ -84,6 +84,10 @@ size_t      __sizeof_BITs (uint32_t  x);
 size_t      __sizeof_OCTs (uint32_t  x);
 size_t      __sizeof_DECs (uint32_t  x);
 size_t      __sizeof_HEXs (uint32_t  x);
+ 
+uint32_t    __Bin2Gray    (uint32_t  x);
+uint32_t    __Gray2Bin    (uint32_t  x); //
+
 
 /*===========================================================================================================================
  > Algebra Reference 
@@ -102,6 +106,9 @@ struct __Kernel_t{
 };
 typedef struct __Kernel_t       __Kernel_t;
 __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel);
+ 
+long    __step_mul   (long   x);
+
  
 /*=====================================================================
  > Quantity Reference 
@@ -239,13 +246,13 @@ __ImageRGB888_t* __Filter_OTUS_ImgRGB888         (const __ImageRGB888_t* src,__I
  
 __ImageRGB888_t* __Trans_Mirror_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV);
 
-__ImageRGB888_t* __Blur_Gussian_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage);
-__ImageRGB888_t* __Blur_Average_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage);
+__ImageRGB888_t* __Blur_Gussian_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100);
+__ImageRGB888_t* __Blur_Average_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100);
 
 __ImageRGB888_t* __Interpo_NstNeighbor_ImgRGB888 (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width); //
 
-__ImageRGB565_t* __Conv2D_ImgRGB565              (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t brPersentage);
-__ImageRGB888_t* __Conv2D_ImgRGB888              (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t brPersentage);
+__ImageRGB565_t* __Conv2D_ImgRGB565              (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100);
+__ImageRGB888_t* __Conv2D_ImgRGB888              (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100);
 
 
 /*=====================================================================

@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B27944A4-7A31-4418-B850-175C8C2FDD83"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../RH_GUI.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1409"
-            endingLineNumber = "1409"
-            landmarkName = "GUI_DrawRect(x1, y1, x2, y2)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "6B9524CE-A0E5-4F51-9BA2-6CFF7A9922C8"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -30,41 +14,41 @@
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1778"
-            endingLineNumber = "1778"
-            landmarkName = "GUI_FillTriangle(x1, y1, x2, y2, x3, y3)"
+            startingLineNumber = "1820"
+            endingLineNumber = "1820"
+            landmarkName = "GUI_FillEllipse(x, y, rx, ry)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2A8DBA7D-F312-41EE-9C02-5ECA13D4788B"
+            uuid = "EDF6CC36-EFA7-43AF-9ACC-AA77694C98A2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../RH_GUI.c"
+            filePath = "XCode_11.1/main.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1094"
-            endingLineNumber = "1094"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1DFA3A0C-9346-4861-97A5-E9DEC05D30E2"
+            uuid = "ECC768C6-5732-4B14-B45C-CEAA33123228"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../RH_GUI.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "554"
-            endingLineNumber = "554"
-            landmarkName = "__blurFilledRectangular(xs, ys, xe, ye, radSize, brPersentage, pBufferInfo)"
+            startingLineNumber = "636"
+            endingLineNumber = "636"
+            landmarkName = "__Graph_circle_raw(x, y, r, penColor, pBufferInfo, Call_ApplyPixel_xxxx)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

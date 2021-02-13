@@ -86,13 +86,15 @@ void    GUI_FillRect          (int  x1,int  y1,int x2,int y2);
 void    GUI_FillCircle        (int  x ,int  y ,int r );
 void    GUI_FillEllipse       (int  x ,int  y ,int rx,int ry,...);
 void    GUI_FillQuadrilateral (int  x1,int  y1,int x2,int y2,int x3,int y3,int x4,int y4);
-
+void    GUI_FillTriangle      (int  x1,int  y1,int x2,int y2,int x3,int y3);
+ 
+ 
 void    GUI_FillAll           (Pixel_t columnData); 
 void    GUI_ClearScreen       (void);
 void    GUI_ClearFrameBuffer  (void);
 
   
-void    GUI_FillTriangle      (int x1,int y1,int x2,int y2,int x3,int y3);
+
   
 void    GUI_DrawPixel         (int  x ,int   y);
 void    GUI_DrawLine          (int  x1,int   y1,int   x2 ,int  y2);
@@ -103,6 +105,7 @@ void    GUI_DrawWave          (int  A ,float w ,float phi,int  x_start,int  x_en
 void    GUI_DrawTriangle      (int  x1,int   y1,int    x2,int       y2,int     x3,int  y3);
  
 void    GUI_BlurRect          (int  x1,int  y1,int  x2,int  y2,uint16_t radSize, uint16_t brPersentage);
+void    GUI_BlurRoundCornerRect(int x1,int y1,int x2,int y2,int r,uint16_t radSize, uint16_t brPersentage);
 
 void    GUI_DispChar          (unsigned char c);
 void    GUI_DispCharAt        (unsigned char c,int x,int y,...);
@@ -254,7 +257,7 @@ void GUI_ShowTraceWatch(BYTE ID,size_t probe);
 
 
 
-
+void    GUI_Debug(void);
 
 // 声明: 示例函数
 #if GUI_DEMO

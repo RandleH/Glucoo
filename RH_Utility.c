@@ -3,7 +3,6 @@
 ============================================================================================================================*/
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <stdbool.h>
 #include <stdarg.h>
 #include <wchar.h>
@@ -68,6 +67,14 @@ inline size_t __sizeof_HEXs(uint32_t x){
     size_t cnt = 1;
     while(x>>=4){cnt++;}
     return cnt;
+}
+      
+//inline uint32_t __Gray2Bin(uint32_t x){
+//    return (uint32_t)((x>>1)^x);
+//}
+      
+inline uint32_t __Bin2Gray(uint32_t x){
+    return (uint32_t)((x>>1)^x);
 }
      
 /*===========================================================================================================================
@@ -157,6 +164,34 @@ __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel){
     }
     return pKernel;
 }
+      
+long __pascal_triangle(int row, int col){
+    __exitReturn(col>row || col<0 || row<0 , -1);
+#if SHOW_BUG
+    ???
+#endif    
+    return 0;
+}
+      
+inline long __step_mul(long x){ // [!] Limitation: x should be smaller than 20
+    __exitReturn(x<0, -1);
+    
+    long res = 1;
+    while(--x){
+        res*=(x+1);
+    }
+    return res;
+}
+      
+long __comb(long num,long m){
+    __exitReturn(m>num || m<0 || num<0 , -1);
+#if SHOW_BUG
+    ???
+#endif
+    return 0;
+}
+      
+
 
 /*===========================================================================================================================
  > Quantity Reference 
@@ -472,6 +507,11 @@ void __cIDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,
         __free(_x);
 }
 
+void __Huffman_Code(const int* __src,int* __dst,size_t len){
+#if SHOW_BUG
+    ???
+#endif
+}
 
 /*===========================================================================================================================
  > Image Processing Reference 
@@ -727,7 +767,7 @@ __ImageRGB888_t* __Trans_Mirror_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
     return NULL;
 }
 
-__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage){
+__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100){
     static __Kernel_t gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
@@ -750,7 +790,7 @@ __ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
         __gussianKernel(sigma,order,&gus_kernel);
     }
 
-    __ImageRGB888_t* pImg = __Conv2D_ImgRGB888(src, dst, &gus_kernel,brPersentage);
+    __ImageRGB888_t* pImg = __Conv2D_ImgRGB888(src, dst, &gus_kernel,br_100);
     
     radSize_old      = radSize;
 
@@ -758,7 +798,8 @@ __ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
 
 }
 
-__ImageRGB888_t* __Blur_Average_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t brPersentage){
+__ImageRGB888_t* __Blur_Average_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100){
+    
     return NULL;
 }
 
@@ -808,7 +849,7 @@ __ImageRGB888_t* __Interpo_NstNeighbor_ImgRGB888(const __ImageRGB888_t* src,__Im
     return dst;
 }
 
-__ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t brPersentage){
+__ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100){
     if( src == NULL || src->pBuffer == NULL || k == NULL){
         return dst;
     }
@@ -861,9 +902,9 @@ __ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* 
             }
             size_t offset = (j*src->width)+i;
             if(offset < dst->width*dst->height){
-                (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R*brPersentage/(div*100));
-                (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G*brPersentage/(div*100));
-                (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B*brPersentage/(div*100));
+                (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R*br_100/(div*100));
+                (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G*br_100/(div*100));
+                (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B*br_100/(div*100));
             }
         }
     }
@@ -871,7 +912,7 @@ __ImageRGB565_t* __Conv2D_ImgRGB565(const __ImageRGB565_t* src,__ImageRGB565_t* 
     return dst;
 }
 
-__ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t brPersentage){
+__ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100){
     if( src == NULL || src->pBuffer == NULL || k == NULL ){
         return dst;
     }
@@ -924,9 +965,20 @@ __ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* 
             }
             size_t offset = (j*src->width)+i;
             if(offset < dst->width*dst->height){
-                (dst->pBuffer+offset)->R = (div==0)?((1<<8)-1):(tmp_R*brPersentage/(div*100));
-                (dst->pBuffer+offset)->G = (div==0)?((1<<8)-1):(tmp_G*brPersentage/(div*100));
-                (dst->pBuffer+offset)->B = (div==0)?((1<<8)-1):(tmp_B*brPersentage/(div*100));
+                unsigned long temp = 0;
+                
+                temp = (tmp_R*br_100)/(div*100);
+                if( div == 0 || temp >= (1<<8) )    (dst->pBuffer+offset)->R = (uint8_t)((1<<8)-1);
+                else                                (dst->pBuffer+offset)->R = (uint8_t)(temp);
+                
+                temp = (tmp_G*br_100)/(div*100);
+                if( div == 0 || temp >= (1<<8) )    (dst->pBuffer+offset)->G = (uint8_t)((1<<8)-1);
+                else                                (dst->pBuffer+offset)->G = (uint8_t)(temp);
+                
+                temp = (tmp_B*br_100)/(div*100);
+                if( div == 0 || temp >= (1<<8) )    (dst->pBuffer+offset)->B = (uint8_t)((1<<8)-1);
+                else                                (dst->pBuffer+offset)->B = (uint8_t)(temp);
+                
             }
         }
     }
