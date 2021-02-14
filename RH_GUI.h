@@ -28,6 +28,10 @@
 #define GUI_FONT_CourierNew_Middle     (3)
 #define GUI_FONT_CourierNew_Large      (4)
  
+ typedef enum{
+     GUI_BLUR_Average ,
+     GUI_BLUR_Gussian
+ }E_BlurMethod_t;
  
 
 // 声明: 无符号整型
@@ -74,6 +78,7 @@ Pixel_t GUI_GetPenColor       (void);
 void    GUI_SetBackColor      (Pixel_t color);
 Pixel_t GUI_GetBackColor      (void);
 void    GUI_SetFont           (int GUI_FONT_xxx);
+void    GUI_SetBlurMethod     (E_BlurMethod_t GUI_BLUR_xxxx);
 void    GUI_SetTextPos        (uint x,uint y);
 
 void    GUI_ClearPageArea     (uint page_start,uint page_end,uint column_start,uint column_end,...);

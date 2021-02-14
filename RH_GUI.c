@@ -248,7 +248,8 @@ static struct __Screen_t{
     
     __GUI_XY_t       txtPos;
     __FontChar_t*    pFont;
-
+    E_BlurMethod_t   BlurMethod;
+    
     size_t           allocated_byte;
 
     bool             autoDisplayMode;
@@ -276,11 +277,12 @@ static struct __Screen_t{
 
 
 // 声明: 插入一个像素点的函数接口
-typedef void (*func_ApplyPixelMethod)  (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_mark         (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
+typedef void (*func_ApplyPixelMethod)  (int x,int y,Pixel_t param             ,BufferInfo_t* pBufferInfo);
+static  void __ApplyPixel_mark         (int x,int y,Pixel_t nan               ,BufferInfo_t* pBufferInfo);
 static  void __ApplyPixel_fill         (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
+static  void __ApplyPixel_lightness    (int x,int y,Pixel_t br_100            ,BufferInfo_t* pBufferInfo);
 static  void __ApplyPixel_unzero       (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_moveBlur     (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
+static  void __ApplyPixel_moveBlur     (int x,int y,Pixel_t nan               ,BufferInfo_t* pBufferInfo);
 
 
 /*===========================================
@@ -351,6 +353,16 @@ static void __ApplyPixel_moveBlur(int x,int y,Pixel_t color,BufferInfo_t* pBuffe
     Screen.buffer[M_SCREEN_MAIN][y][x].data = Screen.buffer[M_SCREEN_BLUR][y][x].data;
 }
 
+static void __ApplyPixel_lightness(int x,int y,Pixel_t br_100,BufferInfo_t* pBufferInfo){
+    size_t width   = pBufferInfo->width;
+    size_t height  = pBufferInfo->height;
+    __exit( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH);
+    
+    Screen.buffer[M_SCREEN_MAIN][y][x].R = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].R*br_100/100) , 0 , ((1<<8)-1));
+    Screen.buffer[M_SCREEN_MAIN][y][x].G = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].G*br_100/100) , 0 , ((1<<8)-1));
+    Screen.buffer[M_SCREEN_MAIN][y][x].B = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].B*br_100/100) , 0 , ((1<<8)-1));
+}
+
 
 static void      __Clear_gram_all  (void                                      );
 static void      __Clear_gram_part (               int xs,int ys,int xe,int ye);
@@ -363,7 +375,7 @@ static void      __Clear_gram_page (               int ps,int pe,int cs,int ce);
  > 清空显存
 =====================================*/
 static void __Clear_gram_all(void){
-    if(sizeof(Pixel_t) == 1 || Screen.bkColor == GUI_BLACK)
+    if(sizeof(Pixel_t) == 1 || Screen.bkColor == GUI_COLOR_BLACK)
  #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
         memset(Screen.buffer[M_SCREEN_MAIN], Screen.bkColor ,sizeof(Pixel_t)*(GUI_PAGEs   * GUI_X_WIDTH));
 #else
@@ -376,7 +388,7 @@ static void __Clear_gram_all(void){
 }
 
 static void __Clear_gram_part(int xs,int ys,int xe,int ye){
-    if(sizeof(Pixel_t) == 1 || Screen.bkColor == GUI_BLACK)
+    if(sizeof(Pixel_t) == 1 || Screen.bkColor == GUI_COLOR_BLACK)
  #if ( GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN )
         //...//
 #else
@@ -1057,7 +1069,7 @@ static void __Graph_rect_raw(int xs,int ys,int xe,int ye,Pixel_t penColor,Buffer
         (*Call_ApplyPixel_xxxx)(x,ys,penColor,pBufferInfo);
         (*Call_ApplyPixel_xxxx)(x,ye,penColor,pBufferInfo);
     }
-    for(int y=ys;y<=ye;y++){
+    for(int y=ys+1;y<ye;y++){
         (*Call_ApplyPixel_xxxx)(xs,y,penColor,pBufferInfo);
         (*Call_ApplyPixel_xxxx)(xe,y,penColor,pBufferInfo);
     }
@@ -1200,12 +1212,13 @@ void GUI_RefreashArea(int x1,int y1,int x2,int y2){
 void GUI_Init(void){
     Screen.allocated_byte = 0;
 
-    Screen.txtPos.x = 0;
-    Screen.txtPos.y = 0;
-    Screen.pFont    = __FONT_STD6X8;
-    Screen.penColor = GUI_WHITE;
-    Screen.bkColor  = GUI_BLACK;
-    Screen.penSize  = 3;
+    Screen.txtPos.x   = 0;
+    Screen.txtPos.y   = 0;
+    Screen.pFont      = __FONT_STD6X8;
+    Screen.penColor   = GUI_COLOR_WHITE;
+    Screen.bkColor    = GUI_COLOR_BLACK;
+    Screen.penSize    = 3;
+    Screen.BlurMethod = GUI_BLUR_Average;
 
     __Clear_gram_all();
     Screen.autoDisplayMode = true;
@@ -1238,13 +1251,13 @@ void GUI_Debug(void){
         .width   = GUI_X_WIDTH,
         .height  = GUI_Y_WIDTH
 	};
-    int xs = 200;
-    int ys = 200;
-    int xe = 200+400;
-    int ye = 200+100;
+    int xs = 213;
+    int ys = 284;
+    int xe = 215;
+    int ye = 400;
     
-    __Graph_rect_raw(xs, ys, xe, ye, GUI_GREEN, &BufferInfo, __ApplyPixel_fill);
-    __insertRoundCornerRectangular(xs, ys, xe, ye, 20, Screen.penColor, &BufferInfo, __ApplyPixel_fill);
+    __Graph_rect_raw(xs, ys, xe, ye, 200, &BufferInfo, __ApplyPixel_lightness);
+//    __insertRoundCornerRectangular(xs, ys, xe, ye, 20, Screen.penColor, &BufferInfo, __ApplyPixel_fill);
     
 	if( Screen.autoDisplayMode == true ){
 		GUI_RefreashArea(xs,ys,xe,ye);
@@ -1393,6 +1406,10 @@ void GUI_SetFont(int GUI_FONT_xxx){
         default: Screen.pFont = __FONT_STD6X8  ;break;
 #endif
     }
+}
+
+void GUI_SetBlurMethod(E_BlurMethod_t GUI_BLUR_xxxx){
+    
 }
 
 void GUI_SetTextPos(unsigned int x,unsigned int y){
@@ -1639,8 +1656,17 @@ void GUI_BlurRect(int x1,int y1,int x2,int y2,uint16_t radSize, uint16_t br_100)
         .width   = GUI_X_WIDTH  ,
         .height  = GUI_Y_WIDTH
     };
-
-    __Blur_gus_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+    
+    switch(Screen.BlurMethod){
+        case GUI_BLUR_Average:
+            __Blur_avg_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+            break;
+        case GUI_BLUR_Gussian:
+            __Blur_gus_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+            break;
+        default:break;
+    }
+    
     
     for(int y=ys;y<=ye;y++){
         memcpy(&Screen.buffer[M_SCREEN_MAIN][y][xs], &Screen.buffer[M_SCREEN_BLUR][y][xs], (xe-xs+1)*sizeof(PixelUnit_t));
@@ -1670,8 +1696,15 @@ void GUI_BlurRoundCornerRect(int x1,int y1,int x2,int y2,int r,uint16_t radSize,
         .width   = GUI_X_WIDTH  ,
         .height  = GUI_Y_WIDTH
     };
-    
-    __Blur_gus_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+    switch(Screen.BlurMethod){
+        case GUI_BLUR_Average:
+            __Blur_avg_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+            break;
+        case GUI_BLUR_Gussian:
+            __Blur_gus_part(xs, ys, xe, ye, radSize, br_100, &BufferInfo);
+            break;
+        default:break;
+    }
     
     __insertRoundCornerRectangular(xs, ys, xe, ye, r, 0, &BufferInfo, __ApplyPixel_moveBlur);
 
@@ -2325,7 +2358,7 @@ void GUI_DialogBox(struct GUI_DialogBox_t* p,const char* text,...){
     while(pButton != NULL){
         //...//
         // Screen.penColor = GUI_MAKE_COLOR(232,232,232);
-        __insertButton(pButton->name,GUI_BLUE);
+        __insertButton(pButton->name,GUI_COLOR_BLUE);
         pButton = pButton->nextButton;
     }
 
@@ -2371,13 +2404,13 @@ static void __insert_animation_ProgressBar_LR(__AnimationConfigChain* p,uint fp_
         uint x = x_start, y = y_start;
         while( x<=x_end && y<=y_end ){
             if( x < x_end ){
-                Screen.buffer[M_SCREEN_MAIN][y_start][x].data = GUI_WHITE;//...//
-                Screen.buffer[M_SCREEN_MAIN][y_end][x].data   = GUI_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y_start][x].data = GUI_COLOR_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y_end][x].data   = GUI_COLOR_WHITE;//...//
                 x++;
             }
             else{
-                Screen.buffer[M_SCREEN_MAIN][y][x_start].data = GUI_WHITE;//...//
-                Screen.buffer[M_SCREEN_MAIN][y][x_end].data   = GUI_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y][x_start].data = GUI_COLOR_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y][x_end].data   = GUI_COLOR_WHITE;//...//
                 y++;
             }
         }
@@ -2424,13 +2457,13 @@ static void __insert_animation_ProgressBar_UD(__AnimationConfigChain* p,uint fp_
         uint x = x_start, y = y_start;
         while( x<=x_end && y<=y_end ){
             if( x < x_end ){
-                Screen.buffer[M_SCREEN_MAIN][y_start][x].data = GUI_WHITE;//...//
-                Screen.buffer[M_SCREEN_MAIN][y_end][x].data   = GUI_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y_start][x].data = GUI_COLOR_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y_end][x].data   = GUI_COLOR_WHITE;//...//
                 x++;
             }
             else{
-                Screen.buffer[M_SCREEN_MAIN][y][x_start].data = GUI_WHITE;//...//
-                Screen.buffer[M_SCREEN_MAIN][y][x_end].data   = GUI_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y][x_start].data = GUI_COLOR_WHITE;//...//
+                Screen.buffer[M_SCREEN_MAIN][y][x_end].data   = GUI_COLOR_WHITE;//...//
                 y++;
             }
         }
@@ -2609,7 +2642,7 @@ static void __insert_animation_SlideSwitch(__AnimationConfigChain* p, uint fp_0_
 
     eps = (p->config.height<<1)/40;
     if(eps == 0) eps = 1;
-    __Graph_circle_fill(x1+progress,y1,radius-eps,GUI_LIGHTSLATEGRAY,&BufferInfo,__ApplyPixel_fill);
+    __Graph_circle_fill(x1+progress,y1,radius-eps,GUI_COLOR_LIGHTSLATEGRAY,&BufferInfo,__ApplyPixel_fill);
 
 }
 
@@ -2843,7 +2876,7 @@ static void __insert_icon_Windows10(struct __IconConfigChain* p){
 
     __Graph_quad_fill(x1,y1,x2,y2,x3,y3,x4,y4,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
     
-    Screen.penColor = GUI_BLACK;
+    Screen.penColor = GUI_COLOR_BLACK;
     Screen.penSize  = (p->config.size)>33 ? (int)((p->config.size)*3/100):1;
     __Graph_line_raw(p->config.x_pos,line_0,p->config.x_pos+p->config.size-1,line_0,p->config.themeColor,&BufferInfo,__ApplyPixel_fill);
     __Graph_line_raw(line_90,p->config.y_pos,line_90,p->config.y_pos+p->config.size-1,p->config.themeColor,&BufferInfo,__ApplyPixel_fill);
@@ -2933,7 +2966,7 @@ void GUI_ShowIcon(BYTE ID){
     uint y_end   = pNow->config.y_pos + pNow->config.size - 1;
 
     if(pNow->config.dispFrame == true){
-        penColor = GUI_WHITE;
+        penColor = GUI_COLOR_WHITE;
         penSize  = 1;
         __Graph_rect_edged(x_start,y_start,x_end,y_end,penSize,penColor,&BufferInfo,__ApplyPixel_fill);
     }
@@ -3236,7 +3269,7 @@ inline void GUI_DEMO_MovingRect_1(void){
     register float theater = 360.0;
     register unsigned int x,y;
     register unsigned int mov_x,mov_y;
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     GUI_AutoDisplayMode();
     while(theater > 0){
@@ -3264,7 +3297,7 @@ inline void GUI_DEMO_MovingRect_2(void){
 }
  #include <stdlib.h>
 inline void GUI_DEMO_MovingRect_3(void){
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     GUI_AutoDisplayMode();
     GUI_DrawRect(rand()%128,rand()%64,rand()%128,rand()%64);
@@ -3275,7 +3308,7 @@ inline void GUI_DEMO_MovingRect_3(void){
 
 inline void GUI_DEMO_MovingEllipse_1(void){
     const int c = 20;
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     for(int a=1;a<=64-c;a++){
         GUI_FillEllipse(64,32,64-a,c,true,true);
@@ -3308,7 +3341,7 @@ inline void GUI_DEMO_MovingEllipse_1(void){
 
 inline void GUI_DEMO_MovingEllipse_2(void){
     const int c = 20;
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     for(int a=1;a<=64-c;a++){
         GUI_DrawEllipse(64,32,64-a,c,true,true);
@@ -3345,8 +3378,8 @@ inline void GUI_DEMO_MovingWave_1(void){
     const int y_level = GUI_Y_WIDTH>>1;
     const int A       = (int)(y_level/1.5);
     GUI_SetPenSize(2);
-    GUI_SetPenColor(GUI_WHITE);
-    GUI_SetBackColor(GUI_BLACK);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
+    GUI_SetBackColor(GUI_COLOR_BLACK);
     for(double w=0.0;w<1.5;w+=0.01){
         GUI_DrawWave(A,w,0.0,x_start,x_end,y_level,true,true);
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
@@ -3368,8 +3401,8 @@ inline void GUI_DEMO_MovingWave_2(void){
     const int A       = (int)(y_level/1.5);
     const float w     = 0.2;
     GUI_SetPenSize(1);
-    GUI_SetPenColor(GUI_WHITE);
-    GUI_SetBackColor(GUI_BLACK);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
+    GUI_SetBackColor(GUI_COLOR_BLACK);
     
     for(int phi=0;phi<=31;phi++){
         GUI_DrawWave(A,w,phi,x_start,x_end,y_level,true,true);
@@ -3384,7 +3417,7 @@ inline void GUI_DEMO_Rotation_1(void){
     const unsigned int radius = (int)(((GUI_MIN(GUI_X_WIDTH,GUI_Y_WIDTH))>>2)-2);
     const unsigned int x      = GUI_X_WIDTH>>1;
     const unsigned int y      = GUI_Y_WIDTH>>1;
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     GUI_ManualDisplayMode();
     for(double phi=0;phi<360;phi+=0.1){
@@ -3413,7 +3446,7 @@ inline void GUI_DEMO_Rotation_1(void){
 
 inline void GUI_DEMO_Pennis(void){
     GUI_AutoDisplayMode();
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     int x1 = 100,y1 = 30,x2 = 30,y2 = 90;
     GUI_FillCircle(x2-10,y2-10,20);
     GUI_FillCircle(x2+10,y2+10,20);
@@ -3425,7 +3458,7 @@ inline void GUI_DEMO_Pennis(void){
 }
 
 inline void GUI_DEMO_Blink_1(void){
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(3);
     GUI_ManualDisplayMode();
     for(int r=32;r>0;r--){
@@ -3442,7 +3475,7 @@ inline void GUI_DEMO_Blink_1(void){
 inline void GUI_DEMO_Pattern_1(void){
     unsigned int penSize = GUI_GetPenSize();
     const int r = 20,ps = 3;
-    GUI_SetPenColor(GUI_WHITE);
+    GUI_SetPenColor(GUI_COLOR_WHITE);
     GUI_SetPenSize(ps);
     GUI_DrawRect(64-r-ps,32-r-ps,64+r+ps,32+r+ps);
     GUI_FillCircle(64,32,r);
@@ -3451,16 +3484,16 @@ inline void GUI_DEMO_Pattern_1(void){
 }
 
 inline void GUI_DEMO_Microsoft_1(void){
-    GUI_SetBackColor(GUI_BLACK);
+    GUI_SetBackColor(GUI_COLOR_BLACK);
     GUI_SetPenSize(3);
     GUI_AutoDisplayMode();
-    GUI_SetPenColor(GUI_RED);
+    GUI_SetPenColor(GUI_COLOR_RED);
     GUI_DrawRect(24,24,64,64);
-    GUI_SetPenColor(GUI_GREEN);
+    GUI_SetPenColor(GUI_COLOR_GREEN);
     GUI_DrawRect(94,24,64,64);
-    GUI_SetPenColor(GUI_BLUE);
+    GUI_SetPenColor(GUI_COLOR_BLUE);
     GUI_DrawRect(24,94,64,64);
-    GUI_SetPenColor(GUI_YELLOW);
+    GUI_SetPenColor(GUI_COLOR_YELLOW);
     GUI_DrawRect(94,94,64,64);
 }
 
@@ -3472,7 +3505,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
     if(initFlag == false){
         struct GUI_AnimConfig_t config = {
             .GUI_ANIM_xxxx = GUI_ANIM_PROGRESSBAR_STD_LR,
-            .themeColor    = GUI_LIGHTGREEN,
+            .themeColor    = GUI_COLOR_LIGHTGREEN,
             .ID            = 0x01,
             .x_pos         = 20,
             .y_pos         = 40,
@@ -3482,7 +3515,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
         };
         GUI_CreateAnimationSocket(&config);
 
-        config.themeColor = GUI_LIGHTSLATEGRAY;
+        config.themeColor = GUI_COLOR_LIGHTSLATEGRAY;
         config.ID         = 0x02;
         config.height     = 4;
         config.width      = 90;
@@ -3490,7 +3523,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
         config.y_pos      = 10;
         GUI_CreateAnimationSocket(&config);
 
-        config.themeColor = GUI_PALETURQUOISE;
+        config.themeColor = GUI_COLOR_PALETURQUOISE;
         config.ID         = 0x03;
         config.height     = 5;
         config.width      = 70;
@@ -3498,7 +3531,7 @@ inline void GUI_DEMO_ANIM_ProgressBar(void){
         config.y_pos      = 24;
         GUI_CreateAnimationSocket(&config);
 
-        config.themeColor = GUI_RED;
+        config.themeColor = GUI_COLOR_RED;
         config.ID         = 0x04;
         config.height     = 11;
         config.width      = 90;
@@ -3527,35 +3560,35 @@ inline void GUI_DEMO_ANIM_SwitchSlider(void){
         .y_pos         = 30   ,
         .height        = 20   ,
         .width         = 35   ,
-        .themeColor    = GUI_GREEN,
-        .backColor     = GUI_RED
+        .themeColor    = GUI_COLOR_GREEN,
+        .backColor     = GUI_COLOR_RED
     };
 
     GUI_CreateAnimationSocket(&config);
 
     config.ID    =  0x01;
     config.y_pos += config.height + 5;
-    config.themeColor = GUI_YELLOW;
+    config.themeColor = GUI_COLOR_YELLOW;
     GUI_CreateAnimationSocket(&config);
 
     config.ID    =  0x02;
     config.y_pos += config.height + 5;
-    config.themeColor = GUI_RED;
+    config.themeColor = GUI_COLOR_RED;
     GUI_CreateAnimationSocket(&config);
 
     config.ID    =  0x04;
     config.x_pos += config.width + 5;
-    config.themeColor = GUI_BLUE;
+    config.themeColor = GUI_COLOR_BLUE;
     GUI_CreateAnimationSocket(&config);
 
     config.ID    =  0x05;
     config.y_pos -= config.height + 5;
-    config.themeColor = GUI_CYAN;
+    config.themeColor = GUI_COLOR_CYAN;
     GUI_CreateAnimationSocket(&config);
 
     config.ID    =  0x06;
     config.y_pos -= config.height + 5;
-    config.themeColor = GUI_MAGENTA;
+    config.themeColor = GUI_COLOR_MAGENTA;
     GUI_CreateAnimationSocket(&config);
     while(1){
         int i = 0;

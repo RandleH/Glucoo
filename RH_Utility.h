@@ -64,6 +64,10 @@
 #define __exitReturn(express,res)            if( express )   return res
 #endif
  
+#define __array1D(ptr,width,y,x)             (((ptr)+(width)*(y)+(x)))
+#define __array2D(ptr,width,y,x)             (((ptr[0])+(width)*(y)+(x)))
+ 
+ 
 typedef enum{
     kStatus_Success ,
     kStatus_Error   ,
@@ -88,6 +92,7 @@ size_t      __sizeof_HEXs (uint32_t  x);
 uint32_t    __Bin2Gray    (uint32_t  x);
 uint32_t    __Gray2Bin    (uint32_t  x); //
 
+long        __sum         (void* pArray,size_t size,size_t num);
 
 /*===========================================================================================================================
  > Algebra Reference 
@@ -108,7 +113,7 @@ typedef struct __Kernel_t       __Kernel_t;
 __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel);
  
 long    __step_mul   (long   x);
-
+long    __fibonacci  (long   n);
  
 /*=====================================================================
  > Quantity Reference 
@@ -247,7 +252,7 @@ __ImageRGB888_t* __Filter_OTUS_ImgRGB888         (const __ImageRGB888_t* src,__I
 __ImageRGB888_t* __Trans_Mirror_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV);
 
 __ImageRGB888_t* __Blur_Gussian_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100);
-__ImageRGB888_t* __Blur_Average_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100);
+__ImageRGB888_t* __Blur_Average_ImgRGB888        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t radSize, uint16_t br_100);
 
 __ImageRGB888_t* __Interpo_NstNeighbor_ImgRGB888 (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width); //
 

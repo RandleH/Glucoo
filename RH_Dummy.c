@@ -433,6 +433,21 @@ int main(int argc, const char * argv[]) {
     GUI_FillRect( width * 39, 0, width * 40 - 1, GUI_Y_WIDTH-1); GUI_SetPenColor( GUI_CADETBLUE        );
 
 
+
+
+
+    const char* __restrict__ src  = "/Users/randle_h/desktop/screen.bmp";
+    const char* __restrict__ des  = "/Users/randle_h/desktop/screen_.bmp";
+
+    __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
+
+    __ImageRGB888_t* IMG_OUT = __Create_ImgRGB888(IMG_IN->width, IMG_IN->height);
+    __Blur_Average_ImgRGB888(IMG_IN,IMG_OUT,80000,100);
+    __Blur_Average_ImgRGB888(IMG_OUT,IMG_IN,80000,100);
+    __OutBMP_ImgRGB888(des, IMG_IN);
+
+
+
 #endif
 
 

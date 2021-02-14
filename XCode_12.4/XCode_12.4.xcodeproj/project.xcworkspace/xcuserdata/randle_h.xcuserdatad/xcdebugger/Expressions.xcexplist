@@ -32,12 +32,7 @@
          contextName = "__insertLine:RH_GUI.c">
       </ContextState>
       <ContextState
-         contextName = "__Blur_Gussian_ImgRGB888:RH_Utility.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "brPersentage">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "__logMessage:main.c">
       </ContextState>
       <ContextState
          contextName = "__insertSausageLine:RH_GUI.c">
@@ -59,6 +54,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__Blur_Average_ImgRGB888:RH_Utility.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "div">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__insertPixel:RH_GUI.c">
          <PersistentStrings>
             <PersistentString
@@ -66,6 +69,14 @@
             </PersistentString>
             <PersistentString
                value = "Screen.buffer[34][21]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__Blur_Gussian_ImgRGB888:RH_Utility.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "brPersentage">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -84,9 +95,6 @@
                value = "__Allocated_Bytes__">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__logMessage:main.c">
       </ContextState>
    </ContextStates>
 </VariablesViewState>
