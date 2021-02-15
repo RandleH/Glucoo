@@ -74,39 +74,9 @@ int main(int argc, const char * argv[]) {
     GUI_RefreashScreen();
     
     
-//    __UNION_PixelRGB888_t in_[6][6] = {
-//        {{.R =  90},{.R = 100},{.R = 100},{.R =  90},{.R = 100},{.R = 100}},
-//        {{.R = 100},{.R = 120},{.R =  80},{.R = 100},{.R = 120},{.R = 100}},
-//        {{.R = 100},{.R =  20},{.R = 100},{.R = 100},{.R = 120},{.R = 100}},
-//        {{.R =  90},{.R = 100},{.R = 100},{.R =  90},{.R = 100},{.R = 100}},
-//        {{.R = 100},{.R = 120},{.R =  70},{.R = 100},{.R = 120},{.R = 100}},
-//        {{.R = 100},{.R =  20},{.R = 100},{.R = 100},{.R = 120},{.R = 100}},
-//    };
-//    __UNION_PixelRGB888_t out_[6][6] = {0};
-//
-//    __ImageRGB888_t in = {
-//        .pBuffer = in_[0],
-//        .width   = 6,
-//        .height  = 6
-//    };
-//
-//    __ImageRGB888_t out = {
-//        .pBuffer = out_[0],
-//        .width   = 6,
-//        .height  = 6
-//    };
-    
-//    __Blur_Average_ImgRGB888(&in,&out,3,100);
-    
-//    for(int y=0;y<6;y++){
-//        for(int x=0;x<6;x++){
-//            printf(" %3d ",out.pBuffer[y*(6)+x].R);
-//        }
-//        printf("\n");
-//    }
-    
-    
-    
+// RH_Dummy.c
+// RH_Utility.c
+// RH_Utility.h
     
     
     return 0;

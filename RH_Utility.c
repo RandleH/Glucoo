@@ -732,7 +732,7 @@ void __Free_ImgRGB888(__ImageRGB888_t* ptr){
     __free(__FreeBuffer_ImgRGB888(ptr));
 }
 
-__ImageRGB888_t* __Filter_Gray_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+__ImageRGB888_t* __Filter_Gray_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     
     if(src != NULL && dst != NULL){
         if(src->pBuffer != NULL && dst->pBuffer != NULL){
@@ -747,16 +747,39 @@ __ImageRGB888_t* __Filter_Gray_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB88
     return dst;
 }
 
-__ImageRGB888_t* __Filter_Warm_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+__ImageRGB888_t* __Filter_Warm_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     return dst;
 }
 
-__ImageRGB888_t* __Filter_Cold_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+__ImageRGB888_t* __Filter_Cold_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     
     return dst;
 }
 
-__ImageRGB888_t* __Filter_OTUS_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+__ImageRGB888_t* __Filter_OTUS_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+    uint32_t threshold = 0;
+    __exitReturn( src==NULL         , NULL);
+    __exitReturn( src->pBuffer==NULL, NULL);
+    __exitReturn( dst==NULL         , NULL);
+    __exitReturn( dst->pBuffer==NULL, NULL);
+    __Analyze_OTUS_ImgRGB888(src, &threshold);
+    __exitReturn(threshold == -1, NULL);
+    
+    for(int y=0;y<src->height;y++){
+        for(int x=0;x<src->width;x++){
+            uint8_t temp = ( __array1D(src->pBuffer, src->width, y, x)->R*19595 + \
+                             __array1D(src->pBuffer, src->width, y, x)->G*38469 + \
+                             __array1D(src->pBuffer, src->width, y, x)->B*7472 )>>16;
+            if( temp > threshold )
+                __array1D(dst->pBuffer, dst->width, y, x)->data = 0x00ffffff;
+            else
+                __array1D(dst->pBuffer, dst->width, y, x)->data = 0x00000000;
+        }
+    }
+    
+//    printf("otus threshold = %d\n", threshold);
+    
+    
     return NULL;
 }
      
@@ -803,7 +826,7 @@ __ImageRGB888_t* __Trans_Mirror_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB8
     return NULL;
 }
 
-__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint16_t radSize, uint16_t br_100){
+__ImageRGB888_t* __Blur_Gussian_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t radSize, uint16_t br_100){
     static __Kernel_t gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
@@ -1157,6 +1180,71 @@ __ImageRGB888_t* __Conv2D_ImgRGB888(const __ImageRGB888_t* src,__ImageRGB888_t* 
     }
     
     return dst;
+}
+      
+void __Analyze_OTUS_ImgRGB888(const __ImageRGB888_t* src,uint32_t* threshold){
+    *threshold = -1;
+    __exit( src          == NULL );
+    __exit( src->pBuffer == NULL );
+    
+    int    threshold_temp;
+    long   NumOf_bckPixel = 0;    //Number of pixels defined as background
+    long   SumOf_bckPixel = 0;    //Sum of pixels defined as background
+    float  AvgOf_bckPixel = 0.0;  //Average value of pixels defined as background
+
+    long   NumOf_objPixel = 0;    //Number of pixels defined as background
+    long   SumOf_objPixel = 0;    //Sum of pixels defined as background
+    float  AvgOf_objPixel = 0.0;  //Average value of pixels defined as background
+    
+    float  g = 0.0, g_max = 0.0;  //Variance between obj and bck
+    
+    const long NumOf_allPixel = (src->width) * (src->height);
+    
+    // Make Statistic...
+
+    long gray_cnt[255] = {0};
+    for (int row = 0; row < src->height; row++){
+        for (int col = 0; col < src->width; col++){
+            uint8_t temp = ( __array1D(src->pBuffer, src->width, row, col)->R*19595 + \
+                             __array1D(src->pBuffer, src->width, row, col)->G*38469 + \
+                             __array1D(src->pBuffer, src->width, row, col)->B*7472 )>>16;
+            gray_cnt[temp]++;
+        }
+    }
+    
+    for (threshold_temp = 0; threshold_temp < 255; threshold_temp++){
+        NumOf_bckPixel = 0; SumOf_bckPixel = 0;
+        NumOf_objPixel = 0; SumOf_objPixel = 0;
+        
+        // Calculation for Background.
+        for (uint8_t i = 0; i < threshold_temp; i++){
+            NumOf_bckPixel += gray_cnt[i];
+            SumOf_bckPixel += (i * gray_cnt[i]);
+        }
+        if (NumOf_bckPixel == 0)
+            continue;
+        AvgOf_bckPixel = SumOf_bckPixel / NumOf_bckPixel;
+        
+        // Calculation for object.
+        NumOf_objPixel = NumOf_allPixel - NumOf_bckPixel;
+        for (uint8_t i = threshold_temp; i < 255; i++){
+            SumOf_objPixel += (i * gray_cnt[i]);
+        }
+        if (NumOf_objPixel == 0)
+            continue;
+        AvgOf_objPixel = SumOf_objPixel / NumOf_objPixel;
+        
+        //In case of overloading,calculate step by step.
+        float w_bck   = (float)NumOf_bckPixel / NumOf_allPixel;
+        float w_obj   = (float)NumOf_objPixel / NumOf_allPixel;
+        float mu_diff = AvgOf_objPixel - AvgOf_bckPixel;
+
+        g = w_bck * mu_diff * w_obj * mu_diff;
+        if (g > g_max){
+            g_max = g;
+            *threshold = threshold_temp;
+        }
+    }
 }
 
 /*===========================================================================================================================

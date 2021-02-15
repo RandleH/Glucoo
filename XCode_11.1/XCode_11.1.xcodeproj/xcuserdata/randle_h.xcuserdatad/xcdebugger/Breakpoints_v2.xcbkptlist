@@ -16,23 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1820"
             endingLineNumber = "1820"
-            landmarkName = "GUI_FillEllipse(x, y, rx, ry)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EDF6CC36-EFA7-43AF-9ACC-AA77694C98A2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "XCode_11.1/main.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "main(argc, argv)"
+            landmarkName = "GUI_BlueCircle(x, y, r, radSize, br_100)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

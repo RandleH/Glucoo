@@ -227,6 +227,12 @@ struct __TraceWatchConfigChain{
 typedef struct __TraceWatchConfigChain __TraceWatchConfigChain;
 #endif
 
+#if GUI_MENU_DISPLAY
+struct __MenuConfigChain{
+    struct __MenuConfigChain* nextConfig;
+};
+#endif
+
 struct __AreaRefreashChain{
     int xs;
     int ys;

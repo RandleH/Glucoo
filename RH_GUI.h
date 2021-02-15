@@ -22,16 +22,18 @@
   #define GUI_CENTER                            __mid
 #endif
 
-#define GUI_FONT_Standard_Small        (0)
-#define GUI_FONT_Standard_Middle       (1)
-#define GUI_FONT_Bradley_Large         (2)
-#define GUI_FONT_CourierNew_Middle     (3)
-#define GUI_FONT_CourierNew_Large      (4)
- 
- typedef enum{
-     GUI_BLUR_Average ,
-     GUI_BLUR_Gussian
- }E_BlurMethod_t;
+typedef enum{
+    GUI_FONT_Standard_Small     , 
+    GUI_FONT_Standard_Middle    , 
+    GUI_FONT_Bradley_Large      , 
+    GUI_FONT_CourierNew_Middle  , 
+    GUI_FONT_CourierNew_Large   , 
+}E_Font_t; 
+
+typedef enum{
+    GUI_BLUR_Average ,
+    GUI_BLUR_Gussian
+}E_BlurMethod_t;
  
 
 // 声明: 无符号整型
@@ -119,14 +121,16 @@ void    GUI_DispWord          (const char* word,...);
 
 
 // 声明: RGB测试功能号
-#define GUI_TEST_RGB_HOR_RAINBOW    (0)
-#define GUI_TEST_RGB_VER_RAINBOW    (1)
-#define GUI_TEST_RGB_ROL_RAINBOW    (2)
-#define GUI_TEST_RGB_HOR_BAR        (3)
-#define GUI_TEST_RGB_VER_BAR        (4)
-#define GUI_TEST_RGB_STEP           (5)     
+typedef enum{
+    GUI_TEST_RGB_HOR_RAINBOW  ,
+    GUI_TEST_RGB_VER_RAINBOW  ,
+    GUI_TEST_RGB_ROL_RAINBOW  ,
+    GUI_TEST_RGB_HOR_BAR      ,
+    GUI_TEST_RGB_VER_BAR      ,
+    GUI_TEST_RGB_STEP         ,   
+}E_TestRGB_t;  
 // 声明: RGB测试的函数
-void    GUI_TestRGB           (uint GUI_TEST_RGB_xxxx ,...);
+void    GUI_TestRGB           (E_TestRGB_t GUI_TEST_RGB_xxxx ,...);
 
 
 #if GUI_DIALOG_DISPLAY
@@ -156,19 +160,19 @@ void    GUI_DialogBox         (struct GUI_DialogBox_t* p , const char* text,...)
 #if GUI_ANIMATION_DISPLAY
 
 // 声明: 动画演示的功能号
-#define GUI_ANIM_PROGRESSBAR_STD_LR   (0)
-#define GUI_ANIM_PROGRESSBAR_STD_UD   (1)
-#define GUI_ANIM_VALUEBAR_IOS_LR      (2)
-#define GUI_ANIM_VALUEBAR_IOS_UD      (3)
-#define GUI_ANIM_PROGRESSLOOP         (4)
-
-#define GUI_ANIM_SLIDESWITCH          (5)
-
+ typedef enum{
+    GUI_ANIM_PROGRESSBAR_STD_LR ,
+    GUI_ANIM_PROGRESSBAR_STD_UD ,
+    GUI_ANIM_VALUEBAR_IOS_LR    ,
+    GUI_ANIM_VALUEBAR_IOS_UD    ,
+    GUI_ANIM_PROGRESSLOOP       ,
+    GUI_ANIM_SLIDESWITCH        ,
+ }E_Anim_t;
 
 // 声明: 绘制动画插件所需要的信息
 struct GUI_AnimConfig_t{
 	const char*  text;
-	Macro_t      GUI_ANIM_xxxx;
+	E_Anim_t     GUI_ANIM_xxxx;
 	BYTE         ID;
 	unsigned int x_pos;
 	unsigned int y_pos;
@@ -189,15 +193,18 @@ void   GUI_DeleteAnimationSocket   (BYTE ID);
 #if GUI_ICON_DISPLAY
 
 // 声明: 图标演示的功能号
-#define GUI_ICON_ARROW_UP    (0)
-#define GUI_ICON_ARROW_DN    (1)
-#define GUI_ICON_ARROW_LF    (2)
-#define GUI_ICON_ARROW_RG    (3)
-#define GUI_ICON_WIN10       (4)
+ typedef enum{
+     GUI_ICON_ARROW_UP ,
+     GUI_ICON_ARROW_DN ,
+     GUI_ICON_ARROW_LF ,
+     GUI_ICON_ARROW_RG ,
+     GUI_ICON_WIN10
+ }E_Icon_t;
+ 
 // 声明: 绘制图标插件所需要的信息
 struct GUI_IconConfig_t{
 	const char*  text;
-	Macro_t      GUI_ICON_xxxx;
+	E_Icon_t     GUI_ICON_xxxx;
 	BYTE         ID;
 	unsigned int x_pos;
 	unsigned int y_pos;
@@ -211,17 +218,50 @@ void   GUI_CreateIconSocket        (struct GUI_IconConfig_t* config);
 void   GUI_ChangeIconSocket        (struct GUI_IconConfig_t* newConfig,BYTE ID);
 void   GUI_ShowIcon                (BYTE ID);
 
+#endif
+ 
+#if GUI_MENU_DISPLAY
+// 声明: 绘制单个菜单栏所需要的信息
+ struct GUI_MenuItemConfig_t{
+     
+    const char*  title;
+    const char*  description;
+    bool         showSwitchIcon;
+    
+    struct GUI_MenuItemConfig_t*  to_PrevItem;
+    struct GUI_MenuItemConfig_t*  to_NextItem;
+    struct GUI_MenuItemConfig_t*  to_Branch;
+};
+typedef struct GUI_MenuItemConfig_t GUI_MenuItemConfig_t;
 
+// 声明: 绘制菜单插件所需要的信息
+struct GUI_MenuConfig_t{
+    Macro_t                  GUI_MENU_xxxx;
+    BYTE                     ID;
+    int                      x_pos;
+    int                      y_pos;
+    int                      height;
+    int                      width;
+
+    GUI_MenuItemConfig_t*    item_head_node;
+};
+typedef struct GUI_MenuConfig_t GUI_MenuConfig_t;
+  
+void GUI_MenuInit(GUI_MenuConfig_t* pConfig);
+void GUI_MenuCheck(GUI_MenuConfig_t* pConfig);
+ 
 #endif
 
 #if GUI_TRACE_WATCH_DISPLAY
 
 // 声明: 数据跟踪演示的功能号
-#define GUI_TRACE_LINEAR    (0)
-#define GUI_TRACE_FILL      (1)
-#define GUI_TRACE_COLUMN    (2)
-#define GUI_TRACE_SCATTER   (3)
-
+typedef enum{
+    GUI_TRACE_LINEAR   ,
+    GUI_TRACE_FILL     ,
+    GUI_TRACE_COLUMN   ,
+    GUI_TRACE_SCATTER  ,
+}E_TraceWatch_t;
+ 
 struct GUI_TraceData_t{
 	int         *dataSource;
 	const char  *dataName; 
@@ -232,7 +272,7 @@ typedef struct GUI_TraceData_t GUI_TraceData_t;
 
 struct GUI_TraceConfig_t{
 	BYTE                     ID;
-	Macro_t                  GUI_TRACE_xxxx;
+	E_TraceWatch_t           GUI_TRACE_xxxx;
 	const char*              text;
   
 	size_t                   recordSize; // !!!

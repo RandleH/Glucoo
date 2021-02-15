@@ -13,11 +13,14 @@
 
 #define GUI_TRACE_WATCH_DISPLAY     1   // 0=Disable   1=Enable
 
+#define GUI_MENU_DISPLAY            1   // 0=Disable   1=Enable
+
 #define GUI_ANIMATION_DISPLAY       1   // 0=Disable   1=Enable
 
 #define GUI_FONT_EXTENTION          1   // 0=Disable   1=Enable
 
 #define GUI_TEST_EXTENTION          1   // 0=Disable   1=Enable
+
 
 #define GUI_Y_WIDTH          480
 #define GUI_X_WIDTH          800

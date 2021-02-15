@@ -12,7 +12,7 @@
 #ifdef __cplusplcus
 extern "C"{
 #endif
-
+#include <stdio.h>
 #include "RH_Utility.h"
 #include "RH_GUI.h"
 #include "API.h"
