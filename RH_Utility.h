@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <complex.h>
+#include <errno.h>
 
 #ifdef __cplusplus
  extern "C" {
@@ -69,9 +70,15 @@
  
  
 typedef enum{
-    kStatus_Success ,
-    kStatus_Error   ,
-}B_Status_t;
+    kStatus_Success    ,
+    kStatus_Busy       ,
+    kStatus_BadAccess  ,
+    kStatus_Denied     ,
+    kStatus_Exist      ,
+    kStatus_NoSpace    ,
+    kStatus_ErrorID    ,
+    kStatus_NotFound   ,
+}E_Status_t;
 
 #pragma anon_unions
  
@@ -93,7 +100,8 @@ uint32_t    __Bin2Gray    (uint32_t  x);
 uint32_t    __Gray2Bin    (uint32_t  x); //
 
 long        __sum         (void* pArray,size_t size,size_t num);
-
+int         __isPrime     (long      x);
+ 
 /*===========================================================================================================================
  > Algebra Reference 
 ============================================================================================================================*/
@@ -308,19 +316,45 @@ void* __memset_Area (void*                __b,int                      value,siz
 void* __memcpy_Area (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 
+ 
+/*=====================================================================
+> Data Structure Reference
+======================================================================*/
+ 
 struct __AnyNode_t{
-    void*   object;
-    const int           ID;
-    const struct __AnyNode_t* pNext;
-    const struct __AnyNode_t* pPrev;
+    void*        object;
+    const struct __AnyNode_t* pNext; // Can NOT be modified by user.
+    const struct __AnyNode_t* pPrev; // Can NOT be modified by user.
 };
 typedef struct __AnyNode_t __AnyNode_t;
 
-__AnyNode_t* __createNode       (void);
-__AnyNode_t* __createHeadNode   (void);
-void         __addNode          (__AnyNode_t* pHeadNode ,__AnyNode_t* pNode);
-void         __deleteNode       (__AnyNode_t* pHeadNode ,__AnyNode_t* pNode);
-void         __deleteAllNodes   (__AnyNode_t* pHeadNode);
+E_Status_t __createNode       (      __AnyNode_t  **ptr                                   );
+E_Status_t __createHeadNode   (      __AnyNode_t  **ptr                                   );
+E_Status_t __addNode_tail     (const __AnyNode_t  *pHeadNode ,      __AnyNode_t*  pNewNode);
+E_Status_t __findNode         (const __AnyNode_t  *pHeadNode ,const __AnyNode_t*  pTarget );
+E_Status_t __checkLoopNode    (const __AnyNode_t  *pHeadNode                              );
+E_Status_t __removeNode       (const __AnyNode_t  *pHeadNode ,      __AnyNode_t*  pTarget );
+E_Status_t __removeAllNodes   (      __AnyNode_t  *pHeadNode                              );
+E_Status_t __deleteNode       (const __AnyNode_t  *pHeadNode ,      __AnyNode_t** ppTarget);
+E_Status_t __printAllNodesAdr (const __AnyNode_t  *pHeadNode ,int(*PRINTF_FUNC)(const char*,...));
+
+ 
+struct __BiTreeNode_t{
+    void*        object;
+    const int    ID;    // <-- Unique
+    const struct __BiNode_t* pLeft;
+    const struct __BiNode_t* pRight;
+    const struct __BiNode_t* pPrev;
+};
+typedef struct __BiTreeNode_t __BiTreeNode_t;
+ 
+E_Status_t   __createBiTreeNode       (__BiTreeNode_t **ptr);
+E_Status_t   __createBiTreeHeadNode   (__BiTreeNode_t **ptr);
+E_Status_t   __addBiTreeNode          (__BiTreeNode_t* pHeadNode ,__BiTreeNode_t*  pNode     ,int L_R);
+E_Status_t   __findBiTreeNode         (__BiTreeNode_t* pHeadNode ,__BiTreeNode_t** pTargetOut,int ID);
+E_Status_t   __checkBiTreeNode        (__BiTreeNode_t* pHeadNode );
+E_Status_t   __deleteBiTreeNode       (__BiTreeNode_t* pHeadNode ,int ID);
+E_Status_t   __deleteAllBiTreeNodes   (__BiTreeNode_t* pHeadNode);
  
  
 void __logMessage     (const char* format,...);

@@ -9,22 +9,22 @@
          contextName = "main:main.c">
          <PersistentStrings>
             <PersistentString
-               value = "__message_buffer[1]">
+               value = "P6">
             </PersistentString>
             <PersistentString
-               value = "__message_buffer[2]">
+               value = "P2">
             </PersistentString>
             <PersistentString
-               value = "Screen.buffer[441][200]">
+               value = "P5">
             </PersistentString>
             <PersistentString
-               value = "__message_buffer[3]">
+               value = "P1">
             </PersistentString>
             <PersistentString
-               value = "__message_buffer[1][11]">
+               value = "P4">
             </PersistentString>
             <PersistentString
-               value = "__message_buffer">
+               value = "P3">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -32,7 +32,12 @@
          contextName = "__insertLine:RH_GUI.c">
       </ContextState>
       <ContextState
-         contextName = "__logMessage:main.c">
+         contextName = "GUI_RefreashArea:RH_GUI.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "__Allocated_Bytes__">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "__insertSausageLine:RH_GUI.c">
@@ -89,12 +94,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "GUI_RefreashArea:RH_GUI.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "__Allocated_Bytes__">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "__logMessage:main.c">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

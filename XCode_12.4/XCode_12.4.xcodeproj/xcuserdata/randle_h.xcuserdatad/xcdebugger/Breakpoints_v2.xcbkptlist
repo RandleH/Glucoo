@@ -14,9 +14,9 @@
             filePath = "../RH_Utility.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1304"
-            endingLineNumber = "1304"
-            landmarkName = "__memsetDWORD(__b, value, num)"
+            startingLineNumber = "1321"
+            endingLineNumber = "1321"
+            landmarkName = "__mallocHEAP(size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -46,9 +46,9 @@
             filePath = "../RH_Utility.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1308"
-            endingLineNumber = "1308"
-            landmarkName = "__memsetDWORD(__b, value, num)"
+            startingLineNumber = "1325"
+            endingLineNumber = "1325"
+            landmarkName = "__mallocHEAP(size)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

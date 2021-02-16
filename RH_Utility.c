@@ -98,6 +98,23 @@ inline long __sum(void* pArray,size_t size,size_t num){
     }
     return res;
 }
+      
+inline int __isPrime(long x){
+    int res = false;
+
+    static const char prime_128[] = {2,3,5,7,11,13,17,19,23,27,29};
+    const char* p     = prime_128;
+
+    size_t iter = sizeof(prime_128);
+    while(iter--){
+        if( x == *(p) )
+            return true;
+        if( x > *(p) && x < *(++p) )
+            return false;
+    }
+    //...//
+    return res;
+}
      
 /*===========================================================================================================================
  > Algebra Reference 
@@ -1449,116 +1466,160 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
     return __dst;
 }
 
-static bool __checkNode(const __AnyNode_t* pHeadNode,const __AnyNode_t* pNewNode){
-    __exitReturn(pHeadNode == NULL || pNewNode == NULL, false);
-    
-    const __AnyNode_t* pTmp = pHeadNode;
-    bool         res  = true;
-    // Search the entire chain.
-    do{
-        if(pTmp == pNewNode)
-            res = false;
-        
-        pTmp = pTmp->pNext;
-    }while(pTmp != pHeadNode);
-    
-    return res;
-}
 
-__AnyNode_t* __createNode(void){
-    return (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-}
+/*=====================================================================
+ > Data Structure Reference
+======================================================================*/
       
-__AnyNode_t* __createHeadNode(void){
-    __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-    __SET_STRUCT_MB(__AnyNode_t,int         ,pNode,ID   ,0    );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext,pNode);
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev,pNode);
 
-    // Same Effect: pNode->ID    = 0;      // But to cope with <const>.
-    // Same Effect: pNode->pNext = pNode;  // But to cope with <const>.
-    // Same Effect: pNode->pPrev = pNode;  // But to cope with <const>.
-    return pNode;
-}
+E_Status_t __checkLoopNode(const __AnyNode_t* pHeadNode){
+    __exitReturn(pHeadNode == NULL , kStatus_BadAccess);
+    
+    const __AnyNode_t* pFast = pHeadNode;
+    const __AnyNode_t* pSlow = pHeadNode;
 
-void __addNode(__AnyNode_t* pHeadNode,__AnyNode_t* pNode){
-    __exit(pHeadNode == NULL || pNode == NULL);
-    __exit(false == __checkNode(pHeadNode,pNode));
-    
-    static int ID_Num = 1;
-    
-    // Things to do for the new Node.
-    __SET_STRUCT_MB(__AnyNode_t,int         ,pNode           ,ID   ,ID_Num          );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode           ,pPrev,pHeadNode->pPrev);
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode           ,pNext,pHeadNode       );
-
-    // Things to do for the neighbour.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNode           );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNode           );
-    
-    // Same Effect: pNode->ID    = ID_Num;           // But to cope with <const>.
-    // Same Effect: pNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
-    // Same Effect: pNode->pNext = pHeadNode;        // But to cope with <const>.
-    
-    // Same Effect: pHeadNode->pPrev->pNext = pNode; // But to cope with <const>.
-    // Same Effect: pHeadNode->pPrev        = pNode; // But to cope with <const>.
-    
-    ID_Num++; // This is a bug. ID_Num will turn back to 0.
-}
-
-void __deleteNode(__AnyNode_t* pHeadNode ,__AnyNode_t* pNode){
-    __exit(pHeadNode == NULL || pNode == NULL);
-    
-    if(pNode == pHeadNode)
-        __deleteAllNodes(pHeadNode);
-    else{
-        const __AnyNode_t* pTmp = pHeadNode;
-        
-        // Check whether <pNode> belongs to the chain with the head of <pHeadNode>.
-        while(pTmp->pNext != pNode){
-            pTmp = pTmp->pNext;
-            
-            if(pTmp == pHeadNode){
-                return; // The Node that given by is not found. There is nothing to delete.
-            }
-        }
-        pTmp = pTmp->pNext;
-        
-        // Connect the neighbour and isolate the <pTmp> which is <pNode>.
-        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp->pPrev, pNext, pTmp->pNext);
-        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp->pNext, pPrev, pTmp->pPrev);
-        // Same Effect: pTmp->pPrev->pNext = pTmp->pNext; // But to cope with <const>.
-        // Same Effect: pTmp->pNext->pPrev = pTmp->pPrev; // But to cope with <const>.
-        
-        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp, pNext, NULL);
-        __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTmp, pPrev, NULL);
-        // Same Effect: pTmp->pNext = NULL; // But to cope with <const>.
-        // Same Effect: pTmp->pPrev = NULL; // But to cope with <const>.
-
-        __free((__AnyNode_t*)pTmp); // You should release anything in this node before deleting it.
-        pTmp = NULL;
+    // Search the entire chain. o(n)  :-)
+    while(pSlow->pNext != pHeadNode){
+        pSlow = pSlow->pNext;
+        pFast = pFast->pNext->pNext;
+        if( pSlow==pFast )
+            return kStatus_Exist;
     }
     
+    return kStatus_Success;
 }
 
-void __deleteAllNodes(__AnyNode_t* pHeadNode){
-    __exit(pHeadNode == NULL);
+E_Status_t __createNode (__AnyNode_t **ptr ){
+    __exitReturn(ptr==NULL, kStatus_BadAccess);
+    
+    *ptr =  (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
+    if(*ptr == NULL)
+        return kStatus_NoSpace;
+
+    return kStatus_Success;
+}
+      
+E_Status_t __createHeadNode(__AnyNode_t **ptr){
+    __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
+    *ptr = pNode;
+    
+    if( pNode == NULL )
+        return kStatus_NoSpace;
+
+    __SET_STRUCT_MB(__AnyNode_t,void*       ,pNode,object,NULL );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext ,pNode);
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev ,pNode);
+
+    // Same Effect: pNode->object = NULL;
+    // Same Effect: pNode->pNext  = pNode;  // But to cope with <const>.
+    // Same Effect: pNode->pPrev  = pNode;  // But to cope with <const>.
+    return kStatus_Success;
+}
+
+E_Status_t __findNode(const __AnyNode_t  *pHeadNode ,const __AnyNode_t* pTarget){
+    
+    __exitReturn(pHeadNode==NULL, kStatus_BadAccess);
+    __exitReturn(pTarget==NULL  , kStatus_NotFound);
+    
+    const __AnyNode_t* pTmp  = pHeadNode;
+    
+    do{
+        if (pTmp == pTarget) {
+            return kStatus_Success;
+        }
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHeadNode );
+    return kStatus_NotFound;
+}
+      
+E_Status_t __addNode_tail(const __AnyNode_t* pHeadNode ,__AnyNode_t* pNewNode){
+    __exitReturn( pHeadNode == NULL || pNewNode == NULL , kStatus_BadAccess);
+    
+    // Check whether it was already exist.
+    const __AnyNode_t* pTmp = pHeadNode;
+    do{
+        if( pTmp == pNewNode )
+            return kStatus_Exist;
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHeadNode );
+    // Every thing is OK.
+    
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNewNode        ,pPrev,pHeadNode->pPrev   );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNewNode        ,pNext,pHeadNode          );
+
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNewNode           );
+    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNewNode           );
+    
+    // Same Effect: pNewNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
+    // Same Effect: pNewNode->pNext = pHeadNode;        // But to cope with <const>.
+    
+    // Same Effect: pHeadNode->pPrev->pNext = pNewNode; // But to cope with <const>.
+    // Same Effect: pHeadNode->pPrev        = pNewNode; // But to cope with <const>.
+    
+    return kStatus_Success;
+}
+      
+E_Status_t __removeNode(const __AnyNode_t  *pHeadNode ,__AnyNode_t* pTarget ){
+    __exitReturn( pHeadNode==NULL || pTarget==NULL,kStatus_BadAccess );
+    __exitReturn( pHeadNode==pTarget              ,kStatus_Denied    );
+    E_Status_t state = __findNode(pHeadNode, pTarget);
+    __exitReturn(state != kStatus_Success         ,state             );
+
+    // Connect the neighbour and isolate the <pTarget>.
+    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget->pPrev, pNext, pTarget->pNext);
+    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget->pNext, pPrev, pTarget->pPrev);
+    // Same Effect: pTarget->pPrev->pNext = pTarget->pNext; // But to cope with <const>.
+    // Same Effect: pTarget->pNext->pPrev = pTarget->pPrev; // But to cope with <const>.
+    
+    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget, pNext, NULL);
+    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget, pPrev, NULL);
+    // Same Effect: pTarget->pNext = NULL; // But to cope with <const>.
+    // Same Effect: pTarget->pPrev = NULL; // But to cope with <const>.
+    
+    return kStatus_Success;
+}
+
+E_Status_t __deleteNode(const __AnyNode_t  *pHeadNode ,__AnyNode_t** ppTarget ){
+    __exitReturn(ppTarget==NULL          , kStatus_BadAccess);
+    E_Status_t state = __removeNode(pHeadNode, *ppTarget);
+    __exitReturn(state!=kStatus_Success , state             );
+    __free(*ppTarget);  // You should release anything in this node before deleting it.
+    *ppTarget = NULL;
+    return kStatus_Success;
+}
+
+E_Status_t __removeAllNodes(__AnyNode_t* pHeadNode){
+    __exitReturn(pHeadNode == NULL      ,kStatus_BadAccess);
+    E_Status_t state = __checkLoopNode(pHeadNode);
+    __exitReturn(state!=kStatus_Success ,state            );
+    
     __AnyNode_t* pTmpCur  = (__AnyNode_t*)(pHeadNode->pNext);
     __AnyNode_t* pTmpNxt  = (__AnyNode_t*)(pTmpCur->pNext);
     while(pTmpCur != pHeadNode){
         pTmpCur->pNext  = NULL;
         pTmpCur->pPrev  = NULL;
-        pTmpCur->object = NULL;
-        __free(pTmpCur);
         pTmpCur = pTmpNxt;
         pTmpNxt = (__AnyNode_t*)(pTmpNxt->pNext);
     }
-    
-    pHeadNode->pNext  = NULL;
-    pHeadNode->pPrev  = NULL;
-    pHeadNode->object = NULL;
-    __free(pHeadNode);
-    
+
+    pHeadNode->pNext  = pHeadNode;
+    pHeadNode->pPrev  = pHeadNode;
+
+    return kStatus_Success;
+}
+      
+E_Status_t __printAllNodesAdr(const __AnyNode_t* pHeadNode,int(*PRINTF_FUNC)(const char*,...)){
+    const __AnyNode_t* pTmp = pHeadNode;
+    size_t cnt = 0;
+    do{
+        (*PRINTF_FUNC)("NODE[%d]: %p\n",cnt,pTmp);
+        cnt++;
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHeadNode );
+        
+    return kStatus_Success;
 }
       
       
@@ -1573,14 +1634,14 @@ void __logMessage(const char* format,...){
     char* message = (char*)__malloc(len);
     strncpy(message,messageTmpBuffer,len);
     
-    if( pMessageHeadNode == NULL ){
-        pMessageHeadNode          = __createHeadNode();
-        pMessageHeadNode->object  = (void*)(message);
-    }else{
-        __AnyNode_t* pMessageNode = __createNode();
-        pMessageNode->object      = (void*)(message);
-        __addNode(pMessageHeadNode, pMessageNode);
-    }
+//    if( pMessageHeadNode == NULL ){
+//        pMessageHeadNode          = __createHeadNode();
+//        pMessageHeadNode->object  = (void*)(message);
+//    }else{
+//        __AnyNode_t* pMessageNode = __createNode();
+//        pMessageNode->object      = (void*)(message);
+//        __addNode(pMessageHeadNode, pMessageNode);
+//    }
     
     va_end(arg);
 }
