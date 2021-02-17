@@ -14,6 +14,10 @@
 
 
 
+void MAKE_FUNC( __LINK , create) (void){
+    
+}
+
 #if 1
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -21,34 +25,26 @@ int main(int argc, const char * argv[]) {
 //    Simul_API_Init();
 //    GUI_Init();
     
-    __AnyNode_t *pHead = NULL;
-    __AnyNode_t *P1,*P2,*P3,*P4,*P5,*P6;
+    __LinkLoopNode *pHead = NULL;
+    __LinkLoopNode *P1,*P2,*P3,*P4,*P5,*P6;
     
-    __createHeadNode(&pHead);
-    __createNode(&P1);
-    __createNode(&P2);
-    __createNode(&P3);
-    __createNode(&P4);
-    __createNode(&P5);
-    __createNode(&P6);
+    __LINK_Loop_createHeadNode(&pHead);
+    __LINK_Loop_createNode(&P1);
+    __LINK_Loop_createNode(&P2);
+    __LINK_Loop_createNode(&P3);
+    __LINK_Loop_createNode(&P4);
+    __LINK_Loop_createNode(&P5);
+    __LINK_Loop_createNode(&P6);
     
-    __addNode_tail(pHead,P1); P1->object = (void*)"Hello World";
-    __addNode_tail(pHead,P2); P2->object = (void*)"Can I help you?";
-    __addNode_tail(pHead,P3); P3->object = (void*)"How dare you!";
-    __addNode_tail(pHead,P4);
-    __addNode_tail(pHead,P5);
-    __addNode_tail(pHead,P2);
-    __addNode_tail(pHead,P6);
+    __LINK_Loop_addNode_tail(&pHead, &P1);
+    __LINK_Loop_addNode_tail(&pHead, &P3);
+    __LINK_Loop_addNode_tail(&pHead, &P5);
+    __LINK_Loop_addNode_tail(&pHead, &P4);
+    __LINK_Loop_addNode_tail(&pHead, &P2);
+    __LINK_Loop_removeNode(&pHead, &P3);
+    __LINK_Loop_addNode_front(&pHead, &P3);
+    __LINK_Loop_printAllNodesAdr(&pHead, printf);
     
-//    __deleteNode(pHead, P2);
-    
-    
-    
-    printf("%d\n",__findNode(pHead, P2));
-    
-    __printAllNodesAdr(pHead,printf);
-    
-    __removeAllNodes(pHead);
     return 0;
 }
 

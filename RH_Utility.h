@@ -67,7 +67,8 @@
  
 #define __array1D(ptr,width,y,x)             (((ptr)+(width)*(y)+(x)))
 #define __array2D(ptr,width,y,x)             (((ptr[0])+(width)*(y)+(x)))
- 
+
+#define MAKE_FUNC( class , method )          __##class##_##method
  
 typedef enum{
     kStatus_Success    ,
@@ -303,8 +304,8 @@ void             __Analyze_OTUS_ImgRGB888        (const __ImageRGB888_t* src,uin
 #define __OUT_WORD  ( port, val )      ( *((volatile uint16_t* )(port)) = ((uint16_t)(val)) )
 #define __OUT_DWORD ( port, val )      ( *((volatile uint32_t* )(port)) = ((uint32_t)(val)) )
 
-#define __VIRTUAL_HEAP_SIZE_BYTE        (0)
-#define __MESSAGE_PER_MAXSIZE_BYTE         (255)
+#define __VIRTUAL_HEAP_SIZE_BYTE       (0)
+#define __MESSAGE_PER_MAXSIZE_BYTE     (255)
  
 void* __mallocHEAP(size_t size);
 void  __freeHEAP(void* ptr);
@@ -321,23 +322,25 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
 > Data Structure Reference
 ======================================================================*/
  
-struct __AnyNode_t{
+struct __LinkLoopNode{
     void*        object;
-    const struct __AnyNode_t* pNext; // Can NOT be modified by user.
-    const struct __AnyNode_t* pPrev; // Can NOT be modified by user.
+    const struct __LinkLoopNode* const pNext; // Can NOT be modified by user.
+    const struct __LinkLoopNode* const pPrev; // Can NOT be modified by user.
 };
-typedef struct __AnyNode_t __AnyNode_t;
+typedef struct __LinkLoopNode __LinkLoopNode;
 
-E_Status_t __createNode       (      __AnyNode_t  **ptr                                   );
-E_Status_t __createHeadNode   (      __AnyNode_t  **ptr                                   );
-E_Status_t __addNode_tail     (const __AnyNode_t  *pHeadNode ,      __AnyNode_t*  pNewNode);
-E_Status_t __findNode         (const __AnyNode_t  *pHeadNode ,const __AnyNode_t*  pTarget );
-E_Status_t __checkLoopNode    (const __AnyNode_t  *pHeadNode                              );
-E_Status_t __removeNode       (const __AnyNode_t  *pHeadNode ,      __AnyNode_t*  pTarget );
-E_Status_t __removeAllNodes   (      __AnyNode_t  *pHeadNode                              );
-E_Status_t __deleteNode       (const __AnyNode_t  *pHeadNode ,      __AnyNode_t** ppTarget);
-E_Status_t __printAllNodesAdr (const __AnyNode_t  *pHeadNode ,int(*PRINTF_FUNC)(const char*,...));
-
+E_Status_t MAKE_FUNC( LINK_Loop , createNode            ) (   __LinkLoopNode  **      ptr        );
+E_Status_t MAKE_FUNC( LINK_Loop , createHeadNode        ) (   __LinkLoopNode  **      ptr        );
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_tail          ) (   __LinkLoopNode  *const* ppHeadNode , __LinkLoopNode *const* ppNewNode  );
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_tail_newhead  ) (   __LinkLoopNode  **      ppHeadNode , __LinkLoopNode *const* ppNewNode  );
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_front         ) (   __LinkLoopNode  *const* ppHeadNode , __LinkLoopNode *const* ppNewNode  );
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_front_newhead ) (   __LinkLoopNode  **      ppHeadNode , __LinkLoopNode *const* ppNewNode  );
+E_Status_t MAKE_FUNC( LINK_Loop , findNode              ) (   __LinkLoopNode  *const* ppHeadNode , __LinkLoopNode *const* ppTarget   );
+E_Status_t MAKE_FUNC( LINK_Loop , checkLoopNode         ) (   __LinkLoopNode  *const* ppHeadNode );
+E_Status_t MAKE_FUNC( LINK_Loop , deleteNode            ) (   __LinkLoopNode  *const* ppHeadNode , __LinkLoopNode **      ppTarget   );
+E_Status_t MAKE_FUNC( LINK_Loop , removeNode            ) (   __LinkLoopNode  *const* ppHeadNode , __LinkLoopNode *const* ppTarget   );
+E_Status_t MAKE_FUNC( LINK_Loop , removeAllNodes        ) (   __LinkLoopNode  *const* ppHeadNode );
+E_Status_t MAKE_FUNC( LINK_Loop , printAllNodesAdr      ) (   __LinkLoopNode  *const* ppHeadNode , int(*PRINTF_FUNC)(const char*,...));
  
 struct __BiTreeNode_t{
     void*        object;

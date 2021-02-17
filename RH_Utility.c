@@ -90,7 +90,7 @@ inline long __sum(void* pArray,size_t size,size_t num){
         case 4:// Dword
             while(num--) res += *((int32_t*)pArray+num);
             break;
-        case 8://
+        case 8:// Lword
             while(num--) res += *((int64_t*)pArray+num);
             break;
         default:
@@ -1470,14 +1470,143 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
 /*=====================================================================
  > Data Structure Reference
 ======================================================================*/
+E_Status_t MAKE_FUNC( LINK_Loop , createNode     )         (__LinkLoopNode **      ptr ){
+    __exitReturn(ptr==NULL, kStatus_BadAccess);
+  
+    *ptr =  (__LinkLoopNode*)__malloc(sizeof(__LinkLoopNode));
+    if(*ptr == NULL)
+        return kStatus_NoSpace;
+
+    return kStatus_Success;
+}
       
+E_Status_t MAKE_FUNC( LINK_Loop , createHeadNode )         (__LinkLoopNode **      ptr ){
+    __LinkLoopNode* pNode = (__LinkLoopNode*)__malloc(sizeof(__LinkLoopNode));
+    *ptr = pNode;
+  
+    if( pNode == NULL )
+        return kStatus_NoSpace;
 
-E_Status_t __checkLoopNode(const __AnyNode_t* pHeadNode){
-    __exitReturn(pHeadNode == NULL , kStatus_BadAccess);
+    __SET_STRUCT_MB(__LinkLoopNode,void*       ,pNode,object,NULL );
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNode,pNext ,pNode);
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNode,pPrev ,pNode);
+
+    // Same Effect: pNode->object = NULL;
+    // Same Effect: pNode->pNext  = pNode;  // But to cope with <const>.
+    // Same Effect: pNode->pPrev  = pNode;  // But to cope with <const>.
+    return kStatus_Success;
+}
+
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_tail   )         (__LinkLoopNode *const* ppHeadNode ,__LinkLoopNode *const* ppNewNode){
+  __exitReturn(  ppHeadNode == NULL ||  ppNewNode == NULL , kStatus_BadAccess);
+  __exitReturn( *ppHeadNode == NULL || *ppNewNode == NULL , kStatus_BadAccess);
+  
+  const __LinkLoopNode* pHeadNode = *ppHeadNode;
+  const __LinkLoopNode* pNewNode  = *ppNewNode;
+  // Check whether it was already exist.
+  const __LinkLoopNode* pTmp = pHeadNode;
+  do{
+      if( pTmp == pNewNode )
+          return kStatus_Exist;
+      pTmp = pTmp->pNext;
+  }while( pTmp != pHeadNode );
+  // Every thing is OK.
+  
+  // Things to do for the new Node.
+  __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNewNode        ,pPrev,pHeadNode->pPrev   );
+  __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNewNode        ,pNext,pHeadNode          );
+
+  // Things to do for the neighbour.
+  __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pHeadNode->pPrev,pNext,pNewNode           );
+  __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pHeadNode       ,pPrev,pNewNode           );
+  
+  // Same Effect: pNewNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
+  // Same Effect: pNewNode->pNext = pHeadNode;        // But to cope with <const>.
+  
+  // Same Effect: pHeadNode->pPrev->pNext = pNewNode; // But to cope with <const>.
+  // Same Effect: pHeadNode->pPrev        = pNewNode; // But to cope with <const>.
+  
+  return kStatus_Success;
+}
+      
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_tail_newhead  )  (__LinkLoopNode **      ppHeadNode ,__LinkLoopNode *const* ppNewNode){
+  
+    E_Status_t state = MAKE_FUNC( LINK_Loop , addNode_tail   )(ppHeadNode, ppNewNode);
+    __exitReturn(state != kStatus_Success, state);
     
-    const __AnyNode_t* pFast = pHeadNode;
-    const __AnyNode_t* pSlow = pHeadNode;
+    // New Head
+    *ppHeadNode = *ppNewNode;
 
+    return kStatus_Success;
+}
+
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_front         )  (__LinkLoopNode *const* ppHeadNode ,__LinkLoopNode *const* ppNewNode){
+    __exitReturn(  ppHeadNode == NULL ||  ppNewNode == NULL , kStatus_BadAccess);
+    __exitReturn( *ppHeadNode == NULL || *ppNewNode == NULL , kStatus_BadAccess);
+    
+    const __LinkLoopNode* pHeadNode = *ppHeadNode;
+    const __LinkLoopNode* pNewNode  = *ppNewNode;
+    // Check whether it was already exist.
+    const __LinkLoopNode* pTmp = pHeadNode;
+    do{
+        if( pTmp == pNewNode )
+            return kStatus_Exist;
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHeadNode );
+    // Every thing is OK.
+    
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNewNode        ,pPrev,pHeadNode          );
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pNewNode        ,pNext,pHeadNode->pNext   );
+  
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pHeadNode->pNext,pPrev,pNewNode           );
+    __SET_STRUCT_MB(__LinkLoopNode,__LinkLoopNode*,pHeadNode       ,pNext,pNewNode           );
+    
+    // Same Effect: pNewNode->pPrev = pHeadNode;        // But to cope with <const>.
+    // Same Effect: pNewNode->pNext = pHeadNode->pNext; // But to cope with <const>.
+    
+    // Same Effect: pHeadNode->pNext->pPrev = pNewNode; // But to cope with <const>.
+    // Same Effect: pHeadNode->pNext        = pNewNode; // But to cope with <const>.
+    
+    return kStatus_Success;
+}
+
+E_Status_t MAKE_FUNC( LINK_Loop , addNode_front_newhead )  (__LinkLoopNode **      ppHeadNode ,__LinkLoopNode *const* ppNewNode){
+    E_Status_t state = MAKE_FUNC(LINK_Loop , addNode_front)(ppHeadNode, ppNewNode);
+    __exitReturn(state!=kStatus_Success, state);
+    
+    // New Head
+    *ppHeadNode = *ppNewNode;
+
+    return kStatus_Success;
+}
+
+E_Status_t MAKE_FUNC( LINK_Loop , findNode              )  (__LinkLoopNode *const* ppHeadNode ,__LinkLoopNode *const* ppTarget ){
+    __exitReturn(  ppHeadNode == NULL ||  ppTarget == NULL , kStatus_BadAccess);
+    const __LinkLoopNode* pHeadNode = *ppHeadNode;
+    const __LinkLoopNode* pTarget   = *ppTarget;
+    __exitReturn(pHeadNode==NULL, kStatus_BadAccess);
+    __exitReturn(pTarget==NULL  , kStatus_NotFound);
+    
+    const __LinkLoopNode* pTmp  = pHeadNode;
+    
+    do{
+        if (pTmp == pTarget) {
+            return kStatus_Success;
+        }
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHeadNode );
+    return kStatus_NotFound;
+}
+
+E_Status_t MAKE_FUNC( LINK_Loop , checkLoopNode         )  (__LinkLoopNode *const* ppHeadNode){
+    __exitReturn(ppHeadNode == NULL , kStatus_BadAccess);
+    __LinkLoopNode* pHeadNode = *ppHeadNode;
+    __exitReturn(pHeadNode == NULL  , kStatus_BadAccess);
+    const __LinkLoopNode* pFast = pHeadNode;
+    const __LinkLoopNode* pSlow = pHeadNode;
+  
     // Search the entire chain. o(n)  :-)
     while(pSlow->pNext != pHeadNode){
         pSlow = pSlow->pNext;
@@ -1489,129 +1618,73 @@ E_Status_t __checkLoopNode(const __AnyNode_t* pHeadNode){
     return kStatus_Success;
 }
 
-E_Status_t __createNode (__AnyNode_t **ptr ){
-    __exitReturn(ptr==NULL, kStatus_BadAccess);
+E_Status_t MAKE_FUNC( LINK_Loop , deleteNode            )  (__LinkLoopNode *const* ppHeadNode ,__LinkLoopNode **      ppTarget ){
+    E_Status_t state = MAKE_FUNC(LINK_Loop , removeNode)(ppHeadNode, ppTarget);
+    __exitReturn(state!=kStatus_Success , state             );
     
-    *ptr =  (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-    if(*ptr == NULL)
-        return kStatus_NoSpace;
-
-    return kStatus_Success;
-}
-      
-E_Status_t __createHeadNode(__AnyNode_t **ptr){
-    __AnyNode_t* pNode = (__AnyNode_t*)__malloc(sizeof(__AnyNode_t));
-    *ptr = pNode;
-    
-    if( pNode == NULL )
-        return kStatus_NoSpace;
-
-    __SET_STRUCT_MB(__AnyNode_t,void*       ,pNode,object,NULL );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pNext ,pNode);
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNode,pPrev ,pNode);
-
-    // Same Effect: pNode->object = NULL;
-    // Same Effect: pNode->pNext  = pNode;  // But to cope with <const>.
-    // Same Effect: pNode->pPrev  = pNode;  // But to cope with <const>.
+    __LinkLoopNode* pTarget   = *ppTarget;
+    __free(pTarget);  // You should release anything in this node before deleting it.
+    *ppTarget = NULL;
     return kStatus_Success;
 }
 
-E_Status_t __findNode(const __AnyNode_t  *pHeadNode ,const __AnyNode_t* pTarget){
+E_Status_t MAKE_FUNC( LINK_Loop , removeNode            )  (__LinkLoopNode *const* ppHeadNode ,__LinkLoopNode *const* ppTarget ){
+    __exitReturn( ppHeadNode==NULL || ppTarget==NULL,kStatus_BadAccess );
+    __LinkLoopNode* pHeadNode = *ppHeadNode;
+    __LinkLoopNode* pTarget   = *ppTarget;
+    __exitReturn( pHeadNode==NULL||pTarget==NULL    , kStatus_BadAccess);
+    __exitReturn( pHeadNode==pTarget                ,kStatus_Denied    );
     
-    __exitReturn(pHeadNode==NULL, kStatus_BadAccess);
-    __exitReturn(pTarget==NULL  , kStatus_NotFound);
-    
-    const __AnyNode_t* pTmp  = pHeadNode;
-    
-    do{
-        if (pTmp == pTarget) {
-            return kStatus_Success;
-        }
-        pTmp = pTmp->pNext;
-    }while( pTmp != pHeadNode );
-    return kStatus_NotFound;
-}
-      
-E_Status_t __addNode_tail(const __AnyNode_t* pHeadNode ,__AnyNode_t* pNewNode){
-    __exitReturn( pHeadNode == NULL || pNewNode == NULL , kStatus_BadAccess);
-    
-    // Check whether it was already exist.
-    const __AnyNode_t* pTmp = pHeadNode;
-    do{
-        if( pTmp == pNewNode )
-            return kStatus_Exist;
-        pTmp = pTmp->pNext;
-    }while( pTmp != pHeadNode );
-    // Every thing is OK.
-    
-    // Things to do for the new Node.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNewNode        ,pPrev,pHeadNode->pPrev   );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pNewNode        ,pNext,pHeadNode          );
-
-    // Things to do for the neighbour.
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode->pPrev,pNext,pNewNode           );
-    __SET_STRUCT_MB(__AnyNode_t,__AnyNode_t*,pHeadNode       ,pPrev,pNewNode           );
-    
-    // Same Effect: pNewNode->pPrev = pHeadNode->pPrev; // But to cope with <const>.
-    // Same Effect: pNewNode->pNext = pHeadNode;        // But to cope with <const>.
-    
-    // Same Effect: pHeadNode->pPrev->pNext = pNewNode; // But to cope with <const>.
-    // Same Effect: pHeadNode->pPrev        = pNewNode; // But to cope with <const>.
-    
-    return kStatus_Success;
-}
-      
-E_Status_t __removeNode(const __AnyNode_t  *pHeadNode ,__AnyNode_t* pTarget ){
-    __exitReturn( pHeadNode==NULL || pTarget==NULL,kStatus_BadAccess );
-    __exitReturn( pHeadNode==pTarget              ,kStatus_Denied    );
-    E_Status_t state = __findNode(pHeadNode, pTarget);
-    __exitReturn(state != kStatus_Success         ,state             );
-
+    E_Status_t state = MAKE_FUNC( LINK_Loop,findNode)(ppHeadNode,ppTarget);
+    __exitReturn(state != kStatus_Success           ,state             );
+  
     // Connect the neighbour and isolate the <pTarget>.
-    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget->pPrev, pNext, pTarget->pNext);
-    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget->pNext, pPrev, pTarget->pPrev);
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTarget->pPrev, pNext, pTarget->pNext);
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTarget->pNext, pPrev, pTarget->pPrev);
     // Same Effect: pTarget->pPrev->pNext = pTarget->pNext; // But to cope with <const>.
     // Same Effect: pTarget->pNext->pPrev = pTarget->pPrev; // But to cope with <const>.
     
-    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget, pNext, NULL);
-    __SET_STRUCT_MB(__AnyNode_t, __AnyNode_t*, pTarget, pPrev, NULL);
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTarget, pNext, NULL);
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTarget, pPrev, NULL);
     // Same Effect: pTarget->pNext = NULL; // But to cope with <const>.
     // Same Effect: pTarget->pPrev = NULL; // But to cope with <const>.
     
     return kStatus_Success;
 }
 
-E_Status_t __deleteNode(const __AnyNode_t  *pHeadNode ,__AnyNode_t** ppTarget ){
-    __exitReturn(ppTarget==NULL          , kStatus_BadAccess);
-    E_Status_t state = __removeNode(pHeadNode, *ppTarget);
-    __exitReturn(state!=kStatus_Success , state             );
-    __free(*ppTarget);  // You should release anything in this node before deleting it.
-    *ppTarget = NULL;
-    return kStatus_Success;
-}
-
-E_Status_t __removeAllNodes(__AnyNode_t* pHeadNode){
-    __exitReturn(pHeadNode == NULL      ,kStatus_BadAccess);
-    E_Status_t state = __checkLoopNode(pHeadNode);
+E_Status_t MAKE_FUNC( LINK_Loop , removeAllNodes        )  (__LinkLoopNode *const* ppHeadNode){
+    __exitReturn(ppHeadNode==NULL, kStatus_BadAccess);
+    
+    E_Status_t state = MAKE_FUNC(LINK_Loop,checkLoopNode)(ppHeadNode);
     __exitReturn(state!=kStatus_Success ,state            );
     
-    __AnyNode_t* pTmpCur  = (__AnyNode_t*)(pHeadNode->pNext);
-    __AnyNode_t* pTmpNxt  = (__AnyNode_t*)(pTmpCur->pNext);
+    __LinkLoopNode* pHeadNode = *ppHeadNode;
+    __LinkLoopNode* pTmpCur  = (__LinkLoopNode*)(pHeadNode->pNext);
+    __LinkLoopNode* pTmpNxt  = (__LinkLoopNode*)(pTmpCur->pNext);
     while(pTmpCur != pHeadNode){
-        pTmpCur->pNext  = NULL;
-        pTmpCur->pPrev  = NULL;
+//        pTmpCur->pNext  = NULL;
+//        pTmpCur->pPrev  = NULL;
+        __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTmpCur, pNext, NULL);
+        __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pTmpCur, pPrev, NULL);
         pTmpCur = pTmpNxt;
-        pTmpNxt = (__AnyNode_t*)(pTmpNxt->pNext);
+        pTmpNxt = (__LinkLoopNode*)(pTmpNxt->pNext);
     }
-
-    pHeadNode->pNext  = pHeadNode;
-    pHeadNode->pPrev  = pHeadNode;
-
+  
+    
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pHeadNode, pNext, pHeadNode);
+    __SET_STRUCT_MB(__LinkLoopNode, __LinkLoopNode*, pHeadNode, pPrev, pHeadNode);
+//    pHeadNode->pNext  = pHeadNode;
+//    pHeadNode->pPrev  = pHeadNode;
+  
     return kStatus_Success;
 }
-      
-E_Status_t __printAllNodesAdr(const __AnyNode_t* pHeadNode,int(*PRINTF_FUNC)(const char*,...)){
-    const __AnyNode_t* pTmp = pHeadNode;
+
+E_Status_t MAKE_FUNC( LINK_Loop , printAllNodesAdr      )  (__LinkLoopNode *const* ppHeadNode,int(*PRINTF_FUNC)(const char*,...)){
+  
+    __exitReturn(ppHeadNode == NULL, kStatus_BadAccess);
+    
+    const __LinkLoopNode* pHeadNode = *ppHeadNode;
+    const __LinkLoopNode* pTmp      = pHeadNode;
     size_t cnt = 0;
     do{
         (*PRINTF_FUNC)("NODE[%d]: %p\n",cnt,pTmp);
@@ -1623,27 +1696,34 @@ E_Status_t __printAllNodesAdr(const __AnyNode_t* pHeadNode,int(*PRINTF_FUNC)(con
 }
       
       
-static __AnyNode_t* pMessageHeadNode                             = NULL;
-static char         messageTmpBuffer[__MESSAGE_PER_MAXSIZE_BYTE] = {'\0'};
       
+#define MAX_CHARLOG_PER_TIME 100
+
+static const char** __message_buffer = NULL;
+
+static size_t                 msgCnt = 0;
+
+static char __dummy_message_buffer[MAX_CHARLOG_PER_TIME] = {0};
 void __logMessage(const char* format,...){
+    const char** p = (const char**)malloc((msgCnt+1)*sizeof(void*)); // 重新建指针数组
     va_list arg;
     va_start(arg, format);
     
-    size_t len = vsnprintf( messageTmpBuffer, __MESSAGE_PER_MAXSIZE_BYTE, format, arg );
-    char* message = (char*)__malloc(len);
-    strncpy(message,messageTmpBuffer,len);
+    size_t len = vsprintf(__dummy_message_buffer, format, arg);      // 计算本次message字符个数
     
-//    if( pMessageHeadNode == NULL ){
-//        pMessageHeadNode          = __createHeadNode();
-//        pMessageHeadNode->object  = (void*)(message);
-//    }else{
-//        __AnyNode_t* pMessageNode = __createNode();
-//        pMessageNode->object      = (void*)(message);
-//        __addNode(pMessageHeadNode, pMessageNode);
-//    }
+    if( __message_buffer != NULL){       
+        memmove(p, __message_buffer, msgCnt*sizeof(const char*));    // 拷贝之前存储的指针
+        free(__message_buffer);
+    }
+    
+    char* temp = (char*)malloc(len);                                
+    strncpy(temp,__dummy_message_buffer,len);                        // 拷贝内容
+    p[msgCnt] = temp;
     
     va_end(arg);
+
+    msgCnt++;
+    __message_buffer = p;
 }
      
 void __deleteMessage(void){
@@ -1651,7 +1731,7 @@ void __deleteMessage(void){
 }
 
 void __showMessage( int(*PRINTF_METHOD)(const char* ,...)  ){
-    __exit( pMessageHeadNode == NULL );
+    __exit( __message_buffer == NULL );
     
 }
       
