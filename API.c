@@ -13,7 +13,7 @@
 extern "C"{
 #endif
 #include <stdio.h>
-#include "RH_Utility.h"
+#include "RH_image.h"
 #include "RH_GUI.h"
 #include "API.h"
 

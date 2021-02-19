@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include "RH_image.h"
+#include "RH_lib.h"
 
 #ifdef __cplusplus
  extern "C" {

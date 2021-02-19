@@ -3,98 +3,15 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "__insertFilledCircle:RH_GUI.c">
-      </ContextState>
-      <ContextState
          contextName = "main:main.c">
          <PersistentStrings>
             <PersistentString
-               value = "P6">
-            </PersistentString>
-            <PersistentString
-               value = "P2">
-            </PersistentString>
-            <PersistentString
-               value = "P5">
+               value = "PH">
             </PersistentString>
             <PersistentString
                value = "P1">
             </PersistentString>
-            <PersistentString
-               value = "P4">
-            </PersistentString>
-            <PersistentString
-               value = "P3">
-            </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__insertLine:RH_GUI.c">
-      </ContextState>
-      <ContextState
-         contextName = "GUI_RefreashArea:RH_GUI.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "__Allocated_Bytes__">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__insertSausageLine:RH_GUI.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "x_offset">
-            </PersistentString>
-            <PersistentString
-               value = "y_offset">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__Create_ImgRGB888:RH_Utility.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "__Allocated_Bytes__">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__Blur_Average_ImgRGB888:RH_Utility.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "div">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__insertPixel:RH_GUI.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "Screen.buffer[0]">
-            </PersistentString>
-            <PersistentString
-               value = "Screen.buffer[34][21]">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__Blur_Gussian_ImgRGB888:RH_Utility.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "brPersentage">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Simul_DrawArea:main.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "Screen.buffer">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__logMessage:main.c">
       </ContextState>
    </ContextStates>
 </VariablesViewState>
