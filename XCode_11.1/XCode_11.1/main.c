@@ -2,41 +2,49 @@
 //  main.c
 //  XCode_11.1
 //
-//  Created by Randle Helmslay on 2021/2/6.
+//  Created by Randle Helmslay on 2021/2/21.
 //  Copyright © 2021 Randle Helmslay. All rights reserved.
 //
 
 #include <stdio.h>
-#include "../../RH_Utility.h"
-#include "../../RH_GUI.h"
-#include "../../API.h"
 
+#include "RH_GUI.h"
+#include "API.h"
 
-
-#if 1
 int main(int argc, const char * argv[]) {
     // insert code here...
-
-//    Simul_API_Init();
-//    GUI_Init();
+    Simul_API_Init();
+    GUI_Init();
     
-    const char* __restrict__ src  = "/Users/randle_h/desktop/lenna.bmp";
-    const char* __restrict__ des  = "/Users/randle_h/desktop/lenna_.bmp";
-
-    __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
-
-    __ImageRGB888_t* IMG_OUT = __Create_ImgRGB888(IMG_IN->width, IMG_IN->height);
-    __Filter_OTUS_ImgRGB888(IMG_IN, IMG_OUT, 100);
-    __OutBMP_ImgRGB888(des, IMG_OUT);
-    __Free_ImgRGB888(IMG_IN);
-    __Free_ImgRGB888(IMG_OUT);
-// RH_Dummy.c
-// RH_Utility.c
-// RH_Utility.h
+    GUI_SetPenColor(GUI_COLOR_RED);
+    GUI_AutoDisplayMode();
+    GUI_FillAll(GUI_COLOR_SILVER);
+    GUI_SetBlurMethod(GUI_BLUR_Average);
+    GUI_BlurRoundCornerRect(100, 100, 600, 300, 30U, 60000U, 70U);
     
+    GUI_SetPenSize(14);
+//    GUI_DrawLine(200, 300, 492, 90);
     
+//    GUI_DrawLine(100, 100, 200, 200);
+//    GUI_DrawLine(200, 100, 100, 200);
+//    GUI_DrawLine(150, 100, 150, 200);
+//    GUI_DrawLine(100, 150, 200, 150);
+  
+    
+    GUI_DrawLine(200, 200, 200-50, 200+50 );
+    GUI_DrawLine(200, 200, 200+50, 200+50 );
+    struct  GUI_IconConfig_t icon1 = {
+        .x_pos = 50,
+        .y_pos = 50,
+        .size  = 190,
+        .GUI_ICON_xxxx = GUI_ICON_ARROW_UP,
+        .ID = 0x01
+       
+    };
+    
+    GUI_CreateIconSocket(&icon1);
+//    GUI_ShowIcon(0x01);
+    
+    printf("Hello, World!\n");
     return 0;
 }
-
-
-#endif

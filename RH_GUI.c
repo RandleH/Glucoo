@@ -1006,94 +1006,111 @@ static void __Graph_quad_fill(int x1,int y1,int x2,int y2,int x3,int y3,int x4,i
 static void __Graph_line_sausage(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,Pixel_t penColor ,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_ApplyPixel_xxxx){
 
     __Graph_line_raw(x1,y1,x2,y2,penColor,pBufferInfo,Call_ApplyPixel_xxxx);
-    if(penSize > 1){
-        int d = (int)(penSize);
-        int r = d>>1;
-        int p = 3-(r<<1);
-        int x_tmp = 0,y_tmp = r;
-        bool eps  = (d%2==0);
-
-        int    dis_min = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
-        int    dis_tmp = dis_min;
-        
-        int    py1=0,px1=0,py2=0,px2=0;
-        
-        for(;x_tmp<=y_tmp;x_tmp++){
-            int cnt = y_tmp+1;
-
-            while(cnt--){
-                (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
-
-                (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
-            }
-
-            cnt = x_tmp+1;
-            while(cnt--){
-                (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
-
-                (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2     + cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
-                (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
-            }
-//            Screen.buffer[M_SCREEN_MAIN][y1     + y_tmp][x1     + x_tmp].data = GUI_COLOR_RED;
-//            Screen.buffer[M_SCREEN_MAIN][y1+eps - y_tmp][x1+eps - x_tmp].data = GUI_COLOR_RED;
-            dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(eps-2*x_tmp) );;
-            if( dis_tmp < dis_min ){
-                dis_min = dis_tmp;
-                py1 =  y_tmp ; px1 =  x_tmp;
-                py2 = eps-y_tmp ; px2 = eps-x_tmp;
-            }
-            
-//            Screen.buffer[M_SCREEN_MAIN][y1     + y_tmp][x1+eps - x_tmp].data = GUI_COLOR_GREEN;
-//            Screen.buffer[M_SCREEN_MAIN][y1+eps - y_tmp][x1     + x_tmp].data = GUI_COLOR_GREEN;
-            dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
-            if( dis_tmp < dis_min ){
-                dis_min = dis_tmp;
-                py1 =  y_tmp ; px1 = eps-x_tmp;
-                py2 = eps-y_tmp ; px2 =  x_tmp;
-            }
-
-//            Screen.buffer[M_SCREEN_MAIN][y1     + x_tmp][x1     + y_tmp].data = GUI_COLOR_BLUE;
-//            Screen.buffer[M_SCREEN_MAIN][y1+eps - x_tmp][x1+eps - y_tmp].data = GUI_COLOR_BLUE;
-            dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(eps-2*y_tmp) );
-            if( dis_tmp < dis_min ){
-                dis_min = dis_tmp;
-                py1 =  x_tmp ; px1 =  y_tmp;
-                py2 = eps-x_tmp ; px2 = -y_tmp;
-            }
-            
-//            Screen.buffer[M_SCREEN_MAIN][y1     + x_tmp][x1+eps - y_tmp].data = GUI_COLOR_TAN;
-//            Screen.buffer[M_SCREEN_MAIN][y1+eps - x_tmp][x1     + y_tmp].data = GUI_COLOR_TAN;
-            dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(2*y_tmp-eps) );
-            if( dis_tmp < dis_min ){
-                dis_min = dis_tmp;
-                py1 =  x_tmp ; px1 = eps-y_tmp;
-                py2 = eps-x_tmp ; px2 =  y_tmp;
-            }
-            
-            if(p <= 0){
-                p += (x_tmp<<2) + 6;
-            }else{
-                p += ((x_tmp-y_tmp)<<2) + 10;
-                y_tmp--;
-            }
-        }
-        
-        Screen.buffer[M_SCREEN_MAIN][y1     + py1][x1     + px1].data = GUI_COLOR_BLACK;
-        Screen.buffer[M_SCREEN_MAIN][y1     + py2][x1     + px2].data = GUI_COLOR_BLACK;
-
-        __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+    int dir_line = __Dir_Line(x1, y1, x2, y2);
     
+    if(penSize > 1){
+        switch(dir_line){
+            case 0:
+            {
+                int xs = GUI_MIN(x1, x2);
+                int xe = GUI_MAX(x1, x2);
+                int ys = GUI_MIN(y1, y2) - (int)(penSize>>1) + (penSize%2==0);
+                int ye = GUI_MAX(y1, y2) + (int)(penSize>>1);
+                __Graph_circle_fill(x1, y1, (int)penSize, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+                __Graph_circle_fill(x2, y2, (int)penSize, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+                __Graph_rect_fill(xs, ys, xe, ye, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+            }
+                break;
+            case 1:
+            case -1:
+            {
+                int d = (int)(penSize);
+                int r = d>>1;
+                int p = 3-(r<<1);
+                int x_tmp = 0,y_tmp = r;
+                bool eps  = (d%2==0);
+
+                int    dis_min = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+                int    dis_tmp = dis_min;
+                int    py1 =  y_tmp , px1 = eps-x_tmp , py2 = eps-y_tmp , px2 =  x_tmp;
+                
+                for(;x_tmp<=y_tmp;x_tmp++){
+                    int cnt = y_tmp+1;
+                    while(cnt--){
+                        (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+
+                        (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                    }
+                    cnt = x_tmp+1;
+                    while(cnt--){
+                        (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+
+                        (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2     + cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                        (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                    }
+                    // (x+∂x,y+∂y) & (x-∂x,y-∂y)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(eps-2*x_tmp) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  y_tmp ; px1 =  x_tmp;
+                        py2 = eps-y_tmp ; px2 = eps-x_tmp;
+                    }
+                    // (x-∂x,y+∂y) & (x+∂x,y-∂y)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  y_tmp ; px1 = eps-x_tmp;
+                        py2 = eps-y_tmp ; px2 =  x_tmp;
+                    }
+                    // (x+∂y,y+∂x) & (x-∂y,y-∂x)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(eps-2*y_tmp) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  x_tmp ; px1 =  y_tmp;
+                        py2 = eps-x_tmp ; px2 = -y_tmp;
+                    }
+                    // (x-∂y,y+∂x) & (x+∂y,y-∂x)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(2*y_tmp-eps) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  x_tmp ; px1 = eps-y_tmp;
+                        py2 = eps-x_tmp ; px2 =  y_tmp;
+                    }
+                    
+                    if(p <= 0){
+                        p += (x_tmp<<2) + 6;
+                    }else{
+                        p += ((x_tmp-y_tmp)<<2) + 10;
+                        y_tmp--;
+                    }
+                }
+                
+                __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+            }
+                break;
+            case 65535:
+            {
+                int xs = GUI_MIN(x1, x2) - (int)(penSize>>1) + (penSize%2==0);
+                int xe = GUI_MAX(x1, x2) + (int)(penSize>>1);
+                int ys = GUI_MIN(y1, y2);
+                int ye = GUI_MAX(y1, y2);
+                __Graph_circle_fill(x1, y1, (int)penSize, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+                __Graph_circle_fill(x2, y2, (int)penSize, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+                __Graph_rect_fill(xs, ys, xe, ye, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
+            }
+                break;
+        }
     }
     
 }
@@ -2847,34 +2864,30 @@ static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
 
     int xc = GUI_CENTER(xs,xe);
 
-    // Screen.penColor  = p->config.themeColor;
-    // Screen.penSize   = width;
-
-    __Graph_line_sausage(    xc            ,\
-                            ys + halfWidth,\
-                            xc            ,\
-                            ye - halfWidth,\
-                            width         ,\
-                            p->config.themeColor,\
+    __Graph_line_sausage(   xc                                   ,\
+                            ys + halfWidth                       ,\
+                            xc                                   ,\
+                            ye - halfWidth                       ,\
+                            width                                ,\
+                            p->config.themeColor                 ,\
                             &BufferInfo,__ApplyPixel_fill    );
     
-    __Graph_line_sausage(    xc            ,\
-                            ys + halfWidth,\
-                            xs + halfWidth + (p->config.size)/10,\
-                            ys + xc - xs   - (p->config.size)/10,\
-                            width         ,\
-                            p->config.themeColor,\
+    __Graph_line_sausage(   xc                                   ,\
+                            ys + halfWidth                       ,\
+                            xs + halfWidth + (p->config.size)/10 ,\
+                            ys + xc - xs   - (p->config.size)/10 ,\
+                            width                                ,\
+                            p->config.themeColor                 ,\
                             &BufferInfo,__ApplyPixel_fill    );
 
-    __Graph_line_sausage(    xc            ,\
-                            ys + halfWidth,\
-                            xe - halfWidth - (p->config.size)/10,\
-                            ys + xc - xs   - (p->config.size)/10,\
-                            width         ,\
-                            GUI_COLOR_RED,\
+    __Graph_line_sausage(   xc                                   ,\
+                            ys + halfWidth                       ,\
+                            xe - halfWidth - (p->config.size)/10 ,\
+                            ys + xc - xs   - (p->config.size)/10 ,\
+                            width                                ,\
+                            p->config.themeColor                 ,\
                             &BufferInfo,__ApplyPixel_fill    );
 
-    
     Screen.penColor = penColor;
     Screen.penSize  = penSize;
 }
