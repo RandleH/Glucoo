@@ -621,6 +621,21 @@ static void __Graph_line_sausage(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize 
 }
 
 
+
+
+__LinkBiTreeNode *PH,*P1,*P2,*P3,*P4;
+__LINK_BiTree_createHeadNode(&PH);
+__LINK_BiTree_createNode(&P1);
+__LINK_BiTree_createNode(&P2);
+__LINK_BiTree_createNode(&P3);
+__LINK_BiTree_createNode(&P4);
+
+printf("%d\n",__LINK_BiTree_addNode_l2r(&PH, &PH, &P1));
+printf("%d\n",__LINK_BiTree_addNode_l2r(&PH, &P1, &P2));
+printf("%d\n",__LINK_BiTree_addNode_r2l(&PH, &P2, &P3));
+
+printf("%d\n",__LINK_BiTree_findNode(&PH, &P3));
+
 #endif
 
 
