@@ -1,12 +1,16 @@
 
-#include "RH_GUI.h"
-#include "RH_Utility.h"
+
+
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
 #include <stdbool.h>
 
+#include "RH_GUI.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 
 #if defined ( __CC_ARM )
@@ -2836,7 +2840,7 @@ void GUI_DeleteAnimationSocket(BYTE ID){
 //=================================================== Icon Function ====================================================//
 #if GUI_ICON_DISPLAY
 
-static void __remove_icon_Arrow_UP(struct __IconConfigChain* p){
+static void __remove_icon_Arrow_UP     (struct __IconConfigChain* p){
     uint x_start = p->config.x_pos;
     uint y_start = p->config.y_pos;
 
@@ -2845,59 +2849,126 @@ static void __remove_icon_Arrow_UP(struct __IconConfigChain* p){
         memset(&(Screen.buffer[M_SCREEN_MAIN][y_start+cnt][x_start].data),0,(p->config.size)*sizeof(Pixel_t) );
 
 }
-
-static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
+static void __remove_icon_Arrow_DOWN   (struct __IconConfigChain* p){
+    __remove_icon_Arrow_UP(p);
+}
+static void __remove_icon_Arrow_LEFT   (struct __IconConfigChain* p){
+    __remove_icon_Arrow_UP(p);
+}
+static void __remove_icon_Arrow_RIGHT  (struct __IconConfigChain* p){
+    __remove_icon_Arrow_UP(p);
+}
+    
+static void __insert_icon_Arrow_UP     (struct __IconConfigChain* p){
     BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
                                 .height  = GUI_Y_WIDTH  ,
                                 .width   = GUI_X_WIDTH };
-
-    Pixel_t penColor = Screen.penColor;
-    uint    penSize  = Screen.penSize;
-
     int xs = (int)(p->config.x_pos);
     int xe = (int)((p->config.x_pos)+(p->config.size)-1);
     int ys = (int)(p->config.y_pos);
     int ye = (int)((p->config.y_pos)+(p->config.size)-1);
 
-    int width        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
-    int halfWidth    = (int)(width>>1);
-
-    int xc = GUI_CENTER(xs,xe);
-
-    __Graph_line_sausage(   xc                                   ,\
-                            ys + halfWidth                       ,\
-                            xc                                   ,\
-                            ye - halfWidth                       ,\
-                            width                                ,\
-                            p->config.themeColor                 ,\
-                            &BufferInfo,__ApplyPixel_fill    );
+    int penSize        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
     
-    __Graph_line_sausage(   xc                                   ,\
-                            ys + halfWidth                       ,\
-                            xs + halfWidth + (p->config.size)/10 ,\
-                            ys + xc - xs   - (p->config.size)/10 ,\
-                            width                                ,\
-                            p->config.themeColor                 ,\
-                            &BufferInfo,__ApplyPixel_fill    );
+    int  d = ((p->config.size*3)>>3) - penSize;
+    int tx = GUI_CENTER(xs, xe);
+    int ty = ys + penSize;
+    int bx = tx;
+    int by = ye - penSize;
+    int lx = tx - d;
+    int ly = ty + d;
+    int rx = tx + d;
+    int ry = ty + d;
 
-    __Graph_line_sausage(   xc                                   ,\
-                            ys + halfWidth                       ,\
-                            xe - halfWidth - (p->config.size)/10 ,\
-                            ys + xc - xs   - (p->config.size)/10 ,\
-                            width                                ,\
-                            p->config.themeColor                 ,\
-                            &BufferInfo,__ApplyPixel_fill    );
-
-    Screen.penColor = penColor;
-    Screen.penSize  = penSize;
-}
-
-static void __remove_icon_Windows10(struct __IconConfigChain* p){
-    
+    __Graph_line_sausage(   tx,ty,bx,by , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   tx,ty,lx,ly , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   tx,ty,rx,ry , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
 
 }
+static void __insert_icon_Arrow_DOWN   (struct __IconConfigChain* p){
+    BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
+                                .height  = GUI_Y_WIDTH  ,
+                                .width   = GUI_X_WIDTH };
+    int xs = (int)(p->config.x_pos);
+    int xe = (int)((p->config.x_pos)+(p->config.size)-1);
+    int ys = (int)(p->config.y_pos);
+    int ye = (int)((p->config.y_pos)+(p->config.size)-1);
 
-static void __insert_icon_Windows10(struct __IconConfigChain* p){
+    int penSize        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
+    
+    int  d = ((p->config.size*3)>>3) - penSize;
+    int tx = GUI_CENTER(xs, xe);
+    int ty = ys + penSize;
+    int bx = tx;
+    int by = ye - penSize;
+    int lx = bx - d;
+    int ly = by - d;
+    int rx = bx + d;
+    int ry = by - d;
+
+    __Graph_line_sausage(   tx,ty,bx,by , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   bx,by,lx,ly , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   bx,by,rx,ry , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+}
+static void __insert_icon_Arrow_LEFT   (struct __IconConfigChain* p){
+    BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
+                                .height  = GUI_Y_WIDTH  ,
+                                .width   = GUI_X_WIDTH };
+    int xs = (int)(p->config.x_pos);
+    int xe = (int)((p->config.x_pos)+(p->config.size)-1);
+    int ys = (int)(p->config.y_pos);
+    int ye = (int)((p->config.y_pos)+(p->config.size)-1);
+
+    int penSize        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
+    
+    int  d = ((p->config.size*3)>>3) - penSize;
+    
+    int lx = xs + penSize;
+    int ly = GUI_CENTER(ys, ye);
+    int tx = lx + d;
+    int ty = ly - d;
+    int bx = tx;
+    int by = ly + d;
+    int rx = xe - penSize;
+    int ry = ly;
+
+    __Graph_line_sausage(   lx,ly,bx,by , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   lx,ly,tx,ty , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   lx,ly,rx,ry , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+}
+static void __insert_icon_Arrow_RIGHT  (struct __IconConfigChain* p){
+    BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
+                                .height  = GUI_Y_WIDTH  ,
+                                .width   = GUI_X_WIDTH };
+    int xs = (int)(p->config.x_pos);
+    int xe = (int)((p->config.x_pos)+(p->config.size)-1);
+    int ys = (int)(p->config.y_pos);
+    int ye = (int)((p->config.y_pos)+(p->config.size)-1);
+
+    int penSize        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
+    
+    int  d = ((p->config.size*3)>>3) - penSize;
+    
+    int lx = xs + penSize;
+    int ly = GUI_CENTER(ys, ye);
+    int rx = xe - penSize;
+    int ry = ly;
+    int tx = rx - d;
+    int ty = ry - d;
+    int bx = tx;
+    int by = ry + d;
+
+    __Graph_line_sausage(   rx,ry,bx,by , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   rx,ry,tx,ty , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+    __Graph_line_sausage(   lx,ly,rx,ry , penSize, p->config.themeColor, &BufferInfo, __ApplyPixel_fill    );
+}
+
+static void __remove_icon_Windows10    (struct __IconConfigChain* p){
+    
+
+}
+
+static void __insert_icon_Windows10    (struct __IconConfigChain* p){
     BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
                                 .height  = GUI_Y_WIDTH  ,
                                 .width   = GUI_X_WIDTH };
@@ -2957,6 +3028,21 @@ void GUI_CreateIconSocket(struct GUI_IconConfig_t* config){
             pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
             pConfig->insertFunc = __insert_icon_Arrow_UP;
             pConfig->removeFunc = __remove_icon_Arrow_UP;
+            break;
+        case GUI_ICON_ARROW_DN:
+            pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
+            pConfig->insertFunc = __insert_icon_Arrow_DOWN;
+            pConfig->removeFunc = __remove_icon_Arrow_DOWN;
+            break;
+        case GUI_ICON_ARROW_LF:
+            pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
+            pConfig->insertFunc = __insert_icon_Arrow_LEFT;
+            pConfig->removeFunc = __remove_icon_Arrow_LEFT;
+            break;
+        case GUI_ICON_ARROW_RG:
+            pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
+            pConfig->insertFunc = __insert_icon_Arrow_RIGHT;
+            pConfig->removeFunc = __remove_icon_Arrow_RIGHT;
             break;
         case GUI_ICON_WIN10:
             pConfig = (__IconConfigChain*)malloc( sizeof(__IconConfigChain) );
@@ -3675,7 +3761,9 @@ void GUI_Debug(void){
 
 #endif
 
-
+#ifdef __cplusplus
+}
+#endif
 
 //===================================================== End of File ====================================================//
 //===================================================== End of File ====================================================//
