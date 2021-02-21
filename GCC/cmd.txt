@@ -1,8 +1,10 @@
 
-For [XCode_11.1]
 
-gcc RH_Utility.c RH_GUI.c RH_Font.c API.c ./XCode_11.1/XCode_11.1/main.c -o ./GCC/main
 
-For [XCode_12.4]
+{$ PROJDIR $} = Glucoo-Simulation-macOS
 
-gcc RH_Utility.c RH_GUI.c RH_Font.c API.c ./XCode_12.4/XCode_12.4/main.c -o ./GCC/main
+
+[ For <*.exe> | <*.Unix executable> ]
+
+gcc ./BlackHouse/RH_utility.c ./BlackHouse/RH_image.c ./BlackHouse/RH_data.c ./BlackHouse/RH_math.c ./BlackHouse/RH_dsp.c ./BlackHouse/RH_lib.c RH_GUI.c RH_Font.c API.c ./GCC/main.c  -std=c99 -o ./GCC/main
+
