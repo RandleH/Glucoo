@@ -7,16 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E32996DC25CE767900A44224 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996DB25CE767900A44224 /* main.c */; };
-		E32996EB25CE76BE00A44224 /* RH_Dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E325CE76BD00A44224 /* RH_Dummy.c */; };
-		E32996EC25CE76BE00A44224 /* RH_GUI.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E425CE76BD00A44224 /* RH_GUI.c */; };
-		E32996ED25CE76BE00A44224 /* RH_Font.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E625CE76BD00A44224 /* RH_Font.c */; };
-		E32996EE25CE76BE00A44224 /* RH_Utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E32996E925CE76BD00A44224 /* RH_Utility.c */; };
-		E330AC6625D566A200AD2292 /* API.c in Sources */ = {isa = PBXBuildFile; fileRef = E330AC6525D566A200AD2292 /* API.c */; };
+		E370AE2D25E24DA9008FAE92 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E370AE2C25E24DA9008FAE92 /* main.c */; };
+		E3BE5AAA25E24DF900364F1B /* RH_data.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA225E24DF800364F1B /* RH_data.c */; };
+		E3BE5AAB25E24DF900364F1B /* RH_math.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA525E24DF800364F1B /* RH_math.c */; };
+		E3BE5AAC25E24DF900364F1B /* RH_image.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA625E24DF800364F1B /* RH_image.c */; };
+		E3BE5AAD25E24DF900364F1B /* RH_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA725E24DF800364F1B /* RH_lib.c */; };
+		E3BE5AAE25E24DF900364F1B /* RH_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA825E24DF800364F1B /* RH_dsp.c */; };
+		E3BE5AAF25E24DF900364F1B /* RH_utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AA925E24DF800364F1B /* RH_utility.c */; };
+		E3BE5AB125E24E0600364F1B /* RH_Dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AB025E24E0600364F1B /* RH_Dummy.c */; };
+		E3BE5AB925E24E3700364F1B /* RH_Font.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AB625E24E3700364F1B /* RH_Font.c */; };
+		E3BE5ABA25E24E3700364F1B /* RH_GUI.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5AB725E24E3700364F1B /* RH_GUI.c */; };
+		E3BE5ABD25E24E4400364F1B /* API.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BE5ABC25E24E4400364F1B /* API.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		E32996D625CE767900A44224 /* CopyFiles */ = {
+		E370AE2725E24DA9008FAE92 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -28,23 +33,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E32996D825CE767900A44224 /* XCode_11.1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XCode_11.1; sourceTree = BUILT_PRODUCTS_DIR; };
-		E32996DB25CE767900A44224 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		E32996E225CE76BD00A44224 /* RH_GUIConfigCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfigCheck.h; path = ../../RH_GUIConfigCheck.h; sourceTree = "<group>"; };
-		E32996E325CE76BD00A44224 /* RH_Dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Dummy.c; path = ../../RH_Dummy.c; sourceTree = "<group>"; };
-		E32996E425CE76BD00A44224 /* RH_GUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_GUI.c; path = ../../RH_GUI.c; sourceTree = "<group>"; };
-		E32996E525CE76BD00A44224 /* RH_GUIConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfig.h; path = ../../RH_GUIConfig.h; sourceTree = "<group>"; };
-		E32996E625CE76BD00A44224 /* RH_Font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Font.c; path = ../../RH_Font.c; sourceTree = "<group>"; };
-		E32996E725CE76BD00A44224 /* RH_GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUI.h; path = ../../RH_GUI.h; sourceTree = "<group>"; };
-		E32996E825CE76BD00A44224 /* RH_Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Font.h; path = ../../RH_Font.h; sourceTree = "<group>"; };
-		E32996E925CE76BD00A44224 /* RH_Utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Utility.c; path = ../../RH_Utility.c; sourceTree = "<group>"; };
-		E32996EA25CE76BE00A44224 /* RH_Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Utility.h; path = ../../RH_Utility.h; sourceTree = "<group>"; };
-		E330AC6425D566A200AD2292 /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../API.h; sourceTree = "<group>"; };
-		E330AC6525D566A200AD2292 /* API.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = API.c; path = ../../API.c; sourceTree = "<group>"; };
+		E370AE2925E24DA9008FAE92 /* XCode_11.1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XCode_11.1; sourceTree = BUILT_PRODUCTS_DIR; };
+		E370AE2C25E24DA9008FAE92 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		E3BE5A9D25E24DF800364F1B /* RH_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_lib.h; path = ../BlackHouse/RH_lib.h; sourceTree = "<group>"; };
+		E3BE5A9E25E24DF800364F1B /* RH_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_data.h; path = ../BlackHouse/RH_data.h; sourceTree = "<group>"; };
+		E3BE5A9F25E24DF800364F1B /* RH_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_math.h; path = ../BlackHouse/RH_math.h; sourceTree = "<group>"; };
+		E3BE5AA025E24DF800364F1B /* RH_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_image.h; path = ../BlackHouse/RH_image.h; sourceTree = "<group>"; };
+		E3BE5AA125E24DF800364F1B /* RH_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_dsp.h; path = ../BlackHouse/RH_dsp.h; sourceTree = "<group>"; };
+		E3BE5AA225E24DF800364F1B /* RH_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_data.c; path = ../BlackHouse/RH_data.c; sourceTree = "<group>"; };
+		E3BE5AA325E24DF800364F1B /* RH_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_utility.h; path = ../BlackHouse/RH_utility.h; sourceTree = "<group>"; };
+		E3BE5AA425E24DF800364F1B /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_common.h; path = ../BlackHouse/RH_common.h; sourceTree = "<group>"; };
+		E3BE5AA525E24DF800364F1B /* RH_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_math.c; path = ../BlackHouse/RH_math.c; sourceTree = "<group>"; };
+		E3BE5AA625E24DF800364F1B /* RH_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_image.c; path = ../BlackHouse/RH_image.c; sourceTree = "<group>"; };
+		E3BE5AA725E24DF800364F1B /* RH_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_lib.c; path = ../BlackHouse/RH_lib.c; sourceTree = "<group>"; };
+		E3BE5AA825E24DF800364F1B /* RH_dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_dsp.c; path = ../BlackHouse/RH_dsp.c; sourceTree = "<group>"; };
+		E3BE5AA925E24DF800364F1B /* RH_utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_utility.c; path = ../BlackHouse/RH_utility.c; sourceTree = "<group>"; };
+		E3BE5AB025E24E0600364F1B /* RH_Dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Dummy.c; path = ../../RH_Dummy.c; sourceTree = "<group>"; };
+		E3BE5AB325E24E3700364F1B /* RH_Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_Font.h; path = ../RH_Font.h; sourceTree = "<group>"; };
+		E3BE5AB425E24E3700364F1B /* RH_GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUI.h; path = ../RH_GUI.h; sourceTree = "<group>"; };
+		E3BE5AB525E24E3700364F1B /* RH_GUIConfigCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfigCheck.h; path = ../RH_GUIConfigCheck.h; sourceTree = "<group>"; };
+		E3BE5AB625E24E3700364F1B /* RH_Font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Font.c; path = ../RH_Font.c; sourceTree = "<group>"; };
+		E3BE5AB725E24E3700364F1B /* RH_GUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_GUI.c; path = ../RH_GUI.c; sourceTree = "<group>"; };
+		E3BE5AB825E24E3700364F1B /* RH_GUIConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_GUIConfig.h; path = ../RH_GUIConfig.h; sourceTree = "<group>"; };
+		E3BE5ABB25E24E4400364F1B /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../API.h; sourceTree = "<group>"; };
+		E3BE5ABC25E24E4400364F1B /* API.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = API.c; path = ../../API.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E32996D525CE767900A44224 /* Frameworks */ = {
+		E370AE2625E24DA9008FAE92 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -54,51 +70,78 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E32996CF25CE767900A44224 = {
+		E370AE2025E24DA9008FAE92 = {
 			isa = PBXGroup;
 			children = (
-				E32996DA25CE767900A44224 /* XCode_11.1 */,
-				E32996D925CE767900A44224 /* Products */,
+				E3BE5AB225E24E1E00364F1B /* Glucoo */,
+				E3BE5A9C25E24DE400364F1B /* BlackHouse */,
+				E370AE2B25E24DA9008FAE92 /* XCode_11.1 */,
+				E370AE2A25E24DA9008FAE92 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E32996D925CE767900A44224 /* Products */ = {
+		E370AE2A25E24DA9008FAE92 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E32996D825CE767900A44224 /* XCode_11.1 */,
+				E370AE2925E24DA9008FAE92 /* XCode_11.1 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E32996DA25CE767900A44224 /* XCode_11.1 */ = {
+		E370AE2B25E24DA9008FAE92 /* XCode_11.1 */ = {
 			isa = PBXGroup;
 			children = (
-				E330AC6525D566A200AD2292 /* API.c */,
-				E330AC6425D566A200AD2292 /* API.h */,
-				E32996E325CE76BD00A44224 /* RH_Dummy.c */,
-				E32996E625CE76BD00A44224 /* RH_Font.c */,
-				E32996E825CE76BD00A44224 /* RH_Font.h */,
-				E32996E425CE76BD00A44224 /* RH_GUI.c */,
-				E32996E725CE76BD00A44224 /* RH_GUI.h */,
-				E32996E525CE76BD00A44224 /* RH_GUIConfig.h */,
-				E32996E225CE76BD00A44224 /* RH_GUIConfigCheck.h */,
-				E32996E925CE76BD00A44224 /* RH_Utility.c */,
-				E32996EA25CE76BE00A44224 /* RH_Utility.h */,
-				E32996DB25CE767900A44224 /* main.c */,
+				E3BE5ABC25E24E4400364F1B /* API.c */,
+				E3BE5ABB25E24E4400364F1B /* API.h */,
+				E3BE5AB025E24E0600364F1B /* RH_Dummy.c */,
+				E370AE2C25E24DA9008FAE92 /* main.c */,
 			);
 			path = XCode_11.1;
+			sourceTree = "<group>";
+		};
+		E3BE5A9C25E24DE400364F1B /* BlackHouse */ = {
+			isa = PBXGroup;
+			children = (
+				E3BE5AA425E24DF800364F1B /* RH_common.h */,
+				E3BE5AA225E24DF800364F1B /* RH_data.c */,
+				E3BE5A9E25E24DF800364F1B /* RH_data.h */,
+				E3BE5AA825E24DF800364F1B /* RH_dsp.c */,
+				E3BE5AA125E24DF800364F1B /* RH_dsp.h */,
+				E3BE5AA625E24DF800364F1B /* RH_image.c */,
+				E3BE5AA025E24DF800364F1B /* RH_image.h */,
+				E3BE5AA725E24DF800364F1B /* RH_lib.c */,
+				E3BE5A9D25E24DF800364F1B /* RH_lib.h */,
+				E3BE5AA525E24DF800364F1B /* RH_math.c */,
+				E3BE5A9F25E24DF800364F1B /* RH_math.h */,
+				E3BE5AA925E24DF800364F1B /* RH_utility.c */,
+				E3BE5AA325E24DF800364F1B /* RH_utility.h */,
+			);
+			name = BlackHouse;
+			sourceTree = "<group>";
+		};
+		E3BE5AB225E24E1E00364F1B /* Glucoo */ = {
+			isa = PBXGroup;
+			children = (
+				E3BE5AB625E24E3700364F1B /* RH_Font.c */,
+				E3BE5AB325E24E3700364F1B /* RH_Font.h */,
+				E3BE5AB725E24E3700364F1B /* RH_GUI.c */,
+				E3BE5AB425E24E3700364F1B /* RH_GUI.h */,
+				E3BE5AB825E24E3700364F1B /* RH_GUIConfig.h */,
+				E3BE5AB525E24E3700364F1B /* RH_GUIConfigCheck.h */,
+			);
+			name = Glucoo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E32996D725CE767900A44224 /* XCode_11.1 */ = {
+		E370AE2825E24DA9008FAE92 /* XCode_11.1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E32996DF25CE767900A44224 /* Build configuration list for PBXNativeTarget "XCode_11.1" */;
+			buildConfigurationList = E370AE3025E24DA9008FAE92 /* Build configuration list for PBXNativeTarget "XCode_11.1" */;
 			buildPhases = (
-				E32996D425CE767900A44224 /* Sources */,
-				E32996D525CE767900A44224 /* Frameworks */,
-				E32996D625CE767900A44224 /* CopyFiles */,
+				E370AE2525E24DA9008FAE92 /* Sources */,
+				E370AE2625E24DA9008FAE92 /* Frameworks */,
+				E370AE2725E24DA9008FAE92 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -106,24 +149,24 @@
 			);
 			name = XCode_11.1;
 			productName = XCode_11.1;
-			productReference = E32996D825CE767900A44224 /* XCode_11.1 */;
+			productReference = E370AE2925E24DA9008FAE92 /* XCode_11.1 */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E32996D025CE767900A44224 /* Project object */ = {
+		E370AE2125E24DA9008FAE92 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Randle Helmslay";
 				TargetAttributes = {
-					E32996D725CE767900A44224 = {
+					E370AE2825E24DA9008FAE92 = {
 						CreatedOnToolsVersion = 11.1;
 					};
 				};
 			};
-			buildConfigurationList = E32996D325CE767900A44224 /* Build configuration list for PBXProject "XCode_11.1" */;
+			buildConfigurationList = E370AE2425E24DA9008FAE92 /* Build configuration list for PBXProject "XCode_11.1" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -131,34 +174,39 @@
 				en,
 				Base,
 			);
-			mainGroup = E32996CF25CE767900A44224;
-			productRefGroup = E32996D925CE767900A44224 /* Products */;
+			mainGroup = E370AE2025E24DA9008FAE92;
+			productRefGroup = E370AE2A25E24DA9008FAE92 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E32996D725CE767900A44224 /* XCode_11.1 */,
+				E370AE2825E24DA9008FAE92 /* XCode_11.1 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E32996D425CE767900A44224 /* Sources */ = {
+		E370AE2525E24DA9008FAE92 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E330AC6625D566A200AD2292 /* API.c in Sources */,
-				E32996EE25CE76BE00A44224 /* RH_Utility.c in Sources */,
-				E32996EC25CE76BE00A44224 /* RH_GUI.c in Sources */,
-				E32996EB25CE76BE00A44224 /* RH_Dummy.c in Sources */,
-				E32996ED25CE76BE00A44224 /* RH_Font.c in Sources */,
-				E32996DC25CE767900A44224 /* main.c in Sources */,
+				E3BE5ABD25E24E4400364F1B /* API.c in Sources */,
+				E3BE5AB125E24E0600364F1B /* RH_Dummy.c in Sources */,
+				E3BE5AAD25E24DF900364F1B /* RH_lib.c in Sources */,
+				E3BE5AAF25E24DF900364F1B /* RH_utility.c in Sources */,
+				E3BE5AAB25E24DF900364F1B /* RH_math.c in Sources */,
+				E370AE2D25E24DA9008FAE92 /* main.c in Sources */,
+				E3BE5ABA25E24E3700364F1B /* RH_GUI.c in Sources */,
+				E3BE5AAE25E24DF900364F1B /* RH_dsp.c in Sources */,
+				E3BE5AB925E24E3700364F1B /* RH_Font.c in Sources */,
+				E3BE5AAA25E24DF900364F1B /* RH_data.c in Sources */,
+				E3BE5AAC25E24DF900364F1B /* RH_image.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E32996DD25CE767900A44224 /* Debug */ = {
+		E370AE2E25E24DA9008FAE92 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -216,7 +264,7 @@
 			};
 			name = Debug;
 		};
-		E32996DE25CE767900A44224 /* Release */ = {
+		E370AE2F25E24DA9008FAE92 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -267,7 +315,7 @@
 			};
 			name = Release;
 		};
-		E32996E025CE767900A44224 /* Debug */ = {
+		E370AE3125E24DA9008FAE92 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -277,7 +325,7 @@
 			};
 			name = Debug;
 		};
-		E32996E125CE767900A44224 /* Release */ = {
+		E370AE3225E24DA9008FAE92 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -290,25 +338,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E32996D325CE767900A44224 /* Build configuration list for PBXProject "XCode_11.1" */ = {
+		E370AE2425E24DA9008FAE92 /* Build configuration list for PBXProject "XCode_11.1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E32996DD25CE767900A44224 /* Debug */,
-				E32996DE25CE767900A44224 /* Release */,
+				E370AE2E25E24DA9008FAE92 /* Debug */,
+				E370AE2F25E24DA9008FAE92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E32996DF25CE767900A44224 /* Build configuration list for PBXNativeTarget "XCode_11.1" */ = {
+		E370AE3025E24DA9008FAE92 /* Build configuration list for PBXNativeTarget "XCode_11.1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E32996E025CE767900A44224 /* Debug */,
-				E32996E125CE767900A44224 /* Release */,
+				E370AE3125E24DA9008FAE92 /* Debug */,
+				E370AE3225E24DA9008FAE92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E32996D025CE767900A44224 /* Project object */;
+	rootObject = E370AE2125E24DA9008FAE92 /* Project object */;
 }
