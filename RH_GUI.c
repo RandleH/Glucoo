@@ -289,7 +289,7 @@ static  void __ApplyPixel_fill         (int x,int y,Pixel_t color             ,B
 static  void __ApplyPixel_lightness    (int x,int y,Pixel_t br_100            ,BufferInfo_t* pBufferInfo);
 static  void __ApplyPixel_unzero       (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
 static  void __ApplyPixel_moveBlur     (int x,int y,Pixel_t nan               ,BufferInfo_t* pBufferInfo);
-
+static  void __ApplyPixel_reverse      (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
 
 /*===========================================
  > 在指定缓存区,标记一个点
@@ -359,6 +359,9 @@ static void __ApplyPixel_moveBlur(int x,int y,Pixel_t color,BufferInfo_t* pBuffe
     Screen.buffer[M_SCREEN_MAIN][y][x].data = Screen.buffer[M_SCREEN_BLUR][y][x].data;
 }
 
+/*===========================================
+ > 在主屏显存区调节像素的亮度 「耦合」
+============================================*/
 static void __ApplyPixel_lightness(int x,int y,Pixel_t br_100,BufferInfo_t* pBufferInfo){
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
@@ -367,6 +370,25 @@ static void __ApplyPixel_lightness(int x,int y,Pixel_t br_100,BufferInfo_t* pBuf
     Screen.buffer[M_SCREEN_MAIN][y][x].R = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].R*br_100/100) , 0 , ((1<<8)-1));
     Screen.buffer[M_SCREEN_MAIN][y][x].G = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].G*br_100/100) , 0 , ((1<<8)-1));
     Screen.buffer[M_SCREEN_MAIN][y][x].B = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].B*br_100/100) , 0 , ((1<<8)-1));
+}
+
+/*===========================================
+ > 在主屏显存区像素颜色取反 「耦合」
+============================================*/
+static void __ApplyPixel_reverse(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+    size_t width   = pBufferInfo->width;
+    size_t height  = pBufferInfo->height;
+    __exit( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH);
+    
+    PixelUnit_t temp = {.data = Screen.buffer[M_SCREEN_MAIN][y][x].data};
+#if ( GUI_COLOR_TYPE == GUI_RGB888 )
+    temp.B = 0xff - temp.B;
+    temp.G = 0xff - temp.G;
+    temp.R = 0xff - temp.R;
+#else
+    while(1);
+#endif
+    Screen.buffer[M_SCREEN_MAIN][y][x].data = temp.data;
 }
 
 
@@ -477,9 +499,9 @@ static void __addAreaNeedRefreash(int xs,int ys,int xe,int ye){
  > 矢量基本图形
 =====================================*/
 //           [内部][图形功能函数]          [相关属性参数]                                            [画笔粗细]     [画笔颜色]        [画布属性]                 [绘图方法]
-static void __Graph_circle_raw     (int x ,int y ,int r ,                                   /************/ Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
-static void __Graph_circle_edged   (int x ,int y ,int r ,                                   size_t penSize,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
-static void __Graph_circle_fill    (int x ,int y ,int r ,                                   /************/ Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
+static void __Graph_circle_raw     (int x ,int y ,int d ,                                   /************/ Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
+static void __Graph_circle_edged   (int x ,int y ,int d ,                                   size_t penSize,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
+static void __Graph_circle_fill    (int x ,int y ,int d ,                                   /************/ Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
 
 
 static void __Graph_line_raw       (int x1,int y1,int x2,int y2,                            /************/ Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx);
@@ -502,7 +524,7 @@ static void __Graph_rect_fill      (int xs,int ys,int xe,int ye,                
  > 局部高斯虚化
 =====================================*/
 static void __Blur_gus_part      (int xs,int ys,int xe,int ye, uint16_t radSize, uint16_t br_100, BufferInfo_t* pBufferInfo);
-
+static void __Blur_avg_part      (int xs,int ys,int xe,int ye, uint16_t radSize, uint16_t br_100, BufferInfo_t* pBufferInfo);
 
 static void __Blur_gus_part      (int xs,int ys,int xe,int ye, uint16_t radSize, uint16_t br_100, BufferInfo_t* pBufferInfo){
     
@@ -557,25 +579,27 @@ static void __Blur_avg_part      (int xs,int ys,int xe,int ye, uint16_t radSize,
 /*====================================
  > 插入一个填充圆
 =====================================*/
-static void __Graph_circle_fill(int x, int y, int r,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx){
+static void __Graph_circle_fill(int x, int y, int d,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx){
+    int r = d>>1;
     int p = 3-(r<<1);
     int x_tmp = 0,y_tmp = r;
-
+    bool eps  = (d%2==0);
+    
     for(;x_tmp<=y_tmp;x_tmp++){
         int cnt = y_tmp+1;
         while(cnt--){
-            (*Call_ApplyPixel_xxxx)(x+x_tmp,y+cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_tmp,y+cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+x_tmp,y-cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_tmp,y-cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_tmp ,y     + cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_tmp ,y     + cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_tmp ,y+eps - cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_tmp ,y+eps - cnt,penColor,pBufferInfo );
         }
 
         cnt = x_tmp+1;
         while(cnt--){
-            (*Call_ApplyPixel_xxxx)(x+y_tmp,y+cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-y_tmp,y+cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+y_tmp,y-cnt,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-y_tmp,y-cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + y_tmp ,y     + cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - y_tmp ,y     + cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + y_tmp ,y+eps - cnt,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - y_tmp ,y+eps - cnt,penColor,pBufferInfo );
         }
 
         if(p <= 0){
@@ -590,8 +614,8 @@ static void __Graph_circle_fill(int x, int y, int r,Pixel_t penColor,BufferInfo_
 /*====================================
  > 插入一个空心圆,线宽随设定
 =====================================*/
-static void __Graph_circle_edged(int x, int y, int r,size_t penSize,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_ApplyPixel_xxxx){
-
+static void __Graph_circle_edged(int x, int y, int d,size_t penSize,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_ApplyPixel_xxxx){
+    int r = d>>1;
     int r_ex  = r;
     int r_in  = (int)(r-penSize);
     
@@ -601,16 +625,19 @@ static void __Graph_circle_edged(int x, int y, int r,size_t penSize,Pixel_t penC
     int y_in_tmp = r_in;
     int p_ex  = 3-2*r_ex;
     int p_in  = 3-2*r_in;
+    
+    bool eps  = (d%2==0);
+    
     for(;x_ex_tmp<y_ex_tmp;x_ex_tmp++,x_in_tmp++){
         for(int Y = y_in_tmp;Y<y_ex_tmp;Y++){
-            (*Call_ApplyPixel_xxxx)(x+x_ex_tmp,y+Y ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_ex_tmp,y+Y ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+x_ex_tmp,y-Y ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_ex_tmp,y-Y ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+Y,y+x_ex_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-Y,y+x_ex_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+Y,y-x_ex_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-Y,y-x_ex_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_ex_tmp ,y     + Y        ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_ex_tmp ,y     + Y        ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_ex_tmp ,y+eps - Y        ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_ex_tmp ,y+eps - Y        ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + Y        ,y     + x_ex_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - Y        ,y     + x_ex_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + Y        ,y+eps - x_ex_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - Y        ,y+eps - x_ex_tmp ,penColor,pBufferInfo );
         }
 
         if(p_ex <= 0){
@@ -631,18 +658,19 @@ static void __Graph_circle_edged(int x, int y, int r,size_t penSize,Pixel_t penC
 /*====================================
  > 插入一个空心圆,线宽为1
 =====================================*/
-static void __Graph_circle_raw(int x ,int y ,int r ,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx){
-
-    int p  = 3-2*r;
+static void __Graph_circle_raw(int x ,int y ,int d ,Pixel_t penColor,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod Call_ApplyPixel_xxxx){
+    int r    = d>>1;
+    int p    = 3-2*r;
+    bool eps = (d%2==0);
     for(int x_tmp=0,y_tmp = r;x_tmp<=y_tmp;x_tmp++){
-            (*Call_ApplyPixel_xxxx)(x+x_tmp,y+y_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_tmp,y+y_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+x_tmp,y-y_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-x_tmp,y-y_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+y_tmp,y+x_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-y_tmp,y+x_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x+y_tmp,y-x_tmp ,penColor,pBufferInfo );
-            (*Call_ApplyPixel_xxxx)(x-y_tmp,y-x_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_tmp ,y     + y_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_tmp ,y     + y_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + x_tmp ,y+eps - y_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - x_tmp ,y+eps - y_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + y_tmp ,y     + x_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - y_tmp ,y     + x_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x     + y_tmp ,y+eps - x_tmp ,penColor,pBufferInfo );
+            (*Call_ApplyPixel_xxxx)(x+eps - y_tmp ,y+eps - x_tmp ,penColor,pBufferInfo );
 
         if(p <= 0){
             p += (x_tmp<<2) + 6;
@@ -977,75 +1005,96 @@ static void __Graph_quad_fill(int x1,int y1,int x2,int y2,int x3,int y3,int x4,i
 =====================================*/
 static void __Graph_line_sausage(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,Pixel_t penColor ,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_ApplyPixel_xxxx){
 
-    int x_offset = 0;
-    int y_offset = 0;
-    int x11=0,y11=0,x22=0,y22=0,x33=0,y33=0,x44=0,y44=0;
-
     __Graph_line_raw(x1,y1,x2,y2,penColor,pBufferInfo,Call_ApplyPixel_xxxx);
     if(penSize > 1){
+        int d = (int)(penSize);
+        int r = d>>1;
+        int p = 3-(r<<1);
+        int x_tmp = 0,y_tmp = r;
+        bool eps  = (d%2==0);
 
-        //                -----------------------------------
-        //              /       penSize * penSize * K^2
-        // x_offset =  /    -------------------------------
-        //           \/               K^2 + 1
+        int    dis_min = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+        int    dis_tmp = dis_min;
         
-        //                -----------------------------------
-        //              /         penSize * penSize
-        // y_offset =  /    -------------------------------
-        //           \/               K^2 + 1
+        int    py1=0,px1=0,py2=0,px2=0;
+        
+        for(;x_tmp<=y_tmp;x_tmp++){
+            int cnt = y_tmp+1;
 
-        
-        switch(__Dir_Line(x1,y1,x2,y2)){
-            case  0:
-                x11 = x1; y11 = (int)(y1-(penSize>>1)+(penSize%2==0));
-                x22 = x1; y22 = (int)(y1+(penSize>>1));
-                x33 = x2; y33 = (int)(y2-(penSize>>1)+(penSize%2==0));
-                x44 = x2; y44 = (int)(y2+(penSize>>1));
-                break;
-            case  1:
-                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
-        
-                x11 = x1+(x_offset>>1)-(x_offset%2==0); y11 = y1-(y_offset>>1);
-                x22 = x1-(x_offset>>1)                ; y22 = y1+(y_offset>>1)-(y_offset%2==0);
-                x33 = x2-(x_offset>>1)                ; y33 = y2+(y_offset>>1)-(y_offset%2==0);
-                x44 = x2+(x_offset>>1)-(x_offset%2==0); y44 = y2-(y_offset>>1);
-                break;
-            case -1:
-                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
-                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
-        
-                x11 = x1+(x_offset>>1)                ; y11 = y1+(y_offset>>1)-(y_offset%2==0);
-                x22 = x1-(x_offset>>1)+(x_offset%2==0); y22 = y1-(y_offset>>1)                ;
-                x33 = x2-(x_offset>>1)+(x_offset%2==0); y33 = y2-(y_offset>>1)                ;
-                x44 = x2+(x_offset>>1)                ; y44 = y2+(y_offset>>1)-(y_offset%2==0);
-                break;
-            case 65535:
-                x11 = (int)(x1-(penSize>>1)                ); y11 = y1;
-                x22 = (int)(x1+(penSize>>1)-(penSize%2==0)); y22 = y1;
-                x33 = (int)(x2-(penSize>>1)                ); y33 = y2;
-                x44 = (int)(x2+(penSize>>1)-(penSize%2==0)); y44 = y2;
-                break;
+            while(cnt--){
+                (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1     + x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1+eps - x_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+
+                (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2     + x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2+eps - x_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+            }
+
+            cnt = x_tmp+1;
+            while(cnt--){
+                (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1     + y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x1+eps - y_tmp ,y1+eps - cnt,penColor,pBufferInfo );
+
+                (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2     + cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2     + y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+                (*Call_ApplyPixel_xxxx)(x2+eps - y_tmp ,y2+eps - cnt,penColor,pBufferInfo );
+            }
+//            Screen.buffer[M_SCREEN_MAIN][y1     + y_tmp][x1     + x_tmp].data = GUI_COLOR_RED;
+//            Screen.buffer[M_SCREEN_MAIN][y1+eps - y_tmp][x1+eps - x_tmp].data = GUI_COLOR_RED;
+            dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(eps-2*x_tmp) );;
+            if( dis_tmp < dis_min ){
+                dis_min = dis_tmp;
+                py1 =  y_tmp ; px1 =  x_tmp;
+                py2 = eps-y_tmp ; px2 = eps-x_tmp;
+            }
+            
+//            Screen.buffer[M_SCREEN_MAIN][y1     + y_tmp][x1+eps - x_tmp].data = GUI_COLOR_GREEN;
+//            Screen.buffer[M_SCREEN_MAIN][y1+eps - y_tmp][x1     + x_tmp].data = GUI_COLOR_GREEN;
+            dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+            if( dis_tmp < dis_min ){
+                dis_min = dis_tmp;
+                py1 =  y_tmp ; px1 = eps-x_tmp;
+                py2 = eps-y_tmp ; px2 =  x_tmp;
+            }
+
+//            Screen.buffer[M_SCREEN_MAIN][y1     + x_tmp][x1     + y_tmp].data = GUI_COLOR_BLUE;
+//            Screen.buffer[M_SCREEN_MAIN][y1+eps - x_tmp][x1+eps - y_tmp].data = GUI_COLOR_BLUE;
+            dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(eps-2*y_tmp) );
+            if( dis_tmp < dis_min ){
+                dis_min = dis_tmp;
+                py1 =  x_tmp ; px1 =  y_tmp;
+                py2 = eps-x_tmp ; px2 = -y_tmp;
+            }
+            
+//            Screen.buffer[M_SCREEN_MAIN][y1     + x_tmp][x1+eps - y_tmp].data = GUI_COLOR_TAN;
+//            Screen.buffer[M_SCREEN_MAIN][y1+eps - x_tmp][x1     + y_tmp].data = GUI_COLOR_TAN;
+            dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(2*y_tmp-eps) );
+            if( dis_tmp < dis_min ){
+                dis_min = dis_tmp;
+                py1 =  x_tmp ; px1 = eps-y_tmp;
+                py2 = eps-x_tmp ; px2 =  y_tmp;
+            }
+            
+            if(p <= 0){
+                p += (x_tmp<<2) + 6;
+            }else{
+                p += ((x_tmp-y_tmp)<<2) + 10;
+                y_tmp--;
+            }
         }
-        (*Call_ApplyPixel_xxxx)(x11,y11,penColor,pBufferInfo );
-        (*Call_ApplyPixel_xxxx)(x22,y22,penColor,pBufferInfo );
-        (*Call_ApplyPixel_xxxx)(x33,y33,penColor,pBufferInfo );
-        (*Call_ApplyPixel_xxxx)(x44,y44,penColor,pBufferInfo );
+        
+        Screen.buffer[M_SCREEN_MAIN][y1     + py1][x1     + px1].data = GUI_COLOR_BLACK;
+        Screen.buffer[M_SCREEN_MAIN][y1     + py2][x1     + px2].data = GUI_COLOR_BLACK;
 
-        __Graph_quad_fill(  x11,y11, \
-                                      x22,y22, \
-                                      x33,y33, \
-                                      x44,y44, \
-                                      penColor  , \
-                                      pBufferInfo,Call_ApplyPixel_xxxx  );
-        // GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-    }
-
-    size_t tmp = (penSize>>1)-(penSize%2==0);
-    penSize = 1;
-    __Graph_circle_fill(x1,y1,(int)tmp, penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+        __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, penColor, pBufferInfo, Call_ApplyPixel_xxxx);
     
-    __Graph_circle_fill(x2,y2,(int)tmp, penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+    }
     
 }
 
@@ -1732,7 +1781,7 @@ void GUI_FillCircle(int x,int y, int r){
                                 .height  = GUI_Y_WIDTH  ,
                                 .width   = GUI_X_WIDTH };
 
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
+#if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
     int page_start   = (GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH))>>3;
     int page_end     = (GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH))>>3;
     int column_start = (GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH));
@@ -1770,7 +1819,7 @@ void GUI_FillCircle(int x,int y, int r){
     }
 }
 
-void GUI_DrawCircle(int x,int y, int r){
+void GUI_DrawCircle(int x,int y, int d){
 #if GUI_ASSERT
     (*GUI_API_AssertParam)(x<GUI_X_WIDTH,"X-Y cordination is out of range.");
     (*GUI_API_AssertParam)(y<GUI_Y_WIDTH,"X-Y cordination is out of range.");
@@ -1779,41 +1828,22 @@ void GUI_DrawCircle(int x,int y, int r){
     BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
                                 .height  = GUI_Y_WIDTH  ,
                                 .width   = GUI_X_WIDTH };
-
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-    int page_start   = (GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH))>>3;
-    int page_end     = (GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH))>>3;
-    int column_start = (GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH-1));
-    int column_end   = (GUI_LIMIT((signed)(x+r),0,GUI_X_WIDTH-1));
-
-    Pixel_t penColor = Screen.penColor;
-    Pixel_t bkColor  = Screen.bkColor;
-    __Graph_circle_fill(x,y,r,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
-#else
-    int x_end   = GUI_LIMIT((signed)(x+r),0,GUI_X_WIDTH-1);
-    int x_start = GUI_LIMIT((signed)(x-r),0,GUI_X_WIDTH-1);
-    int y_end   = GUI_LIMIT((signed)(y+r),0,GUI_Y_WIDTH-1);
-    int y_start = GUI_LIMIT((signed)(y-r),0,GUI_Y_WIDTH-1);
+    int r = d>>1;
+    int xe = GUI_LIMIT((signed)(x+r+1),0,GUI_X_WIDTH-1);
+    int xs = GUI_LIMIT((signed)(x-r-1),0,GUI_X_WIDTH-1);
+    int ye = GUI_LIMIT((signed)(y+r+1),0,GUI_Y_WIDTH-1);
+    int ys = GUI_LIMIT((signed)(y-r-1),0,GUI_Y_WIDTH-1);
 
     if(Screen.penSize == 1)
-        __Graph_circle_raw(x,y,r,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
+        __Graph_circle_raw(x,y,d,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
     else
-        __Graph_circle_edged(x,y,r,Screen.penSize,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
-#endif
+        __Graph_circle_edged(x,y,d,Screen.penSize,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
+
 
     if(Screen.autoDisplayMode == true){
- #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
-        Pixel_t* p;
-        for(unsigned int page=page_start;page<=page_end;page++){
-            p = (Pixel_t*)(&Screen.buffer[page]);
-            p += column_start;
-            (*GUI_API_DrawPageColumn)(page,column_start,column_end-column_start,p );
-        }
-#else
-        GUI_RefreashArea(x_start,y_start,x_end,y_end);
-#endif
+        GUI_RefreashArea(xs,ys,xe,ye);
     }else{
-        __addAreaNeedRefreash(x_start,y_start,x_end,y_end);
+        __addAreaNeedRefreash(xs,ys,xe,ye);
     }
 }
 
@@ -1894,7 +1924,6 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2){
                                 .height  = GUI_Y_WIDTH  ,
                                 .width   = GUI_X_WIDTH };
 
-//     __Graph_line_raw(x1,y1,x2,y2,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
     __Graph_line_sausage(x1,y1,x2,y2,Screen.penSize,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
 
 
@@ -1905,13 +1934,13 @@ void GUI_DrawLine(int x1,int y1,int x2,int y2){
         GUI_RefreashPageArea(page_start,page_end,column_start,column_end);
 #else
         GUI_RefreashArea(    (int)GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-tmp) , 0 , GUI_X_WIDTH ), \
-                             (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y1)-tmp) , 0 , GUI_Y_WIDTH ), \
+                             (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y2)-tmp) , 0 , GUI_Y_WIDTH ), \
                              (int)GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+tmp) , 0 , GUI_X_WIDTH ), \
                              (int)GUI_LIMIT( (signed)(GUI_MAX(y1,y2)+tmp) , 0 , GUI_Y_WIDTH )    );
 #endif
     }else{
         __addAreaNeedRefreash(    (int)GUI_LIMIT( (signed)(GUI_MIN(x1,x2)-tmp) , 0 ,GUI_X_WIDTH ), \
-                                  (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y1)-tmp) , 0 ,GUI_Y_WIDTH ), \
+                                  (int)GUI_LIMIT( (signed)(GUI_MIN(y1,y2)-tmp) , 0 ,GUI_Y_WIDTH ), \
                                   (int)GUI_LIMIT( (signed)(GUI_MAX(x1,x2)+tmp) , 0 ,GUI_X_WIDTH ), \
                                   (int)GUI_LIMIT( (signed)(GUI_MAX(y1,y2)+tmp) , 0 ,GUI_Y_WIDTH )    );
     }
@@ -2809,9 +2838,9 @@ static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
     uint    penSize  = Screen.penSize;
 
     int xs = (int)(p->config.x_pos);
-    int xe = (int)((p->config.x_pos)+(p->config.size)-2);
+    int xe = (int)((p->config.x_pos)+(p->config.size)-1);
     int ys = (int)(p->config.y_pos);
-    int ye = (int)((p->config.y_pos)+(p->config.size)-2);
+    int ye = (int)((p->config.y_pos)+(p->config.size)-1);
 
     int width        = (((p->config.size)>>3) == 0 ) ? (1):(((p->config.size)>>3)) ;
     int halfWidth    = (int)(width>>1);
@@ -2828,7 +2857,6 @@ static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
                             width         ,\
                             p->config.themeColor,\
                             &BufferInfo,__ApplyPixel_fill    );
-    // GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
     
     __Graph_line_sausage(    xc            ,\
                             ys + halfWidth,\
@@ -2837,16 +2865,15 @@ static void __insert_icon_Arrow_UP(struct __IconConfigChain* p){
                             width         ,\
                             p->config.themeColor,\
                             &BufferInfo,__ApplyPixel_fill    );
-    // GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-    
+
     __Graph_line_sausage(    xc            ,\
                             ys + halfWidth,\
                             xe - halfWidth - (p->config.size)/10,\
                             ys + xc - xs   - (p->config.size)/10,\
                             width         ,\
-                            p->config.themeColor,\
+                            GUI_COLOR_RED,\
                             &BufferInfo,__ApplyPixel_fill    );
-    // GUI_RefreashArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
+
     
     Screen.penColor = penColor;
     Screen.penSize  = penSize;

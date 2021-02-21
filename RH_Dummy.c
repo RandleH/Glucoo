@@ -436,8 +436,8 @@ int main(int argc, const char * argv[]) {
 
 
 
-    const char* __restrict__ src  = "/Users/randle_h/desktop/screen.bmp";
-    const char* __restrict__ des  = "/Users/randle_h/desktop/screen_.bmp";
+    const char* __restrict__ src  = "/Users/randle_h/desktop/lenna.bmp";
+    const char* __restrict__ des  = "/Users/randle_h/desktop/lenna_.bmp";
 
     __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
 
@@ -481,6 +481,146 @@ int main(int argc, const char * argv[]) {
         }
         printf("\n");
     }
+
+
+
+
+
+
+
+
+switch(__Dir_Line(x1,y1,x2,y2)){
+    case  0:
+        x11 = x1; y11 = (int)(y1-(penSize>>1)+(penSize%2==0));
+        x22 = x1; y22 = (int)(y1+(penSize>>1));
+        x33 = x2; y33 = (int)(y2-(penSize>>1)+(penSize%2==0));
+        x44 = x2; y44 = (int)(y2+(penSize>>1));
+        break;
+    case  1:
+        x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+        y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+
+        x11 = x1+(x_offset>>1)-(x_offset%2==0); y11 = y1-(y_offset>>1);
+        x22 = x1-(x_offset>>1)                ; y22 = y1+(y_offset>>1)-(y_offset%2==0);
+        x33 = x2-(x_offset>>1)                ; y33 = y2+(y_offset>>1)-(y_offset%2==0);
+        x44 = x2+(x_offset>>1)-(x_offset%2==0); y44 = y2-(y_offset>>1);
+        break;
+    case -1:
+        x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+        y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+
+        x11 = x1+(x_offset>>1)                ; y11 = y1+(y_offset>>1)-(y_offset%2==0);
+        x22 = x1-(x_offset>>1)+(x_offset%2==0); y22 = y1-(y_offset>>1)                ;
+        x33 = x2-(x_offset>>1)+(x_offset%2==0); y33 = y2-(y_offset>>1)                ;
+        x44 = x2+(x_offset>>1)                ; y44 = y2+(y_offset>>1)-(y_offset%2==0);
+        break;
+    case 65535:
+        x11 = (int)(x1-(penSize>>1)                ); y11 = y1;
+        x22 = (int)(x1+(penSize>>1)-(penSize%2==0) ); y22 = y1;
+        x33 = (int)(x2-(penSize>>1)                ); y33 = y2;
+        x44 = (int)(x2+(penSize>>1)-(penSize%2==0) ); y44 = y2;
+        break;
+}
+
+
+
+/*====================================
+ > 插入一根香肠线,粗细随设定
+=====================================*/
+static void __Graph_line_sausage(int x1 ,int y1 ,int x2 ,int y2 ,size_t penSize ,Pixel_t penColor ,BufferInfo_t* pBufferInfo,func_ApplyPixelMethod  Call_ApplyPixel_xxxx){
+
+    int x_offset = 0;
+    int y_offset = 0;
+    int x11=0,y11=0,x22=0,y22=0,x33=0,y33=0,x44=0,y44=0;
+
+    __Graph_line_raw(x1,y1,x2,y2,penColor,pBufferInfo,Call_ApplyPixel_xxxx);
+    if(penSize > 1){
+
+        //                -----------------------------------
+        //              /       penSize * penSize * K^2
+        // x_offset =  /    -------------------------------
+        //           \/               K^2 + 1
+        
+        //                -----------------------------------
+        //              /         penSize * penSize
+        // y_offset =  /    -------------------------------
+        //           \/               K^2 + 1
+
+        
+        switch(__Dir_Line(x1,y1,x2,y2)){
+            case  0:
+                x11 = x1; y11 = (int)(y1-(penSize>>1)+(penSize%2==0));
+                x22 = x1; y22 = (int)(y1+(penSize>>1));
+                x33 = x2; y33 = (int)(y2-(penSize>>1)+(penSize%2==0));
+                x44 = x2; y44 = (int)(y2+(penSize>>1));
+                break;
+            case  1:
+                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+        
+                x11 = x1+(x_offset>>1)-(x_offset%2==0); y11 = y1-(y_offset>>1);
+                x22 = x1-(x_offset>>1)                ; y22 = y1+(y_offset>>1)-(y_offset%2==0);
+                x33 = x2-(x_offset>>1)                ; y33 = y2+(y_offset>>1)-(y_offset%2==0);
+                x44 = x2+(x_offset>>1)-(x_offset%2==0); y44 = y2-(y_offset>>1);
+                break;
+            case -1:
+                x_offset = (int)lround(sqrt( ((y1-y2)*(y1-y2)*penSize*penSize/((x1-x2)*(x1-x2))) / (1.0*(y1-y2)*(y1-y2)/((x1-x2)*(x1-x2))+1) ));
+                y_offset = (int)lround(sqrt( penSize*penSize/((y1-y2)*(y1-y2)/(1.0*(x1-x2)*(x1-x2))+1) ));
+        
+                x11 = x1+(x_offset>>1)                ; y11 = y1+(y_offset>>1)-(y_offset%2==0);
+                x22 = x1-(x_offset>>1)+(x_offset%2==0); y22 = y1-(y_offset>>1)                ;
+                x33 = x2-(x_offset>>1)+(x_offset%2==0); y33 = y2-(y_offset>>1)                ;
+                x44 = x2+(x_offset>>1)                ; y44 = y2+(y_offset>>1)-(y_offset%2==0);
+                break;
+            case 65535:
+                x11 = (int)(x1-(penSize>>1)                ); y11 = y1;
+                x22 = (int)(x1+(penSize>>1)-(penSize%2==0) ); y22 = y1;
+                x33 = (int)(x2-(penSize>>1)                ); y33 = y2;
+                x44 = (int)(x2+(penSize>>1)-(penSize%2==0) ); y44 = y2;
+                break;
+        }
+        (*Call_ApplyPixel_xxxx)(x11,y11,penColor,pBufferInfo );
+        (*Call_ApplyPixel_xxxx)(x22,y22,penColor,pBufferInfo );
+        (*Call_ApplyPixel_xxxx)(x33,y33,penColor,pBufferInfo );
+        (*Call_ApplyPixel_xxxx)(x44,y44,penColor,pBufferInfo );
+
+        __Graph_quad_fill(  x11,y11, \
+                                      x22,y22, \
+                                      x33,y33, \
+                                      x44,y44, \
+                                      penColor  , \
+                                      pBufferInfo,Call_ApplyPixel_xxxx  );
+        
+    }
+    // Frequently error zone
+    switch(__Dir_Line(x1,y1,x2,y2)){
+        case  0 :
+            __Graph_circle_fill(x1,y1,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            __Graph_circle_fill(x2,y2,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            break;
+        case  1 :
+            __Graph_circle_fill(x1,y1,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            __Graph_circle_fill(x2,y2,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            break;
+        case  -1:
+            __Graph_circle_raw(x1,y1,(int)(penSize), GUI_COLOR_AQUA, pBufferInfo,Call_ApplyPixel_xxxx);
+            __Graph_circle_raw(x2,y2,(int)(penSize), GUI_COLOR_AQUA, pBufferInfo,Call_ApplyPixel_xxxx);
+            
+            break;
+        case  65535:
+            __Graph_circle_fill(x1-(penSize%2==0),y1,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            __Graph_circle_fill(x2-(penSize%2==0),y2,(int)(penSize), penColor, pBufferInfo,Call_ApplyPixel_xxxx);
+            break;
+    }
+    
+    Screen.buffer[M_SCREEN_MAIN][y1][x1].data = GUI_COLOR_AQUA;
+//    Screen.buffer[M_SCREEN_MAIN][y11][x11].data = GUI_COLOR_AQUA;
+//    Screen.buffer[M_SCREEN_MAIN][y22][x22].data = GUI_COLOR_AQUA;
+//    Screen.buffer[M_SCREEN_MAIN][y33][x33].data = GUI_COLOR_AQUA;
+//    Screen.buffer[M_SCREEN_MAIN][y44][x44].data = GUI_COLOR_AQUA;
+}
+
+
 #endif
 
 
