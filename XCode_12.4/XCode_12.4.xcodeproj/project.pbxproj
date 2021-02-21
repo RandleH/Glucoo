@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E322105025E28FFC00F1FF3A /* RH_Dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E322104F25E28FFC00F1FF3A /* RH_Dummy.c */; };
 		E3A7DD1125DE3DAD00588D3D /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A7DD1025DE3DAD00588D3D /* main.c */; };
 		E3A7DD2725DE3E0A00588D3D /* RH_data.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A7DD1E25DE3E0A00588D3D /* RH_data.c */; };
 		E3A7DD2825DE3E0A00588D3D /* RH_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A7DD1F25DE3E0A00588D3D /* RH_lib.c */; };
@@ -32,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E322104F25E28FFC00F1FF3A /* RH_Dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_Dummy.c; path = ../../RH_Dummy.c; sourceTree = "<group>"; };
 		E3A7DD0D25DE3DAD00588D3D /* XCode_12.4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XCode_12.4; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A7DD1025DE3DAD00588D3D /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E3A7DD1A25DE3E0900588D3D /* RH_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_lib.h; path = ../BlackHouse/RH_lib.h; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 		E3A7DD0F25DE3DAD00588D3D /* XCode_12.4 */ = {
 			isa = PBXGroup;
 			children = (
+				E322104F25E28FFC00F1FF3A /* RH_Dummy.c */,
 				E3A7DD1025DE3DAD00588D3D /* main.c */,
 			);
 			path = XCode_12.4;
@@ -186,6 +189,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3A7DD3725DE3E6F00588D3D /* API.c in Sources */,
+				E322105025E28FFC00F1FF3A /* RH_Dummy.c in Sources */,
 				E3A7DD1125DE3DAD00588D3D /* main.c in Sources */,
 				E3A7DD3925DE3E6F00588D3D /* RH_Font.c in Sources */,
 				E3A7DD2825DE3E0A00588D3D /* RH_lib.c in Sources */,
