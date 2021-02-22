@@ -33,7 +33,7 @@ inline uint32_t   __swap_DATA    (uint32_t x){
     return (uint32_t)( M_SWAP_32BIT(x)>>(32-(dummy+1)) );
 }
      
-inline size_t     __sizeof_BITs  (uint32_t x){
+inline size_t     __sizeof_BINs  (uint32_t x){
     size_t cnt = 1;
     while(x>>=1){cnt++;}
     return cnt;
@@ -63,6 +63,47 @@ inline uint32_t   __Gray2Bin     (uint32_t x){
       
 inline uint32_t   __Bin2Gray     (uint32_t x){
     return (uint32_t)((x>>1)^x);
+}
+    
+const char* __ftoa_BIN(float x){
+    static char pTmp[(sizeof(float)<<3)+1] = {0};
+    char* pTmp_iter = pTmp;
+    
+    void* pNum = ((uint8_t*)(&x))+sizeof(float) - 1;
+    
+    memset( pTmp , '\0' ,  (sizeof(float)<<3)+1 );
+    size_t size = sizeof(float);
+    
+    while(size--){
+        size_t byte = 8;
+        while(byte--){
+            (*pTmp_iter) = '0'+(((*(uint8_t*)(pNum))>>byte)&0x01);
+            pTmp_iter++;
+        }
+        pNum--;
+    }
+    return pTmp;
+}
+    
+const char* __btoa_BIN(uint8_t x){
+    static char pTmp[(sizeof(uint8_t)<<3)+1] = {0};
+    char* pTmp_iter = pTmp;
+    
+    void* pNum = &x;
+    
+    memset( pTmp , '\0' ,  (sizeof(uint8_t)<<3)+1 );
+    size_t size = sizeof(uint8_t);
+    
+    while(size--){
+        size_t byte = 8;
+        while(byte--){
+            (*pTmp_iter) = '0'+(((*(uint8_t*)(pNum))>>byte)&0x01);
+            pTmp_iter++;
+        }
+        pNum++;
+    }
+    printf("%s\n",pTmp);
+    return pTmp;
 }
 
 /*===========================================================================================================================
