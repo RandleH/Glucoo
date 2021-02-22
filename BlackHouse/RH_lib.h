@@ -15,16 +15,19 @@ extern "C" {
 uint8_t     __swap_8BIT   (uint8_t   x);
 uint16_t    __swap_16BIT  (uint16_t  x);
 uint32_t    __swap_32BIT  (uint32_t  x);
-uint32_t    __swap_nBIT   (uint32_t  x, size_t n);
+uint32_t    __swap_nBIT   (uint32_t  x , size_t n);
 uint32_t    __swap_DATA   (uint32_t  x);
  
-size_t      __sizeof_BITs (uint32_t  x);
+size_t      __sizeof_BINs (uint32_t  x);
 size_t      __sizeof_OCTs (uint32_t  x);
 size_t      __sizeof_DECs (uint32_t  x);
 size_t      __sizeof_HEXs (uint32_t  x);
  
 uint32_t    __Bin2Gray    (uint32_t  x);
 uint32_t    __Gray2Bin    (uint32_t  x); //
+
+const char* __btoa_BIN    (uint8_t   x); // btoa_BIN
+const char* __ftoa_BIN    (float     x); // ftoa_BIN
 
 /*===========================================================================================================================
  > Memory Programming Reference
