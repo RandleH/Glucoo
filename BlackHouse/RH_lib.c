@@ -65,7 +65,7 @@ inline uint32_t   __Bin2Gray     (uint32_t x){
     return (uint32_t)((x>>1)^x);
 }
     
-const char* __ftoa_BIN(float x){
+const char*       __ftoa_BIN     (float    x){
     static char pTmp[(sizeof(float)<<3)+1] = {0};
     char* pTmp_iter = pTmp;
     
@@ -85,14 +85,46 @@ const char* __ftoa_BIN(float x){
     return pTmp;
 }
     
-const char* __btoa_BIN(uint8_t x){
+const char*       __btoa_BIN     (uint8_t  x){
     static char pTmp[(sizeof(uint8_t)<<3)+1] = {0};
-    char* pTmp_iter = pTmp;
-    
-    void* pNum = &x;
     
     memset( pTmp , '\0' ,  (sizeof(uint8_t)<<3)+1 );
-    size_t size = sizeof(uint8_t);
+    
+    union{
+        struct{
+            uint8_t bit0 : 1;
+            uint8_t bit1 : 1;
+            uint8_t bit2 : 1;
+            uint8_t bit3 : 1;
+            uint8_t bit4 : 1;
+            uint8_t bit5 : 1;
+            uint8_t bit6 : 1;
+            uint8_t bit7 : 1;
+        };
+        uint8_t x;
+    }value;
+    value.x = x;
+    
+    pTmp[0] = value.bit7 + '0';
+    pTmp[1] = value.bit6 + '0';
+    pTmp[2] = value.bit5 + '0';
+    pTmp[3] = value.bit4 + '0';
+    pTmp[4] = value.bit3 + '0';
+    pTmp[5] = value.bit2 + '0';
+    pTmp[6] = value.bit1 + '0';
+    pTmp[7] = value.bit0 + '0';
+
+    return pTmp;
+}
+
+const char*       __ldtoa_BIN    (uint32_t x){
+    static char pTmp[(sizeof(uint32_t)<<3)+1] = {0};
+    char* pTmp_iter = pTmp;
+    
+    void* pNum = ((uint8_t*)(&x))+sizeof(uint32_t) - 1;
+    
+    memset( pTmp , '\0' ,  (sizeof(uint32_t)<<3)+1 );
+    size_t size = sizeof(uint32_t);
     
     while(size--){
         size_t byte = 8;
@@ -100,9 +132,8 @@ const char* __btoa_BIN(uint8_t x){
             (*pTmp_iter) = '0'+(((*(uint8_t*)(pNum))>>byte)&0x01);
             pTmp_iter++;
         }
-        pNum++;
+        pNum--;
     }
-    printf("%s\n",pTmp);
     return pTmp;
 }
 

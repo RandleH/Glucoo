@@ -27,6 +27,7 @@ uint32_t    __Bin2Gray    (uint32_t  x);
 uint32_t    __Gray2Bin    (uint32_t  x); //
 
 const char* __btoa_BIN    (uint8_t   x); // btoa_BIN
+const char* __ldtoa_BIN   (uint32_t  x);
 const char* __ftoa_BIN    (float     x); // ftoa_BIN
 
 /*===========================================================================================================================
