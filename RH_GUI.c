@@ -287,37 +287,53 @@ static struct __Screen_t{
 
 
 // 声明: 插入一个像素点的函数接口
-typedef void (*func_ApplyPixelMethod)  (int x,int y,Pixel_t param             ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_mark         (int x,int y,Pixel_t nan               ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_fill         (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_lightness    (int x,int y,Pixel_t br_100            ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_unzero       (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_moveBlur     (int x,int y,Pixel_t nan               ,BufferInfo_t* pBufferInfo);
-static  void __ApplyPixel_reverse      (int x,int y,Pixel_t color             ,BufferInfo_t* pBufferInfo);
-
+typedef Pixel_t (*func_ApplyPixelMethod)  (int x,int y,Pixel_t param       ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_mark         (int x,int y,Pixel_t nan         ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_unmark       (int x,int y,Pixel_t color       ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_fill         (int x,int y,Pixel_t color       ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_lightness    (int x,int y,Pixel_t br_100      ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_unzero       (int x,int y,Pixel_t color       ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_moveBlur     (int x,int y,Pixel_t nan         ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_reverse      (int x,int y,Pixel_t color       ,BufferInfo_t* pBufferInfo);
+static  Pixel_t __ApplyPixel_pick         (int x,int y,Pixel_t color       ,BufferInfo_t* pBufferInfo);
 /*===========================================
  > 在指定缓存区,标记一个点
 ============================================*/
-static void __ApplyPixel_mark(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_mark(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
     bool* p        = pBufferInfo->pBuffer;
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
 
-    __exit( x>=width || y>=height || x<0 || y<0 );
+    __exitReturn( x>=width || y>=height || x<0 || y<0, 0 );
 
     *(p+(y*width)+x) = 1;
+    return 1;
+}
+    
+/*===========================================
+ > 在指定缓存区,去除标记一个点
+============================================*/
+static Pixel_t __ApplyPixel_unmark(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+    bool* p        = pBufferInfo->pBuffer;
+    size_t width   = pBufferInfo->width;
+    size_t height  = pBufferInfo->height;
+
+    __exitReturn( x>=width || y>=height || x<0 || y<0, 0 );
+
+    *(p+(y*width)+x) = 0;
+    return 1;
 }
 
 /*===========================================
  > 在指定缓存区,填充一个像素点,颜色随设定
 ============================================*/
-static void __ApplyPixel_fill(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_fill(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
     
     PixelUnit_t* p = pBufferInfo->pBuffer;
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
 
-    __exit( x>=width || y>=height || x<0 || y<0 );
+    __exitReturn( x>=width || y>=height || x<0 || y<0 , color );
 
  #if (GUI_DISPLAY_MODE == GUI_OLED_PAGE_COLUMN)
     int temp = y&0x07;
@@ -335,56 +351,61 @@ static void __ApplyPixel_fill(int x,int y,Pixel_t color,BufferInfo_t* pBufferInf
 #else
     p[y*width+x].data = color;
 #endif
+    return color;
 }
 
 /*===========================================
  > 在指定缓冲区,如果为0,则填充像素
 ============================================*/
-static void __ApplyPixel_unzero(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_unzero(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
     PixelUnit_t* p = pBufferInfo->pBuffer;
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
 
-    __exit( x>=width || y>=height || x<0 || y<0 );
+    __exitReturn( x>=width || y>=height || x<0 || y<0 , color );
     
     if((p+(y*height)+x)->data == 0){
         (p+(y*height)+x)->data = color;
     }
+    return 0;
 }
 
 /*===========================================
  > 从虚化显存区拷贝一个像素至指定缓冲区 「耦合」
 ============================================*/
-static void __ApplyPixel_moveBlur(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_moveBlur(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
 
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
-    __exit( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH);
+    __exitReturn( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH , Screen.buffer[M_SCREEN_BLUR][y][x].data);
     Screen.buffer[M_SCREEN_MAIN][y][x].data = Screen.buffer[M_SCREEN_BLUR][y][x].data;
+    return 0;
 }
 
 /*===========================================
  > 在主屏显存区调节像素的亮度 「耦合」
 ============================================*/
-static void __ApplyPixel_lightness(int x,int y,Pixel_t br_100,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_lightness(int x,int y,Pixel_t br_100,BufferInfo_t* pBufferInfo){
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
-    __exit( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH);
+    __exitReturn( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH , br_100);
     
     Screen.buffer[M_SCREEN_MAIN][y][x].R = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].R*br_100/100) , 0 , ((1<<8)-1));
     Screen.buffer[M_SCREEN_MAIN][y][x].G = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].G*br_100/100) , 0 , ((1<<8)-1));
     Screen.buffer[M_SCREEN_MAIN][y][x].B = GUI_LIMIT((signed)(Screen.buffer[M_SCREEN_MAIN][y][x].B*br_100/100) , 0 , ((1<<8)-1));
+    return 0;
 }
 
 /*===========================================
- > 在主屏显存区像素颜色取反 「耦合」
+ > 在指定缓冲区,取反一个像素颜色
 ============================================*/
-static void __ApplyPixel_reverse(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+static Pixel_t __ApplyPixel_reverse(int x,int y,Pixel_t color,BufferInfo_t* pBufferInfo){
+    PixelUnit_t* p = pBufferInfo->pBuffer;
     size_t width   = pBufferInfo->width;
     size_t height  = pBufferInfo->height;
-    __exit( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH);
+    __exitReturn( x>=width || y>=height || x<0 || y<0 || width>GUI_X_WIDTH || height>GUI_Y_WIDTH , 0);
     
-    PixelUnit_t temp = {.data = Screen.buffer[M_SCREEN_MAIN][y][x].data};
+    PixelUnit_t temp = {.data = p[y*width+x].data};
 #if ( GUI_COLOR_TYPE == GUI_RGB888 )
     temp.B = 0xff - temp.B;
     temp.G = 0xff - temp.G;
@@ -392,7 +413,8 @@ static void __ApplyPixel_reverse(int x,int y,Pixel_t color,BufferInfo_t* pBuffer
 #else
     while(1);
 #endif
-    Screen.buffer[M_SCREEN_MAIN][y][x].data = temp.data;
+    p[y*width+x].data = temp.data;
+    return 0;
 }
 
 
@@ -989,14 +1011,11 @@ static void __Graph_quad_fill(int x1,int y1,int x2,int y2,int x3,int y3,int x4,i
     }
 
  // 将画布上的点，存入图像显存，注意偏移量
-    // BufferInfo.pBuffer = Screen.buffer;
-    // BufferInfo.height  = GUI_Y_WIDTH;
-    // BufferInfo.width   = GUI_X_WIDTH;
 
     for(int j = 0;j < area_height;j++){
         for(int i = 0;i < area_width;i++){
             if( (*(pBuffer + area_width*j + i)) == 1 )
-                __ApplyPixel_fill( i+left_x , j+top_y , penColor, pBufferInfo );
+                (*Call_ApplyPixel_xxxx)( i+left_x , j+top_y , penColor, pBufferInfo );
         }
     }
 
@@ -2969,37 +2988,91 @@ static void __remove_icon_Windows10    (struct __IconConfigChain* p){
 }
 
 static void __insert_icon_Windows10    (struct __IconConfigChain* p){
-    BufferInfo_t BufferInfo = {    .pBuffer = Screen.buffer,
+    BufferInfo_t BufferInfo = { .pBuffer = Screen.buffer[M_SCREEN_MAIN],
                                 .height  = GUI_Y_WIDTH  ,
-                                .width   = GUI_X_WIDTH };
+                                .width   = GUI_X_WIDTH  };
 
-    Pixel_t penColor = Screen.penColor;
-    uint    penSize  = Screen.penSize;
+    
+/*
+ 
+             line_90   ______  (x2,y2)
+  (x1,y1)    _____-----      |
+     ___----     |           |
+     |           |           |
+     |           |           |
+     |           |           |
+     | ----------+---------- |  line_0
+     |           |           |
+     |           |           |
+     |___        |           |
+         ------_______       |
+ (x4,y4)              -------  (x3,y3)
+               
+*/
     
     int x2 = (int)(p->config.x_pos + p->config.size*69.0/71) - 1;
     int y2 = p->config.y_pos;
 
     int x1 = p->config.x_pos;
-    int y1 = (int)(y2 + p->config.size*9.0/79) - 1;
+    int y1 = (int)(y2 + p->config.size*9/79.0) - 1;
     
     int x3 = x2;
     int y3 = y2 + p->config.size-1;
     
     int x4 = x1;
-    int y4 = (int)(y1 + p->config.size*54.0/72) - 1;
+    int y4 = (int)(y1 + p->config.size*54/72.0) - 1;
 
     int line_0  = (int)((y1+y4)>>1);
     int line_90 = (int)((2.5*x2+3*x1)/(2.5+3));
-
-    __Graph_quad_fill(x1,y1,x2,y2,x3,y3,x4,y4,Screen.penColor,&BufferInfo,__ApplyPixel_fill);
     
-    Screen.penColor = GUI_COLOR_BLACK;
-    Screen.penSize  = (p->config.size)>33 ? (int)((p->config.size)*3/100):1;
-    __Graph_line_raw(p->config.x_pos,line_0,p->config.x_pos+p->config.size-1,line_0,p->config.themeColor,&BufferInfo,__ApplyPixel_fill);
-    __Graph_line_raw(line_90,p->config.y_pos,line_90,p->config.y_pos+p->config.size-1,p->config.themeColor,&BufferInfo,__ApplyPixel_fill);
     
-    Screen.penSize  = penSize;
-    Screen.penColor = penColor;
+    
+    size_t penSize   = (p->config.size)>33 ? (int)((p->config.size)*3/100):1;
+    
+//    size_t   Len_0    = (x3-x1+1)*sizeof(Pixel_t);
+//    Pixel_t* pLine_0  = (Pixel_t*)__malloc(penSize*Len_0);
+//    size_t   Len_90   = (y3-y2+1)*sizeof(Pixel_t);
+//    Pixel_t* pLine_90 = (Pixel_t*)__malloc(penSize*Len_90);
+    // Copy pixels of line
+//    for(int i=0;i<penSize;i++){
+//        memcpy((pLine_0+i*Len_0), &Screen.buffer[M_SCREEN_MAIN][line_0+i][x1], Len_0 );
+//        for(int cnt=0,j=y2;j<=y3;j++,cnt++){
+//            *(pLine_90+i*Len_90+cnt) = Screen.buffer[M_SCREEN_MAIN][j][line_90+i].data;
+//        }
+//    }
+//
+    BufferInfo.pBuffer = (uint8_t*)__malloc( p->config.size*p->config.size);
+    BufferInfo.width   = p->config.size;
+    BufferInfo.height  = p->config.size;
+    memset(BufferInfo.pBuffer, 0, p->config.size*p->config.size );
+    
+    // offset(x1,y2)
+    __Graph_quad_fill(x1  - x1,y1  - y2,\
+                      x2  - x1,y2  - y2,\
+                      x3  - x1,y3  - y2,\
+                      x4  - x1,y4  - y2,p->config.themeColor,&BufferInfo,__ApplyPixel_mark);
+    
+    __Graph_line_raw(p->config.x_pos-x1                    ,\
+                     line_0-y2                             ,\
+                     p->config.x_pos-x1+p->config.size-1   ,\
+                     line_0-y2                             ,\
+                     p->config.themeColor                  ,\
+                     &BufferInfo,__ApplyPixel_unmark);
+    
+    __Graph_line_raw(line_90-x1                            ,\
+                     p->config.y_pos - y2                  ,\
+                     line_90-x1                            ,\
+                     p->config.y_pos+p->config.size-1 - y2 ,\
+                     p->config.themeColor                  ,\
+                     &BufferInfo,__ApplyPixel_unmark);
+    
+    for(int y_cnt=0,y=y2;y<=y3;y++,y_cnt++){
+        for(int x_cnt=0,x=x1;x<=x2;x++,x_cnt++){
+            if( (*(uint8_t*)(BufferInfo.pBuffer+BufferInfo.width*y_cnt+x_cnt)) == 1)
+                Screen.buffer[M_SCREEN_MAIN][y][x].data = p->config.themeColor;
+        }
+    }
+    
 }
 
 static __IconConfigChain* __searchIconConfigChain(BYTE ID){
