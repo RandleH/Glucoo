@@ -20,7 +20,10 @@ long         __sign            (long   x);
 long         __step            (long   x);
 long         __sqrt            (long   x);
 double       __sigmold         (double x);
+
+double       __cordic_tan      (long   dec);
 double       __cordic_atan     (long   y,long x     );
+
 double       __gussian         (long   x,long __miu  ,double __sigma);
 double       __gussian2D       (long   x,long y      ,double __sigma);
 __Kernel_t*  __gussianKernel   (double __sigma,size_t order,__Kernel_t* pKernel);
@@ -28,6 +31,8 @@ __Kernel_t*  __gussianKernel   (double __sigma,size_t order,__Kernel_t* pKernel)
 long         __step_mul        (long   x);
 long         __fibonacci       (long   n);
 
+long         __pascal_triangle     ( long row , long col );
+long*        __pascal_triangle_row ( long row , size_t* returnSize );
 
 /*=====================================================================
  > Quantity Reference
@@ -69,15 +74,15 @@ Point3D_t __findPoint_VectorDistance   (const Point3D_t* A        ,const Point3D
 Point3D_t __findPoint_VectorProportion (const Point3D_t* A        ,const Point3D_t* B     ,double scale   );
 
 
-int        __Vect2D_Dot    (const Vector2D_t* vect1,const Vector2D_t* vect2);
-int        __Vect3D_Dot    (const Vector3D_t* vect1,const Vector3D_t* vect2);
-Vector3D_t __Vect3D_Cross  (const Vector3D_t* vect1,const Vector3D_t* vect2);
+int        __Vect2D_Dot                (const Vector2D_t* vect1   ,const Vector2D_t* vect2);
+int        __Vect3D_Dot                (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
+Vector3D_t __Vect3D_Cross              (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
 
 
-int        __Dir_Line        (int xs,int ys,int xe,int ye);
-int        __Point_toLine    (int xs,int ys,int xe,int ye,               int px,int py);
-int        __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
-int        __Point_toCircle  (int xc,int yc,int radius,                  int px,int py);
+int        __Dir_Line                  (int xs,int ys,int xe,int ye);
+int        __Point_toLine              (int xs,int ys,int xe,int ye,               int px,int py);
+int        __Point_toTriangle          (int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
+int        __Point_toCircle            (int xc,int yc,int radius,                  int px,int py);
 
 
 #ifdef __cplusplus

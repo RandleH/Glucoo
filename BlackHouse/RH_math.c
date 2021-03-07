@@ -34,28 +34,104 @@ long __sqrt(long x){
         return res;
     return (res+1);
 }
+/*========================================================================================================
+ > DEC                        RAD                          TAN
+ =========================================================================================================
+ > Φ = 45                     0.78539816339744828          tan(Φ) = 1/1    
+ > Φ = 26.565051177078        0.46364760900080609          tan(Φ) = 1/2    
+ > Φ = 14.0362434679265       0.24497866312686414          tan(Φ) = 1/4    
+ > Φ = 7.1250163489018        0.12435499454676144          tan(Φ) = 1/8    
+ > Φ = 3.57633437499735       0.06241880999595735          tan(Φ) = 1/16   
+ > Φ = 1.78991060824607       0.031239833430268277         tan(Φ) = 1/32   
+ > Φ = 0.8951737102111        0.015623728620476831         tan(Φ) = 1/64   
+ > Φ = 0.4476141708606        0.0078123410601011111        tan(Φ) = 1/128  
+ > Φ = 0.2238105003685        0.0039062301319669718        tan(Φ) = 1/256  
+ > Φ = 0.1119056770662        0.0019531225164788188        tan(Φ) = 1/512  
+ > Φ = 0.0559528918938        0.00097656218955931946       tan(Φ) = 1/1024 
+ > Φ = 0.027976452617         0.00048828121119489829       tan(Φ) = 1/2048 
+ > Φ = 0.01398822714227       0.00024414062014936177       tan(Φ) = 1/4096 
+ > Φ = 0.006994113675353      0.00012207031189367021       tan(Φ) = 1/8192 
+ > Φ = 0.003497056850704      0.000061035156174208773      tan(Φ) = 1/16384
+//========================================================================================================*/
     
+//const static uint16_t angle_rad_65535[] = {
+//    // When 1 rad = 65535, then...
+//    51471 , 
+//    30385 , 
+//    16055 , 
+//    8150  , 
+//    4091  , 
+//    2047  , 
+//    1024  , 
+//    512   , 
+//    256   , 
+//    128   , 
+//    64    , 
+//    32    , 
+//    16    , 
+//    8     , 
+//    4     , 
+//    2
+//};
+
+const static uint16_t angle_dec_256[] = {
+    // When 1 deg = 256, then...
+    11520 , 
+    6801  , 
+    3593  , 
+    1824  , 
+    916   , 
+    458   , 
+    229   , 
+    115   , 
+    57    , 
+    29    , 
+    14    , 
+    7     , 
+    4     , 
+    2     , 
+    1       
+};
+
+double __cordic_tan(long dec){
+
+    long x = 0xffff;
+    long y = 0;
+    long angle_tar = dec<<8;
+    long angle_sum = 0;
+    long x_tmp = 0,y_tmp = 0;
+    
+    for( int i=0; i<16; i++ ){
+        if( angle_tar < angle_sum ){ // cw
+            x_tmp = (x + (y>>i));
+            y_tmp = (y - (x>>i));
+            x  = x_tmp;
+            y  = y_tmp;
+            angle_sum -= angle_dec_256[i];
+        }else if(angle_tar > angle_sum){ // ccw
+            x_tmp = (x - (y>>i));
+            y_tmp = (y + (x>>i));
+            x  = x_tmp;
+            y  = y_tmp;
+            angle_sum += angle_dec_256[i];
+        }else{
+            break;
+        }
+    }
+    return y/((double)(x));
+}
+
 double __cordic_atan(long y,long x){
-    const static uint16_t angle_256[] = {
-        // When 1 deg = 256, then...
-        
-        11520 , // Φ = 45               tan(Φ) = 1
-        6801  , // Φ = 26.565051177078  tan(Φ) = 1/2
-        3593  , // Φ = 14.036243467927  tan(Φ) = 1/4
-        1824  , // Φ = 26.565051177078  tan(Φ) = 1/8
-        916   , // Φ = 26.565051177078  tan(Φ) = 1/16
-        458   , // Φ = 26.565051177078  tan(Φ) = 1/32
-        229   , // Φ = 26.565051177078  tan(Φ) = 1/64
-        115   , // Φ = 26.565051177078  tan(Φ) = 1/128
-        57    , // Φ = 26.565051177078  tan(Φ) = 1/256
-        29    , // Φ = 26.565051177078  tan(Φ) = 1/512
-        14    , // Φ = 26.565051177078  tan(Φ) = 1/1024
-        7     , // Φ = 26.565051177078  tan(Φ) = 1/2048
-        4     , // Φ = 26.565051177078  tan(Φ) = 1/4096
-        2     , // Φ = 26.565051177078  tan(Φ) = 1/8192
-        1       // Φ = 26.565051177078  tan(Φ) = 1/16384
-    };
-    long angle_sum = 0.0;
+    
+    __exitReturn( x==0 && y==0 ,    0 );
+    __exitReturn( x==0 && y<0  ,  -90 );
+    __exitReturn( x==0 && y>0  ,   90 );
+    __exitReturn( y==0 && x<0  ,    0 );
+    __exitReturn( y==0 && x>0  ,    0 );
+    __exitReturn( x==y         ,   45 );
+    __exitReturn( x==-y        ,  -45 );
+
+    long angle_sum = 0;
     long x_tmp,y_tmp;
     
     y<<=10;
@@ -67,13 +143,13 @@ double __cordic_atan(long y,long x){
             y_tmp = (y - (x>>i));
             x  = x_tmp;
             y  = y_tmp;
-            angle_sum += angle_256[i];
-        }else{ // ccw
+            angle_sum += angle_dec_256[i];
+        }else if(y<0){ // ccw
             x_tmp = (x - (y>>i));
             y_tmp = (y + (x>>i));
             x  = x_tmp;
             y  = y_tmp;
-            angle_sum -= angle_256[i];
+            angle_sum -= angle_dec_256[i];
         }
     }
     
@@ -137,12 +213,101 @@ __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel){
     return pKernel;
 }
       
-long __pascal_triangle(int row, int col){
-    __exitReturn(col>row || col<0 || row<0 , -1);
-#if SHOW_BUG
-    ???
-#endif
-    return 0;
+long __pascal_triangle(long row, long col){
+    __exitReturn( col>row || col<0 || row<0 , -1 );
+    return (__pascal_triangle_row(row, NULL))[col];
+}
+    
+long* __pascal_triangle_row( long row , size_t* returnSize ){
+    __exitReturn( row<0 , NULL );
+    if( returnSize )
+        *returnSize = row+1;
+    
+    struct __Link{
+        struct __Link* pNext;
+        long*           data;
+        size_t         row;
+    };
+    typedef struct __Link __Link;
+    static struct __Link Head = {
+        .pNext = NULL ,
+        .data  = NULL ,
+        .row   = 0
+    };
+    if( Head.data == NULL ){
+        Head.data = (long*)malloc(sizeof(long));
+        Head.data[0] = 1;
+    }
+
+    __Link* pIter = &Head;
+    __Link* pOpti = &Head;
+    __Link* pLast = &Head;
+    
+    long dis_row_min    = __abs(row - pIter->row);
+    bool sgn            = (row > pIter->row);     // 标志,判断距离目标最近的那一行位于目标的上方还是下方 1 = 上方; 0 = 下方;
+    do{
+        // 行差越小，需要迭代的次数就越少
+        if( __abs(row-pIter->row) < dis_row_min ){
+            sgn = (row > pIter->row);
+            dis_row_min = row - pIter->row;
+            pOpti = pIter;
+        }
+        // 如果就是那一行，即行差为0，则直接返回值
+        if( pIter->row==row ){
+            return ( pIter->data );
+        }
+        // 继续迭代寻找
+        pLast = pIter;
+        pIter = pIter->pNext;
+   
+    }while( pIter != NULL );
+    
+    // 没有找到那一行，则从最接近那一行（pOpti->row）的数值开始向sgn方向计算，并记录之
+    // 此时 pOpti 代表距离最近的那一行数据，pLast为链表最后节点末尾。
+    __Link*  pasc_link = pLast;
+    long*    last_data = pOpti->data;                                      // 从距离目标最近的那一行开始
+    if( sgn == true ){ // =================================================// 距离最近的那一行位于目标上方
+        long   pasc_size = (pOpti->row)+2;                                 // 该行的元素个数为上一行行号+2
+        
+        while( dis_row_min-- ){
+            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
+            pasc_link           = pasc_link->pNext;
+            
+
+            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
+            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
+            pasc_link->pNext    = NULL;
+            
+            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
+            for( int i=1;i<=(pasc_size-1-i);i++ ){
+                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] + last_data[i-1];
+            }
+
+            last_data           = pasc_link->data;
+            pasc_size           = pasc_link->row+2;
+        }
+    }else{ // =============================================================// 距离最近的那一行位于目标下方
+        long   pasc_size = (pOpti->row)-2;                                 // 该行的元素个数为下一行行号-2
+        
+        while( dis_row_min-- ){
+            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
+            pasc_link           = pasc_link->pNext;
+            
+            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
+            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
+            pasc_link->pNext    = NULL;
+            
+            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
+            for( int i=1;i<=(pasc_size-1-i);i++ ){
+                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] - pasc_link->data[i-1];
+            }
+            
+            last_data           = pasc_link->data;
+            pasc_size           = pasc_link->row-2;
+        }
+    }
+
+    return pasc_link->data;
 }
       
 inline long __step_mul(long x){ // [!] Limitation: x should be smaller than 20
@@ -157,10 +322,7 @@ inline long __step_mul(long x){ // [!] Limitation: x should be smaller than 20
       
 long __comb(long num,long m){
     __exitReturn(m>num || m<0 || num<0 , -1);
-#if SHOW_BUG
-    ???
-#endif
-    return 0;
+    return __pascal_triangle(num, m);
 }
       
 long __fibonacci(long n){

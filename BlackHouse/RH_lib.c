@@ -331,7 +331,6 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
     char* p = __dst;
     for(size_t y = ys;y <= ye;y++){
         size_t offset = size*(nmenb_line*y + xs);
-
         memmove( p , (__src+offset), num_objs );
         p += num_objs;
     }

@@ -81,7 +81,7 @@ void __cFFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,s
     if(dst_m != NULL){
         for(size_t k=0;k<fftLen;k++){
             dst_m[k] = sqrt(creal(_x[k])*creal(_x[k])+cimag(_x[k])*cimag(_x[k]));
-            printf("| %.4f + j* %.4f | = \t%f\n",creal(dst_c[k]),cimag(dst_c[k]),dst_m[k]);
+            // printf("| %.4f + j* %.4f | = \t%f\n",creal(dst_c[k]),cimag(dst_c[k]),dst_m[k]);
         }
     }
     
@@ -113,7 +113,7 @@ void __cDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,s
             dst_m[k] = sqrt(creal(X[k])*creal(X[k]) + cimag(X[k])*cimag(X[k]));
     }
     
-    for(size_t k=0;k<dftLen;k++) printf("| %.4f + j* %.4f | = \t%f\n",creal(X[k]),cimag(X[k]),dst_m[k]);
+    // for(size_t k=0;k<dftLen;k++) printf("| %.4f + j* %.4f | = \t%f\n",creal(X[k]),cimag(X[k]),dst_m[k]);
     
     if(dst_c == NULL)
         __free(X);
@@ -148,7 +148,7 @@ void __cIDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,
         
     }
     
-    for(size_t k=0;k<dftLen;k++) printf("| %.4f + \tj*%.4f | = \t%.4f\n",creal(_x[k]),cimag(_x[k]),dst_m[k]);
+    // for(size_t k=0;k<dftLen;k++) printf("| %.4f + \tj*%.4f | = \t%.4f\n",creal(_x[k]),cimag(_x[k]),dst_m[k]);
     
     if(dst_c == NULL)
         __free(_x);
