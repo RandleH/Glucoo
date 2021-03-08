@@ -155,26 +155,35 @@ void GUI_rect_raw( int xs,int ys,int xe,int ye ){
 
 static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     printf("##\n");
-    int xs = config->area.xs;
-    int ys = config->area.ys;
-    int xe = (int)(xs + config->area.width -1);
-    int ye = (int)(ys + config->area.height-1);
+    const int xs = config->area.xs;
+    const int ys = config->area.ys;
+    const int xe = (int)(xs + config->area.width -1);
+    const int ye = (int)(ys + config->area.height-1);
+    const int bar_size   = __limit( (int)(config->size), 20, 256 );//38
+    const int bar_size_2 = bar_size>>1;
+    const int bar_size_4 = bar_size>>2;
+    const int bar_rad    = __limit( (int)(config->size), 20, 256 )/5;
+    
+    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
+    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    
+    __GUI_Font_t* pFontInfo = GUI_ExportFontStr( config->title );
+    const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+    const int font_ys = ys + bar_size_4;
     __Pixel_t penColor = __Graph_get_penColor();
     size_t    penSize  = __Graph_get_penSize();
-    
+    int                fontSize = GUI_GetFontSize();
+    E_GUI_FontStyle_t fontStyle = GUI_GetFontStyle();
     
     __GraphInfo_t info = {
         .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
         .height  = GUI_Y_WIDTH                    ,
         .width   = GUI_X_WIDTH                    ,
     };
-    const int bar_size   = __limit( (int)(config->size), 20, 256 );//38
-    const int bar_size_2 = bar_size>>1;
-    const int bar_size_4 = bar_size>>2;
-    const int bar_rad    = __limit( (int)(config->size), 20, 256 )/5;
     
     // Window Bar
-    __Graph_set_penColor(M_COLOR_SILVER);
+    __Graph_set_penColor(color_bar.data);
     __Graph_set_penSize(bar_rad);
     __Graph_rect_round   (xs   , ys         , xe  , ys+bar_size+bar_rad, &info, kApplyPixel_fill);
     
@@ -187,10 +196,31 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_line_raw     (xe-1 , ys+bar_size, xe-1, ye  , &info, kApplyPixel_fill);
     
     // Title
-    
+    GUI_SetFontSize(bar_size_2);
+    GUI_SetFontStyle( kGUI_FontStyle_CourierNew_Bold );
+    for( int y=0; y<pFontInfo->height; y++ ){
+        for( int x=0; x<pFontInfo->width; x++ ){
+            uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
+            size_t  index     = (y+font_ys)*info.width + (x+font_xs);
+            if( pixWeight != 0 ){
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+                while(1);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+                while(1);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+                info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_title.R - info.pBuffer[ index ].R) * pixWeight )>>8);
+                info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_title.G - info.pBuffer[ index ].G) * pixWeight )>>8);
+                info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_title.B - info.pBuffer[ index ].B) * pixWeight )>>8);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+                
+            }
+        }
+    }
     
     // Context
-    __Graph_set_penColor(M_COLOR_WHITE);
+    __Graph_set_penColor(color_blank.data);
     __Graph_rect_fill    (xs+2 , ys+bar_size, xe-2, ye-2, &info, kApplyPixel_fill);
     
     // Button
@@ -205,6 +235,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     __Graph_set_penColor(penColor);
     __Graph_set_penSize(penSize);
+    
+    GUI_SetFontSize(fontSize);
+    GUI_SetFontStyle(fontStyle);
 }
 
 static void __gui_remove_window_MacOS(__GUI_Window_t* config){

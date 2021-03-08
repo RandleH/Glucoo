@@ -20,8 +20,11 @@ static __ImageRGB888_t* pTmpScreenShot = NULL;
   #error "[RH_gui_api]: Unknown color type."
 #endif
 
-    
+#if defined __WIN32
+const char* dst_path = "D:/Personal/Desktop/screen.bmp";
+#elif defined  (__APPLE__)
 const char* dst_path = "/Users/randle_h/desktop/screen.bmp";
+#endif
 
 static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
 

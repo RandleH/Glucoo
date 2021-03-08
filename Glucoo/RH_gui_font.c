@@ -14,10 +14,23 @@ static struct{
     uint8_t*           font_data;
 }Font = {0};
 
+#if defined (__WIN32)
+#include <direct.h>
+
 static const char* font_path[kGUI_NUM_FontStyle] = {
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
+    "../Glucoo/Font/Courier New.ttf"        ,
+    "../Glucoo/Font/Courier New Italic.ttf" ,
+    "../Glucoo/Font/Courier New Bold.ttf"
 };
+#elif defined  (__APPLE__)
+static const char* font_path[kGUI_NUM_FontStyle] = {
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"
+};
+#endif
+
+
 
 static void  __attribute__((constructor)) __gui_font_init(void){
     GUI_SetFontStyle( kGUI_FontStyle_CourierNew );
@@ -49,6 +62,7 @@ void GUI_SetFontStyle(E_GUI_FontStyle_t style){
     switch(style){
         case kGUI_FontStyle_CourierNew:
         case kGUI_FontStyle_CourierNew_Italic:
+        case kGUI_FontStyle_CourierNew_Bold:
             __gui_font_read( font_path[style] );
             stbtt_InitFont(&Font.stb_info, Font.font_data, 0);
             break;
@@ -70,13 +84,21 @@ void GUI_SetFontSize(int size){
     Font.info.descent = roundf(Font.info.descent * Font.scale);
 }
 
+int GUI_GetFontSize(void){
+    return Font.size;
+}
+
+E_GUI_FontStyle_t GUI_GetFontStyle(void){
+    return Font.style;
+}
+
 #define STB_OUTPUT_FONT_PNG
 
 #ifdef STB_OUTPUT_FONT_PNG
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 #endif
-__GUI_Font_t* GUI_ExportFontChar(uint16_t unicode){
+__GUI_Font_t* __attribute__((warn_unused_result)) GUI_ExportFontChar(uint16_t unicode){
     int c_x1 , c_y1 , c_x2 , c_y2;
     stbtt_GetCodepointBitmapBox(&Font.stb_info, unicode, Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     Font.info.height = c_y2-c_y1;
@@ -97,7 +119,7 @@ __GUI_Font_t* GUI_ExportFontChar(uint16_t unicode){
     return &Font.info;
 }
 
-__GUI_Font_t* GUI_ExportFontStr( const char* str){
+__GUI_Font_t* __attribute__((warn_unused_result)) GUI_ExportFontStr( const char* str ){
     
     if( Font.info.output ){
         free(Font.info.output);

@@ -39,8 +39,10 @@ typedef enum{
 struct __GUI_Window_t{
     __Area_t           area;
     E_GUI_WindowType_t type;
+    E_GUI_Apperance_t  appearance;
     size_t             size;
     const char*        title;
+    
     //...//
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
