@@ -175,8 +175,10 @@ extern "C" {
 #define M_COLOR_GAINSBORO                    (MAKE_COLOR(220,220,220))  // 赶死部落
 #define M_COLOR_LIGHTGRAY                    (MAKE_COLOR(211,211,211))  // 浅灰
 #define M_COLOR_SILVER                       (MAKE_COLOR(192,192,192))  // 银色
-#define M_COLOR_DARKGRAY                     (MAKE_COLOR(169,169,169))  // 深灰
-#define M_COLOR_DIMGRAY                      (MAKE_COLOR(105,105,105))  // 暗灰
+#define M_COLOR_DARKGRAY                     (MAKE_COLOR( 73, 73, 73))  // 深灰
+#define M_COLOR_DIMGRAY                      (MAKE_COLOR( 54, 54, 54))  // 暗灰
+
+#define M_COLOR_COAL                         (MAKE_COLOR( 34, 35, 34))  // 煤炭黑
 
 
 #ifdef __cplusplus

@@ -374,7 +374,7 @@ struct IntArray_t __findMin_INT(const int* pValue,size_t num){
 /*===========================================================================================================================
  > Geometry Reference
 ============================================================================================================================*/
-Point3D_t __findPoint_VectorDistance (const Point3D_t*  A,const Point3D_t*  B,int dist_AP){
+Point3D_t __findPoint_VectorDistance   (const Point3D_t*  A,const Point3D_t*  B,int dist_AP){
     long dist_AB = lroundl(sqrt( (B->x - A->x)*(B->x - A->x) + \
                                 (B->y - A->y)*(B->y - A->y) + \
                                 (B->z - A->z)*(B->z - A->z)  ));
