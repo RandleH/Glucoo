@@ -16,7 +16,6 @@ static struct{
 
 #if defined (__WIN32)
 #include <direct.h>
-
 static const char* font_path[kGUI_NUM_FontStyle] = {
     "../Glucoo/Font/Courier New.ttf"        ,
     "../Glucoo/Font/Courier New Italic.ttf" ,

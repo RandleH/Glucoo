@@ -24,10 +24,10 @@ void GUI_RefreashScreen     (void);
 void GUI_rect_raw           ( int xs,int ys,int xe,int ye );
 
 typedef enum{
-    kGUI_Apperance_Light  ,
-    kGUI_Apperance_Dark   ,
+    kGUI_Appearance_Light  ,
+    kGUI_Appearance_Dark   ,
     
-}E_GUI_Apperance_t;
+}E_GUI_Appearance_t;
 
 #if GUI_WINDOW_DISPLAY
 
@@ -39,7 +39,7 @@ typedef enum{
 struct __GUI_Window_t{
     __Area_t           area;
     E_GUI_WindowType_t type;
-    E_GUI_Apperance_t  appearance;
+    E_GUI_Appearance_t  appearance;
     size_t             size;
     const char*        title;
     

@@ -75,7 +75,7 @@ static void __attribute__((constructor)) GUI_Init(void){
 }
 
 void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
-    printf("[%d,%d] -> [%d,%d]\n",xs,ys,xe,ye);
+//    printf("[%d,%d] -> [%d,%d]\n",xs,ys,xe,ye);
     int x_width = xe-xs+1;
     int y_width = ye-ys+1;
     if(GUI_API_DrawArea != NULL){
@@ -154,7 +154,7 @@ void GUI_rect_raw( int xs,int ys,int xe,int ye ){
 #if GUI_WINDOW_DISPLAY
 
 static void __gui_insert_window_MacOS(__GUI_Window_t* config){
-    printf("##\n");
+
     const int xs = config->area.xs;
     const int ys = config->area.ys;
     const int xe = (int)(xs + config->area.width -1);
@@ -164,13 +164,12 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const int bar_size_4 = bar_size>>2;
     const int bar_rad    = __limit( (int)(config->size), 20, 256 )/5;
     
-    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Apperance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
+    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
     
-    __GUI_Font_t* pFontInfo = GUI_ExportFontStr( config->title );
-    const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
-    const int font_ys = ys + bar_size_4;
+    
+    
     __Pixel_t penColor = __Graph_get_penColor();
     size_t    penSize  = __Graph_get_penSize();
     int                fontSize = GUI_GetFontSize();
@@ -196,25 +195,31 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_line_raw     (xe-1 , ys+bar_size, xe-1, ye  , &info, kApplyPixel_fill);
     
     // Title
-    GUI_SetFontSize(bar_size_2);
-    GUI_SetFontStyle( kGUI_FontStyle_CourierNew_Bold );
-    for( int y=0; y<pFontInfo->height; y++ ){
-        for( int x=0; x<pFontInfo->width; x++ ){
-            uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
-            size_t  index     = (y+font_ys)*info.width + (x+font_xs);
-            if( pixWeight != 0 ){
+    if( config->title != NULL ){
+        __GUI_Font_t* pFontInfo = GUI_ExportFontStr( config->title );
+        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+        const int font_ys = ys + bar_size_4;
+        
+        GUI_SetFontSize(bar_size_2);
+        GUI_SetFontStyle( kGUI_FontStyle_CourierNew_Bold );
+        for( int y=0; y<pFontInfo->height; y++ ){
+            for( int x=0; x<pFontInfo->width; x++ ){
+                uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
+                size_t  index     = (y+font_ys)*info.width + (x+font_xs);
+                if( pixWeight != 0 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                while(1);
+                    while(1);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-                while(1);
+                    while(1);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
-                info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_title.R - info.pBuffer[ index ].R) * pixWeight )>>8);
-                info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_title.G - info.pBuffer[ index ].G) * pixWeight )>>8);
-                info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_title.B - info.pBuffer[ index ].B) * pixWeight )>>8);
+                    info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_title.R - info.pBuffer[ index ].R) * pixWeight )>>8);
+                    info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_title.G - info.pBuffer[ index ].G) * pixWeight )>>8);
+                    info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_title.B - info.pBuffer[ index ].B) * pixWeight )>>8);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-                
+                    
+                }
             }
         }
     }
