@@ -147,7 +147,12 @@ extern "C"{
 
 #endif
 
-
+const char* path_in  = "D:\\Personal\\Desktop\\temp.bmp";
+const char* path_out = "D:\\Personal\\Desktop\\out.bmp";
+__ImageRGB565_t* IMG_IN  = __ImgRGB565_load_bmp(path_in);
+__ImageRGB565_t* IMG_OUT = __ImgRGB565_create( IMG_IN->width , IMG_IN->height );
+__ImgRGB565_copy( IMG_IN, IMG_OUT );
+__ImgRGB565_out_bmp( path_out, IMG_OUT );
 #endif
 
 

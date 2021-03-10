@@ -54,8 +54,133 @@ typedef struct tagBITMAPINFOHEADER {
 } BITMAPINFOHEADER;
 
 #endif
+
+
+
+__ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
+    FILE* bmp;
+    BITMAPFILEHEADER fileHead;
+    BITMAPINFOHEADER infoHead;
+
+    __ImageRGB565_t* pIMG = __malloc(sizeof(__ImageRGB565_t));
+    pIMG->height  = 0;
+    pIMG->width   = 0;
+    pIMG->pBuffer = NULL;
+
+    bmp = fopen(path, "r");
+    if (bmp == NULL) {
+        // printf("open error\n");
+        return pIMG;
+    }
+    fseek(bmp, 0L, SEEK_SET);
+    fread(&fileHead, sizeof(BITMAPFILEHEADER), 1, bmp);
+    fread(&infoHead, sizeof(BITMAPINFOHEADER), 1, bmp);
+
+    if (fileHead.bfType != 0x4D42) {
+        printf("This not a *.bmp file\n");
+        return pIMG;
+    }
+    printf( "(w,h) = (%d, %d)\n", infoHead.biWidth , infoHead.biHeight);
+    printf( "biBitCount = %d\n" , infoHead.biBitCount);
+
+    fseek(bmp, fileHead.bfOffBits, SEEK_SET);
+
+    pIMG->pBuffer = (__UNION_PixelRGB565_t*)__malloc(infoHead.biWidth * infoHead.biHeight * sizeof(__UNION_PixelRGB565_t));
     
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__ path){
+    for (int row = 0; row < infoHead.biHeight; row++) {
+        for (int col = 0; col < infoHead.biWidth; col++) {
+            fread(&(pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data), sizeof(__PixelRGB565_t), 1, bmp);
+            // printf("%d ",pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data);
+        }
+        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB565_t))%4)%4;
+        uint8_t dummyByte;
+        while(eps--){
+            fread(&dummyByte,sizeof(char) ,1 , bmp);
+        }
+        // printf("\n");
+    }
+    fclose(bmp);
+
+    pIMG->width   = infoHead.biWidth;
+    pIMG->height  = infoHead.biHeight;
+
+    return pIMG;
+}
+
+__ImageRGB565_t* __ImgRGB565_create        (size_t width,size_t height){
+    __ImageRGB565_t* pIMG = __malloc(sizeof(__ImageRGB565_t));
+    if(pIMG == NULL)
+        return NULL;
+    pIMG->height          = height;
+    pIMG->width           = width;
+    pIMG->pBuffer         = __malloc((pIMG->height)*(pIMG->width)*sizeof(pIMG->pBuffer[0]));
+    if(pIMG->pBuffer == NULL){
+        __free(pIMG);
+        return NULL;
+    }
+    memset(pIMG->pBuffer, 0, (pIMG->height)*(pIMG->width)*sizeof(pIMG->pBuffer[0]));
+    return pIMG;
+}
+
+__ImageRGB565_t* __ImgRGB565_copy          (const __ImageRGB565_t* src,__ImageRGB565_t* dst){
+    __exitReturn( src==NULL         ||dst==NULL          , dst );
+    __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
+
+    memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(__UNION_PixelRGB565_t));
+    dst->height = src->height;
+    dst->width  = src->width;
+    return dst;
+}
+
+__ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__ImageRGB565_t* p){
+    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+    
+    FILE* bmp = fopen(path,"wb");
+    __exitReturn(bmp == NULL, NULL);
+
+    int eps = (4-(p->width*sizeof(__PixelRGB565_t))%4)%4;
+    BITMAPFILEHEADER fileHead = {
+        .bfOffBits      = 40 + 14   ,
+        .bfReserved1    = 0         ,
+        .bfReserved2    = 0         ,
+        .bfSize         = (uint32_t)(p->height * p->width * sizeof(__PixelRGB565_t) + 54),
+        .bfType         = 0x4D42    ,
+    };
+    BITMAPINFOHEADER infoHead = {
+        .biSize          = 40        ,
+        .biWidth         = (int)(p->width)  ,
+        .biHeight        = (int)(p->height) ,
+        .biPlanes        = 1         ,
+        .biBitCount      = 5+6+5     ,
+        .biCompression   = 0         ,
+        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(__PixelRGB565_t) + eps*(p->height)) ,
+        .biClrUsed       = 0         ,
+        .biClrImportant  = 0         ,
+        .biXPelsPerMeter = 0         ,
+        .biYPelsPerMeter = 0         ,
+    };
+
+    // RGB Sequence should be reversed.
+    fseek(bmp,0L,SEEK_SET);
+    fwrite(&fileHead ,1 ,sizeof(BITMAPFILEHEADER) , bmp);
+    fwrite(&infoHead ,1 ,sizeof(BITMAPINFOHEADER) , bmp);
+    fseek(bmp,54L,SEEK_SET);
+    for (int row = 0; row < p->height; row++) {
+        for (int col = 0; col < p->width; col++) {
+            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(__PixelRGB565_t) ,1 ,bmp );
+        }
+        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB565_t))%4)%4;
+        uint8_t dummyByte = 0x00;
+        while(eps--){
+            fwrite(&dummyByte,sizeof(char) ,1 , bmp);
+        }
+    }
+    
+    fclose(bmp);
+    return p;
+}
+    
+__ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
     BITMAPINFOHEADER infoHead;
@@ -67,7 +192,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__
     
     bmp = fopen(path, "r");
     if (bmp == NULL) {
-        printf("open error\n");
+        // printf("open error\n");
         return pIMG;
     }
     fseek(bmp, 0L, SEEK_SET);
@@ -75,7 +200,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__
     fread(&infoHead, sizeof(BITMAPINFOHEADER), 1, bmp);
 
     if (fileHead.bfType != 0x4D42) {
-        printf("This not a *.bmp file\n");
+        // printf("This not a *.bmp file\n");
         return pIMG;
     }
 
@@ -101,14 +226,17 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__
     return pIMG;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , copy         ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+__ImageRGB888_t* __ImgRGB888_copy          (const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+    __exitReturn( src==NULL         ||dst==NULL          , dst );
+    __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
+
     memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(__UNION_PixelRGB888_t));
     dst->height = src->height;
     dst->width  = src->width;
     return dst;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , create       ) (size_t width,size_t height){
+__ImageRGB888_t* __ImgRGB888_create        (size_t width,size_t height){
     __ImageRGB888_t* pIMG = __malloc(sizeof(__ImageRGB888_t));
     if(pIMG == NULL)
         return NULL;
@@ -123,10 +251,12 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , create       ) (size_t width,size_t heig
     return pIMG;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__ path,__ImageRGB888_t* p){
-    FILE* bmp;
-    if(p == NULL && p->pBuffer == NULL)
-        return NULL;
+__ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__ImageRGB888_t* p){
+    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+    
+    FILE* bmp = fopen(path,"wb");
+    __exitReturn(bmp == NULL, NULL);
+
     int eps = (4-(p->width*sizeof(__PixelRGB888_t))%4)%4;
     BITMAPFILEHEADER fileHead = {
         .bfOffBits      = 40 + 14   ,
@@ -148,10 +278,8 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__
         .biXPelsPerMeter = 0         ,
         .biYPelsPerMeter = 0         ,
     };
-    printf("%d\n" ,infoHead.biSizeImage    );
-    bmp = fopen(path,"wb");
-
-    if(bmp == NULL) return NULL;
+    // printf("%d\n" ,infoHead.biSizeImage    );
+   
 
     // RGB Sequence should be reversed.
     fseek(bmp,0L,SEEK_SET);
@@ -173,7 +301,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__
     return p;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , free_buffer  ) (__ImageRGB888_t*      ptr){
+__ImageRGB888_t* __ImgRGB888_free_buffer   (__ImageRGB888_t*      ptr){
     __free(ptr->pBuffer);
     ptr->height  = 0;
     ptr->width   = 0;
@@ -181,11 +309,11 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , free_buffer  ) (__ImageRGB888_t*      pt
     return ptr;
 }
 
-void             MAKE_FUNC( ImgRGB888 , free         ) (__ImageRGB888_t*      ptr){
+void             __ImgRGB888_free          (__ImageRGB888_t*      ptr){
     __free(__ImgRGB888_free_buffer(ptr));
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_gray  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+__ImageRGB888_t* __ImgRGB888_filter_gray   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     
     if(src != NULL && dst != NULL){
         if(src->pBuffer != NULL && dst->pBuffer != NULL){
@@ -200,16 +328,16 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_gray  ) (const __ImageRGB888_t* s
     return dst;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_cold  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+__ImageRGB888_t* __ImgRGB888_filter_cold   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     return dst;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_warm  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+__ImageRGB888_t* __ImgRGB888_filter_warm   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     
     return dst;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_OTUS  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+__ImageRGB888_t* __ImgRGB888_filter_OTUS   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
     uint32_t threshold = 0;
     __exitReturn( src==NULL         , NULL);
     __exitReturn( src->pBuffer==NULL, NULL);
@@ -236,7 +364,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_OTUS  ) (const __ImageRGB888_t* s
     return NULL;
 }
      
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , trans_mirror ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV){
+__ImageRGB888_t* __ImgRGB888_trans_mirror  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV){
     if( src == NULL || src->pBuffer == NULL ){
         return NULL;
     }
@@ -279,7 +407,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , trans_mirror ) (const __ImageRGB888_t* s
     return NULL;
 }
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_gussian ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+__ImageRGB888_t* __ImgRGB888_blur_gussian  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
     static __Kernel_t gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
@@ -310,7 +438,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_gussian ) (const __ImageRGB888_t* s
 
 }
     
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+__ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
     __exitReturn(src == NULL || dst == NULL , NULL);
     
     __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
@@ -360,7 +488,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* s
     
     // Average Filter Begin
     for(int j=ys; j <= ye; j++){
-//        printf("\n");
+
         for(int i=xs; i <= xe; i++){
             if(j%2 == 0){ // Scan Direction:  [old] -->--> [new]
                 
@@ -421,7 +549,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* s
                         }
                     }
                 }
-//                printf("[%ld] ",sum_R);
+
                 __array1D(pDstData, area->width, j-area->ys, k-area->xs)->R = sum_R*br_100/(div*100);
                 __array1D(pDstData, area->width, j-area->ys, k-area->xs)->G = sum_G*br_100/(div*100);
                 __array1D(pDstData, area->width, j-area->ys, k-area->xs)->B = sum_B*br_100/(div*100);
@@ -480,7 +608,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* s
 
 
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , insert_NstNeighbor ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width){
+__ImageRGB888_t* __ImgRGB888_insert_NstNeighbor  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width){
     if(src == NULL || src->pBuffer == NULL || dst == NULL) // Bad address
         return NULL;
     if(height < src->height || width < src->width) // Image of "dst" should be larger than image of "src" in both dimension.
@@ -527,7 +655,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , insert_NstNeighbor ) (const __ImageRGB88
 }
 
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , conv2D       ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100){
+__ImageRGB888_t* __ImgRGB888_conv2D        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100){
     if( src == NULL || src->pBuffer == NULL || k == NULL ){
         return dst;
     }
@@ -601,7 +729,7 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , conv2D       ) (const __ImageRGB888_t* s
     return dst;
 }
    
-void             MAKE_FUNC( ImgRGB888 , data_OTUS    ) (const __ImageRGB888_t* src,uint32_t* threshold){
+void             __ImgRGB888_data_OTUS     (const __ImageRGB888_t* src,uint32_t* threshold){
     *threshold = -1;
     __exit( src          == NULL );
     __exit( src->pBuffer == NULL );
@@ -666,7 +794,7 @@ void             MAKE_FUNC( ImgRGB888 , data_OTUS    ) (const __ImageRGB888_t* s
     }
 }
 
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , conv2D       ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100){
+__ImageRGB565_t* __ImgRGB565_conv2D        (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100){
         if( src == NULL || src->pBuffer == NULL || k == NULL){
             return dst;
         }

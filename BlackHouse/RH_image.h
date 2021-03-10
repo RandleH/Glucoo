@@ -64,6 +64,16 @@ struct __ImageRGB888_t{
 };
 typedef struct __ImageRGB888_t  __ImageRGB888_t;
 
+__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , create       ) (size_t width,size_t height);//
+__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , load_bmp     ) (const char* __restrict__ path);//
+__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , out_bmp      ) (const char* __restrict__ path,__ImageRGB565_t* p);//
+
+__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , copy         ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst);//
+__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , conv2D       ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100);
+
+
+
+
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , create       ) (size_t width,size_t height);
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__ path);
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__ path,__ImageRGB888_t* p);
@@ -85,8 +95,6 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* s
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , insert_NstNeighbor ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width);
 
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , conv2D       ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100);
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , conv2D       ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100);
-
 
 void             MAKE_FUNC( ImgRGB888 , data_OTUS    ) (const __ImageRGB888_t* src,uint32_t* threshold);
 
