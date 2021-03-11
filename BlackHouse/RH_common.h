@@ -106,41 +106,89 @@ typedef struct __Region_t __Area_t;
 #endif
  
  
-#define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
+#ifndef __map 
+  #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
+#else
+  #error " '__map' has been defined. "
+#endif
 
-#define __abs(val)                           (((val)>0)?(val):(-(val)))
-#define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
+#ifndef __swap
+  #define __swap(a,b)                          do{a=a^b;b=a^b;a=a^b;}while(0)
+#else
+  #error " '__swap' has been defined. "
+#endif
+
+#ifndef __abs
+#define __abs(val)                             (((val)>0)?(val):(-(val)))
+#else
+  #error " '__abs' has been defined. "
+#endif
+
+#ifndef __limit
+  #define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
+#else
+  #error " '__limit' has been defined. "
+#endif
 
 #ifndef __min
-#define __min(a,b)                           (((a)<(b))?(a):(b))
+  #define __min(a,b)                           (((a)<(b))?(a):(b))
+#else
+  // #pragma message (" '__min' has been defined. ")
 #endif
 
 #ifndef __max
-#define __max(a,b)                           (((a)>(b))?(a):(b))
+  #define __max(a,b)                           (((a)>(b))?(a):(b))
+#else
+  // #pragma message (" '__max' has been defined. ")
 #endif
 
 #ifndef __mid
-#define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+  #define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+#else  
+  #error " '__mid' has been defined. "
 #endif
  
 #ifndef __exit
-#define __exit(express)                      if( express )   return
+  #define __exit(express)                      if( express )   return
+#else
+  #error " '__exit' has been defined. "
 #endif
 
 #ifndef __exitReturn
-#define __exitReturn(express,res)            if( express )   return res
+  #define __exitReturn(express,res)            if( express )   return res
+#else
+  #error " '__exitReturn' has been defined. "
 #endif
  
 #ifndef __abort
-#define __abort(express)                     if( express )   while(1)
+  #define __abort(express)                     if( express )   while(1)
+#else
+  #error " '__abort' has been defined. "
 #endif
- 
-#define __array1D(ptr,width,y,x)             (((ptr)+(width)*(y)+(x)))
-#define __array2D(ptr,width,y,x)             (((ptr[0])+(width)*(y)+(x)))
 
-#define __malloc(x)                          malloc(x)  //__mallocHEAP(x)
-#define __free(x)                            free(x)    //__freeHEAP(x)
- 
+#ifndef __array1D 
+  #define __array1D(ptr,width,y,x)             (((ptr)+(width)*(y)+(x)))
+#else
+  #error " '__array1D' has been defined. "
+#endif
+
+#ifndef __array2D  
+  #define __array2D(ptr,width,y,x)             (((ptr[0])+(width)*(y)+(x)))
+#else
+  #error " '__array2D' has been defined. "
+#endif
+
+#ifndef __malloc
+  #define __malloc(x)                          malloc(x)  //__mallocHEAP(x)
+#else
+  #error " '__malloc' has been defined. "
+#endif
+
+#ifndef __free
+  #define __free(x)                            free(x)    //__freeHEAP(x)
+#else
+  #error " '__free' has been defined. " 
+#endif 
  
 #define __MEM_BYTE( adr )                    ( (*( (uint8_t* )(adr) )) )
 #define __MEM_WORD( adr )                    ( (*( (uint16_t*)(adr) )) )

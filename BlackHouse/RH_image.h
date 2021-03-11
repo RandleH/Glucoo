@@ -91,6 +91,8 @@ __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , trans_mirror ) (const __ImageRGB888_t* s
 
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_gussian ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
+__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_fast    ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);//
+
 
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , insert_NstNeighbor ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width);
 

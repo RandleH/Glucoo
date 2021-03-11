@@ -606,6 +606,72 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
     return dst;
 }
 
+__ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+    __exitReturn( !src || !dst || !src->pBuffer || !dst->pBuffer, NULL );
+    
+    const int xs = area->xs;
+    const int ys = area->ys;
+    const int xe = area->xs + area->width  -1;
+    const int ye = area->ys + area->height -1; 
+    
+    const __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
+    __UNION_PixelRGB888_t*       pDstData = dst->pBuffer;
+
+    __UNION_PixelRGB888_t*       pTmpData = dst->pBuffer;
+
+    long accumulate_R=0, accumulate_G=0, accumulate_B=0;
+    // Horizontal Processing
+    for( int y=ys; y<=ye; y++ ){
+        __UNION_PixelRGB888_t pix_s = pSrcData[ y*src->width + xs ];
+        __UNION_PixelRGB888_t pix_e = pSrcData[ y*src->width + xe ];
+        
+        int lx = 0;
+        int rx = radSize;
+        
+        for( int x=0; x<radSize; x++){
+            accumulate_B += pSrcData[ y*src->width + xs+x ].B;
+            accumulate_G += pSrcData[ y*src->width + xs+x ].G;
+            accumulate_R += pSrcData[ y*src->width + xs+x ].R;
+        }
+        
+        // Now: rx=radSize; lx=0;
+        for( int x=0; x<=radSize; x++, rx++ ){
+            accumulate_B += pSrcData[ y*src->width + xs+rx ].B - pix_s.B;
+            accumulate_G += pSrcData[ y*src->width + xs+rx ].G - pix_s.G;
+            accumulate_R += pSrcData[ y*src->width + xs+rx ].R - pix_s.R;   
+
+            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1);
+        }
+        
+        // Now: rx=2*radSize+1; lx=0; 
+        for( int x=radSize+1; x<area->width-radSize; x++,rx++,lx++ ){
+            accumulate_B += pSrcData[ y*src->width + xs+rx ].B - pSrcData[ y*src->width + xs+lx ].B;
+            accumulate_G += pSrcData[ y*src->width + xs+rx ].G - pSrcData[ y*src->width + xs+lx ].G;
+            accumulate_R += pSrcData[ y*src->width + xs+rx ].R - pSrcData[ y*src->width + xs+lx ].R;  
+        
+            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1);
+        }
+
+        // Now: rx=area->width; lx=area->width-2*radSize;
+        for( int x=area->width-radSize; x<area->width; x++,lx++ ){
+            accumulate_B += pix_e.B - pSrcData[ y*src->width + xs+lx ].B;
+            accumulate_G += pix_e.R - pSrcData[ y*src->width + xs+lx ].G;
+            accumulate_R += pix_e.R - pSrcData[ y*src->width + xs+lx ].R;
+        
+            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1); 
+        }
+
+    }
+
+    return dst;
+}
+
 
 
 __ImageRGB888_t* __ImgRGB888_insert_NstNeighbor  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width){
