@@ -278,7 +278,7 @@ __ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__Imag
         .biXPelsPerMeter = 0         ,
         .biYPelsPerMeter = 0         ,
     };
-    // printf("%d\n" ,infoHead.biSizeImage    );
+     printf("%d\n" ,infoHead.biSizeImage    );
    
 
     // RGB Sequence should be reversed.
@@ -467,40 +467,53 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
     int half_order  = (int)((order+1)>>1); // Kernel
     div = half_order * half_order;
     
-    if( ys%2==0 ){
-        for(int n=ys; n < ys+half_order; n++){
-            for(int m=xs; m < xs+half_order;m++){
-                sum_R += __array1D(pSrcData, src->width, n, m)->R;
-                sum_G += __array1D(pSrcData, src->width, n, m)->G;
-                sum_B += __array1D(pSrcData, src->width, n, m)->B;
+    if( (ys&0x01)==0 ){
+        int iter = (int)(src->width*ys + xs);
+        for(int n=ys; n < ys+half_order; n++, iter+=src->width){
+            for(int m=xs; m < xs+half_order;m++, iter++){
+                sum_R += pSrcData[iter].R;
+                sum_G += pSrcData[iter].G;
+                sum_B += pSrcData[iter].B;
             }
+            iter-=half_order;
         }
     }else{
-        for(int n=ye+1-half_order; n <= ye; n++){
-            for(int m=xe+1-half_order; m <= xe;m++){
-                sum_R += __array1D(pSrcData, src->width, n, m)->R;
-                sum_G += __array1D(pSrcData, src->width, n, m)->G;
-                sum_B += __array1D(pSrcData, src->width, n, m)->B;
+        int iter = (int)(src->width*(ye+1-half_order) + xe+1-half_order);
+        for(int n=ye+1-half_order; n <= ye; n++, iter+=src->width){
+            for(int m=xe+1-half_order; m <= xe;m++, iter++){
+                sum_R += pSrcData[iter].R;
+                sum_G += pSrcData[iter].G;
+                sum_B += pSrcData[iter].B;
             }
+            iter-=half_order;
         }
     }
     div = half_order * half_order;
     
     // Average Filter Begin
-    for(int j=ys; j <= ye; j++){
+    
+    size_t target = 0;
+    for(int j=ys; j <= ye; j++ ){
 
-        for(int i=xs; i <= xe; i++){
-            if(j%2 == 0){ // Scan Direction:  [old] -->--> [new]
+        for(int i=xs; i <= xe; i++, target++ ){
+            if((j&0x01) == 0){ // Scan Direction:  [old] -->--> [new]
                 
                 if(i!=xs){ // No need to do when it reachs the left-edge because it has been done when moving to the next row.
                     
                     // Remove leftmost column because it is old.
                     if(i-half_order >= xs){                                          // [!] no cross the broad [0,src->width-1] [xs,xe]
-                        for(int row=j-half_order+1;row<=j+half_order-1;row++){
+                        
+                        for(int row  = j-half_order+1,                                     \
+                                iter = (int)(src->width*(j-half_order+1) + i-half_order);  \
+                              
+                            row<=j+half_order-1;                                           \
+                            
+                            row++,                                                         \
+                            iter+=src->width){
                             if( row<=ye && row>=ys ){                                // [!] no cross the broad [0,src->height-1] [ys,ye]
-                                sum_R -= __array1D(pSrcData, src->width, row, i-half_order)->R;
-                                sum_G -= __array1D(pSrcData, src->width, row, i-half_order)->G;
-                                sum_B -= __array1D(pSrcData, src->width, row, i-half_order)->B;
+                                sum_R -= pSrcData[ iter ].R;
+                                sum_G -= pSrcData[ iter ].G;
+                                sum_B -= pSrcData[ iter ].B;
                                 div--;
                             }
                         }
@@ -508,20 +521,26 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
                     
                     // Add rightmost column because it is new.
                     if( i+half_order-1 <= xe ){                                    // [!] no cross the broad [0,src->width-1] [xs,xe]
-                        for(int row=j-half_order+1;row<=j+half_order-1;row++){
+                        for(int row  = j-half_order+1,                                     \
+                                iter = (int)(src->width*(j-half_order+1) + i+half_order-1);\
+                            
+                            row<=j+half_order-1;                                           \
+                            
+                            row++,                                                         \
+                            iter+=src->width){
                             if( row<=ye && row>=ys ){                              // [!] no cross the broad [0,src->height-1] [ys,ye]
-                                sum_R += __array1D(pSrcData, src->width, row, i+half_order-1)->R;
-                                sum_G += __array1D(pSrcData, src->width, row, i+half_order-1)->G;
-                                sum_B += __array1D(pSrcData, src->width, row, i+half_order-1)->B;
+                                sum_R += pSrcData[ iter ].R;
+                                sum_G += pSrcData[ iter ].G;
+                                sum_B += pSrcData[ iter ].B;
                                 div++;
                             }
                         }
                     }
                     
                 }
-                __array1D(pDstData, area->width, j-area->ys, i-area->xs)->R = sum_R*br_100/(div*100);
-                __array1D(pDstData, area->width, j-area->ys, i-area->xs)->G = sum_G*br_100/(div*100);
-                __array1D(pDstData, area->width, j-area->ys, i-area->xs)->B = sum_B*br_100/(div*100);
+                pDstData[ target ].R = sum_R*br_100/(div*100);
+                pDstData[ target ].G = sum_G*br_100/(div*100);
+                pDstData[ target ].B = sum_B*br_100/(div*100);
             }else{ // Scan Direction:  [new] <--<-- [old]
                 int k = (int)(xe + xs - i); // reverse i   i in (xs->xe); k in (xe -> xs)
                 // Remove rightmost column because it is old.
@@ -611,64 +630,126 @@ __ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRG
     
     const int xs = area->xs;
     const int ys = area->ys;
-    const int xe = area->xs + area->width  -1;
-    const int ye = area->ys + area->height -1; 
+    const int xe = (int)(area->xs + area->width  -1);
+//    const int ye = (int)(area->ys + area->height -1);
     
     const __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
     __UNION_PixelRGB888_t*       pDstData = dst->pBuffer;
 
-    __UNION_PixelRGB888_t*       pTmpData = dst->pBuffer;
+    __UNION_PixelRGB888_t*       pTmpData = dst->pBuffer;//__malloc( area->width*area->height*sizeof(__UNION_PixelRGB888_t) );
+    
+    
 
     long accumulate_R=0, accumulate_G=0, accumulate_B=0;
     // Horizontal Processing
-    for( int y=ys; y<=ye; y++ ){
-        __UNION_PixelRGB888_t pix_s = pSrcData[ y*src->width + xs ];
-        __UNION_PixelRGB888_t pix_e = pSrcData[ y*src->width + xe ];
+    for( int y=0; y<area->height; y++ ){
+        __UNION_PixelRGB888_t pix_s = pSrcData[ (y+ys)*src->width + xs ];
+        __UNION_PixelRGB888_t pix_e = pSrcData[ (y+ys)*src->width + xe ];
         
+        accumulate_B = (radSize+1)*pix_s.B;
+        accumulate_G = (radSize+1)*pix_s.G;
+        accumulate_R = (radSize+1)*pix_s.R;
+
+
         int lx = 0;
         int rx = radSize;
-        
+        // printf( "rx=%d lx=%d\n",rx,lx );
         for( int x=0; x<radSize; x++){
-            accumulate_B += pSrcData[ y*src->width + xs+x ].B;
-            accumulate_G += pSrcData[ y*src->width + xs+x ].G;
-            accumulate_R += pSrcData[ y*src->width + xs+x ].R;
+            accumulate_B += pSrcData[ (y+ys)*src->width + xs+x ].B;
+            accumulate_G += pSrcData[ (y+ys)*src->width + xs+x ].G;
+            accumulate_R += pSrcData[ (y+ys)*src->width + xs+x ].R;
         }
         
         // Now: rx=radSize; lx=0;
+        // printf( "rx=%d lx=%d\n",rx,lx );
         for( int x=0; x<=radSize; x++, rx++ ){
-            accumulate_B += pSrcData[ y*src->width + xs+rx ].B - pix_s.B;
-            accumulate_G += pSrcData[ y*src->width + xs+rx ].G - pix_s.G;
-            accumulate_R += pSrcData[ y*src->width + xs+rx ].R - pix_s.R;   
+            accumulate_B += pSrcData[ (y+ys)*src->width + xs+rx ].B - pix_s.B;
+            accumulate_G += pSrcData[ (y+ys)*src->width + xs+rx ].G - pix_s.G;
+            accumulate_R += pSrcData[ (y+ys)*src->width + xs+rx ].R - pix_s.R;
 
-            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
         }
         
-        // Now: rx=2*radSize+1; lx=0; 
+        // Now: rx=2*radSize+1; lx=0;
+        // printf( "rx=%d lx=%d\n",rx,lx );
         for( int x=radSize+1; x<area->width-radSize; x++,rx++,lx++ ){
-            accumulate_B += pSrcData[ y*src->width + xs+rx ].B - pSrcData[ y*src->width + xs+lx ].B;
-            accumulate_G += pSrcData[ y*src->width + xs+rx ].G - pSrcData[ y*src->width + xs+lx ].G;
-            accumulate_R += pSrcData[ y*src->width + xs+rx ].R - pSrcData[ y*src->width + xs+lx ].R;  
+            accumulate_B += pSrcData[ (y+ys)*src->width + xs+rx ].B - pSrcData[ (y+ys)*src->width + xs+lx ].B;
+            accumulate_G += pSrcData[ (y+ys)*src->width + xs+rx ].G - pSrcData[ (y+ys)*src->width + xs+lx ].G;
+            accumulate_R += pSrcData[ (y+ys)*src->width + xs+rx ].R - pSrcData[ (y+ys)*src->width + xs+lx ].R;
         
-            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
-        // Now: rx=area->width; lx=area->width-2*radSize;
-        for( int x=area->width-radSize; x<area->width; x++,lx++ ){
-            accumulate_B += pix_e.B - pSrcData[ y*src->width + xs+lx ].B;
-            accumulate_G += pix_e.R - pSrcData[ y*src->width + xs+lx ].G;
-            accumulate_R += pix_e.R - pSrcData[ y*src->width + xs+lx ].R;
+        // Now: rx=area->width; lx=area->width-2*radSize-1;
+        // printf( "rx=%d lx=%d\n",rx,lx );
+        for( int x=(int)(area->width-radSize); x<area->width; x++,lx++ ){
+            accumulate_B += pix_e.B - pSrcData[ (y+ys)*src->width + xs+lx ].B;
+            accumulate_G += pix_e.R - pSrcData[ (y+ys)*src->width + xs+lx ].G;
+            accumulate_R += pix_e.R - pSrcData[ (y+ys)*src->width + xs+lx ].R;
         
-            pTmpData[ y*src->width + xs+x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*src->width + xs+x ].R = accumulate_R / ((radSize<<1)+1); 
+            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+        }
+        // printf( "rx=%d lx=%d\n\n",rx,lx);
+
+    }
+    
+    // Trunk Processing
+    for( int x=0; x<area->width; x++ ){
+        __UNION_PixelRGB888_t pix_s = pSrcData[                                x ];
+        __UNION_PixelRGB888_t pix_e = pSrcData[ (area->height-1)*area->width + x ];
+
+        accumulate_B = (radSize+1)*pix_s.B;
+        accumulate_G = (radSize+1)*pix_s.G;
+        accumulate_R = (radSize+1)*pix_s.R;
+
+        int ty = 0;
+        int by = radSize;
+
+        for( int y=0; y<radSize; y++ ){
+            accumulate_B += pTmpData[ y*area->width + x ].B;
+            accumulate_G += pTmpData[ y*area->width + x ].G;
+            accumulate_R += pTmpData[ y*area->width + x ].R;
+        }
+
+        for( int y=0; y<=radSize; y++,by++ ){
+            accumulate_B += pTmpData[ by*area->width + x ].B - pix_s.B;
+            accumulate_G += pTmpData[ by*area->width + x ].G - pix_s.G;
+            accumulate_R += pTmpData[ by*area->width + x ].R - pix_s.R;
+
+            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+        }
+
+        for( int y=radSize+1; y<area->height-radSize; y++, ty++, by++ ){
+            accumulate_B += pTmpData[ by*area->width + x ].B - pTmpData[ ty*area->width + x ].B;
+            accumulate_G += pTmpData[ by*area->width + x ].G - pTmpData[ ty*area->width + x ].G;
+            accumulate_R += pTmpData[ by*area->width + x ].R - pTmpData[ ty*area->width + x ].R;
+
+            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+        }
+
+        for( int y=(int)(area->height-radSize); y<area->height; y++, ty++ ){
+            accumulate_B += pix_e.B - pTmpData[ ty*area->width + x ].B;
+            accumulate_G += pix_e.G - pTmpData[ ty*area->width + x ].G;
+            accumulate_R += pix_e.R - pTmpData[ ty*area->width + x ].R;
+
+            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
     }
-
+    
+    __free( pTmpData );
     return dst;
 }
 
