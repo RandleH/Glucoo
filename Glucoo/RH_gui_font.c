@@ -22,10 +22,11 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
     "../Glucoo/Font/Courier New Bold.ttf"
 };
 #elif defined  (__APPLE__)
+#include <unistd.h>
 static const char* font_path[kGUI_NUM_FontStyle] = {
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"
+    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS/Glucoo/Font/Courier New.ttf"        ,
+    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS/Glucoo/Font/Courier New Italic.ttf" ,
+    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS/Glucoo/Font/Courier New Bold.ttf"
 };
 #endif
 
@@ -38,6 +39,9 @@ static void  __attribute__((constructor)) __gui_font_init(void){
 }
 
 static E_Status_t __gui_font_read( const char* path ){
+//    char buf[300] = {0};
+//    getcwd( buf,300 );
+//    printf("%s\n",buf);
     FILE* fontFile = fopen( path , "rb" );
     __exitReturn( !fontFile, kStatus_BadAccess );
     
