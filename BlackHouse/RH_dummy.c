@@ -153,6 +153,19 @@ __ImageRGB565_t* IMG_IN  = __ImgRGB565_load_bmp(path_in);
 __ImageRGB565_t* IMG_OUT = __ImgRGB565_create( IMG_IN->width , IMG_IN->height );
 __ImgRGB565_copy( IMG_IN, IMG_OUT );
 __ImgRGB565_out_bmp( path_out, IMG_OUT );
+
+
+
+int iter = (int)(src->width*ys + xs);
+        for(int n=ys; n < ys+half_order; n++, iter+=src->width){
+//            int iter = (int)(src->width*n + xs);
+            for(int m=xs; m < xs+half_order;m++, iter++){
+                sum_R += pSrcData[iter].R;
+                sum_G += pSrcData[iter].G;
+                sum_B += pSrcData[iter].B;
+            }
+            iter-=half_order;
+        }
 #endif
 
 
