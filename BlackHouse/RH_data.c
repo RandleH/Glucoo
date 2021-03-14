@@ -372,6 +372,123 @@ E_Status_t __Queue_createHead  ( __Queue_t ** ptr    ){
     return kStatus_Success;
 }
     
+    
+static size_t __HashFunc( size_t key ){
+    return (key%RH_HASH_MAP_SIZE);
+}
+    
+E_Status_t __Hash_createMap  ( __HashMap_t** ptr  ){
+    __exitReturn( !ptr , kStatus_BadAccess );
+    
+    *ptr = __malloc( sizeof(__HashMap_t) );
+    
+    __HashList_t* pHashList = __malloc(RH_HASH_MAP_SIZE*sizeof(__HashList_t));
+    __exitReturn( !pHashList, kStatus_NoSpace );
+    memset(pHashList, 0, RH_HASH_MAP_SIZE*sizeof(__HashList_t));
+    
+    __SET_STRUCT_MB(__HashMap_t, __HashList_t*, (*ptr), pList, pHashList);
+//    (*ptr)->pList = pHashList;
+    
+    return kStatus_Success;
+}
+    
+E_Status_t __Hash_find       ( __HashMap_t** ppHead, size_t key ){
+    __exitReturn( !ppHead                          , kStatus_BadAccess );
+    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
+
+    const __HashList_t *pList = (*ppHead)->pList[ __HashFunc(key)].pNext ;
+    
+    while( pList != NULL ){
+        if( pList->key == key )
+            return kStatus_Success;
+        pList = pList->pNext;
+    }
+    
+    return kStatus_NotFound;
+}
+    
+E_Status_t __Hash_put        ( __HashMap_t** ppHead, size_t key, void*  pObj  ){
+    __exitReturn( !ppHead                          , kStatus_BadAccess );
+    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
+    
+    const __HashList_t *pList     =  ((*ppHead)->pList[ __HashFunc(key) ].pNext);
+    const __HashList_t *pList_old = &((*ppHead)->pList[ __HashFunc(key) ]);
+    while( pList != NULL ){
+        if( pList->key == key ){
+            __SET_STRUCT_MB(__HashList_t, void*, pList, object, pObj);
+            return kStatus_Success;
+        }
+        pList_old = pList;
+        pList     = (__HashList_t*)pList->pNext;
+    }
+    pList = pList_old;
+
+    // This key is not exsist in current HashList.
+    // Allocate a new node for this pair.
+    __SET_STRUCT_MB(__HashList_t, __HashList_t* , pList       , pNext , __malloc(sizeof(__HashList_t)));
+    __SET_STRUCT_MB(__HashList_t, size_t        , pList->pNext, key   , key);
+    __SET_STRUCT_MB(__HashList_t, void*         , pList->pNext, object, pObj);
+    __SET_STRUCT_MB(__HashList_t, void*         , pList->pNext, pNext , NULL);
+    return kStatus_Success;
+}
+    
+E_Status_t __Hash_get        ( __HashMap_t** ppHead, size_t key, void** ppObj  ){
+    __exitReturn( !ppHead                          , kStatus_BadAccess );
+    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
+    __exitReturn( !ppObj                           , kStatus_BadAccess );
+    
+    const __HashList_t *pList = ((*ppHead)->pList[ (long)__HashFunc(key) ].pNext);
+    
+    *ppObj = NULL;
+    while( pList != NULL ){
+        if( pList->key == key ){
+            (*ppObj) = (void*)pList->object;
+            return kStatus_Success;
+        }
+        pList     = (__HashList_t*)pList->pNext;
+    }
+    
+    return kStatus_NotFound;
+}
+    
+E_Status_t __Hash_remove     ( __HashMap_t** ppHead, size_t key ){
+    __exitReturn( !ppHead                          , kStatus_BadAccess );
+    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
+    
+    const __HashList_t *pList     =  ((*ppHead)->pList[ (long)__HashFunc(key) ].pNext);
+    const __HashList_t *pList_old = &((*ppHead)->pList[ (long)__HashFunc(key) ]);
+    while( pList != NULL ){
+        if( pList->key == key ){
+            __SET_STRUCT_MB(__HashList_t, __HashList_t*, pList_old, pNext, pList->pNext);
+            __free((void*)pList);
+            return kStatus_Success;
+        }
+        pList_old = pList;
+        pList     = pList->pNext;
+    }
+    
+    return kStatus_Success;
+}
+    
+E_Status_t __Hash_removeAll   ( __HashMap_t** ptr  ){
+    __exitReturn( !ptr                       , kStatus_BadAccess );
+    __exitReturn( !(*ptr) || (!(*ptr)->pList), kStatus_BadAccess );
+    
+    size_t cnt = RH_HASH_MAP_SIZE;
+    while(cnt--){
+        const __HashList_t *pList_tmp = ((*ptr)->pList[ cnt ].pNext);
+        const __HashList_t *pList     = ((*ptr)->pList[ cnt ].pNext);
+        while( pList != NULL ){
+            pList_tmp = pList->pNext;
+            __free((void*)pList);
+            pList = pList_tmp;
+        }
+    }
+    __free( (void*)(*ptr)->pList );
+    *ptr = NULL;
+    return kStatus_Success;
+}
+    
 #ifdef __cplusplus
 }
 #endif

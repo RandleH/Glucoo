@@ -68,7 +68,25 @@ typedef struct __Queue_t __Queue_t;
 E_Status_t MAKE_FUNC( Queue , createHead ) ( __Queue_t ** ptr    );
 
 
+#define RH_HASH_MAP_SIZE              (256)
+struct __HashList_t{
+    const size_t                     key;
+    const void*                const object;
+    const struct __HashList_t* const pNext ;
+};
+typedef struct __HashList_t __HashList_t;
 
+struct __HashMap_t{
+    const __HashList_t*     const pList;
+};
+typedef struct __HashMap_t __HashMap_t;
+
+E_Status_t MAKE_FUNC( Hash , createMap ) ( __HashMap_t** ptr  );
+E_Status_t MAKE_FUNC( Hash , find      ) ( __HashMap_t** ppHead, size_t key );
+E_Status_t MAKE_FUNC( Hash , put       ) ( __HashMap_t** ppHead, size_t key, void*  pObj  );
+E_Status_t MAKE_FUNC( Hash , get       ) ( __HashMap_t** ppHead, size_t key, void** ppObj );
+E_Status_t MAKE_FUNC( Hash , remove    ) ( __HashMap_t** ppHead, size_t key );
+E_Status_t MAKE_FUNC( Hash , removeAll ) ( __HashMap_t** ptr  );//
 
 #ifdef __cplusplus
 }
