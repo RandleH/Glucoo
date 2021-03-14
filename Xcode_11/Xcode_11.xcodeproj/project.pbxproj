@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E38D762225FDD0310012E786 /* RH_gui_font.c in Sources */ = {isa = PBXBuildFile; fileRef = E38D762025FDD0310012E786 /* RH_gui_font.c */; };
+		E38D762725FDE1230012E786 /* RH_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E38D762625FDE1230012E786 /* RH_dummy.c */; };
 		E3A5ACEA25F3616900C585A2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A5ACE925F3616900C585A2 /* main.c */; };
 		E3A5ACF525F3618A00C585A2 /* RH_gui.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A5ACF225F3618A00C585A2 /* RH_gui.c */; };
 		E3A5AD0825F361A700C585A2 /* RH_image.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A5ACF825F361A600C585A2 /* RH_image.c */; };
@@ -32,6 +34,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E38D762025FDD0310012E786 /* RH_gui_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_gui_font.c; path = ../Glucoo/RH_gui_font.c; sourceTree = "<group>"; };
+		E38D762125FDD0310012E786 /* RH_gui_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_gui_font.h; path = ../Glucoo/RH_gui_font.h; sourceTree = "<group>"; };
+		E38D762325FDD0460012E786 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = ../Glucoo/STB/stb_image_write.h; sourceTree = "<group>"; };
+		E38D762425FDD0460012E786 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../Glucoo/STB/stb_truetype.h; sourceTree = "<group>"; };
+		E38D762625FDE1230012E786 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_dummy.c; path = ../../BlackHouse/RH_dummy.c; sourceTree = "<group>"; };
 		E3A5ACE625F3616900C585A2 /* Xcode_11 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode_11; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A5ACE925F3616900C585A2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E3A5ACF225F3618A00C585A2 /* RH_gui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_gui.c; path = ../Glucoo/RH_gui.c; sourceTree = "<group>"; };
@@ -69,9 +76,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E38D762525FDD04B0012E786 /* STB */ = {
+			isa = PBXGroup;
+			children = (
+				E38D762425FDD0460012E786 /* stb_truetype.h */,
+				E38D762325FDD0460012E786 /* stb_image_write.h */,
+			);
+			name = STB;
+			sourceTree = "<group>";
+		};
 		E3A5ACDD25F3616900C585A2 = {
 			isa = PBXGroup;
 			children = (
+				E38D762525FDD04B0012E786 /* STB */,
 				E3A5ACF125F3617C00C585A2 /* Glucoo */,
 				E3A5ACF025F3617100C585A2 /* BlackHouse */,
 				E3A5ACE825F3616900C585A2 /* Xcode_11 */,
@@ -90,6 +107,7 @@
 		E3A5ACE825F3616900C585A2 /* Xcode_11 */ = {
 			isa = PBXGroup;
 			children = (
+				E38D762625FDE1230012E786 /* RH_dummy.c */,
 				E3A5ACE925F3616900C585A2 /* main.c */,
 			);
 			path = Xcode_11;
@@ -122,6 +140,8 @@
 		E3A5ACF125F3617C00C585A2 /* Glucoo */ = {
 			isa = PBXGroup;
 			children = (
+				E38D762025FDD0310012E786 /* RH_gui_font.c */,
+				E38D762125FDD0310012E786 /* RH_gui_font.h */,
 				E3A5AD0F25F36E2A00C585A2 /* RH_gui_api.c */,
 				E3A5AD1025F36E2A00C585A2 /* RH_gui_api.h */,
 				E3A5ACF425F3618A00C585A2 /* RH_gui_config.h */,
@@ -196,8 +216,10 @@
 				E3A5AD0B25F361A700C585A2 /* RH_data.c in Sources */,
 				E3A5AD0D25F361A700C585A2 /* RH_math.c in Sources */,
 				E3A5AD0E25F361A700C585A2 /* RH_dsp.c in Sources */,
+				E38D762725FDE1230012E786 /* RH_dummy.c in Sources */,
 				E3A5AD0925F361A700C585A2 /* RH_utility.c in Sources */,
 				E3A5AD0825F361A700C585A2 /* RH_image.c in Sources */,
+				E38D762225FDD0310012E786 /* RH_gui_font.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
