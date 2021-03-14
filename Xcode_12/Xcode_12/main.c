@@ -17,24 +17,24 @@ int main(int argc, const char * argv[]) {
     GUI_RefreashScreen();
     
     __GUI_Window_t cfg;
-    cfg.area.xs = 30;
-    cfg.area.ys = 40;
+    cfg.area.xs     = 30;
+    cfg.area.ys     = 40;
     cfg.area.height = 300;
-    cfg.area.width  = 600;
-    cfg.type = kGUI_WindowType_macOS;
-    cfg.size = 40;
+    cfg.area.width  = 500;
+    cfg.type        = kGUI_WindowType_macOS;
+    cfg.size        = 40;
+    cfg.appearance  = kGUI_Appearance_Dark;
+    cfg.title       = "Text";
+    
     
     ID_t ID_Window1 = GUI_create_window(&cfg);
     
-    GUI_show_window( ID_Window1 );
-    
+    GUI_insert_window( ID_Window1 );
     GUI_RefreashScreen();
     
     GUI_delete_window( ID_Window1 );
     
-    GUI_SetFontStyle(kGUI_FontStyle_CourierNew_Italic);
-    GUI_SetFontSize(100);
-    GUI_ExportFontStr("ABCDEFGhijkl");
+
     
     return 0;
 }
