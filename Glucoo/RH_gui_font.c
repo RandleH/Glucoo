@@ -24,9 +24,9 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
 #elif defined  (__APPLE__)
 #include <unistd.h>
 static const char* font_path[kGUI_NUM_FontStyle] = {
-    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS-OptArray/Glucoo/Font/Courier New.ttf"        ,
-    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS-OptArray/Glucoo/Font/Courier New Italic.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo-Simulation-MacOS-OptArray/Glucoo/Font/Courier New Bold.ttf"
+    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New.ttf"        ,
+    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New Italic.ttf" ,
+    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New Bold.ttf"
 };
 #endif
 
@@ -35,7 +35,6 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
 static void  __attribute__((constructor)) __gui_font_init(void){
     GUI_SetFontStyle( kGUI_FontStyle_CourierNew );
     GUI_SetFontSize ( 24 );
-    
 }
 
 static E_Status_t __gui_font_read( const char* path ){
@@ -43,6 +42,9 @@ static E_Status_t __gui_font_read( const char* path ){
 //    getcwd( buf,300 );
 //    printf("%s\n",buf);
     FILE* fontFile = fopen( path , "rb" );
+#ifdef RH_DEBUG
+    ASSERT( fontFile );
+#endif
     __exitReturn( !fontFile, kStatus_BadAccess );
 
     fseek(fontFile, 0, SEEK_END);
@@ -95,7 +97,7 @@ E_GUI_FontStyle_t GUI_GetFontStyle(void){
     return Font.style;
 }
 
-#define STB_OUTPUT_FONT_PNG
+//#define STB_OUTPUT_FONT_PNG
 
 #ifdef STB_OUTPUT_FONT_PNG
 #define STB_IMAGE_WRITE_IMPLEMENTATION

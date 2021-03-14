@@ -48,7 +48,7 @@ struct __GUI_Window_t{
 typedef struct __GUI_Window_t __GUI_Window_t;
 
 ID_t       __attribute__ ((warn_unused_result)) GUI_create_window  ( __GUI_Window_t* config );
-E_Status_t                                      GUI_show_window    ( ID_t ID );
+E_Status_t                                      GUI_insert_window  ( ID_t ID );
 E_Status_t                                      GUI_delete_window  ( ID_t ID );
 #endif
 

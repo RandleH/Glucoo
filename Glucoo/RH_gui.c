@@ -154,7 +154,13 @@ void GUI_rect_raw( int xs,int ys,int xe,int ye ){
 #if GUI_WINDOW_DISPLAY
 
 static void __gui_insert_window_MacOS(__GUI_Window_t* config){
+#ifdef RH_DEBUG
+    ASSERT( config );
 
+#else
+    __exit( !config );
+#endif
+    
     const int xs = config->area.xs;
     const int ys = config->area.ys;
     const int xe = (int)(xs + config->area.width -1);
@@ -251,7 +257,9 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
 
 ID_t __attribute__ ((warn_unused_result)) GUI_create_window( __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
-    
+#ifdef RH_DEBUG
+    ASSERT( tmp );
+#endif
     tmp->config = *config;
 
     switch( tmp->config.type ){
@@ -269,8 +277,9 @@ ID_t __attribute__ ((warn_unused_result)) GUI_create_window( __GUI_Window_t* con
     return (ID_t)tmp;
 }
 
-E_Status_t GUI_show_window( ID_t ID ){
+E_Status_t GUI_insert_window( ID_t ID ){
     E_Status_t state = __LINK_Loop_find( &Screen.windowCFG, (void*)ID );
+
     __exitReturn( state != kStatus_Success, state );
     
     (*((__GUI_INT_Window_t*)ID)->insert_func)( &((__GUI_INT_Window_t*)ID)->config );
