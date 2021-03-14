@@ -17,12 +17,15 @@
 #include <math.h>
 #include <complex.h>
 #include <errno.h>
+#include <assert.h>
 
 #ifdef __cplusplus
  extern "C" {
 #endif
  
 #pragma anon_unions
+ 
+#define RH_DEBUG
  
 typedef enum{
     kStatus_Success    ,
@@ -105,6 +108,11 @@ typedef struct __Region_t __Area_t;
 #define M_ATAN_1_256  0.2238105003685                         /* arctan(1/256)  */
 #endif
  
+#ifndef ASSERT
+  #define ASSERT( express )                    assert( express )
+#else
+  #error " 'ASSERT' has been defined. "
+#endif
  
 #ifndef __map 
   #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
@@ -178,14 +186,16 @@ typedef struct __Region_t __Area_t;
   #error " '__array2D' has been defined. "
 #endif
 
+void* __attribute__((warn_unused_result)) __RH_malloc  (size_t size);
+void                                      __RH_free(void* ptr);
 #ifndef __malloc
-  #define __malloc(x)                          malloc(x)  //__mallocHEAP(x)
+  #define __malloc(x)                          __RH_malloc(x)//malloc(x)
 #else
   #error " '__malloc' has been defined. "
 #endif
 
 #ifndef __free
-  #define __free(x)                            free(x)    //__freeHEAP(x)
+  #define __free(x)                            __RH_free(x)//free(x)  
 #else
   #error " '__free' has been defined. " 
 #endif 
