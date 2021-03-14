@@ -145,8 +145,9 @@ const char*       __ldtoa_BIN    (uint32_t x){
 #endif
          
 #pragma pack(1)
-unsigned char __VERTUAL_HEAP[ __VIRTUAL_HEAP_SIZE_BYTE ];//__attribute__((at()));
-static size_t __Allocated_Bytes__  = 0;
+unsigned char __VERTUAL_HEAP[ RH_ALLOC_CHUNK_SIZE ];//__attribute__((at()));
+size_t RH_alloc_byte  = 0;
+size_t RH_free_byte   = 0;
 
 struct __MallocNode_t{
     unsigned long            index;
@@ -168,12 +169,12 @@ struct __MallocNode_t{
      *
      --------------------------------------------------------------------------------------------------------*/
 
-void* __mallocHEAP(size_t size){
+void* __RH_malloc(size_t size){
     size_t size_need       = size;
-    if( __Allocated_Bytes__ + size_need > __VIRTUAL_HEAP_SIZE_BYTE )
+    if( RH_alloc_byte + size_need > RH_ALLOC_CHUNK_SIZE )
         return NULL;
     else{
-        __Allocated_Bytes__ += size_need;
+        RH_alloc_byte += size_need;
         // It doesn't mean there is enough space to allocate.
     }
     
@@ -181,14 +182,14 @@ void* __mallocHEAP(size_t size){
     struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
     struct __MallocNode_t* pNewNode  = (struct __MallocNode_t*)malloc(sizeof(struct __MallocNode_t));
     struct __MallocNode_t* pForeward = NULL,*pBackward = NULL;
-    size_t minDist                   = __VIRTUAL_HEAP_SIZE_BYTE;
+    size_t minDist                   = RH_ALLOC_CHUNK_SIZE;
     
     pNewNode->byte      = size_need;
     pNewNode->pNextNode = NULL;
     
-    // Only for test.
-    for(int i=0;i<__VIRTUAL_HEAP_SIZE_BYTE;i++)
-        __VERTUAL_HEAP[i] = i;
+// Only for test.
+//    for(int i=0;i<RH_ALLOC_CHUNK_SIZE;i++)
+//        __VERTUAL_HEAP[i] = i;
     
     // Special Condition. There isn't any allocated memory.
     if(pNode == NULL){
@@ -206,7 +207,7 @@ void* __mallocHEAP(size_t size){
         if(pNode->pNextNode != NULL){
             size_free = (pNode->pNextNode->index) - (pNode->index + pNode->byte);
         }else{
-            size_free = (__VIRTUAL_HEAP_SIZE_BYTE-1) - ((pNode->index) + (pNode->byte));
+            size_free = (RH_ALLOC_CHUNK_SIZE-1) - ((pNode->index) + (pNode->byte));
         }
         if( size_free - size_need < minDist && size_free >= size_need ){
             minDist             = size_free - size_need;
@@ -229,12 +230,12 @@ void* __mallocHEAP(size_t size){
     }else{
         // Fail to find enough space to allocate
         free(pNewNode);
-        __Allocated_Bytes__ -= size_need;
+        RH_alloc_byte -= size_need;
     }
     return ptr;
 }
 
-void __freeHEAP(void* ptr){
+void __RH_free(void* ptr){
     unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
     struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
     struct __MallocNode_t* pForeward = NULL;
@@ -242,7 +243,7 @@ void __freeHEAP(void* ptr){
         if(pNode->index == index && pNode->ptr == ptr){
             if(pForeward != NULL){
                 pForeward->pNextNode = pNode->pNextNode;
-                __Allocated_Bytes__ -= pNode->byte;
+                RH_alloc_byte -= pNode->byte;
                 free(pNode);
             }
             break;
