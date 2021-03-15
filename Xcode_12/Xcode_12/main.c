@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include "RH_common.h"
+#include "RH_data.h"
 #include "RH_gui.h"
 #include "RH_gui_api.h"
 #include "RH_gui_font.h"
@@ -15,7 +16,7 @@ int main(int argc, const char * argv[]) {
     Simul_API_Init();
     
     GUI_RefreashScreen();
-    
+
     __GUI_Window_t cfg1;
     cfg1.area.xs     = 30;
     cfg1.area.ys     = 40;
@@ -25,7 +26,7 @@ int main(int argc, const char * argv[]) {
     cfg1.size        = 40;
     cfg1.appearance  = kGUI_Appearance_Dark;
     cfg1.title       = "Text";
-    
+
     __GUI_Window_t cfg2;
     cfg2.area.xs     = 200;
     cfg2.area.ys     = 140;
@@ -35,19 +36,17 @@ int main(int argc, const char * argv[]) {
     cfg2.size        = 40;
     cfg2.appearance  = kGUI_Appearance_Light;
     cfg2.title       = "Glucoo";
-    
-    
+
+
     ID_t ID_Window1 = GUI_create_window(&cfg1);
     ID_t ID_Window2 = GUI_create_window(&cfg2);
-    
+
     GUI_insert_window( ID_Window1 );
     GUI_insert_window( ID_Window2 );
     GUI_RefreashScreen();
-    
+
     GUI_delete_window( ID_Window1 );
     
-    
-
-    
+     
     return 0;
 }
