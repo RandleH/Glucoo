@@ -16,8 +16,8 @@
 #include <limits.h>
 #include <math.h>
 #include <complex.h>
-#include <errno.h>
 #include <assert.h>
+#include <errno.h>
 
 #ifdef __cplusplus
  extern "C" {
@@ -107,6 +107,32 @@ typedef struct __Region_t __Area_t;
 #ifndef M_ATAN_1_256
 #define M_ATAN_1_256  0.2238105003685                         /* arctan(1/256)  */
 #endif
+
+#ifndef __restrict__
+#define __restrict__ __restrict
+#endif
+
+
+typedef uint8_t                 u8;   
+typedef uint16_t                u16;  
+typedef uint32_t                u32;  
+typedef uint64_t                u64;  
+
+typedef int8_t                  i8;   
+typedef int16_t                 i16;  
+typedef int32_t                 i32;  
+typedef int64_t                 i64;  
+
+typedef volatile int8_t         vi8;  
+typedef volatile int16_t        vi16; 
+typedef volatile int32_t        vi32; 
+typedef volatile int64_t        vi64; 
+
+typedef volatile uint8_t        vu8;  
+typedef volatile uint16_t       vu16; 
+typedef volatile uint32_t       vu32; 
+typedef volatile uint64_t       vu64; 
+
  
 #ifndef ASSERT
   #define ASSERT( express )                    assert( express )
@@ -186,16 +212,14 @@ typedef struct __Region_t __Area_t;
   #error " '__array2D' has been defined. "
 #endif
 
-void* __attribute__((warn_unused_result)) __RH_malloc  (size_t size);
-void                                      __RH_free(void* ptr);
 #ifndef __malloc
-  #define __malloc(x)                          __RH_malloc(x)//malloc(x)
+  #define __malloc(x)                          malloc(x)  //__mallocHEAP(x)
 #else
   #error " '__malloc' has been defined. "
 #endif
 
 #ifndef __free
-  #define __free(x)                            __RH_free(x)//free(x)  
+  #define __free(x)                            free(x)    //__freeHEAP(x)
 #else
   #error " '__free' has been defined. " 
 #endif 
@@ -220,13 +244,22 @@ void                                      __RH_free(void* ptr);
  
 #define __SET_STRUCT_MB( s_type, var_type, s_ptr, s_mem, val )   *( (var_type*) ( ((unsigned char*)(s_ptr))+(offsetof(s_type, s_mem)) ) ) = (var_type)(val)
 
-#define __IN_BYTE  ( port )                  ( *((volatile uint8_t*  )(port)) )
-#define __IN_WORD  ( port )                  ( *((volatile uint16_t* )(port)) )
-#define __IN_DWORD ( port )                  ( *((volatile uint32_t* )(port)) )
+#define __IN_BYTE   ( port )                 ( *((volatile uint8_t*  )(port)) )
+#define __IN_WORD   ( port )                 ( *((volatile uint16_t* )(port)) )
+#define __IN_DWORD  ( port )                 ( *((volatile uint32_t* )(port)) )
+
+#define __IN_8BIT   ( port )                 __IN_BYTE  ( port )
+#define __IN_16BIT  ( port )                 __IN_WORD  ( port )
+#define __IN_32BIT  ( port )                 __IN_DWORD ( port )
       
 #define __OUT_BYTE  ( port, val )            ( *((volatile uint8_t*  )(port)) = ((uint8_t )(val)) )
 #define __OUT_WORD  ( port, val )            ( *((volatile uint16_t* )(port)) = ((uint16_t)(val)) )
 #define __OUT_DWORD ( port, val )            ( *((volatile uint32_t* )(port)) = ((uint32_t)(val)) )
+
+#define __OUT_8BIT  ( port, val )            __OUT_BYTE  ( port, val )
+#define __OUT_16BIT ( port, val )            __OUT_WORD  ( port, val )
+#define __OUT_32BIT ( port, val )            __OUT_DWORD ( port, val )
+
 
 #ifdef __cplusplus
  }
