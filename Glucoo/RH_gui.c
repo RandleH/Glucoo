@@ -1,11 +1,11 @@
 
 
-//#include "RH_gui_config.h"
+
 #include "RH_gui.h"
 #include "RH_data.h"
 #include "RH_lib.h"
 #include "RH_graphic.h"
-#include "RH_gui_font.h"
+
 
 void __attribute__((weak)) GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
 // THIS MAY COST SOME TIME.
@@ -255,7 +255,7 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
     
 }
 
-ID_t __attribute__ ((warn_unused_result)) GUI_create_window( __GUI_Window_t* config ){
+ID_t __attribute__((warn_unused_result)) GUI_create_window( __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
 #ifdef RH_DEBUG
     ASSERT( tmp );

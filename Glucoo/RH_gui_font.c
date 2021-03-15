@@ -24,9 +24,9 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
 #elif defined  (__APPLE__)
 #include <unistd.h>
 static const char* font_path[kGUI_NUM_FontStyle] = {
-    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New.ttf"        ,
-    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New Italic.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo - Simulation@MacOS/Glucoo/Font/Courier New Bold.ttf"
+    "/Users/randle_h/Desktop/Glucoo-Simulation@MacOS/Glucoo/Font/Courier New.ttf"        ,
+    "/Users/randle_h/Desktop/Glucoo-Simulation@MacOS/Glucoo/Font/Courier New Italic.ttf" ,
+    "/Users/randle_h/Desktop/Glucoo-Simulation@MacOS/Glucoo/Font/Courier New Bold.ttf"
 };
 #endif
 

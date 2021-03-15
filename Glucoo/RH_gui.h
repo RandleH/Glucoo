@@ -3,6 +3,7 @@
 
 #include "RH_common.h"
 #include "RH_gui_config.h"
+#include "RH_gui_font.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -34,14 +35,19 @@ typedef enum{
 typedef enum{
     kGUI_WindowType_macOS  ,
     
-}E_GUI_WindowType_t;
+}E_GUI_WindowStyle_t;
 
 struct __GUI_Window_t{
-    __Area_t           area;
-    E_GUI_WindowType_t type;
-    E_GUI_Appearance_t  appearance;
-    size_t             size;
-    const char*        title;
+    __Area_t             area;
+    E_GUI_WindowStyle_t  type;
+    E_GUI_Appearance_t   appearance;
+    size_t               size;
+    
+    const char*          title;
+    E_GUI_FontStyle_t    title_font;//
+    
+    const char*          text;//
+    E_GUI_FontStyle_t    text_font;//
     
     //...//
 };
