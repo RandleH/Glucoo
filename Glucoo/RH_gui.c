@@ -43,8 +43,8 @@ struct __GUI_INT_Window_t{
 typedef struct __GUI_INT_Window_t __GUI_INT_Window_t;
 #endif
 
-typedef __Stack_t      __LINK_AreaRefreash;
-typedef __LinkLoopNode __LINK_WindowCFG;
+typedef __Stack_t    __LINK_AreaRefreash;
+typedef __LinkLoop_t __LINK_WindowCFG;
 
 static struct{
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH][ GUI_X_WIDTH ];
@@ -268,19 +268,23 @@ ID_t __attribute__((warn_unused_result)) GUI_create_window( __GUI_Window_t* conf
             tmp->remove_func = __gui_remove_window_MacOS;
             break;
         default:
+#ifdef RH_DEBUG
+            ASSERT( false );
+#else
             while(1);
+#endif
     }
     if( Screen.windowCFG==NULL )
-        __LINK_Loop_createHead( &Screen.windowCFG , tmp );
+        Screen.windowCFG = __LINK_Loop_createHead( tmp );
     else
-        __LINK_Loop_add(&Screen.windowCFG, tmp);
+        __LINK_Loop_add( Screen.windowCFG, tmp );
     return (ID_t)tmp;
 }
 
 E_Status_t GUI_insert_window( ID_t ID ){
-    E_Status_t state = __LINK_Loop_find( &Screen.windowCFG, (void*)ID );
+    __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
 
-    __exitReturn( state != kStatus_Success, state );
+    __exitReturn( !pCFG, kStatus_NotFound );
     
     (*((__GUI_INT_Window_t*)ID)->insert_func)( &((__GUI_INT_Window_t*)ID)->config );
     if( Screen.autoDisplay ){
@@ -295,9 +299,10 @@ E_Status_t GUI_insert_window( ID_t ID ){
 }
 
 E_Status_t GUI_delete_window( ID_t ID ){
-    E_Status_t state = __LINK_Loop_remove( &Screen.windowCFG, (void*)ID );
-    __exitReturn( state != kStatus_Success, state );
+    __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
+    __exitReturn( !pCFG, kStatus_NotFound );
     
+    __LINK_Loop_remove( Screen.windowCFG, (void*)ID );
     __free((void*)ID);
     return kStatus_Success;
 }
