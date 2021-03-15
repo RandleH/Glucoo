@@ -37,7 +37,7 @@ typedef enum{
     kStatus_ErrorID    ,
     kStatus_NotFound   ,
     kStatus_Warning    ,
-    kStatus_Empty      
+    kStatus_Empty
 }E_Status_t;
  
 struct __Region_t{
@@ -113,25 +113,25 @@ typedef struct __Region_t __Area_t;
 #endif
 
 
-typedef uint8_t                 u8;   
-typedef uint16_t                u16;  
-typedef uint32_t                u32;  
-typedef uint64_t                u64;  
+typedef uint8_t                 u8;
+typedef uint16_t                u16;
+typedef uint32_t                u32;
+typedef uint64_t                u64;
 
-typedef int8_t                  i8;   
-typedef int16_t                 i16;  
-typedef int32_t                 i32;  
-typedef int64_t                 i64;  
+typedef int8_t                  i8;
+typedef int16_t                 i16;
+typedef int32_t                 i32;
+typedef int64_t                 i64;
 
-typedef volatile int8_t         vi8;  
-typedef volatile int16_t        vi16; 
-typedef volatile int32_t        vi32; 
-typedef volatile int64_t        vi64; 
+typedef volatile int8_t         vi8;
+typedef volatile int16_t        vi16;
+typedef volatile int32_t        vi32;
+typedef volatile int64_t        vi64;
 
-typedef volatile uint8_t        vu8;  
-typedef volatile uint16_t       vu16; 
-typedef volatile uint32_t       vu32; 
-typedef volatile uint64_t       vu64; 
+typedef volatile uint8_t        vu8;
+typedef volatile uint16_t       vu16;
+typedef volatile uint32_t       vu32;
+typedef volatile uint64_t       vu64;
 
  
 #ifndef ASSERT
@@ -140,7 +140,7 @@ typedef volatile uint64_t       vu64;
   #error " 'ASSERT' has been defined. "
 #endif
  
-#ifndef __map 
+#ifndef __map
   #define __map(val,i_min,i_max,o_min,o_max)   (double)( ( ((double)o_max)*(((double)val)-((double)i_min))+((double)o_min)*((double)(i_max)-(double)(val)) )/((double)(i_max)-(double)(i_min)) )
 #else
   #error " '__map' has been defined. "
@@ -178,7 +178,7 @@ typedef volatile uint64_t       vu64;
 
 #ifndef __mid
   #define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
-#else  
+#else
   #error " '__mid' has been defined. "
 #endif
  
@@ -200,13 +200,13 @@ typedef volatile uint64_t       vu64;
   #error " '__abort' has been defined. "
 #endif
 
-#ifndef __array1D 
+#ifndef __array1D
   #define __array1D(ptr,width,y,x)             (((ptr)+(width)*(y)+(x)))
 #else
   #error " '__array1D' has been defined. "
 #endif
 
-#ifndef __array2D  
+#ifndef __array2D
   #define __array2D(ptr,width,y,x)             (((ptr[0])+(width)*(y)+(x)))
 #else
   #error " '__array2D' has been defined. "
@@ -221,8 +221,8 @@ typedef volatile uint64_t       vu64;
 #ifndef __free
   #define __free(x)                            free(x)    //__freeHEAP(x)
 #else
-  #error " '__free' has been defined. " 
-#endif 
+  #error " '__free' has been defined. "
+#endif
  
 #define __MEM_BYTE( adr )                    ( (*( (uint8_t* )(adr) )) )
 #define __MEM_WORD( adr )                    ( (*( (uint16_t*)(adr) )) )

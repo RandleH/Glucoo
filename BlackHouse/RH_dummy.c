@@ -166,6 +166,14 @@ int iter = (int)(src->width*ys + xs);
             }
             iter-=half_order;
         }
+
+
+#ifdef RH_DEBUG
+    ASSERT(!fontFile);
+#endif
+
+
+
 #endif
 
 
