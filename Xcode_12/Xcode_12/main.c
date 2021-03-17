@@ -11,10 +11,13 @@
 #include "RH_gui.h"
 #include "RH_gui_api.h"
 #include "RH_gui_font.h"
+
+#include "RH_time.h"
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     Simul_API_Init();
-    
+
     GUI_RefreashScreen();
 
     __GUI_Window_t cfg1;
@@ -47,6 +50,8 @@ int main(int argc, const char * argv[]) {
 
     GUI_delete_window( ID_Window1 );
     
-     
+    
+    printf("%s\n",__PST2BJT("2021-03-19 19:00:00"));
+    
     return 0;
 }
