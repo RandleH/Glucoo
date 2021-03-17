@@ -18,6 +18,7 @@
 #include <complex.h>
 #include <assert.h>
 #include <errno.h>
+#include <alloca.h>
 
 #ifdef __cplusplus
  extern "C" {
@@ -49,9 +50,14 @@ struct __Region_t{
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;
  
-#define RH_RESULT  __attribute__((warn_unused_result))
+#define RH_RESULT     __attribute__((warn_unused_result))
+#define RH_PREMAIN    __attribute__((constructor))
+#define RH_AFTMAIN    __attribute__((destructor))
+#define RH_FUNCONST   __attribute__((const)) 
  
- 
+#ifndef __restrict__
+#define __restrict__ __restrict
+#endif
  
 #define MAKE_FUNC( class , method )          __##class##_##method  // Function like this: __XXXX_xxxxx();
 #define CALL_FUNC                            MAKE_FUNC             // exactly the same but has semantic difference.
@@ -110,10 +116,6 @@ typedef struct __Region_t __Area_t;
 
 #ifndef M_ATAN_1_256
 #define M_ATAN_1_256  0.2238105003685                         /* arctan(1/256)  */
-#endif
-
-#ifndef __restrict__
-#define __restrict__ __restrict
 #endif
 
 
@@ -216,14 +218,16 @@ typedef volatile uint64_t       vu64;
   #error " '__array2D' has been defined. "
 #endif
 
+void* RH_RESULT                                __RH_malloc(size_t size);
 #ifndef __malloc
-  #define __malloc(x)                          malloc(x)  //__mallocHEAP(x)
+  #define __malloc(x)                          __RH_malloc(x)//malloc(x)  //__mallocHEAP(x)
 #else
   #error " '__malloc' has been defined. "
 #endif
-
+ 
+void                                           __RH_free(void* ptr);
 #ifndef __free
-  #define __free(x)                            free(x)    //__freeHEAP(x)
+  #define __free(x)                            __RH_free(x)//free(x)    //__freeHEAP(x)
 #else
   #error " '__free' has been defined. "
 #endif

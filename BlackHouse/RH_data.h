@@ -39,7 +39,7 @@ __LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2r       ) ( const __Lin
 __LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
 __LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
 __LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2r       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , find          ) ( const __LinkBiTree_t *pHead , void* object );
+__LinkBiTree_t* RH_RESULT MAKE_FUNC( LINK_BiTree , find          ) ( const __LinkBiTree_t *pHead , void* object );
 
 struct __Stack_t{
     const void*             const object; // Can NOT be modified by user.
@@ -48,13 +48,13 @@ struct __Stack_t{
 };
 typedef struct __Stack_t __Stack_t;
 
-E_Status_t MAKE_FUNC( Stack , createBase ) ( __Stack_t ** ptr    );
-E_Status_t MAKE_FUNC( Stack , push       ) ( __Stack_t ** ppBase  , void      *  pObj  );
-E_Status_t MAKE_FUNC( Stack , pop        ) ( __Stack_t ** ppBase  , void     **  ppObj );
-E_Status_t MAKE_FUNC( Stack , size       ) ( __Stack_t ** ppBase  , size_t    *  result);
-E_Status_t MAKE_FUNC( Stack , empty      ) ( __Stack_t ** ppBase );
-E_Status_t MAKE_FUNC( Stack , top        ) ( __Stack_t ** ppBase  , void     **  ppObj );
-E_Status_t MAKE_FUNC( Stack , deleteBase ) ( __Stack_t ** ptr    );//
+__Stack_t* RH_RESULT MAKE_FUNC( Stack , createBase ) ( void* object );
+__Stack_t*           MAKE_FUNC( Stack , push       ) ( const __Stack_t *pBase , void *object );
+void*      RH_RESULT MAKE_FUNC( Stack , pop        ) ( const __Stack_t *pBase );
+size_t     RH_RESULT MAKE_FUNC( Stack , size       ) ( const __Stack_t *pBase );
+void*      RH_RESULT MAKE_FUNC( Stack , top        ) ( const __Stack_t *pBase );
+bool       RH_RESULT MAKE_FUNC( Stack , empty      ) ( const __Stack_t *pBase );
+void*                MAKE_FUNC( Stack , deleteBase ) (       __Stack_t *pBase );
 
 
 
@@ -80,13 +80,13 @@ struct __HashMap_t{
 };
 typedef struct __HashMap_t __HashMap_t;
 
-E_Status_t MAKE_FUNC( Hash , createMap ) ( __HashMap_t** ptr  );
-E_Status_t MAKE_FUNC( Hash , find      ) ( __HashMap_t** ppHead, size_t key );
-E_Status_t MAKE_FUNC( Hash , put       ) ( __HashMap_t** ppHead, size_t key, void*  pObj  );
-E_Status_t MAKE_FUNC( Hash , get       ) ( __HashMap_t** ppHead, size_t key, void** ppObj );
-E_Status_t MAKE_FUNC( Hash , remove    ) ( __HashMap_t** ppHead, size_t key );
-E_Status_t MAKE_FUNC( Hash , removeAll ) ( __HashMap_t** ptr  );//
-
+__HashMap_t* RH_RESULT MAKE_FUNC( Hash , createMap ) ( void );
+void*                  MAKE_FUNC( Hash , find      ) ( const __HashMap_t *pHead, size_t key );
+void                   MAKE_FUNC( Hash , put       ) ( const __HashMap_t *pHead, size_t key , void* object );
+void*                  MAKE_FUNC( Hash , get       ) ( const __HashMap_t *pHead, size_t key );
+void*                  MAKE_FUNC( Hash , remove    ) ( const __HashMap_t *pHead, size_t key );
+void                   MAKE_FUNC( Hash , removeAll ) (       __HashMap_t *pHead );
+ 
 #ifdef __cplusplus
 }
 #endif

@@ -34,13 +34,10 @@ const char* __ftoa_BIN    (float     x); // ftoa_BIN
  > Memory Programming Reference
 ============================================================================================================================*/
 
-#define RH_ALLOC_CHUNK_SIZE             (6144000)
+#define RH_ALLOC_CHUNK_SIZE             (614400000)
 
 extern size_t RH_alloc_byte;
 extern size_t RH_free_byte;
-
-void* __attribute__((warn_unused_result)) __RH_malloc  (size_t size);
-void                                      __RH_free(void* ptr);
 
 void* __memsetWORD  (void* __b, uint16_t value, size_t num);
 void* __memsetDWORD (void* __b, uint32_t value, size_t num);

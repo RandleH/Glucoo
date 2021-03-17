@@ -1,5 +1,5 @@
-#ifndef __RH_ASSERT_H
-#define __RH_ASSERT_H
+#ifndef _RH_ASSERT_H
+#define _RH_ASSERT_H
 
 #ifdef __cpluplus
 extern "C"{

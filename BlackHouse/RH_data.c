@@ -260,101 +260,107 @@ __LinkBiTree_t* __LINK_BiTree_find           ( const __LinkBiTree_t *pHead , voi
 }
     
     
-E_Status_t __Stack_createBase  ( __Stack_t ** ptr  ){
-    __exitReturn( !ptr   , kStatus_BadAccess );
-    *ptr = (__Stack_t*)__malloc(sizeof(__Stack_t));
-    __exitReturn( !(*ptr), kStatus_NoSpace   );
-    __SET_STRUCT_MB(__Stack_t,__Stack_t*,*ptr,pPrev  ,*ptr);
-    __SET_STRUCT_MB(__Stack_t,__Stack_t*,*ptr,pNext  ,*ptr);
+__Stack_t* __Stack_createBase  ( void* object ){
+    __Stack_t *ptr = (__Stack_t*)__malloc(sizeof(__Stack_t));
+#ifdef RH_DEBUG
+    ASSERT( ptr );
+#endif
+    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pPrev, ptr);
+    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pNext, ptr);
     
-    return kStatus_Success;
+    return ptr;
 }
     
-E_Status_t __Stack_push        ( __Stack_t ** ppBase , void* pObject){
-    __exitReturn( !ppBase   , kStatus_BadAccess );
-    __exitReturn( !*ppBase  , kStatus_BadAccess );
-    __exitReturn( !pObject  , kStatus_BadAccess );
+__Stack_t* __Stack_push        ( const __Stack_t *pBase , void* object ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
+    
     __Stack_t* pNew = (__Stack_t*)__malloc(sizeof(__Stack_t));
-    __exitReturn( !pNew     , kStatus_NoSpace   );
+#ifdef RH_DEBUG
+    ASSERT( pNew );
+#endif
     
-    __SET_STRUCT_MB(__Stack_t, void*     , pNew            , object, pObject          );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pPrev , (*ppBase)->pPrev );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pNext , (*ppBase)        );
+    __SET_STRUCT_MB(__Stack_t, void*     , pNew            , object, object       );
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pPrev , pBase->pPrev );
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pNext , pBase        );
     
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, (*ppBase)->pPrev, pNext , pNew             );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, (*ppBase)       , pPrev , pNew             );
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase->pPrev    , pNext , pNew         );
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase           , pPrev , pNew         );
     
-    return kStatus_Success;
+    return pNew;
 }
     
-E_Status_t __Stack_pop         ( __Stack_t ** ppBase , void     ** pObject){
-    __exitReturn( !ppBase   , kStatus_BadAccess );
-    __exitReturn( !*ppBase  , kStatus_BadAccess );
-    __exitReturn( !pObject  , kStatus_BadAccess );
-    __exitReturn((*ppBase)->pNext==(*ppBase)->pPrev && (*ppBase)->pNext==(*ppBase) , kStatus_Empty );
+void*      __Stack_pop         ( const __Stack_t *pBase ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
     
-    void* dummy_ptr = (__Stack_t*)((*ppBase)->pPrev);
+    __exitReturn(pBase->pNext==pBase->pPrev && pBase->pNext==pBase , (void*)pBase->object );
     
-    *pObject = (void*)((*ppBase)->pPrev->object);
+    void* dummy_ptr = (__Stack_t*)(pBase->pPrev);
     
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, (*ppBase)->pPrev->pPrev , pNext, (*ppBase)             );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, (*ppBase)               , pPrev, (*ppBase)->pPrev->pPrev );
+    void* object = (void*)(pBase->pPrev->object);
+    
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase->pPrev->pPrev , pNext, pBase               );
+    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase               , pPrev, pBase->pPrev->pPrev );
     
     __free(dummy_ptr);
     
-    return kStatus_Success;
+    return object;
 }
     
-E_Status_t __Stack_size        ( __Stack_t ** ppBase , size_t    *  result){
-    __exitReturn( !ppBase   , kStatus_BadAccess );
-    __exitReturn( !*ppBase  , kStatus_BadAccess );
-    __exitReturn( !result   , kStatus_BadAccess );
-    __Stack_t *p = *ppBase;
-    *result      = 0;
-    while(p->pNext!=*ppBase){
-        (*result)++;
-        p = (__Stack_t*)(p->pNext);
+size_t     __Stack_size        ( const __Stack_t *pBase ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
+    size_t cnt = 0;
+    const __Stack_t *p = pBase;
+    while(p->pNext != pBase){
+        cnt++;
+        p = p->pNext;
     }
     
-    return kStatus_Success;
+    return cnt;
 }
     
-E_Status_t __Stack_top         ( __Stack_t ** ppBase , void     **  ppObj ){
-    __exitReturn( !ppBase   , kStatus_BadAccess );
-    __exitReturn( !*ppBase  , kStatus_BadAccess );
-    __exitReturn( !ppObj    , kStatus_BadAccess );
-    
-    *ppObj = (void*)((*ppBase)->pPrev->object);
-    return kStatus_Success;
+void*      __Stack_top         ( const __Stack_t *pBase ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
+    return (void*)(pBase->pPrev->object);
 }
     
-E_Status_t __Stack_empty       ( __Stack_t ** ppBase ){
-    __exitReturn( !ppBase   , kStatus_BadAccess );
-    __exitReturn( !*ppBase  , kStatus_BadAccess );
-    
-    
-    if( (*ppBase)->pNext==(*ppBase)->pPrev && (*ppBase)->pNext==(*ppBase) ){
-        return kStatus_Empty;
-    }
-    
-    return kStatus_Success;
+bool       __Stack_empty       ( const __Stack_t *pBase ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
+    return (pBase->pNext==pBase->pPrev && pBase->pNext==pBase);
 }
     
-E_Status_t __Stack_deleteBase  ( __Stack_t ** ptr    ){
-    __exitReturn( !ptr   , kStatus_BadAccess );
-    __exitReturn( !*ptr  , kStatus_BadAccess );
-    __Stack_t *p = *ptr;
-    if(p->pNext==*ptr){
+void*      __Stack_deleteBase  ( __Stack_t *pBase    ){
+
+#ifdef RH_DEBUG
+    ASSERT( pBase );
+#endif
+    __Stack_t *p = pBase;
+    void* object = (void*)pBase->object;
+    if(p->pNext==pBase){
         __free((void*)(p));
     }else{
-        while(p->pNext!=*ptr){
+        while(p->pNext!=pBase){
             p = (__Stack_t*)(p->pNext);
             __free((void*)(p->pPrev));
             __SET_STRUCT_MB( __Stack_t, __Stack_t*, p, pPrev , NULL );
         }
     }
-    *ptr = NULL;
-    return kStatus_Success;
+
+    return object;
 }
     
     
@@ -364,50 +370,59 @@ E_Status_t __Queue_createHead  ( __Queue_t ** ptr    ){
 }
     
     
-static size_t __HashFunc( size_t key ){
+static size_t RH_FUNCONST __HashFunc( size_t key ){
     return (key%RH_HASH_MAP_SIZE);
 }
     
-E_Status_t __Hash_createMap  ( __HashMap_t** ptr  ){
-    __exitReturn( !ptr , kStatus_BadAccess );
-    
-    *ptr = __malloc( sizeof(__HashMap_t) );
+__HashMap_t* __Hash_createMap  ( void ){
+
+    __HashMap_t *pHashHead = __malloc( sizeof(__HashMap_t) );
+#ifdef RH_DEBUG
+    ASSERT( pHashHead );
+#endif
     
     __HashList_t* pHashList = __malloc(RH_HASH_MAP_SIZE*sizeof(__HashList_t));
-    __exitReturn( !pHashList, kStatus_NoSpace );
+#ifdef RH_DEBUG
+    ASSERT( pHashList );
+#endif
     memset(pHashList, 0, RH_HASH_MAP_SIZE*sizeof(__HashList_t));
     
-    __SET_STRUCT_MB(__HashMap_t, __HashList_t*, (*ptr), pList, pHashList);
+    __SET_STRUCT_MB(__HashMap_t, __HashList_t*, pHashHead, pList, pHashList);
 //    (*ptr)->pList = pHashList;
     
-    return kStatus_Success;
+    return pHashHead;
 }
     
-E_Status_t __Hash_find       ( __HashMap_t** ppHead, size_t key ){
-    __exitReturn( !ppHead                          , kStatus_BadAccess );
-    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
-
-    const __HashList_t *pList = (*ppHead)->pList[ __HashFunc(key)].pNext ;
+void*        __Hash_find       ( const __HashMap_t *pHead, size_t key ){
+#ifdef RH_DEBUG
+    ASSERT(pHead);
+#endif
+    
+    const __HashList_t *pList = pHead->pList[ __HashFunc(key)].pNext ;
     
     while( pList != NULL ){
         if( pList->key == key )
-            return kStatus_Success;
+            return (void*)(pList->object);
         pList = pList->pNext;
     }
     
-    return kStatus_NotFound;
+    return NULL;
 }
     
-E_Status_t __Hash_put        ( __HashMap_t** ppHead, size_t key, void*  pObj  ){
-    __exitReturn( !ppHead                          , kStatus_BadAccess );
-    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
+void         __Hash_put        ( const __HashMap_t *pHead, size_t key, void* object ){
+
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( pHead->pList );
+#endif
     
-    const __HashList_t *pList     =  ((*ppHead)->pList[ __HashFunc(key) ].pNext);
-    const __HashList_t *pList_old = &((*ppHead)->pList[ __HashFunc(key) ]);
+    
+    const __HashList_t *pList     =  (pHead->pList[ __HashFunc(key) ].pNext);
+    const __HashList_t *pList_old = &(pHead->pList[ __HashFunc(key) ]);
     while( pList != NULL ){
         if( pList->key == key ){
-            __SET_STRUCT_MB(__HashList_t, void*, pList, object, pObj);
-            return kStatus_Success;
+            __SET_STRUCT_MB(__HashList_t, void*, pList, object, object);
+            return ;
         }
         pList_old = pList;
         pList     = (__HashList_t*)pList->pNext;
@@ -418,66 +433,69 @@ E_Status_t __Hash_put        ( __HashMap_t** ppHead, size_t key, void*  pObj  ){
     // Allocate a new node for this pair.
     __SET_STRUCT_MB(__HashList_t, __HashList_t* , pList       , pNext , __malloc(sizeof(__HashList_t)));
     __SET_STRUCT_MB(__HashList_t, size_t        , pList->pNext, key   , key);
-    __SET_STRUCT_MB(__HashList_t, void*         , pList->pNext, object, pObj);
+    __SET_STRUCT_MB(__HashList_t, void*         , pList->pNext, object, object);
     __SET_STRUCT_MB(__HashList_t, void*         , pList->pNext, pNext , NULL);
-    return kStatus_Success;
+    
 }
     
-E_Status_t __Hash_get        ( __HashMap_t** ppHead, size_t key, void** ppObj  ){
-    __exitReturn( !ppHead                          , kStatus_BadAccess );
-    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
-    __exitReturn( !ppObj                           , kStatus_BadAccess );
+void*        __Hash_get        ( const __HashMap_t *pHead, size_t key ){
+
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( pHead->pList );
+#endif
     
-    const __HashList_t *pList = ((*ppHead)->pList[ (long)__HashFunc(key) ].pNext);
+    const __HashList_t *pList = pHead->pList[ (long)__HashFunc(key) ].pNext;
     
-    *ppObj = NULL;
     while( pList != NULL ){
         if( pList->key == key ){
-            (*ppObj) = (void*)pList->object;
-            return kStatus_Success;
+            return (void*)pList->object;
         }
         pList     = (__HashList_t*)pList->pNext;
     }
     
-    return kStatus_NotFound;
+    return NULL;
 }
     
-E_Status_t __Hash_remove     ( __HashMap_t** ppHead, size_t key ){
-    __exitReturn( !ppHead                          , kStatus_BadAccess );
-    __exitReturn( !(*ppHead) || (!(*ppHead)->pList), kStatus_BadAccess );
-    
-    const __HashList_t *pList     =  ((*ppHead)->pList[ (long)__HashFunc(key) ].pNext);
-    const __HashList_t *pList_old = &((*ppHead)->pList[ (long)__HashFunc(key) ]);
+void*        __Hash_remove     ( const __HashMap_t *pHead, size_t key ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( pHead->pList );
+#endif
+    const __HashList_t *pList     =  (pHead->pList[ (long)__HashFunc(key) ].pNext);
+    const __HashList_t *pList_old = &(pHead->pList[ (long)__HashFunc(key) ]);
     while( pList != NULL ){
         if( pList->key == key ){
+            void* object = (void*)pList->object;
             __SET_STRUCT_MB(__HashList_t, __HashList_t*, pList_old, pNext, pList->pNext);
             __free((void*)pList);
-            return kStatus_Success;
+            return object;
         }
         pList_old = pList;
         pList     = pList->pNext;
     }
     
-    return kStatus_Success;
+    return NULL;
 }
     
-E_Status_t __Hash_removeAll  ( __HashMap_t** ptr  ){
-    __exitReturn( !ptr                       , kStatus_BadAccess );
-    __exitReturn( !(*ptr) || (!(*ptr)->pList), kStatus_BadAccess );
+void         __Hash_removeAll  ( __HashMap_t *pHead ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( pHead->pList );
+#endif
     
     size_t cnt = RH_HASH_MAP_SIZE;
     while(cnt--){
-        const __HashList_t *pList_tmp = ((*ptr)->pList[ cnt ].pNext);
-        const __HashList_t *pList     = ((*ptr)->pList[ cnt ].pNext);
+        const __HashList_t *pList_tmp = (pHead->pList[ cnt ].pNext);
+        const __HashList_t *pList     = (pHead->pList[ cnt ].pNext);
         while( pList != NULL ){
             pList_tmp = pList->pNext;
             __free((void*)pList);
             pList = pList_tmp;
         }
     }
-    __free( (void*)(*ptr)->pList );
-    *ptr = NULL;
-    return kStatus_Success;
+    __free( (void*)pHead->pList );
+
 }
     
 #ifdef __cplusplus
