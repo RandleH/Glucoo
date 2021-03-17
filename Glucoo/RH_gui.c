@@ -67,7 +67,7 @@ static void __attribute__((constructor)) GUI_Init(void){
     Screen.autoDisplay = false;
     
     Screen.allocated_byte = 0;
-    __Stack_createBase( &Screen.areaNeedRefreashHead );
+    Screen.areaNeedRefreashHead = __Stack_createBase( NULL );
     Screen.areaNeedRefreashCnt      = 0;
     Screen.areaNeedRefreashPixelCnt = 0;
     
@@ -99,13 +99,13 @@ void GUI_RefreashScreen(void){
     __Area_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         GUI_RefreashScreenArea( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
-        while( kStatus_Empty != __Stack_empty(&Screen.areaNeedRefreashHead) ){
-            __Stack_pop( &Screen.areaNeedRefreashHead, (void**)&p );
+        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
+            p = __Stack_pop( Screen.areaNeedRefreashHead );
             __free(p);
         }
     }else{
-        while( kStatus_Empty != __Stack_empty(&Screen.areaNeedRefreashHead) ){
-            __Stack_pop( &Screen.areaNeedRefreashHead, (void**)&p );
+        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
+            p = __Stack_pop( Screen.areaNeedRefreashHead );
             GUI_RefreashScreenArea( (int)(p->xs)             ,\
                                     (int)(p->ys)             ,\
                                     (int)(p->xs+p->width-1)  ,\
@@ -119,8 +119,8 @@ void GUI_RefreashScreen(void){
 void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
-        while( kStatus_Empty != __Stack_empty(&Screen.areaNeedRefreashHead) ){
-            __Stack_pop( &Screen.areaNeedRefreashHead, (void**)&p );
+        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
+            p = __Stack_pop( Screen.areaNeedRefreashHead );
             __free(p);
         }
         return;
@@ -132,7 +132,7 @@ void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
     Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
-    __Stack_push( &Screen.areaNeedRefreashHead, (void*)pArea );
+    __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
 }
 
 void GUI_rect_raw( int xs,int ys,int xe,int ye ){
