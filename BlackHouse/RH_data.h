@@ -20,11 +20,11 @@ struct __LinkLoop_t{
 typedef struct __LinkLoop_t __LinkLoop_t;
 
 __LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , createHead        ) ( void* object );
-__LinkLoop_t*           MAKE_FUNC( LINK_Loop , add               ) ( __LinkLoop_t  *pHead , void* object );
-__LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , find              ) ( __LinkLoop_t  *pHead , void* object );
-void                    MAKE_FUNC( LINK_Loop , remove            ) ( __LinkLoop_t  *pHead , void* object );
-void                    MAKE_FUNC( LINK_Loop , removeAll         ) ( __LinkLoop_t  *pHead );
-void                    MAKE_FUNC( LINK_Loop , printAllNodesAdr  ) ( __LinkLoop_t  *pHead , int(*PRINTF_FUNC)(const char*,...));
+__LinkLoop_t*           MAKE_FUNC( LINK_Loop , add               ) ( const __LinkLoop_t *pHead , void* object );
+__LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , find              ) ( const __LinkLoop_t *pHead , void* object );
+void                    MAKE_FUNC( LINK_Loop , remove            ) (       __LinkLoop_t *pHead , void* object );
+void                    MAKE_FUNC( LINK_Loop , removeAll         ) (       __LinkLoop_t *pHead );
+void                    MAKE_FUNC( LINK_Loop , printAllNodesAdr  ) ( const __LinkLoop_t *pHead , int(*PRINTF_FUNC)(const char*,...));
 
 struct __LinkBiTree_t{
     void*        object;
@@ -35,11 +35,11 @@ struct __LinkBiTree_t{
 typedef struct __LinkBiTree_t __LinkBiTree_t;
 
 __LinkBiTree_t* RH_RESULT MAKE_FUNC( LINK_BiTree , createHead    ) ( void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , addNode_l2r   ) ( __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object);
-E_Status_t                MAKE_FUNC( LINK_BiTree , addNode_l2l   ) ( __LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew);//
-E_Status_t                MAKE_FUNC( LINK_BiTree , addNode_r2l   ) ( __LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew);//
-E_Status_t                MAKE_FUNC( LINK_BiTree , addNode_r2r   ) ( __LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew);//
-E_Status_t                MAKE_FUNC( LINK_BiTree , findNode      ) ( __LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget );//
+__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2r       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
+__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
+__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
+__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2r       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
+__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , find          ) ( const __LinkBiTree_t *pHead , void* object );
 
 struct __Stack_t{
     const void*             const object; // Can NOT be modified by user.

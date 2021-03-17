@@ -21,7 +21,7 @@ __LinkLoop_t * __LINK_Loop_createHead        ( void* object ){
     return ptr;
 }
       
-__LinkLoop_t * __LINK_Loop_add               ( __LinkLoop_t  *pHead , void* object ){
+__LinkLoop_t * __LINK_Loop_add               ( const __LinkLoop_t *pHead , void* object ){
 #ifdef RH_DEBUG
     ASSERT( pHead );
 #endif
@@ -44,7 +44,7 @@ __LinkLoop_t * __LINK_Loop_add               ( __LinkLoop_t  *pHead , void* obje
     return pNewNode;
 }
     
-__LinkLoop_t * __LINK_Loop_find              ( __LinkLoop_t  *pHead , void* object ){
+__LinkLoop_t * __LINK_Loop_find              ( const __LinkLoop_t *pHead , void* object ){
 #ifdef RH_DEBUG
     ASSERT( pHead );
 #endif
@@ -61,7 +61,7 @@ __LinkLoop_t * __LINK_Loop_find              ( __LinkLoop_t  *pHead , void* obje
     return NULL;
 }
     
-void           __LINK_Loop_remove            ( __LinkLoop_t  *pHead , void* object ){
+void           __LINK_Loop_remove            ( __LinkLoop_t *pHead , void* object ){
 
 #ifdef RH_DEBUG
     ASSERT( pHead );
@@ -102,7 +102,7 @@ void           __LINK_Loop_remove            ( __LinkLoop_t  *pHead , void* obje
     
 }
     
-void           __LINK_Loop_removeAll         ( __LinkLoop_t  *pHead ){
+void           __LINK_Loop_removeAll         ( __LinkLoop_t *pHead ){
 
 #ifdef RH_DEBUG
     ASSERT( pHead );
@@ -115,7 +115,7 @@ void           __LINK_Loop_removeAll         ( __LinkLoop_t  *pHead ){
     
 }
 
-void           __LINK_Loop_printAllNodesAdr  ( __LinkLoop_t  *pHead , int(*PRINTF_FUNC)(const char*,...)){
+void           __LINK_Loop_printAllNodesAdr  ( const __LinkLoop_t *pHead , int(*PRINTF_FUNC)(const char*,...)){
   
 #ifdef RH_DEBUG
     ASSERT( pHead );
@@ -145,7 +145,7 @@ __LinkBiTree_t* __LINK_BiTree_createHead     ( void* object ){
     return pNewHead;
 }
     
-__LinkBiTree_t* __LINK_BiTree_addNode_l2r         ( __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object){
+__LinkBiTree_t* __LINK_BiTree_add_l2r        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
 
 #ifdef RH_DEBUG
     ASSERT( pHead );
@@ -158,115 +158,105 @@ __LinkBiTree_t* __LINK_BiTree_addNode_l2r         ( __LinkBiTree_t *pHead , __Li
 #endif
     pNewNode->object = object;
 
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode         , pPrev , pTarget        );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode         , pRight, pTarget->pLeft );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pRight, pTarget->pLeft );
     
     if( pTarget->pLeft!=NULL )
         __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pLeft, pPrev , pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget       , pLeft , pNewNode );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget  , pLeft , pNewNode );
     
     return pNewNode;
 }
     
-E_Status_t __LINK_BiTree_addNode_l2l         (__LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew){
-    __exitReturn( ppHead==NULL || ppTarget==NULL || ppNew==NULL , kStatus_BadAccess );
-    __exitReturn(*ppHead==NULL ||*ppTarget==NULL ||*ppNew==NULL , kStatus_BadAccess );
+__LinkBiTree_t* __LINK_BiTree_add_l2l        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
+    ASSERT( pTarget );
+#endif
+    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)__malloc(sizeof(__LinkBiTree_t));
+#ifdef RH_DEBUG
+    ASSERT( pNewNode );
+#endif
+    pNewNode->object = object;
     
-    // Head Node shouldn't have a previous node. So...Not a headnode.
-    __exitReturn( (*ppHead)->pPrev!=NULL                        , kStatus_Denied    );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pLeft , pTarget->pLeft );
     
-    // Target Node must exist in Tree.
-    E_Status_t state = __LINK_BiTree_findNode (ppHead,ppTarget);
-    __exitReturn( state!=kStatus_Success                        , state             );
+    if( pTarget->pLeft!=NULL )
+        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pLeft, pPrev , pNewNode );
     
-    // New Node shouldn't be in Tree.
-    state = __LINK_BiTree_findNode (ppHead,ppNew);
-    __exitReturn(state==kStatus_Success                         , kStatus_Exist     );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pLeft, pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pPrev , *ppTarget          );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pLeft , (*ppTarget)->pLeft );
-    
-    if( (*ppTarget)->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)->pLeft, pPrev , *ppNew             );
-    
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)       , pLeft , *ppNew             );
-    
-    return kStatus_Success;
+    return pNewNode;
 }
     
-E_Status_t __LINK_BiTree_addNode_r2l         (__LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew){
-    __exitReturn( ppHead==NULL || ppTarget==NULL || ppNew==NULL , kStatus_BadAccess );
-    __exitReturn(*ppHead==NULL ||*ppTarget==NULL ||*ppNew==NULL , kStatus_BadAccess );
+__LinkBiTree_t* __LINK_BiTree_add_r2l        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
+    ASSERT( pTarget );
+#endif
+    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)__malloc(sizeof(__LinkBiTree_t));
+#ifdef RH_DEBUG
+    ASSERT( pNewNode );
+#endif
+    pNewNode->object = object;
     
-    // Head Node shouldn't have a previous node. So...Not a headnode.
-    __exitReturn( (*ppHead)->pPrev!=NULL                        , kStatus_Denied    );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pLeft , pTarget->pLeft );
     
-    // Target Node must exist in Tree.
-    E_Status_t state = __LINK_BiTree_findNode (ppHead,ppTarget);
-    __exitReturn( state!=kStatus_Success                        , state             );
+    if( pTarget->pLeft!=NULL )
+        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pRight, pPrev , pNewNode );
     
-    // New Node shouldn't be in Tree.
-    state = __LINK_BiTree_findNode (ppHead,ppNew);
-    __exitReturn(state==kStatus_Success                         , kStatus_Exist     );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pRight, pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pPrev , *ppTarget          );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pLeft , (*ppTarget)->pLeft );
-    
-    if( (*ppTarget)->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)->pRight, pPrev , *ppNew             );
-    
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)       , pRight, *ppNew             );
-    
-    return kStatus_Success;
+    return pNewNode;
 }
     
-E_Status_t __LINK_BiTree_addNode_r2r         (__LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget , __LinkBiTree_t ** ppNew){
-    __exitReturn( ppHead==NULL || ppTarget==NULL || ppNew==NULL , kStatus_BadAccess );
-    __exitReturn(*ppHead==NULL ||*ppTarget==NULL ||*ppNew==NULL , kStatus_BadAccess );
+__LinkBiTree_t* __LINK_BiTree_add_r2r        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+    ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
+    ASSERT( pTarget );
+#endif
+    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)__malloc(sizeof(__LinkBiTree_t));
+#ifdef RH_DEBUG
+    ASSERT( pNewNode );
+#endif
+    pNewNode->object = object;
     
-    // Head Node shouldn't have a previous node. So...Not a headnode.
-    __exitReturn( (*ppHead)->pPrev!=NULL                        , kStatus_Denied    );
-    
-    // Target Node must exist in Tree.
-    E_Status_t state = __LINK_BiTree_findNode (ppHead,ppTarget);
-    __exitReturn( state!=kStatus_Success                        , state             );
-    
-    // New Node shouldn't be in Tree.
-    state = __LINK_BiTree_findNode (ppHead,ppNew);
-    __exitReturn(state==kStatus_Success                         , kStatus_Exist     );
-    
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pPrev , *ppTarget          );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppNew)          , pRight, (*ppTarget)->pRight);
-    
-    if( (*ppTarget)->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)->pRight, pPrev , *ppNew             );
-    
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, (*ppTarget)       , pRight, *ppNew             );
-    
-    return kStatus_Success;
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode, pPrev , pTarget         );
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode, pRight, pTarget->pRight );
+
+    if( pTarget->pLeft!=NULL )
+        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pRight, pPrev , pNewNode );
+
+    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pRight, pNewNode );
+
+    return pNewNode;
 }
     
-E_Status_t __LINK_BiTree_findNode            (__LinkBiTree_t ** ppHead , __LinkBiTree_t ** ppTarget ){
-    __exitReturn( ppHead   == NULL                , kStatus_BadAccess );
-    __exitReturn( ppTarget == NULL                , kStatus_BadAccess );
-    __exitReturn(*ppHead==NULL || *ppTarget==NULL , kStatus_NotFound  );
+__LinkBiTree_t* __LINK_BiTree_find           ( const __LinkBiTree_t *pHead , void* object ){
     
-    E_Status_t state = kStatus_NotFound;
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+#endif
     
-    if(*ppHead == *ppTarget){
-        return kStatus_Success;
+    __LinkBiTree_t* pTarget = NULL;
+    
+    if( pHead->object == object ){
+        return (__LinkBiTree_t*)pHead;
     }else{
-        __LinkBiTree_t **p = (__LinkBiTree_t **)(&((*ppHead)->pLeft));
-        state =  CALL_FUNC( LINK_BiTree , findNode )( p , ppTarget );
+        pTarget = __LINK_BiTree_find( pHead->pLeft , object );
     }
     
-    if(state != kStatus_Success){
-        __LinkBiTree_t **p = (__LinkBiTree_t **)(&((*ppHead)->pRight));
-        state =  CALL_FUNC( LINK_BiTree , findNode )( p , ppTarget );
+    if( !pTarget ){
+        pTarget = __LINK_BiTree_find( pHead->pLeft , object );
     }
     
-    return state;
+    return pTarget;
 }
     
     
