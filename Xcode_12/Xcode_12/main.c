@@ -10,7 +10,7 @@
 #include "RH_data.h"
 #include "RH_gui.h"
 #include "RH_gui_api.h"
-#include "RH_gui_font.h"
+#include "RH_font.h"
 
 #include "RH_time.h"
 
@@ -39,6 +39,7 @@ int main(int argc, const char * argv[]) {
     cfg2.size        = 40;
     cfg2.appearance  = kGUI_Appearance_Light;
     cfg2.title       = "Glucoo";
+    cfg2.text        = "Most people effortlessly recognize those digits as 504192. That ease is deceptive. In each hemisphere of our brain, humans have a primary visual cortex, also known as V1, containing 140 million neurons, with tens of billions of connections between them. And yet human vision involves not just V1, but an entire series of visual cortices - V2, V3, V4, and V5 - doing progressively more complex image processing. We carry in our heads a supercomputer, tuned by evolution over hundreds of millions of years, and superbly adapted to understand the visual world. Recognizing handwritten digits isn't easy. Rather, we humans are stupendously, astoundingly good at making sense of what our eyes show us. But nearly all that work is done unconsciously. And so we don't usually appreciate how tough a problem our visual systems solve.";
 
 
     ID_t ID_Window1 = GUI_create_window(&cfg1);
@@ -49,9 +50,9 @@ int main(int argc, const char * argv[]) {
     GUI_RefreashScreen();
 
     GUI_delete_window( ID_Window1 );
+
+
     
-    
-    printf("%s\n",__PST2BJT("2021-03-19 19:00:00"));
     
     return 0;
 }
