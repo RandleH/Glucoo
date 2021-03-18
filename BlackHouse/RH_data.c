@@ -265,9 +265,10 @@ __Stack_t* __Stack_createBase  ( void* object ){
 #ifdef RH_DEBUG
     ASSERT( ptr );
 #endif
-    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pPrev, ptr);
-    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pNext, ptr);
-    
+    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pPrev , ptr   );
+    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pNext , ptr   );
+    __SET_STRUCT_MB( __Stack_t, void*     , ptr, object, object);
+
     return ptr;
 }
     

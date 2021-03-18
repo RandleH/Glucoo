@@ -172,7 +172,38 @@ int iter = (int)(src->width*ys + xs);
     ASSERT(!fontFile);
 #endif
 
+FILE* fontFile = fopen( "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf" , "rb" );
+#ifdef RH_DEBUG
+ASSERT( fontFile );
+#endif
+__exitReturn( !fontFile, kStatus_BadAccess );
 
+fseek(fontFile, 0, SEEK_END);
+size_t size = ftell(fontFile);
+fseek(fontFile, 0, SEEK_SET);
+
+uint8_t* array = calloc(size, sizeof(uint8_t));
+
+fread(array, size, sizeof(uint8_t), fontFile);
+fclose(fontFile);
+
+
+
+FILE* fontTxt = NULL;
+
+fontTxt = fopen("/Users/randle_h/Desktop/Glucoo/Glucoo/Font/RH_font_CourierNewBold.c", "a");
+char buf[10] = {0};
+
+for(int i=0; i<size; i++){
+    if(i%20 == 0 ){
+        fprintf( fontTxt, "\n");
+    }
+    sprintf(buf, "0x%02X, ",array[i]);
+    fprintf( fontTxt, "%s",buf);
+
+}
+
+fclose(fontTxt);
 
 #endif
 
