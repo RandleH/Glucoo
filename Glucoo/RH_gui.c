@@ -178,8 +178,8 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     __Pixel_t penColor = __Graph_get_penColor();
     size_t    penSize  = __Graph_get_penSize();
-    int                fontSize = GUI_GetFontSize();
-    E_GUI_FontStyle_t fontStyle = GUI_GetFontStyle();
+    int                fontSize = __Font_getSize();
+    E_GUI_FontStyle_t fontStyle = __Font_getStyle();
     
     __GraphInfo_t info = {
         .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
@@ -202,12 +202,12 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
-        __GUI_Font_t* pFontInfo = GUI_ExportFontStr( config->title );
+        __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
         const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
         const int font_ys = ys + bar_size_4;
         
-        GUI_SetFontSize(bar_size_2);
-        GUI_SetFontStyle( kGUI_FontStyle_CourierNew_Bold );
+        __Font_setSize(bar_size_2);
+        __Font_setStyle( kGUI_FontStyle_CourierNew_Bold );
         for( int y=0; y<pFontInfo->height; y++ ){
             for( int x=0; x<pFontInfo->width; x++ ){
                 uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
@@ -247,8 +247,8 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_set_penColor(penColor);
     __Graph_set_penSize(penSize);
     
-    GUI_SetFontSize(fontSize);
-    GUI_SetFontStyle(fontStyle);
+    __Font_setSize(fontSize);
+    __Font_setStyle(fontStyle);
 }
 
 static void __gui_remove_window_MacOS(__GUI_Window_t* config){
