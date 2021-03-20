@@ -12,6 +12,18 @@ extern "C" {
 /*=====================================================================
 > Data Structure Reference
 ======================================================================*/
+struct __LinkDB_t{
+    void*        object;
+    const struct __LinkDB_t* const pNext; // Can NOT be modified by user.
+    const struct __LinkDB_t* const pPrev; // Can NOT be modified by user.
+};
+typedef struct __LinkDB_t __LinkDB_t;
+
+__LinkDB_t* RH_RESULT MAKE_FUNC( LINK_DB , createHead       ) ( void* object );
+__LinkDB_t*           MAKE_FUNC( LINK_DB , addTail          ) ( const __LinkDB_t *pHead , void* object );
+__LinkDB_t*           MAKE_FUNC( LINK_DB , insert           ) ( const __LinkDB_t *pHead , void* Tobject, void* object );
+void                  MAKE_FUNC( LINK_DB , removeAll        ) (       __LinkDB_t *pHead );
+
 struct __LinkLoop_t{
     void*        object;
     const struct __LinkLoop_t* const pNext; // Can NOT be modified by user.
@@ -23,6 +35,7 @@ __LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , createHead        ) ( void* objec
 __LinkLoop_t*           MAKE_FUNC( LINK_Loop , add               ) ( const __LinkLoop_t *pHead , void* object );
 __LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , find              ) ( const __LinkLoop_t *pHead , void* object );
 void                    MAKE_FUNC( LINK_Loop , remove            ) (       __LinkLoop_t *pHead , void* object );
+__LinkLoop_t*           MAKE_FUNC( LINK_Loop , insert            ) ( const __LinkLoop_t *pHead , void* Tobject, void* object );
 void                    MAKE_FUNC( LINK_Loop , removeAll         ) (       __LinkLoop_t *pHead );
 void                    MAKE_FUNC( LINK_Loop , printAllNodesAdr  ) ( const __LinkLoop_t *pHead , int(*PRINTF_FUNC)(const char*,...));
 

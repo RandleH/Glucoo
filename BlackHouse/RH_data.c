@@ -8,6 +8,90 @@ extern "C" {
 /*=====================================================================
  > Data Structure Reference
 ======================================================================*/
+    
+__LinkDB_t* __LINK_DB_createHead             ( void* object ){
+    __LinkDB_t *ptr = (__LinkDB_t*)__malloc(sizeof(__LinkDB_t));
+#ifdef RH_DEBUG
+    ASSERT( ptr );
+#endif
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pNext  ,NULL);
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pPrev  ,NULL);
+    ptr->object = object;
+    
+    return ptr;
+}
+    
+__LinkDB_t* __LINK_DB_addTail                ( const __LinkDB_t *pHead , void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+#endif
+    
+    __LinkDB_t* pNewNode  = (__LinkDB_t*)__malloc( sizeof(__LinkDB_t) );
+#ifdef RH_DEBUG
+    ASSERT( pNewNode );
+#endif
+    pNewNode->object = object;
+    
+    const __LinkDB_t* pIter = pHead;
+    while( pIter->pNext != NULL ){
+        pIter = pIter->pNext;
+    }
+    
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pNewNode    ,pPrev,pIter    );
+    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pNewNode    ,pNext,NULL     );
+    
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pIter       ,pNext,pNewNode );
+    
+    return pNewNode;
+}
+    
+__LinkDB_t* __LINK_DB_insert                 ( const __LinkDB_t *pHead , void* Tobject, void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+#endif
+    
+    __LinkDB_t* pNewNode  = (__LinkDB_t*)__malloc( sizeof(__LinkDB_t) );
+
+    const __LinkDB_t* pTmp  = pHead;
+    do{
+        if (pTmp->object ==  Tobject ) {
+            goto FOUND_TOBJ;
+        }
+        pTmp = pTmp->pNext;
+    }while( pTmp );
+#ifdef RH_DEBUG
+    ASSERT( false );
+#endif
+FOUND_TOBJ:
+
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pPrev,pTmp        );
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pNext,pTmp->pNext );
+    pNewNode->object = object;
+    
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp        ,pNext,pNewNode    );
+    if( pTmp->pNext )
+        __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp->pNext ,pPrev,pNewNode    );
+    
+    return pNewNode;
+}
+    
+void        __LINK_DB_removeAll              (       __LinkDB_t *pHead ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+#endif
+    const __LinkDB_t* pTmp1  = pHead;
+    const __LinkDB_t* pTmp2  = pHead;
+    do{
+        pTmp2 = pTmp1->pNext;
+        __free( (void*)(pTmp1) );
+        pTmp1 = pTmp2;
+    }while( pTmp1 );
+}
+    
       
 __LinkLoop_t * __LINK_Loop_createHead        ( void* object ){
     __LinkLoop_t *ptr = (__LinkLoop_t*)__malloc(sizeof(__LinkLoop_t));
@@ -40,6 +124,37 @@ __LinkLoop_t * __LINK_Loop_add               ( const __LinkLoop_t *pHead , void*
     // Things to do for the neighbour.
     __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pHead->pPrev,pNext,pNewNode           );
     __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pHead       ,pPrev,pNewNode           );
+    
+    return pNewNode;
+}
+    
+__LinkLoop_t * __LINK_Loop_insert            ( const __LinkLoop_t *pHead , void* Tobject, void* object ){
+#ifdef RH_DEBUG
+    ASSERT( pHead );
+#endif
+    
+    __LinkLoop_t* pNewNode  = (__LinkLoop_t*)__malloc( sizeof(__LinkLoop_t) );
+
+    const __LinkLoop_t* pTmp  = pHead;
+    do{
+        if (pTmp->object ==  Tobject ) {
+            goto FOUND_TOBJ;
+        }
+        pTmp = pTmp->pNext;
+    }while( pTmp != pHead );
+#ifdef RH_DEBUG
+    ASSERT( false );
+#endif
+FOUND_TOBJ:
+
+    // Things to do for the new Node.
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pPrev,pTmp        );
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pNext,pTmp->pNext );
+    pNewNode->object = object;
+    
+    // Things to do for the neighbour.
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp        ,pNext,pNewNode    );
+    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp->pNext ,pPrev,pNewNode    );
     
     return pNewNode;
 }
