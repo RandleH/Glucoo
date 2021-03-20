@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "__gui_font_init:RH_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "Font">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__Font_exportText_Justify:RH_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "pTextHead">
+            </PersistentString>
+            <PersistentString
+               value = "pixCnt">
+            </PersistentString>
+            <PersistentString
+               value = "pIter1">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__Font_exportStr:RH_font.c">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
