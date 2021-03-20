@@ -202,12 +202,13 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
+        __Font_setSize(bar_size_2);
+        __Font_setStyle( kGUI_FontStyle_CourierNew_Bold );
         __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
         const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
         const int font_ys = ys + bar_size_4;
         
-        __Font_setSize(bar_size_2);
-        __Font_setStyle( kGUI_FontStyle_CourierNew_Bold );
+        
         for( int y=0; y<pFontInfo->height; y++ ){
             for( int x=0; x<pFontInfo->width; x++ ){
                 uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
@@ -233,6 +234,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     // Context
     __Graph_set_penColor(color_blank.data);
     __Graph_rect_fill    (xs+2 , ys+bar_size, xe-2, ye-2, &info, kApplyPixel_fill);
+    if( config->text != NULL ){
+        __Font_exportText_Justify( config->text, config->area.width );
+    }
     
     // Button
     __Graph_set_penColor(M_COLOR_BLOODYMEAT);
@@ -255,7 +259,7 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
     
 }
 
-ID_t __attribute__((warn_unused_result)) GUI_create_window( __GUI_Window_t* config ){
+ID_t GUI_create_window( __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
 #ifdef RH_DEBUG
     ASSERT( tmp );
@@ -279,6 +283,28 @@ ID_t __attribute__((warn_unused_result)) GUI_create_window( __GUI_Window_t* conf
     else
         __LINK_Loop_add( Screen.windowCFG, tmp );
     return (ID_t)tmp;
+}
+
+__GUI_Window_t* GUI_easySet_window( __GUI_Window_t* config ){
+#ifdef RH_DEBUG
+    ASSERT( config );
+#else
+    __exitReturn( !config, NULL);
+#endif
+    config->appearance   = kGUI_Appearance_Light;
+    config->area.xs      = 0;
+    config->area.ys      = 0;
+    config->area.height  = 0;
+    config->area.width   = 0;
+    config->size         = 40;
+    config->text         = NULL;
+    config->text_font    = kGUI_FontStyle_CourierNew_Bold;
+    config->text_align   = kGUI_FontAlign_Justify;
+    config->title        = NULL;
+    config->title_font   = kGUI_FontStyle_CourierNew;
+    config->type         = kGUI_WindowType_macOS;
+    
+    return config;
 }
 
 E_Status_t GUI_insert_window( ID_t ID ){

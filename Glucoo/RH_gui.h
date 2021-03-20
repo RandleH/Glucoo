@@ -48,14 +48,17 @@ struct __GUI_Window_t{
     
     const char*          text;//
     E_GUI_FontStyle_t    text_font;//
+    E_GUI_FontAlign_t    text_align;
     
     //...//
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
 
-ID_t       __attribute__ ((warn_unused_result)) GUI_create_window  ( __GUI_Window_t* config );
-E_Status_t                                      GUI_insert_window  ( ID_t ID );
-E_Status_t                                      GUI_delete_window  ( ID_t ID );
+ID_t            RH_RESULT GUI_create_window  ( __GUI_Window_t* config );
+__GUI_Window_t*           GUI_easySet_window ( __GUI_Window_t* config );
+E_Status_t                GUI_insert_window  ( ID_t ID );
+E_Status_t                GUI_delete_window  ( ID_t ID );
+
 #endif
 
 
