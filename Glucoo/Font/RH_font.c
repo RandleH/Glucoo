@@ -111,6 +111,7 @@ __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
     
     if( Font.info.output ){
         free(Font.info.output);
+        Font.info.output = NULL;
     }
     Font.info.output = calloc( Font.info.height*Font.info.width , sizeof(uint8_t) );
     
@@ -128,6 +129,7 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     
     if( Font.info.output ){
         free(Font.info.output);
+        Font.info.output = NULL;
     }
     
     size_t len = strlen(str);
@@ -183,7 +185,7 @@ void __Font_getCharSize( size_t *width, size_t *height, char c ){
     stbtt_GetCodepointBitmapBox(&Font.stb_info, c, Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     if( width )
         *width = c_x2-c_x1;
-    
+
     if( height )
         *height = c_y2-c_y1;
 }
@@ -205,19 +207,12 @@ void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
 
 #include "RH_data.h"
 __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
-    
-    // 释放之前的缓存数据
-    if( Font.info.output ){
-        free(Font.info.output);
-        Font.info.output = NULL;
-    }
-    Font.info.width = width;
-    
+
     // 获取空格的最小像素宽度,为改字体下的空格所占宽度的一半.
     size_t spW = 0;
     size_t spH = 0;
     __Font_getCharSize(&spW, &spH, 'I' );
-    spW >>= 1;
+//    spW >>= 1;
     
     // 定义词汇数据结构,字符串及所需绘制的像素点宽度.
     struct WordInfo_t{
@@ -236,36 +231,27 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     
     __LinkDB_t* pTextHead = __LINK_DB_createHead( &WordInfo );
 
-    __GUI_Font_t *pd = __Font_exportStr(WordInfo.str); printf("%ld\n",WordInfo.pixsW);
-    
-    
-    
-    
+//    __GUI_Font_t *pd = __Font_exportStr(WordInfo.str); printf("%ld\n",WordInfo.pixsW);
+
     char* p = NULL;
     while( (p = strtok(NULL," ")) != NULL ){
         WordInfo_t* pWordInfo = alloca(sizeof(WordInfo_t));
         pWordInfo->str   = p;
         pWordInfo->pixsW = 0;
-//        for(int i=0; i<strlen(WordInfo.str); i++){
-//            size_t w = 0;
-//            __Font_getCharSize(&w, NULL, pWordInfo->str[i]);
-//            pWordInfo->pixsW += w;
-//        }
         __Font_getStrSize( &pWordInfo->pixsW, NULL, pWordInfo->str );
-        
         __LINK_DB_addTail( pTextHead, pWordInfo );
     }
     
 
     const __LinkDB_t* pIter1 = pTextHead;
     const __LinkDB_t* pIter2 = pTextHead;
-    const __LinkDB_t* pIter  = pTextHead;
+//    const __LinkDB_t* pIter  = pTextHead;
 /* 此处可以测试,句子信息是否提取准确 */
-    pIter  = pTextHead;
-    do{
-        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
-        pIter = pIter->pNext;
-    }while( pIter );
+//    pIter  = pTextHead;
+//    do{
+//        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
+//        pIter = pIter->pNext;
+//    }while( pIter );
     
     size_t pixCnt   = 0;          // 用于记录一行已使用的像素栏
     size_t wordCnt  = 0;          // 用于记录一行单词有多少个
@@ -273,6 +259,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     size_t spExtra  = 0;          // 一行单词出去基本空格单元像素(spW)点后,额外的所有空格占用的像素点
     size_t spAvg    = 0;          // 平均每个单词间隙空格占用的像素点
     size_t spRemain = 0;          // spAvg的余数
+    size_t rowCnt   = 0;          // 用于记录左右文本对其后所需的行数, height = rowCnt* Font.height
     bool   spAdded = false;       // 用于记录单词结尾是否添加过空格
     do{
         if( pIter1 != NULL && pixCnt + ((WordInfo_t*)(pIter1->object))->pixsW < width ){
@@ -292,16 +279,17 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
             spAvg    = (spCnt==0)?(1):(spExtra/spCnt);
             spRemain = (spCnt==0)?(1):(spExtra%spCnt);
             
-            printf("[word]%ld\n", wordCnt);
+//            printf("[word]%ld\n", wordCnt);
             while( spCnt-- ){
-                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+//                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
                 // 插入空格字符
                 WordInfo_t* wi = alloca(sizeof(WordInfo_t));
                 wi->str   = NULL;    // 这是一个间隔空白字符,
                 wi->pixsW = spW + spAvg + ((spRemain==0)?(0):((spRemain--)!=0));
                 
                 pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
-            }printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+            }
+//            printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
 
 
 #ifdef RH_DEBUG
@@ -315,6 +303,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
             wi->str   = "\n";    // 这是一个回车字符,当读取到此需要换行
             wi->pixsW = 0;
             pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
+            rowCnt++;
 #ifdef RH_DEBUG
             ASSERT( pIter1==pIter2 );
 #endif
@@ -327,16 +316,58 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     }while( pIter1!=NULL || pIter2!=NULL );
     
 /* 此处可以测试,句子信息是否提取准确 */
-    pIter  = pTextHead;
+//    pIter  = pTextHead;
+//    do{
+//        if( ((WordInfo_t*)pIter->object)->str==NULL ){
+//            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
+//            pIter = pIter->pNext;
+//            continue;
+//        }
+//        printf("%s", ((WordInfo_t*)pIter->object)->str);
+//        pIter = pIter->pNext;
+//    }while( pIter );
+    
+    // 释放之前的缓存数据
+    if( Font.info.output ){
+        free(Font.info.output);
+        Font.info.output = NULL;
+    }
+    // 重建缓存, 宽度为输入的width,高度为上述计算后的行数*字体高度即Font.size
+    Font.info.width  = width;
+    Font.info.height = rowCnt*Font.size;
+    Font.info.output = calloc( Font.info.height*Font.info.width, sizeof(uint8_t) );
+#ifdef RH_DEBUG
+    ASSERT( Font.info.output );
+#endif
+    // 逐单词输出
+    const __LinkDB_t* pIter3 = pTextHead;
+    size_t x=0, y=0;
     do{
-        if( ((WordInfo_t*)pIter->object)->str==NULL ){
-            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
-            pIter = pIter->pNext;
-            continue;
+        char* str = ((WordInfo_t*)(pIter3->object))->str;
+        if( str==NULL ){
+            x += ((WordInfo_t*)(pIter3->object))->pixsW;
+        }else if( *str == '\n' ){
+            y += Font.size;
+            x = 0;
+        }else{
+#ifdef DEBUG
+            ASSERT( x<Font.info.width );
+#endif
+            for(int i=0; i<strlen(str); i++){
+                int c_x1 , c_y1 , c_x2 , c_y2;
+                int advanceWidth    = 0;
+                int leftSideBearing = 0;
+                stbtt_GetCodepointHMetrics( &Font.stb_info, str[i], &advanceWidth, &leftSideBearing );
+                stbtt_GetCodepointBitmapBox(&Font.stb_info, str[i], Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+                size_t byteOffset = Font.info.width*(y+Font.info.ascent + c_y1) + x;
+                stbtt_MakeCodepointBitmap(&Font.stb_info, Font.info.output+byteOffset, c_x2-c_x1, c_y2-c_y1, (int)(Font.info.width), Font.scale, Font.scale, str[i]);
+                x += roundf( advanceWidth*Font.scale );
+            }
         }
-        printf("%s", ((WordInfo_t*)pIter->object)->str);
-        pIter = pIter->pNext;
-    }while( pIter );
+        pIter3 = pIter3->pNext;
+    }while( pIter3 );
+    
+    stbi_write_png("/Users/randle_h/Desktop/o.png", (int)Font.info.width, (int)Font.info.height, 1, Font.info.output, (int)Font.info.width);
      
     __LINK_DB_removeAll(pTextHead);
     return &Font.info;
