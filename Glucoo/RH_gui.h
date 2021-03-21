@@ -44,13 +44,21 @@ struct __GUI_Window_t{
     size_t               size;
     
     const char*          title;
-    E_GUI_FontStyle_t    title_font;//
+    E_GUI_FontStyle_t    title_font;
     
-    const char*          text;//
-    E_GUI_FontStyle_t    text_font;//
+    const char*          text;
+    E_GUI_FontStyle_t    text_font;
     E_GUI_FontAlign_t    text_align;
-    
+    int                  text_size;
     //...//
+    
+    const void*  const   text_bitMap;  // DO NOT MODIFY
+    const size_t         text_bitH;    // DO NOT MODIFY
+    const size_t         text_bitW;    // DO NOT MODIFY
+    const int            text_rs;      // DO NOT MODIFY
+    const int            text_margin;  // DO NOT MODIFY
+    
+    const int            win_edge;     // DO NOT MODIFY
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
 

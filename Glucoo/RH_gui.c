@@ -169,10 +169,13 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const int bar_size_2 = bar_size>>1;
     const int bar_size_4 = bar_size>>2;
     const int bar_rad    = __limit( (int)(config->size), 20, 256 )/5;
+    const int bar_edge   = config->win_edge;
     
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
     const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    
+    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
     
     
@@ -195,10 +198,10 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_line_raw     (xs   , ye         , xe  , ye                 , &info, kApplyPixel_fill);
     __Graph_line_raw     (xs   , ye-1       , xe  , ye-1               , &info, kApplyPixel_fill);
     
-    __Graph_line_raw     (xs   , ys+bar_size, xs  , ye  , &info, kApplyPixel_fill);
-    __Graph_line_raw     (xs+1 , ys+bar_size, xs+1, ye  , &info, kApplyPixel_fill);
-    __Graph_line_raw     (xe   , ys+bar_size, xe  , ye  , &info, kApplyPixel_fill);
-    __Graph_line_raw     (xe-1 , ys+bar_size, xe-1, ye  , &info, kApplyPixel_fill);
+    for(int i=0; i<bar_edge; i++){
+        __Graph_line_raw     (xs+i , ys+bar_size, xs+i, ye  , &info, kApplyPixel_fill);
+        __Graph_line_raw     (xe-i , ys+bar_size, xe-i, ye  , &info, kApplyPixel_fill);
+    }
     
     // Title
     if( config->title != NULL ){
@@ -233,9 +236,28 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     // Context
     __Graph_set_penColor(color_blank.data);
-    __Graph_rect_fill    (xs+2 , ys+bar_size, xe-2, ye-2, &info, kApplyPixel_fill);
+    __Graph_rect_fill    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info, kApplyPixel_fill);
+    
+    
     if( config->text != NULL ){
-        __Font_exportText_Justify( config->text, config->area.width );
+        uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
+        typeof(info.pBuffer) pIterScr  = &info.pBuffer[ (ys+bar_size)*info.width + xs+bar_edge+config->text_margin ];
+        
+        size_t               numOfFontPix = config->text_bitH*config->text_bitW;
+        size_t               cntOfFontPix = 0;
+        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info.width ){
+            for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
+                if( *pIterFont != 0x00 ){
+                    pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
+                    pIterScr->G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
+                    pIterScr->B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
+                }
+                cntOfFontPix++;
+            }
+            if(cntOfFontPix == numOfFontPix)
+                break;
+            pIterScr -= config->text_bitW;
+        }
     }
     
     // Button
@@ -261,15 +283,19 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
 
 ID_t GUI_create_window( __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
+    int               font_size  = __Font_getSize();
+    E_GUI_FontStyle_t font_style = __Font_getStyle();
 #ifdef RH_DEBUG
     ASSERT( tmp );
+    ASSERT( config );
 #endif
-    tmp->config = *config;
-
+    memcpy(&tmp->config, config, sizeof( __GUI_Window_t ));
+    
     switch( tmp->config.type ){
         case kGUI_WindowType_macOS:
             tmp->insert_func = __gui_insert_window_MacOS;
             tmp->remove_func = __gui_remove_window_MacOS;
+            __SET_STRUCT_MB(__GUI_Window_t, int, &(tmp->config), win_edge  , 2);
             break;
         default:
 #ifdef RH_DEBUG
@@ -278,10 +304,37 @@ ID_t GUI_create_window( __GUI_Window_t* config ){
             while(1);
 #endif
     }
+    
+    if( tmp->config.text != NULL ){
+        // 配置用户配置的文本字体和大小
+        __Font_setStyle(tmp->config.text_font);
+        __Font_setSize(tmp->config.text_size);
+        // 设置文本白边, 暂定恒为5
+        __SET_STRUCT_MB(__GUI_Window_t, int  , &(tmp->config), text_margin, 5        );
+        // 生成文本镜像
+        size_t fontW = tmp->config.area.width-((tmp->config.win_edge+tmp->config.text_margin)<<1);
+        __GUI_Font_t* p =  __Font_exportText_Justify( tmp->config.text, fontW );
+        // 拷贝信息到结构体<__GUI_Window_t> config 中
+        // 创建缓存, 并将p->output的文本镜像拷贝至 config->text_bitMap
+        __SET_STRUCT_MB(__GUI_Window_t, void*, &(tmp->config), text_bitMap, __malloc(p->width*p->height*sizeof(*(p->output))));
+#ifdef RH_DEBUG
+        ASSERT(tmp->config.text_bitMap);
+#endif
+        memcpy((void*)tmp->config.text_bitMap, p->output, p->width*p->height*sizeof(*(p->output)) );
+        // 拷贝文本镜像的长和宽
+        __SET_STRUCT_MB(__GUI_Window_t, void*, &(tmp->config), text_bitH  , p->height);
+        __SET_STRUCT_MB(__GUI_Window_t, void*, &(tmp->config), text_bitW  , p->width );
+        //...//
+    }
+    
     if( Screen.windowCFG==NULL )
         Screen.windowCFG = __LINK_Loop_createHead( tmp );
     else
         __LINK_Loop_add( Screen.windowCFG, tmp );
+    
+    
+    __Font_setStyle(font_style);
+    __Font_setSize(font_size);
     return (ID_t)tmp;
 }
 
@@ -291,19 +344,26 @@ __GUI_Window_t* GUI_easySet_window( __GUI_Window_t* config ){
 #else
     __exitReturn( !config, NULL);
 #endif
-    config->appearance   = kGUI_Appearance_Light;
+    
     config->area.xs      = 0;
     config->area.ys      = 0;
     config->area.height  = 0;
     config->area.width   = 0;
+    config->type         = kGUI_WindowType_macOS;
+    config->appearance   = kGUI_Appearance_Light;
     config->size         = 40;
+    config->title        = NULL;
+    config->title_font   = kGUI_FontStyle_CourierNew;
     config->text         = NULL;
     config->text_font    = kGUI_FontStyle_CourierNew_Bold;
     config->text_align   = kGUI_FontAlign_Justify;
-    config->title        = NULL;
-    config->title_font   = kGUI_FontStyle_CourierNew;
-    config->type         = kGUI_WindowType_macOS;
+    config->text_size    = 40;
     
+    __SET_STRUCT_MB(__GUI_Window_t, int   , config, text_rs    , 0    );
+    __SET_STRUCT_MB(__GUI_Window_t, void* , config, text_bitMap, NULL );
+    __SET_STRUCT_MB(__GUI_Window_t, size_t, config, text_bitH  , 0    );
+    __SET_STRUCT_MB(__GUI_Window_t, size_t, config, text_bitW  , 0    );
+    __SET_STRUCT_MB(__GUI_Window_t, int   , config, text_margin, 0    );
     return config;
 }
 
@@ -316,10 +376,10 @@ E_Status_t GUI_insert_window( ID_t ID ){
     if( Screen.autoDisplay ){
         
     }else{
-        GUI_AddScreenArea(((__GUI_INT_Window_t*)ID)->config.area.xs ,\
-                          ((__GUI_INT_Window_t*)ID)->config.area.ys ,\
-                          (int)(((__GUI_INT_Window_t*)ID)->config.area.xs + ((__GUI_INT_Window_t*)ID)->config.area.width -1),\
-                          (int)(((__GUI_INT_Window_t*)ID)->config.area.ys + ((__GUI_INT_Window_t*)ID)->config.area.height-1));
+        GUI_AddScreenArea(      ((__GUI_INT_Window_t*)ID)->config.area.xs ,\
+                                ((__GUI_INT_Window_t*)ID)->config.area.ys ,\
+                          (int)(((__GUI_INT_Window_t*)ID)->config.area.xs +      ((__GUI_INT_Window_t*)ID)->config.area.width -1),\
+                          (int)(((__GUI_INT_Window_t*)ID)->config.area.ys +  ((__GUI_INT_Window_t*)ID)->config.area.height-1));
     }
     return kStatus_Success;
 }

@@ -212,7 +212,6 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     size_t spW = 0;
     size_t spH = 0;
     __Font_getCharSize(&spW, &spH, 'I' );
-//    spW >>= 1;
     
     // 定义词汇数据结构,字符串及所需绘制的像素点宽度.
     struct WordInfo_t{
@@ -231,8 +230,6 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     
     __LinkDB_t* pTextHead = __LINK_DB_createHead( &WordInfo );
 
-//    __GUI_Font_t *pd = __Font_exportStr(WordInfo.str); printf("%ld\n",WordInfo.pixsW);
-
     char* p = NULL;
     while( (p = strtok(NULL," ")) != NULL ){
         WordInfo_t* pWordInfo = alloca(sizeof(WordInfo_t));
@@ -245,13 +242,13 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
 
     const __LinkDB_t* pIter1 = pTextHead;
     const __LinkDB_t* pIter2 = pTextHead;
-//    const __LinkDB_t* pIter  = pTextHead;
+    const __LinkDB_t* pIter  = pTextHead;
 /* 此处可以测试,句子信息是否提取准确 */
-//    pIter  = pTextHead;
-//    do{
-//        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
-//        pIter = pIter->pNext;
-//    }while( pIter );
+    pIter  = pTextHead;
+    do{
+        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
+        pIter = pIter->pNext;
+    }while( pIter );
     
     size_t pixCnt   = 0;          // 用于记录一行已使用的像素栏
     size_t wordCnt  = 0;          // 用于记录一行单词有多少个
@@ -279,9 +276,9 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
             spAvg    = (spCnt==0)?(1):(spExtra/spCnt);
             spRemain = (spCnt==0)?(1):(spExtra%spCnt);
             
-//            printf("[word]%ld\n", wordCnt);
+            printf("[word]%ld\n", wordCnt);
             while( spCnt-- ){
-//                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
                 // 插入空格字符
                 WordInfo_t* wi = alloca(sizeof(WordInfo_t));
                 wi->str   = NULL;    // 这是一个间隔空白字符,
@@ -289,7 +286,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
                 
                 pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
             }
-//            printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+            printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
 
 
 #ifdef RH_DEBUG
@@ -316,16 +313,16 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     }while( pIter1!=NULL || pIter2!=NULL );
     
 /* 此处可以测试,句子信息是否提取准确 */
-//    pIter  = pTextHead;
-//    do{
-//        if( ((WordInfo_t*)pIter->object)->str==NULL ){
-//            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
-//            pIter = pIter->pNext;
-//            continue;
-//        }
-//        printf("%s", ((WordInfo_t*)pIter->object)->str);
-//        pIter = pIter->pNext;
-//    }while( pIter );
+    pIter  = pTextHead;
+    do{
+        if( ((WordInfo_t*)pIter->object)->str==NULL ){
+            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
+            pIter = pIter->pNext;
+            continue;
+        }
+        printf("%s", ((WordInfo_t*)pIter->object)->str);
+        pIter = pIter->pNext;
+    }while( pIter );
     
     // 释放之前的缓存数据
     if( Font.info.output ){
@@ -367,8 +364,9 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
         pIter3 = pIter3->pNext;
     }while( pIter3 );
     
+#ifdef STB_OUTPUT_FONT_PNG
     stbi_write_png("/Users/randle_h/Desktop/o.png", (int)Font.info.width, (int)Font.info.height, 1, Font.info.output, (int)Font.info.width);
-     
+#endif
     __LINK_DB_removeAll(pTextHead);
     return &Font.info;
 }
