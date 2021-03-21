@@ -14,8 +14,8 @@
             filePath = "../Glucoo/Font/RH_font.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "__Font_exportText_Justify(str, width)"
             landmarkType = "9">
          </BreakpointContent>
@@ -30,24 +30,8 @@
             filePath = "../Glucoo/Font/RH_font.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "318"
-            endingLineNumber = "318"
-            landmarkName = "__Font_exportText_Justify(str, width)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A76CE971-96A3-41CD-B6C7-F3386B60DAD3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Glucoo/Font/RH_font.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
+            startingLineNumber = "307"
+            endingLineNumber = "307"
             landmarkName = "__Font_exportText_Justify(str, width)"
             landmarkType = "9">
          </BreakpointContent>
