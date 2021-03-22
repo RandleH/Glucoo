@@ -34,7 +34,7 @@ typedef enum{
 
 typedef enum{
     kGUI_WindowType_macOS  ,
-    
+    NUM_kGUI_WindowType    ,
 }E_GUI_WindowStyle_t;
 
 struct __GUI_Window_t{

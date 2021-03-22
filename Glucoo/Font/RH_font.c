@@ -12,21 +12,25 @@ static struct{
     
     stbtt_fontinfo     stb_info;
     uint8_t*           font_data;
-}Font = {0};
+}FCFG_copy,FCFG = {0};
 
 #if defined (__WIN32)
 #include <direct.h>
 static const char* font_path[kGUI_NUM_FontStyle] = {
     "../Glucoo/Font/Courier New.ttf"        ,
     "../Glucoo/Font/Courier New Italic.ttf" ,
-    "../Glucoo/Font/Courier New Bold.ttf"
+    "../Glucoo/Font/Courier New Bold.ttf"   ,
+    "../Glucoo/Font/NewYork.ttf"            ,
+    "../Glucoo/Font/NewYorkItalic.ttf"
 };
 #elif defined  (__APPLE__)
 #include <unistd.h>
 static const char* font_path[kGUI_NUM_FontStyle] = {
     "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
     "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"   ,
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYork.ttf"            ,
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      
 };
 #endif
 
@@ -35,6 +39,7 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
 static void  RH_PREMAIN __gui_font_init(void){
     __Font_setStyle( kGUI_FontStyle_CourierNew );
     __Font_setSize ( 24 );
+    memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
 }
 
 static E_Status_t __gui_font_read( const char* path ){
@@ -51,13 +56,13 @@ static E_Status_t __gui_font_read( const char* path ){
     size_t size = ftell(fontFile);
     fseek(fontFile, 0, SEEK_SET);
 
-    if( !Font.font_data ){
-        free(Font.font_data);
+    if( !FCFG.font_data ){
+        free(FCFG.font_data);
     }
 
-    Font.font_data = calloc(size, sizeof(uint8_t));
+    FCFG.font_data = calloc(size, sizeof(uint8_t));
 
-    fread(Font.font_data, size, sizeof(uint8_t), fontFile);
+    fread(FCFG.font_data, size, sizeof(uint8_t), fontFile);
     fclose(fontFile);
 
     return kStatus_Success;
@@ -68,36 +73,38 @@ void __Font_setStyle(E_GUI_FontStyle_t style){
         case kGUI_FontStyle_CourierNew:
         case kGUI_FontStyle_CourierNew_Italic:
         case kGUI_FontStyle_CourierNew_Bold:
+        case kGUI_FontStyle_NewYork:
+        case kGUI_FontStyle_NewYork_Italic:
             __gui_font_read( font_path[style] );
-            stbtt_InitFont(&Font.stb_info, Font.font_data, 0);
+            stbtt_InitFont(&FCFG.stb_info, FCFG.font_data, 0);
             break;
         default:
             return;
     }
-    Font.style = style;
-    Font.scale       = stbtt_ScaleForPixelHeight( &Font.stb_info, Font.size );
-    stbtt_GetFontVMetrics( &Font.stb_info, &Font.info.ascent, &Font.info.descent, &Font.info.lineGap );
-    Font.info.ascent  = roundf(Font.info.ascent * Font.scale);
-    Font.info.descent = roundf(Font.info.descent * Font.scale);
+    FCFG.style = style;
+    FCFG.scale       = stbtt_ScaleForPixelHeight( &FCFG.stb_info, FCFG.size );
+    stbtt_GetFontVMetrics( &FCFG.stb_info, &FCFG.info.ascent, &FCFG.info.descent, &FCFG.info.lineGap );
+    FCFG.info.ascent  = roundf(FCFG.info.ascent * FCFG.scale);
+    FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
 }
 
 void __Font_setSize(int size){
-    Font.size        = size;
-    Font.scale       = stbtt_ScaleForPixelHeight( &Font.stb_info, Font.size );
-    stbtt_GetFontVMetrics( &Font.stb_info, &Font.info.ascent, &Font.info.descent, &Font.info.lineGap );
-    Font.info.ascent  = roundf(Font.info.ascent * Font.scale);
-    Font.info.descent = roundf(Font.info.descent * Font.scale);
+    FCFG.size        = size;
+    FCFG.scale       = stbtt_ScaleForPixelHeight( &FCFG.stb_info, FCFG.size );
+    stbtt_GetFontVMetrics( &FCFG.stb_info, &FCFG.info.ascent, &FCFG.info.descent, &FCFG.info.lineGap );
+    FCFG.info.ascent  = roundf(FCFG.info.ascent * FCFG.scale);
+    FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
 }
 
 int __Font_getSize(void){
-    return Font.size;
+    return FCFG.size;
 }
 
 E_GUI_FontStyle_t __Font_getStyle(void){
-    return Font.style;
+    return FCFG.style;
 }
 
-#define STB_OUTPUT_FONT_PNG
+//#define STB_OUTPUT_FONT_PNG
 
 #ifdef STB_OUTPUT_FONT_PNG
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -105,37 +112,37 @@ E_GUI_FontStyle_t __Font_getStyle(void){
 #endif
 __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
     int c_x1 , c_y1 , c_x2 , c_y2;
-    stbtt_GetCodepointBitmapBox(&Font.stb_info, unicode, Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
-    Font.info.height = c_y2-c_y1;
-    Font.info.width  = c_x2-c_x1;
+    stbtt_GetCodepointBitmapBox(&FCFG.stb_info, unicode, FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+    FCFG.info.height = c_y2-c_y1;
+    FCFG.info.width  = c_x2-c_x1;
     
-    if( Font.info.output ){
-        free(Font.info.output);
-        Font.info.output = NULL;
+    if( FCFG.info.output ){
+        free(FCFG.info.output);
+        FCFG.info.output = NULL;
     }
-    Font.info.output = calloc( Font.info.height*Font.info.width , sizeof(uint8_t) );
+    FCFG.info.output = calloc( FCFG.info.height*FCFG.info.width , sizeof(uint8_t) );
     
-    stbtt_MakeCodepointBitmap( &Font.stb_info, Font.info.output, (int)Font.info.width, (int)Font.info.height, (int)Font.info.width, Font.scale, Font.scale, unicode );
+    stbtt_MakeCodepointBitmap( &FCFG.stb_info, FCFG.info.output, (int)FCFG.info.width, (int)FCFG.info.height, (int)FCFG.info.width, FCFG.scale, FCFG.scale, unicode );
 #ifdef STB_OUTPUT_FONT_PNG
-    stbi_write_png("/Users/randle_h/Desktop/output.png", (int)Font.info.width, (int)Font.info.height, 1, Font.info.output, (int)Font.info.width);
-    printf("ascent = %d\n"   , Font.info.ascent);
-    printf("descent = %d\n"  , Font.info.descent);
-    printf("lineGap = %d\n"   , Font.info.lineGap);
+    stbi_write_png("/Users/randle_h/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
+    printf("ascent = %d\n"   , FCFG.info.ascent);
+    printf("descent = %d\n"  , FCFG.info.descent);
+    printf("lineGap = %d\n"   , FCFG.info.lineGap);
 #endif
-    return &Font.info;
+    return &FCFG.info;
 }
 
 __GUI_Font_t*  __Font_exportStr( const char* str ){
     
-    if( Font.info.output ){
-        free(Font.info.output);
-        Font.info.output = NULL;
+    if( FCFG.info.output ){
+        free(FCFG.info.output);
+        FCFG.info.output = NULL;
     }
     
     size_t len = strlen(str);
     
-    Font.info.height = Font.size;
-    Font.info.width  = 0;
+    FCFG.info.height = FCFG.size;
+    FCFG.info.width  = 0;
     int* xs  = (int*)calloc(len,sizeof(int));
     int* ys  = (int*)calloc(len,sizeof(int));
     int* c_x = (int*)malloc(len*sizeof(int));
@@ -145,28 +152,28 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     for(int i=0; i<len; i++){
         int advanceWidth    = 0;
         int leftSideBearing = 0;
-        stbtt_GetCodepointHMetrics( &Font.stb_info, str[i], &advanceWidth, &leftSideBearing );
+        stbtt_GetCodepointHMetrics( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
         
         
         int c_x1 = 0, c_y1 = 0, c_x2 = 0, c_y2 = 0;
-        stbtt_GetCodepointBitmapBox(&Font.stb_info, str[i], Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        stbtt_GetCodepointBitmapBox(&FCFG.stb_info, str[i], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
         c_x[i] = c_x2-c_x1;
         c_y[i] = c_y2-c_y1;
         
-        adv[i] = roundf( advanceWidth*Font.scale );
-        lfB[i] = roundf( leftSideBearing*Font.scale );
-        Font.info.width += adv[i];
+        adv[i] = roundf( advanceWidth*FCFG.scale );
+        lfB[i] = roundf( leftSideBearing*FCFG.scale );
+        FCFG.info.width += adv[i];
         if(i!=0)
             xs[i]  = xs[i-1] + adv[i];
-        ys[i]  = Font.info.ascent + c_y1;
+        ys[i]  = FCFG.info.ascent + c_y1;
 
     }
     
-    Font.info.output = calloc(Font.info.width*Font.info.height, sizeof(uint8_t));
+    FCFG.info.output = calloc(FCFG.info.width*FCFG.info.height, sizeof(uint8_t));
     
     for(int i=0; i<len; i++){
-        size_t byteOffset = ( lfB[i] + ys[i]*Font.info.width + xs[i] );
-        stbtt_MakeCodepointBitmap(&Font.stb_info, Font.info.output+byteOffset, c_x[i], c_y[i], (int)(Font.info.width), Font.scale, Font.scale, str[i]);
+        size_t byteOffset = ( lfB[i] + ys[i]*FCFG.info.width + xs[i] );
+        stbtt_MakeCodepointBitmap(&FCFG.stb_info, FCFG.info.output+byteOffset, c_x[i], c_y[i], (int)(FCFG.info.width), FCFG.scale, FCFG.scale, str[i]);
     }
     free(xs);
     free(ys);
@@ -175,14 +182,14 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     free(adv);
     free(lfB);
 #ifdef STB_OUTPUT_FONT_PNG
-    stbi_write_png("/Users/randle_h/Desktop/output.png", (int)Font.info.width, (int)Font.info.height, 1, Font.info.output, (int)Font.info.width);
+    stbi_write_png("/Users/randle_h/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif
-    return &Font.info;
+    return &FCFG.info;
 }
 
 void __Font_getCharSize( size_t *width, size_t *height, char c ){
     int c_x1 , c_y1 , c_x2 , c_y2;
-    stbtt_GetCodepointBitmapBox(&Font.stb_info, c, Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+    stbtt_GetCodepointBitmapBox(&FCFG.stb_info, c, FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     if( width )
         *width = c_x2-c_x1;
 
@@ -196,13 +203,13 @@ void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
     for(int i=0; i<strlen(str); i++){
         int advanceWidth    = 0;
         int leftSideBearing = 0;
-        stbtt_GetCodepointHMetrics( &Font.stb_info, str[i], &advanceWidth, &leftSideBearing );
+        stbtt_GetCodepointHMetrics( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
     
         if( width )
-            *width += roundf( advanceWidth*Font.scale );;
+            *width += roundf( advanceWidth*FCFG.scale );;
     }
     if( height )
-        *height = Font.size;
+        *height = FCFG.size;
 }
 
 #include "RH_data.h"
@@ -242,21 +249,21 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
 
     const __LinkDB_t* pIter1 = pTextHead;
     const __LinkDB_t* pIter2 = pTextHead;
-    const __LinkDB_t* pIter  = pTextHead;
+//    const __LinkDB_t* pIter  = pTextHead;
 /* 此处可以测试,句子信息是否提取准确 */
-    pIter  = pTextHead;
-    do{
-        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
-        pIter = pIter->pNext;
-    }while( pIter );
-    
+//    pIter  = pTextHead;
+//    do{
+//        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
+//        pIter = pIter->pNext;
+//    }while( pIter );
+//
     size_t pixCnt   = 0;          // 用于记录一行已使用的像素栏
     size_t wordCnt  = 0;          // 用于记录一行单词有多少个
     size_t spCnt    = 0;          // 用于记录一行单词间隙有多少个, 永远等于单词数减1
     size_t spExtra  = 0;          // 一行单词出去基本空格单元像素(spW)点后,额外的所有空格占用的像素点
     size_t spAvg    = 0;          // 平均每个单词间隙空格占用的像素点
     size_t spRemain = 0;          // spAvg的余数
-    size_t rowCnt   = 0;          // 用于记录左右文本对其后所需的行数, height = rowCnt* Font.height
+    size_t rowCnt   = 0;          // 用于记录左右文本对其后所需的行数, height = rowCnt* FCFG.height
     bool   spAdded = false;       // 用于记录单词结尾是否添加过空格
     do{
         if( pIter1 != NULL && pixCnt + ((WordInfo_t*)(pIter1->object))->pixsW < width ){
@@ -276,9 +283,9 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
             spAvg    = (spCnt==0)?(1):(spExtra/spCnt);
             spRemain = (spCnt==0)?(1):(spExtra%spCnt);
             
-            printf("[word]%ld\n", wordCnt);
+//            printf("[word]%ld\n", wordCnt);
             while( spCnt-- ){
-                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+//                printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
                 // 插入空格字符
                 WordInfo_t* wi = alloca(sizeof(WordInfo_t));
                 wi->str   = NULL;    // 这是一个间隔空白字符,
@@ -286,7 +293,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
                 
                 pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
             }
-            printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
+//            printf("spaceExtra: %ld [str]: %s\t\n",spExtra,((WordInfo_t*)(pIter2->object))->str );
 
 
 #ifdef RH_DEBUG
@@ -313,28 +320,28 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     }while( pIter1!=NULL || pIter2!=NULL );
     
 /* 此处可以测试,句子信息是否提取准确 */
-    pIter  = pTextHead;
-    do{
-        if( ((WordInfo_t*)pIter->object)->str==NULL ){
-            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
-            pIter = pIter->pNext;
-            continue;
-        }
-        printf("%s", ((WordInfo_t*)pIter->object)->str);
-        pIter = pIter->pNext;
-    }while( pIter );
+//    pIter  = pTextHead;
+//    do{
+//        if( ((WordInfo_t*)pIter->object)->str==NULL ){
+//            printf(" #%ld ",((WordInfo_t*)pIter->object)->pixsW);
+//            pIter = pIter->pNext;
+//            continue;
+//        }
+//        printf("%s", ((WordInfo_t*)pIter->object)->str);
+//        pIter = pIter->pNext;
+//    }while( pIter );
     
     // 释放之前的缓存数据
-    if( Font.info.output ){
-        free(Font.info.output);
-        Font.info.output = NULL;
+    if( FCFG.info.output ){
+        free(FCFG.info.output);
+        FCFG.info.output = NULL;
     }
     // 重建缓存, 宽度为输入的width,高度为上述计算后的行数*字体高度即Font.size
-    Font.info.width  = width;
-    Font.info.height = rowCnt*Font.size;
-    Font.info.output = calloc( Font.info.height*Font.info.width, sizeof(uint8_t) );
+    FCFG.info.width  = width;
+    FCFG.info.height = rowCnt*FCFG.size;
+    FCFG.info.output = calloc( FCFG.info.height*FCFG.info.width, sizeof(uint8_t) );
 #ifdef RH_DEBUG
-    ASSERT( Font.info.output );
+    ASSERT( FCFG.info.output );
 #endif
     // 逐单词输出
     const __LinkDB_t* pIter3 = pTextHead;
@@ -344,30 +351,42 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
         if( str==NULL ){
             x += ((WordInfo_t*)(pIter3->object))->pixsW;
         }else if( *str == '\n' ){
-            y += Font.size;
+            y += FCFG.size;
             x = 0;
         }else{
 #ifdef DEBUG
-            ASSERT( x<Font.info.width );
+            ASSERT( x<FCFG.info.width );
 #endif
             for(int i=0; i<strlen(str); i++){
                 int c_x1 , c_y1 , c_x2 , c_y2;
                 int advanceWidth    = 0;
                 int leftSideBearing = 0;
-                stbtt_GetCodepointHMetrics( &Font.stb_info, str[i], &advanceWidth, &leftSideBearing );
-                stbtt_GetCodepointBitmapBox(&Font.stb_info, str[i], Font.scale, Font.scale, &c_x1, &c_y1, &c_x2, &c_y2);
-                size_t byteOffset = Font.info.width*(y+Font.info.ascent + c_y1) + x;
-                stbtt_MakeCodepointBitmap(&Font.stb_info, Font.info.output+byteOffset, c_x2-c_x1, c_y2-c_y1, (int)(Font.info.width), Font.scale, Font.scale, str[i]);
-                x += roundf( advanceWidth*Font.scale );
+                stbtt_GetCodepointHMetrics( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
+                stbtt_GetCodepointBitmapBox(&FCFG.stb_info, str[i], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+                size_t byteOffset = FCFG.info.width*(y+FCFG.info.ascent + c_y1) + x;
+                stbtt_MakeCodepointBitmap(&FCFG.stb_info, FCFG.info.output+byteOffset, c_x2-c_x1, c_y2-c_y1, (int)(FCFG.info.width), FCFG.scale, FCFG.scale, str[i]);
+                x += roundf( advanceWidth*FCFG.scale );
             }
         }
         pIter3 = pIter3->pNext;
     }while( pIter3 );
     
 #ifdef STB_OUTPUT_FONT_PNG
-    stbi_write_png("/Users/randle_h/Desktop/o.png", (int)Font.info.width, (int)Font.info.height, 1, Font.info.output, (int)Font.info.width);
+    stbi_write_png("/Users/randle_h/Desktop/o.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif
     __LINK_DB_removeAll(pTextHead);
-    return &Font.info;
+    return &FCFG.info;
 }
 
+static bool backFCFG = false;
+void __Font_backup_config(void){
+    memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
+    backFCFG = true;
+}
+
+void __Font_restore_config(void){
+    if( backFCFG ){
+        memcpy(&FCFG, &FCFG_copy, sizeof(FCFG));
+        backFCFG = false;
+    }
+}

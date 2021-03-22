@@ -41,6 +41,8 @@ static struct __GraphConfig_t GCFG = {
     .blur_br_100 = 70
 };
     
+static struct __GraphConfig_t GCFG_copy = {0};
+    
 /*===========================================
  > 在指定缓存区,标记一个点
 ============================================*/
@@ -210,7 +212,19 @@ size_t         __Graph_get_blurSize       (void){
 size_t         __Graph_get_blurBrightness (void){
     return GCFG.blur_br_100;
 }
+
+static bool backupGCFG = false;
+void           __Graph_backup_config      (void){
+    memcpy(&GCFG_copy, &GCFG, sizeof(struct __GraphConfig_t));
+    backupGCFG = true;
+}
     
+void           __Graph_restore_config     (void){
+    if( backupGCFG ){
+        memcpy(&GCFG, &GCFG_copy, sizeof(struct __GraphConfig_t));
+        backupGCFG = false;
+    }
+}
     
     
 /*===========================================

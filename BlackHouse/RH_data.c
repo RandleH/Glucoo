@@ -524,7 +524,7 @@ void*           __Hash_find                  ( const __HashMap_t *pHead, size_t 
     return NULL;
 }
     
-void            __Hash_put                   ( const __HashMap_t *pHead, size_t key, void* object ){
+void            __Hash_pair                  ( const __HashMap_t *pHead, size_t key, void* object ){
 
 #ifdef RH_DEBUG
     ASSERT( pHead );

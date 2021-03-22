@@ -47,6 +47,9 @@ __GraphPixel_t MAKE_FUNC( Graph , get_penColor       ) (void);
 size_t         MAKE_FUNC( Graph , get_blurSize       ) (void);
 size_t         MAKE_FUNC( Graph , get_blurBrightness ) (void);
 
+void           MAKE_FUNC( Graph , backup_config      ) (void);
+void           MAKE_FUNC( Graph , restore_config     ) (void);
+
 E_Status_t MAKE_FUNC( Graph , circle_raw   ) (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 E_Status_t MAKE_FUNC( Graph , circle_edged ) (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 E_Status_t MAKE_FUNC( Graph , circle_fill  ) (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method);

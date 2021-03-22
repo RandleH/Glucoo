@@ -95,7 +95,7 @@ typedef struct __HashMap_t __HashMap_t;
 
 __HashMap_t* RH_RESULT MAKE_FUNC( Hash , createMap ) ( void );
 void*                  MAKE_FUNC( Hash , find      ) ( const __HashMap_t *pHead, size_t key );
-void                   MAKE_FUNC( Hash , put       ) ( const __HashMap_t *pHead, size_t key , void* object );
+void                   MAKE_FUNC( Hash , pair      ) ( const __HashMap_t *pHead, size_t key , void* object );
 void*                  MAKE_FUNC( Hash , get       ) ( const __HashMap_t *pHead, size_t key );
 void*                  MAKE_FUNC( Hash , remove    ) ( const __HashMap_t *pHead, size_t key );
 void                   MAKE_FUNC( Hash , removeAll ) (       __HashMap_t *pHead );

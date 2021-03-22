@@ -165,10 +165,10 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const int ys = config->area.ys;
     const int xe = (int)(xs + config->area.width -1);
     const int ye = (int)(ys + config->area.height-1);
-    const int bar_size   = __limit( (int)(config->size), 20, 256 );//38
+    const int bar_size   = __limit( (int)(config->size), 10, 256 );//38
     const int bar_size_2 = bar_size>>1;
     const int bar_size_4 = bar_size>>2;
-    const int bar_rad    = __limit( (int)(config->size), 20, 256 )/5;
+    const int bar_rad    = __limit( (int)(config->size), 5, 256 )/5;
     const int bar_edge   = config->win_edge;
     
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
@@ -178,9 +178,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
     
-    
-    __Pixel_t penColor = __Graph_get_penColor();
-    size_t    penSize  = __Graph_get_penSize();
+    __Graph_backup_config();
+//    __Pixel_t penColor = __Graph_get_penColor();
+//    size_t    penSize  = __Graph_get_penSize();
     int                fontSize = __Font_getSize();
     E_GUI_FontStyle_t fontStyle = __Font_getStyle();
     
@@ -270,8 +270,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_set_penColor(M_COLOR_LAWNGREEN);
     __Graph_circle_fill  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info, kApplyPixel_fill);
     
-    __Graph_set_penColor(penColor);
-    __Graph_set_penSize(penSize);
+    __Graph_restore_config();
+//    __Graph_set_penColor(penColor);
+//    __Graph_set_penSize(penSize);
     
     __Font_setSize(fontSize);
     __Font_setStyle(fontStyle);
@@ -281,6 +282,15 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
     
 }
 
+#ifdef RH_DEBUG
+static inline void __gui_check_window(__GUI_Window_t* config){
+    ASSERT( config->size      > 10                  );  /* Too small */
+    ASSERT( config->text_size > 5                   );  /* Too small */
+    ASSERT( config->type      < NUM_kGUI_WindowType );  /* Wrong enumeration reference */
+    
+}
+#endif
+
 ID_t GUI_create_window( __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
     int               font_size  = __Font_getSize();
@@ -288,6 +298,7 @@ ID_t GUI_create_window( __GUI_Window_t* config ){
 #ifdef RH_DEBUG
     ASSERT( tmp );
     ASSERT( config );
+//    __gui_check_window(config);
 #endif
     memcpy(&tmp->config, config, sizeof( __GUI_Window_t ));
     
