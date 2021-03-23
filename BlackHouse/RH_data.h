@@ -80,7 +80,7 @@ typedef struct __Queue_t __Queue_t;
 E_Status_t MAKE_FUNC( Queue , createHead ) ( void* object );
 
 
-#define RH_HASH_MAP_SIZE              (256)
+#define RH_HASH_MAP_SIZE              (1024)
 struct __HashList_t{
     const size_t                     key;
     const void*                const object;

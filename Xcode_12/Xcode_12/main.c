@@ -43,15 +43,12 @@ int main(int argc, const char * argv[]) {
 //
 //    GUI_delete_window( ID_Window2 );
 
+    __HashMap_t* pH = __Hash_createMap();
     
-    const char* text = "Most people effortlessly recognize those digits as 504192. That ease is deceptive. In each hemisphere of our brain, humans have a primary visual cortex, also known as V1, containing 140 million neurons, with tens of billions of connections between them. And yet human vision involves not just V1, but an entire series of visual cortices - V2, V3, V4, and V5 - doing progressively more complex image processing. We carry in our heads a supercomputer, tuned by evolution over hundreds of millions of years, and superbly adapted to understand the visual world. Recognizing handwritten digits isn't easy. Rather, we humans are stupendously, astoundingly good at making sense of what our eyes show us. But nearly all that work is done unconsciously. And so we don't usually appreciate how tough a problem our visual systems solve.";
-    clock_t cs = clock();
-    __Font_exportText_Justify( text, 700 );
-    clock_t ce = clock();
-    printf("[Due]: %ld\n",(ce-cs));
+    __Hash_pair( pH, 12, "12");
+    __Hash_pair( pH, 11, "11");
     
-    
-    
+    printf("%s\n",(char*)__Hash_get(pH, 11));
     
     return 0;
 }

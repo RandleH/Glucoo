@@ -298,7 +298,7 @@ ID_t GUI_create_window( __GUI_Window_t* config ){
 #ifdef RH_DEBUG
     ASSERT( tmp );
     ASSERT( config );
-//    __gui_check_window(config);
+    __gui_check_window(config);
 #endif
     memcpy(&tmp->config, config, sizeof( __GUI_Window_t ));
     

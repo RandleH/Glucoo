@@ -246,7 +246,6 @@ void           __LINK_Loop_printAllNodesAdr  ( const __LinkLoop_t *pHead , int(*
 }
     
 
-    
 __LinkBiTree_t* __LINK_BiTree_createHead     ( void* object ){
     __LinkBiTree_t* pNewHead = (__LinkBiTree_t*)__malloc(sizeof(__LinkBiTree_t));
 #ifdef RH_DEBUG
