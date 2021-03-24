@@ -486,7 +486,7 @@ E_Status_t      __Queue_createHead           ( void* object ){
     
     
 static size_t RH_FUNCONST __HashFunc         ( size_t key ){
-    return (key%RH_HASH_MAP_SIZE);
+    return (key&(RH_HASH_MAP_SIZE-1));
 }
     
 __HashMap_t*    __Hash_createMap             ( void ){

@@ -387,6 +387,8 @@ void __Font_backup_config(void){
 void __Font_restore_config(void){
     if( backFCFG ){
         memcpy(&FCFG, &FCFG_copy, sizeof(FCFG));
+        __Font_setStyle( FCFG.style );
+        __Font_setSize( FCFG.size );
         backFCFG = false;
     }
 }

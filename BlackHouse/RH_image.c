@@ -180,6 +180,10 @@ __ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__Imag
     return p;
 }
     
+    
+    
+    
+    
 __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
@@ -223,6 +227,53 @@ __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
     pIMG->width   = infoHead.biWidth;
     pIMG->height  = infoHead.biHeight;
 
+    return pIMG;
+}
+
+__ImageRGB888_t* __ImgRGB888_load_png      (const char* __restrict__ path){
+struct {
+    uint32_t chunk_type_code;
+    uint32_t width;
+    uint32_t height;
+
+    uint8_t  bit_depth;
+    uint8_t  color_type;
+    uint8_t  compress_method;
+    uint8_t  filter_method;
+    uint8_t  interlace_method;
+    //...//
+    uint32_t CRC;
+}IHDR;
+    
+    
+    FILE* png;
+    __ImageRGB888_t* pIMG = __malloc(sizeof(__ImageRGB888_t));
+#ifdef RH_DEBUG
+    ASSERT( pIMG );
+#endif
+    pIMG->height  = 0;
+    pIMG->width   = 0;
+    pIMG->pBuffer = NULL;
+    
+    png = fopen(path, "r");
+#ifdef RH_DEBUG
+    ASSERT( png );
+#endif
+    
+#ifdef RH_DEBUG
+
+    const uint8_t pngHead[8]     = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+    uint8_t       pngHeadRead[8] = {0};
+    for( int8_t i=0; i<8; i++ ){
+        fread(&pngHeadRead[i], 1, 1, png);
+        ASSERT( pngHeadRead[i] == pngHead[i] );
+    }
+#endif
+    
+    fread( &IHDR, sizeof(IHDR), 1, png );
+    
+    fclose(png);
+    
     return pIMG;
 }
 

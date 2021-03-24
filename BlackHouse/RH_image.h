@@ -76,6 +76,7 @@ __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , conv2D       ) (const __ImageRGB565_t* s
 
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , create       ) (size_t width,size_t height);
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__ path);
+__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_png     ) (const char* __restrict__ path);//
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__ path,__ImageRGB888_t* p);
 
 __ImageRGB888_t* MAKE_FUNC( ImgRGB888 , copy         ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst);

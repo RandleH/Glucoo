@@ -59,11 +59,14 @@ struct __GUI_Window_t{
     const int            text_margin;  // DO NOT MODIFY
     
     const int            win_edge;     // DO NOT MODIFY
+    
+    void (*insert_func)(struct __GUI_Window_t*);  // DO NOT MODIFY
+    void (*remove_func)(struct __GUI_Window_t*);  // DO NOT MODIFY
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
 
-ID_t            RH_RESULT GUI_create_window  ( __GUI_Window_t* config );
-__GUI_Window_t*           GUI_easySet_window ( __GUI_Window_t* config );
+ID_t            RH_RESULT GUI_create_window  ( const __GUI_Window_t* config );
+__GUI_Window_t*           GUI_easySet_window (       __GUI_Window_t* config );
 E_Status_t                GUI_insert_window  ( ID_t ID );
 E_Status_t                GUI_delete_window  ( ID_t ID );
 

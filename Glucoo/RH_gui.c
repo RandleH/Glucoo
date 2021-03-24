@@ -177,12 +177,8 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
-    
     __Graph_backup_config();
-//    __Pixel_t penColor = __Graph_get_penColor();
-//    size_t    penSize  = __Graph_get_penSize();
-    int                fontSize = __Font_getSize();
-    E_GUI_FontStyle_t fontStyle = __Font_getStyle();
+    __Font_backup_config();
     
     __GraphInfo_t info = {
         .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
@@ -248,9 +244,17 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
         for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info.width ){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
                 if( *pIterFont != 0x00 ){
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+                    while(1);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+                    while(1);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
                     pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
                     pIterScr->G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
                     pIterScr->B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
                 }
                 cntOfFontPix++;
             }
@@ -271,11 +275,8 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Graph_circle_fill  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info, kApplyPixel_fill);
     
     __Graph_restore_config();
-//    __Graph_set_penColor(penColor);
-//    __Graph_set_penSize(penSize);
-    
-    __Font_setSize(fontSize);
-    __Font_setStyle(fontStyle);
+    __Font_restore_config();
+
 }
 
 static void __gui_remove_window_MacOS(__GUI_Window_t* config){
@@ -283,7 +284,7 @@ static void __gui_remove_window_MacOS(__GUI_Window_t* config){
 }
 
 #ifdef RH_DEBUG
-static inline void __gui_check_window(__GUI_Window_t* config){
+static inline void __gui_check_window(const __GUI_Window_t* config){
     ASSERT( config->size      > 10                  );  /* Too small */
     ASSERT( config->text_size > 5                   );  /* Too small */
     ASSERT( config->type      < NUM_kGUI_WindowType );  /* Wrong enumeration reference */
@@ -291,10 +292,11 @@ static inline void __gui_check_window(__GUI_Window_t* config){
 }
 #endif
 
-ID_t GUI_create_window( __GUI_Window_t* config ){
+ID_t GUI_create_window( const __GUI_Window_t* config ){
     __GUI_INT_Window_t* tmp = (__GUI_INT_Window_t*)__malloc( sizeof(__GUI_INT_Window_t) );
-    int               font_size  = __Font_getSize();
-    E_GUI_FontStyle_t font_style = __Font_getStyle();
+//    int               font_size  = __Font_getSize();
+//    E_GUI_FontStyle_t font_style = __Font_getStyle();
+    __Font_backup_config();
 #ifdef RH_DEBUG
     ASSERT( tmp );
     ASSERT( config );
@@ -344,8 +346,9 @@ ID_t GUI_create_window( __GUI_Window_t* config ){
         __LINK_Loop_add( Screen.windowCFG, tmp );
     
     
-    __Font_setStyle(font_style);
-    __Font_setSize(font_size);
+//    __Font_setStyle(font_style);
+//    __Font_setSize(font_size);
+    __Font_restore_config();
     return (ID_t)tmp;
 }
 
