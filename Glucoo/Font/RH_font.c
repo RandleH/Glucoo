@@ -30,7 +30,8 @@ static const char* font_path[kGUI_NUM_FontStyle] = {
     "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
     "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"   ,
     "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYork.ttf"            ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      ,
+    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Unicode.ttf"
 };
 #endif
 
@@ -75,6 +76,7 @@ void __Font_setStyle(E_GUI_FontStyle_t style){
         case kGUI_FontStyle_CourierNew_Bold:
         case kGUI_FontStyle_NewYork:
         case kGUI_FontStyle_NewYork_Italic:
+        case kGUI_FontStyle_Arial_Unicode:
             __gui_font_read( font_path[style] );
             stbtt_InitFont(&FCFG.stb_info, FCFG.font_data, 0);
             break;
@@ -218,7 +220,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     // 获取空格的最小像素宽度,为改字体下的空格所占宽度的一半.
     size_t spW = 0;
     size_t spH = 0;
-    __Font_getCharSize(&spW, &spH, 'I' );
+    __Font_getCharSize(&spW, &spH, 'r' );
     
     // 定义词汇数据结构,字符串及所需绘制的像素点宽度.
     struct WordInfo_t{

@@ -23,6 +23,7 @@ typedef enum{
     kGUI_FontStyle_CourierNew_Bold   ,
     kGUI_FontStyle_NewYork           ,
     kGUI_FontStyle_NewYork_Italic    ,
+    kGUI_FontStyle_Arial_Unicode     ,
     kGUI_NUM_FontStyle
 }E_GUI_FontStyle_t;
 

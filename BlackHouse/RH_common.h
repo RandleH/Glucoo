@@ -50,6 +50,8 @@ struct __Region_t{
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;
  
+
+ 
 #define RH_RESULT     __attribute__((warn_unused_result))
 #define RH_PREMAIN    __attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
@@ -239,8 +241,13 @@ void                                           __RH_free(void* ptr);
 #define __PTR_WORD( var )                    ( (uint16_t* ) (void* ) (&(var)) )
 #define __PTR_TYPE( var, type )              ( (type*     ) (void* ) (&(var)) )
       
-#define __WORD_HI( var )                     ( (uint8_t)( (uint16_t)(var) >> 8   ) )
-#define __WORD_LO( var )                     ( (uint8_t)( (uint16_t)(var) & 0xff ) )
+#define __WORD_HI  ( var )                   (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) >> 8     ) )
+#define __WORD_LO  ( var )                   (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) & 0xff   ) )
+#define __DWORD_HI ( var )                   (uint16_t) ( (uint16_t) ( (uint32_t)(var) >> 16    ) )
+#define __DWORD_LO ( var )                   (uint16_t) ( (uint16_t) ( (uint32_t)(var) & 0xffff ) )
+
+#define __SWAP_WORD( var )                 ((uint16_t) ( (((uint16_t )(var)) << 8  )|( ((uint16_t)(var)) >> 8  ) ))
+#define __SWAP_DWORD( var )                 ((uint32_t) (( __SWAP_WORD(((uint32_t)(var))&0x0000ffff)<<16 ) | ( __SWAP_WORD(((uint32_t)(var))>>16) )))
       
 #define __RND4 ( x )                         ( ( ((x)+3)  >>2 )<<2 )
 #define __RND8 ( x )                         ( ( ((x)+7)  >>3 )<<3 )
