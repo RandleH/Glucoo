@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E38BDE8A260DC5FC00C728B8 /* RH_neuron.c in Sources */ = {isa = PBXBuildFile; fileRef = E38BDE88260DC5FC00C728B8 /* RH_neuron.c */; };
 		E38D762725FDE1230012E786 /* RH_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E38D762625FDE1230012E786 /* RH_dummy.c */; };
 		E3A5ACEA25F3616900C585A2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A5ACE925F3616900C585A2 /* main.c */; };
 		E3A5ACF525F3618A00C585A2 /* RH_gui.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A5ACF225F3618A00C585A2 /* RH_gui.c */; };
@@ -38,6 +39,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E38BDE88260DC5FC00C728B8 /* RH_neuron.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_neuron.c; path = ../BlackHouse/RH_neuron.c; sourceTree = "<group>"; };
+		E38BDE89260DC5FC00C728B8 /* RH_neuron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_neuron.h; path = ../BlackHouse/RH_neuron.h; sourceTree = "<group>"; };
 		E38D762325FDD0460012E786 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = ../Glucoo/STB/stb_image_write.h; sourceTree = "<group>"; };
 		E38D762425FDD0460012E786 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../Glucoo/STB/stb_truetype.h; sourceTree = "<group>"; };
 		E38D762625FDE1230012E786 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_dummy.c; path = ../../BlackHouse/RH_dummy.c; sourceTree = "<group>"; };
@@ -126,6 +129,8 @@
 		E3A5ACF025F3617100C585A2 /* BlackHouse */ = {
 			isa = PBXGroup;
 			children = (
+				E38BDE88260DC5FC00C728B8 /* RH_neuron.c */,
+				E38BDE89260DC5FC00C728B8 /* RH_neuron.h */,
 				E3DC2DD026071AEB00E6DBC1 /* RH_assert.c */,
 				E3DC2DCF26071AEB00E6DBC1 /* RH_assert.h */,
 				E3DC2DCE26071AEB00E6DBC1 /* RH_time.c */,
@@ -248,6 +253,7 @@
 				E38D762725FDE1230012E786 /* RH_dummy.c in Sources */,
 				E3A5AD0925F361A700C585A2 /* RH_utility.c in Sources */,
 				E3A5AD0825F361A700C585A2 /* RH_image.c in Sources */,
+				E38BDE8A260DC5FC00C728B8 /* RH_neuron.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
