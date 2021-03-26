@@ -55,6 +55,13 @@ typedef struct tagBITMAPINFOHEADER {
 
 #endif
 
+#define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
+#define PNG_IHDR                PNG_CHUNK('I','H','D','R')
+#define PNG_PLTE                PNG_CHUNK('P','L','T','E')
+#define PNG_IDAT                PNG_CHUNK('I','D','A','T')
+#define PNG_IEND                PNG_CHUNK('I','E','N','D')
+    
+#define PNG_cHRM                PNG_CHUNK('c','H','R','M')
 
 
 __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
@@ -180,10 +187,6 @@ __ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__Imag
     return p;
 }
     
-    
-    
-    
-    
 __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
@@ -248,7 +251,8 @@ struct {
 }IHDR;
     
     
-    FILE* png;
+    FILE*   png;
+    
     __ImageRGB888_t* pIMG = __malloc(sizeof(__ImageRGB888_t));
 #ifdef RH_DEBUG
     ASSERT( pIMG );
@@ -257,13 +261,17 @@ struct {
     pIMG->width   = 0;
     pIMG->pBuffer = NULL;
     
+    // 打开文件
     png = fopen(path, "r");
 #ifdef RH_DEBUG
     ASSERT( png );
 #endif
+    fseek(png,0L,SEEK_END);
+    size_t  f_size = ftell(png);
+    fseek(png,0L,SEEK_SET);
     
+    // 检查PNG固定签名
 #ifdef RH_DEBUG
-
     const uint8_t pngHead[8]     = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
     uint8_t       pngHeadRead[8] = {0};
     for( int8_t i=0; i<8; i++ ){
@@ -272,8 +280,23 @@ struct {
     }
 #endif
     
+//    while( ftello(png) < f_size ){
+//
+//    }
+    
+    // 解析 <IHDR> Image Header
     fread( &IHDR, sizeof(IHDR), 1, png );
-    printf("%d\n",__SWAP_DWORD(IHDR.width));
+#ifdef RH_DEBUG
+    ASSERT( __SWAP_DWORD(IHDR.chunk_type_code) == PNG_IHDR );
+    ASSERT( IHDR.bit_depth  == 0x08 ); //
+    ASSERT( IHDR.color_type == 0x06 || IHDR.color_type==0x02 ); // 8/16bit 真彩色
+#endif
+    pIMG->width   = __SWAP_DWORD(IHDR.width);
+    pIMG->height  = __SWAP_DWORD(IHDR.height);
+    printf("%lld,%lld\n",ftello(png),f_size);
+
+    
+    
     fclose(png);
     
     return pIMG;

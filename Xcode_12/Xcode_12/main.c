@@ -18,21 +18,7 @@
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-#pragma pack(1)
-    struct Dummy_t{
-        struct{
-            uint8_t  a;
-            uint32_t b;
-            void*    p;
-        }*object;
-        uint8_t      d;
-    }test;
-    
-    test.object = NULL;
-    
-    printf("%ld\n",sizeof( *(test.object) ));
-    
-    
+
     __ImgRGB888_load_png("/Users/randle_h/desktop/pig.png");
     
     
