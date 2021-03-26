@@ -281,11 +281,11 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     const int ye = (int)(ys + config->area.height-1);
     const int bar_size   = __limit( (int)((config->size<<1)/3), 10, 256 );//38
     const int bar_size_2 = bar_size>>1;
-    const int bar_size_4 = bar_size>>2;
+//    const int bar_size_4 = bar_size>>2;
     const int bar_edge   = config->win_edge;
     
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
