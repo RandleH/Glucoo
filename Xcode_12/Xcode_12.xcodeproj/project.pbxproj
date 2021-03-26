@@ -21,6 +21,7 @@
 		E383492D2603953E00E32FE6 /* RH_font_CourierNewBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E383492C2603953E00E32FE6 /* RH_font_CourierNewBold.c */; };
 		E391CD79260865E1009849D4 /* RH_data.c in Sources */ = {isa = PBXBuildFile; fileRef = E391CD78260865E1009849D4 /* RH_data.c */; };
 		E3A657772601AEAC003CC8EB /* RH_time.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A657762601AEAC003CC8EB /* RH_time.c */; };
+		E3BBAFF3260C987500D2858D /* RH_neuron.c in Sources */ = {isa = PBXBuildFile; fileRef = E3BBAFF1260C987500D2858D /* RH_neuron.c */; };
 		E3F8E96025F236FE0009B2F2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E3F8E95F25F236FE0009B2F2 /* main.c */; };
 		E3F8E98525F25A9F0009B2F2 /* RH_gui.c in Sources */ = {isa = PBXBuildFile; fileRef = E3F8E98325F25A9F0009B2F2 /* RH_gui.c */; };
 /* End PBXBuildFile section */
@@ -68,6 +69,8 @@
 		E391CD78260865E1009849D4 /* RH_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_data.c; path = ../BlackHouse/RH_data.c; sourceTree = "<group>"; };
 		E3A6577426019257003CC8EB /* RH_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_time.h; path = ../BlackHouse/RH_time.h; sourceTree = "<group>"; };
 		E3A657762601AEAC003CC8EB /* RH_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_time.c; path = ../BlackHouse/RH_time.c; sourceTree = "<group>"; };
+		E3BBAFF1260C987500D2858D /* RH_neuron.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RH_neuron.c; path = ../BlackHouse/RH_neuron.c; sourceTree = "<group>"; };
+		E3BBAFF2260C987500D2858D /* RH_neuron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_neuron.h; path = ../BlackHouse/RH_neuron.h; sourceTree = "<group>"; };
 		E3F8E95C25F236FE0009B2F2 /* Xcode_12 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode_12; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F8E95F25F236FE0009B2F2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E3F8E98225F25A9F0009B2F2 /* RH_gui_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_gui_config.h; path = ../Glucoo/RH_gui_config.h; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 		E361FD1125F384D60047D752 /* BlackHouse */ = {
 			isa = PBXGroup;
 			children = (
+				E3BBAFF1260C987500D2858D /* RH_neuron.c */,
+				E3BBAFF2260C987500D2858D /* RH_neuron.h */,
 				E3A657762601AEAC003CC8EB /* RH_time.c */,
 				E3A6577426019257003CC8EB /* RH_time.h */,
 				E37D348B25F4D6FB00544DC6 /* RH_assert.c */,
@@ -247,6 +252,7 @@
 				E391CD79260865E1009849D4 /* RH_data.c in Sources */,
 				E361FD2E25F394B10047D752 /* RH_gui_api.c in Sources */,
 				E3F8E96025F236FE0009B2F2 /* main.c in Sources */,
+				E3BBAFF3260C987500D2858D /* RH_neuron.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
