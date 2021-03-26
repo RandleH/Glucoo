@@ -11,19 +11,20 @@ typedef enum{
     kNeuronSta_suspend
 }E_PtronSta_t;
 
+typedef float var;
 
 /*========================================================================================
 * Data Structure --- Single Perceptron
 *========================================================================================*/
 struct __Perceptron_t{
-    int32_t*       _in;      /* Input data stream       */ 
-    int32_t*       _w;       /* Weight for each input   */
+    var*           _in;      /* Input data stream       */
+    var*           _w;       /* Weight for each input   */
     size_t         _nIns;    /* Numbers of input        */
     
-    const int32_t  bias;     /* Bias of this perceptron */
-    E_PtronSta_t   state;    
+    var            _b;       /* Bias of this perceptron */
+    E_PtronSta_t   _sta;
     
-    int32_t*       _out;     /* Output data stream      */ 
+    var*           _out;     /* Output data stream      */ 
     size_t         _nOuts;   /* Numbers of output       */
 };
 typedef struct __Perceptron_t __Perceptron_t;
@@ -33,16 +34,18 @@ typedef struct __Perceptron_t __Perceptron_t;
 *========================================================================================*/
 struct __FF_Layer_t{
     struct __FF_LayerInfo_t{
-        const int32_t**          _in_data;
-        const __Perceptron_t*    _ptron;
-        const size_t             _nPtrons_thisLayer;
-        const size_t             _nPtrons_prevLayer;
+        var**              _in_data;
+        var**              _out_data;
+        __Perceptron_t*    _ptron;
+        size_t             _nPtrons_thisLayer;
+        size_t             _nPtrons_prevLayer;
     }*object;
     const struct __FF_Layer_t* const pNext;
     const struct __FF_Layer_t* const pPrev;
 };
 typedef struct __FF_Layer_t __FF_Layer_t;
 
+__FF_Layer_t* RH_RESULT MAKE_FUNC( FF_Net   , create       ) ( size_t* arrPtron, size_t numLayer );
 __FF_Layer_t* RH_RESULT MAKE_FUNC( FF_Layer , create_input ) ( size_t numPtrons );
 __FF_Layer_t* RH_RESULT MAKE_FUNC( FF_Layer , add_hidden   ) ( __FF_Layer_t* prevLayer, size_t numPtrons );
 

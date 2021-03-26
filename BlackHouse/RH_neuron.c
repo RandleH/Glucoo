@@ -4,44 +4,62 @@
 
 
 
-void  __Neuron_set_bias ( __Perceptron_t* ptrons, int32_t bias ){
-    __SET_STRUCT_MB(__Perceptron_t, int32_t, ptrons, bias, bias);
+void  __Neuron_set_bias ( __Perceptron_t* ptrons, var bias ){
+    ptrons->_b = bias;
 }
 
-void  __Neuron_reset    ( __Perceptron_t* pcept ){
+void  __Neuron_reset    ( __Perceptron_t* ptrons ){
     
     
 }
 
-void  __Neuron_cal_out  ( __Perceptron_t* ptrons ){
-#ifdef RH_DEBUG
-    ASSERT( ptrons && ptrons->_in && ptrons->_out && ptrons->_w );
-#endif
-    ptrons->_out[0] = 0;
-    if( ptrons->state != kNeuronSta_suspend ){
-        for(int i=0; i<ptrons->_nIns; i++){
-            ptrons->_out[0] += ptrons->_w[i]*ptrons->_in[i];
+//void  __Neuron_cal_out  ( __Perceptron_t* ptrons ){
+//#ifdef RH_DEBUG
+//    ASSERT( ptrons && ptrons->_in && ptrons->_out && ptrons->_w );
+//#endif
+//    ptrons->_out[0] = 0;
+//    if( ptrons->_sta != kNeuronSta_suspend ){
+//        for(int i=0; i<ptrons->_nIns; i++){
+//            ptrons->_out[0] += ptrons->_w[i]*ptrons->_in[i];
+//        }
+//        __memsetDWORD(ptrons->_out, ptrons->_out[0], ptrons->_nOuts);
+//
+//        if( ptrons->_out[0] > 0 )
+//            ptrons->_sta = kNeuronSta_fired;
+//        else
+//            ptrons->_sta = kNeuronSta_quiecent;
+//    }else{
+//        __memsetDWORD(ptrons->_out, 0, ptrons->_nOuts);
+//    }
+//
+//}
+
+
+
+
+__FF_Layer_t* __FF_Net_create          ( size_t* arrPtron, size_t numLayer ){
+    __FF_Layer_t* pL_in   = NULL;
+    __FF_Layer_t* pL_prev = NULL;
+    __FF_Layer_t* pL_out  = NULL;
+    for( int i=0; i<numLayer; i++){
+        if( i==0 ){
+            pL_in   = __FF_Layer_create_input( arrPtron[i] );
+            pL_prev = pL_in;
+            continue;
         }
-        __memsetDWORD(ptrons->_out, ptrons->_out[0], ptrons->_nOuts);
-        
-        if( ptrons->_out[0] > 0 )
-            ptrons->state = kNeuronSta_fired;
-        else
-            ptrons->state = kNeuronSta_quiecent;
-    }else{
-        __memsetDWORD(ptrons->_out, 0, ptrons->_nOuts);
+        if( i==numLayer-1){
+            pL_out = NULL;
+            continue;
+        }
+        pL_prev = __FF_Layer_add_hidden( pL_prev, arrPtron[i] );
+        //...//
     }
-    
+    return pL_in;
 }
-
-
-
-
-
 
 __FF_Layer_t* __FF_Layer_create_input ( size_t numPtrons ){
     
-    __FF_Layer_t* pLayer_In = (__FF_Layer_t*)__LINK_DB_createHead(NULL); // __malloc( sizeof(__FF_Layer_t) );
+    __FF_Layer_t* pLayer_In = (__FF_Layer_t*)__LINK_DB_createHead(NULL); 
     
 #ifdef RH_DEBUG
     ASSERT(pLayer_In);
@@ -50,37 +68,32 @@ __FF_Layer_t* __FF_Layer_create_input ( size_t numPtrons ){
     
     pLayer_In->object = __malloc( sizeof(*(pLayer_In->object)) );
     
-    __SET_STRUCT_MB(struct __FF_LayerInfo_t, size_t, pLayer_In->object, _nPtrons_thisLayer, numPtrons);
-    __SET_STRUCT_MB(struct __FF_LayerInfo_t, size_t, pLayer_In->object, _nPtrons_prevLayer, 0        );
-    // Same Effect: pLayer_In->object->_nPtrons_thisLayer = numPtrons;
-    // Same Effect: pLayer_In->object->_nPtrons_prevLayer = 0;
-    
-    pLayer_In->object->_ptron             = __malloc( numPtrons*sizeof(__Perceptron_t) );
-    pLayer_In->object->_in_data           = __malloc( numPtrons*1*sizeof(int32_t)      );
-    
+    pLayer_In->object->_nPtrons_thisLayer = numPtrons;
+    pLayer_In->object->_nPtrons_prevLayer = 0;
+    pLayer_In->object->_ptron             = __malloc( numPtrons*sizeof( __Perceptron_t ) );
+    pLayer_In->object->_in_data           = __malloc( numPtrons*sizeof( var            ) );
+    pLayer_In->object->_out_data          = __malloc( numPtrons*sizeof( var            ) );
     return pLayer_In;
 }
 
 __FF_Layer_t* __FF_Layer_add_hidden ( __FF_Layer_t* prevLayer, size_t numPtrons ){
     
-    __FF_Layer_t* pLayer_hidden = (__FF_Layer_t*)__LINK_DB_addTail((__LinkDB_t *)prevLayer, NULL);
+    __FF_Layer_t* thisLayer = (__FF_Layer_t*)__LINK_DB_addTail((__LinkDB_t *)prevLayer, NULL);
     
 #ifdef RH_DEBUG
     ASSERT( prevLayer                                );
-    ASSERT( pLayer_hidden                            );
+    ASSERT( thisLayer                            );
     ASSERT( sizeof(__FF_Layer_t)==sizeof(__LinkDB_t) );
 #endif
     
-    pLayer_hidden->object = __malloc( sizeof(*(pLayer_hidden->object)) );
-    __SET_STRUCT_MB(struct __FF_LayerInfo_t, size_t, pLayer_hidden->object, _nPtrons_thisLayer, numPtrons                              );
-    __SET_STRUCT_MB(struct __FF_LayerInfo_t, size_t, pLayer_hidden->object, _nPtrons_prevLayer, prevLayer->object->_nPtrons_thisLayer  );
-    // Same Effect: pLayer_hidden->object->_nPtrons_thisLayer = numPtrons;
-    // Same Effect: pLayer_hidden->object->_nPtrons_prevLayer = 0;
+    thisLayer->object = __malloc( sizeof(*(thisLayer->object)) );
     
-    pLayer_hidden->object->_ptron   = __malloc( numPtrons*sizeof(__Perceptron_t) );
-    pLayer_hidden->object->_in_data = __malloc( numPtrons*prevLayer->object->_nPtrons_thisLayer*sizeof(int32_t) );
-    
-    return pLayer_hidden;
+    thisLayer->object->_nPtrons_thisLayer = numPtrons;
+    thisLayer->object->_nPtrons_prevLayer = prevLayer->object->_nPtrons_thisLayer;
+    thisLayer->object->_ptron    = __malloc( thisLayer->object->_nPtrons_thisLayer * sizeof( __Perceptron_t ) );
+    thisLayer->object->_in_data  = prevLayer->object->_out_data;
+    thisLayer->object->_out_data = __malloc( thisLayer->object->_nPtrons_thisLayer * sizeof( var            ) );
+    return thisLayer;
 }
 
 

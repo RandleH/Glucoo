@@ -55,14 +55,42 @@ typedef struct tagBITMAPINFOHEADER {
 
 #endif
 
+    
+    
 #define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
+
+// Critical chunks
 #define PNG_IHDR                PNG_CHUNK('I','H','D','R')
 #define PNG_PLTE                PNG_CHUNK('P','L','T','E')
 #define PNG_IDAT                PNG_CHUNK('I','D','A','T')
 #define PNG_IEND                PNG_CHUNK('I','E','N','D')
-    
-#define PNG_cHRM                PNG_CHUNK('c','H','R','M')
 
+
+// Ancillary chunks
+/// Transparency information
+#define PNG_tRNS                PNG_CHUNK('t','R','N','S')
+
+/// Colour space information
+#define PNG_cHRM                PNG_CHUNK('c','H','R','M')
+#define PNG_gAMA                PNG_CHUNK('g','A','M','A')
+#define PNG_iCCP                PNG_CHUNK('i','C','C','P')
+#define PNG_sBIT                PNG_CHUNK('s','B','I','T')
+#define PNG_sRGB                PNG_CHUNK('s','R','G','B')
+
+/// Textual information
+#define PNG_tEXt                PNG_CHUNK('t','E','X','t')
+#define PNG_zEXt                PNG_CHUNK('z','E','X','t')
+#define PNG_iEXt                PNG_CHUNK('i','E','X','t')
+    
+/// Miscellaneous information
+#define PNG_bKGD                PNG_CHUNK('b','K','G','D')
+#define PNG_hIST                PNG_CHUNK('h','I','S','T')
+#define PNG_pHYs                PNG_CHUNK('p','H','Y','s')
+#define PNG_sPLT                PNG_CHUNK('s','P','L','T')
+
+/// Time stamp information
+#define PNG_tIME                PNG_CHUNK('t','I','M','E')
+    
 
 __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
     FILE* bmp;
@@ -236,8 +264,8 @@ __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
 __ImageRGB888_t* __ImgRGB888_load_png      (const char* __restrict__ path){
 #pragma pack(1)
 struct {
-    uint32_t chunk_data_lenth;
-    uint32_t chunk_type_code;
+//    uint32_t chunk_data_lenth;
+//    uint32_t chunk_type_code;
     uint32_t width;                 /* __SWAP_DWORD */
     uint32_t height;                /* __SWAP_DWORD */
 
@@ -247,7 +275,8 @@ struct {
     uint8_t  filter_method;
     uint8_t  interlace_method;
     //...//
-    uint32_t CRC;
+    
+//    uint32_t CRC;
 }IHDR;
     
     
@@ -280,22 +309,89 @@ struct {
     }
 #endif
     
-//    while( ftello(png) < f_size ){
-//
-//    }
-    
-    // 解析 <IHDR> Image Header
-    fread( &IHDR, sizeof(IHDR), 1, png );
+    uint32_t chunk_data_lenth = 0x00000000;
+    uint32_t chunk_type_code  = 0x00000000;
+    while( ftello(png) < f_size ){
+        uint8_t temp = 0x00;
+        chunk_data_lenth <<= 8;
+        chunk_data_lenth  |= (uint8_t)(chunk_type_code>>24);
+        fread( &temp, sizeof(temp), 1, png );
+        chunk_type_code  <<= 8;
+        chunk_type_code   |= temp;
+        
+        switch( chunk_type_code ){
+            case PNG_IHDR:  // 解析 <IHDR> Image Header
+                fread( &IHDR, sizeof(IHDR), 1, png );
 #ifdef RH_DEBUG
-    ASSERT( __SWAP_DWORD(IHDR.chunk_type_code) == PNG_IHDR );
-    ASSERT( IHDR.bit_depth  == 0x08 ); //
-    ASSERT( IHDR.color_type == 0x06 || IHDR.color_type==0x02 ); // 8/16bit 真彩色
+                ASSERT( chunk_data_lenth == sizeof(IHDR) );
+                ASSERT( IHDR.bit_depth  == 0x08 ); //
+                ASSERT( IHDR.color_type == 0x06 || IHDR.color_type==0x02 ); // 8/16bit 真彩色
 #endif
-    pIMG->width   = __SWAP_DWORD(IHDR.width);
-    pIMG->height  = __SWAP_DWORD(IHDR.height);
-    printf("%lld,%lld\n",ftello(png),f_size);
+                pIMG->width   = __SWAP_DWORD(IHDR.width);
+                pIMG->height  = __SWAP_DWORD(IHDR.height);
+                break;
+            case PNG_PLTE:  // 解析 <PLTE> Palette
+                //...//
+                break;
+            case PNG_IDAT:  // 解析 <IDAT> Image data
+                //...//
+                break;
+            case PNG_IEND:  // 解析 <IEND> Image trailer
+                //...//
+                break;
+                
+            case PNG_tRNS:
+                 ASSERT(false);
+                break;
+                
+            case PNG_cHRM:
+                 ASSERT(false);
+                break;    
+            case PNG_gAMA:
+                 ASSERT(false);
+                break;    
+            case PNG_iCCP:
+                //...//
+                break;    
+            case PNG_sBIT:
+                 ASSERT(false);
+                break;    
+            case PNG_sRGB:
+                 ASSERT(false);
+                break;    
 
-    
+
+            case PNG_tEXt:
+                 ASSERT(false);
+                break;    
+            case PNG_zEXt:
+                 ASSERT(false);
+                break;    
+            case PNG_iEXt:
+                 ASSERT(false);
+                break;    
+
+            case PNG_bKGD:
+                 ASSERT(false);
+                break;    
+            case PNG_hIST:
+                 ASSERT(false);
+                break;
+            case PNG_pHYs:
+                 ASSERT(false);
+                break;    
+            case PNG_sPLT:
+                 ASSERT(false);
+                break;    
+
+            case PNG_tIME:
+                 ASSERT(false);  
+                break;
+
+            default:
+                break;
+        }
+    }
     
     fclose(png);
     
