@@ -219,6 +219,13 @@ typedef volatile uint64_t       vu64;
 #else
   #error " '__array2D' has been defined. "
 #endif
+ 
+void* RH_RESULT                                __RH_calloc(size_t count, size_t size);
+#ifndef __calloc
+  #define __calloc(x,size)                     __RH_calloc(x,size)
+#else
+  #error " '__calloc' has been defined. "
+#endif
 
 void* RH_RESULT                                __RH_malloc(size_t size);
 #ifndef __malloc
@@ -234,6 +241,9 @@ void                                           __RH_free(void* ptr);
   #error " '__free' has been defined. "
 #endif
  
+#define __BIT_SET( x , b )                   ((x) | (   1<<(b)    ) )
+#define __BIT_CLR( x , b )                   ((x) & ( ~(1<<(b))   ) )
+ 
 #define __MEM_BYTE( adr )                    ( (*( (uint8_t* )(adr) )) )
 #define __MEM_WORD( adr )                    ( (*( (uint16_t*)(adr) )) )
        
@@ -241,16 +251,16 @@ void                                           __RH_free(void* ptr);
 #define __PTR_WORD( var )                    ( (uint16_t* ) (void* ) (&(var)) )
 #define __PTR_TYPE( var, type )              ( (type*     ) (void* ) (&(var)) )
       
-#define __WORD_HI  ( var )                   (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) >> 8     ) )
-#define __WORD_LO  ( var )                   (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) & 0xff   ) )
-#define __DWORD_HI ( var )                   (uint16_t) ( (uint16_t) ( (uint32_t)(var) >> 16    ) )
-#define __DWORD_LO ( var )                   (uint16_t) ( (uint16_t) ( (uint32_t)(var) & 0xffff ) )
+#define __WORD_HI( var )                     (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) >> 8     ) )
+#define __WORD_LO( var )                     (uint8_t ) ( (uint8_t ) ( (uint16_t)(var) & 0xff   ) )
+#define __DWORD_HI( var )                    (uint16_t) ( (uint16_t) ( (uint32_t)(var) >> 16    ) )
+#define __DWORD_LO( var )                    (uint16_t) ( (uint16_t) ( (uint32_t)(var) & 0xffff ) )
 
-#define __SWAP_WORD( var )                 ((uint16_t) ( (((uint16_t )(var)) << 8  )|( ((uint16_t)(var)) >> 8  ) ))
-#define __SWAP_DWORD( var )                 ((uint32_t) (( __SWAP_WORD(((uint32_t)(var))&0x0000ffff)<<16 ) | ( __SWAP_WORD(((uint32_t)(var))>>16) )))
+#define __SWAP_WORD( var )                   ((uint16_t) ( (((uint16_t )(var)) << 8  )|( ((uint16_t)(var)) >> 8  ) ))
+#define __SWAP_DWORD( var )                  ((uint32_t) (( __SWAP_WORD(((uint32_t)(var))&0x0000ffff)<<16 ) | ( __SWAP_WORD(((uint32_t)(var))>>16) )))
       
-#define __RND4 ( x )                         ( ( ((x)+3)  >>2 )<<2 )
-#define __RND8 ( x )                         ( ( ((x)+7)  >>3 )<<3 )
+#define __RND4( x )                          ( ( ((x)+3)  >>2 )<<2 )
+#define __RND8( x )                          ( ( ((x)+7)  >>3 )<<3 )
 #define __RND16( x )                         ( ( ((x)+15) >>4 )<<4 )
       
 #define __UPCASE( c )                        ( ((c) >= 'a' && (c) <= 'z') ? ((c)-0x20) : (c) )

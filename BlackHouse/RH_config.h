@@ -13,6 +13,16 @@ extern "C" {
 #define GRAPHIC_COLOR_TYPE      GRAPHIC_COLOR_RGB888 // < select >
 
 
+
+#define RH_CFG_RECORD_VERSION
+
+#define RH_CFG_GRAPHIC_COLOR_BIN
+#define RH_CFG_GRAPHIC_COLOR_RGB565
+#define RH_CFG_GRAPHIC_COLOR_RGB888
+#define RH_CFG_GRAPHIC_COLOR_TYPE
+
+
+
 #ifdef __cplusplus
 }
 #endif

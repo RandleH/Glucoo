@@ -47,6 +47,7 @@ extern size_t RH_free_byte;
 
 void* __memsetWORD  (void* __b, uint16_t value, size_t num);
 void* __memsetDWORD (void* __b, uint32_t value, size_t num);
+void* __memswap     (void* __a, void* __b, size_t size );
 
 void* __memset_Area (void*                __b,int                      value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 void* __memcpy_Area (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);

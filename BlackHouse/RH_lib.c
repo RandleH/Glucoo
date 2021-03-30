@@ -235,6 +235,18 @@ void* __RH_malloc(size_t size){
     return ptr;
 }
 
+void* __RH_calloc(size_t count, size_t size){
+    size_t  byt = count*size;
+    void*   ptr = __RH_malloc(byt);
+#ifdef RH_DEBUG
+    ASSERT( ptr );
+#else
+    __exitReturn(ptr==NULL, ptr);
+#endif
+    
+    return memset( ptr, 0, byt );
+}
+    
 void __RH_free(void* ptr){
     unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
     struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
@@ -292,6 +304,18 @@ void* __memsetDWORD(void* __b,uint32_t value,size_t num){
             }
         }
     }
+    return __b;
+}
+    
+void* __memswap     (void* __a, void* __b, size_t size ){
+    uint8_t* a = __a;
+    uint8_t* b = __b;
+    while(size--){
+        __swap(__MEM_BYTE(a), __MEM_BYTE(b));
+        a++;
+        b++;
+    }
+    
     return __b;
 }
 

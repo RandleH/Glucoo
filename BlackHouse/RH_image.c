@@ -90,7 +90,99 @@ typedef struct tagBITMAPINFOHEADER {
 
 /// Time stamp information
 #define PNG_tIME                PNG_CHUNK('t','I','M','E')
+
+__ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
+    FILE* bmp;
+    BITMAPFILEHEADER fileHead;
+    BITMAPINFOHEADER infoHead;
+
+    __ImageBIN_t* pIMG = __malloc(sizeof(__ImageBIN_t));
+    pIMG->height  = 0;
+    pIMG->width   = 0;
+    pIMG->pBuffer = NULL;
+
+    bmp = fopen(path, "r");
+    if (bmp == NULL) {
+        // printf("open error\n");
+        return pIMG;
+    }
+    fseek(bmp, 0L, SEEK_SET);
+    fread(&fileHead, sizeof(BITMAPFILEHEADER), 1, bmp);
+    fread(&infoHead, sizeof(BITMAPINFOHEADER), 1, bmp);
+
+    if (fileHead.bfType != 0x4D42) {
+        printf("This not a *.bmp file\n");
+        return pIMG;
+    }
+    printf( "(w,h) = (%d, %d)\n", infoHead.biWidth , infoHead.biHeight);
+    printf( "biBitCount = %d\n" , infoHead.biBitCount);
     
+    size_t page   = (__RND8(infoHead.biHeight)>>3);
+    size_t col    = infoHead.biWidth;
+    pIMG->pBuffer = __calloc( page*col, sizeof(uint8_t) );
+    
+    size_t BPL  = __RND4( (infoHead.biWidth>>3)+1 ); /* Bytes Per Line */
+    fseek(bmp, fileHead.bfOffBits, SEEK_SET);
+    
+    uint8_t* pTmp = __malloc( BPL );
+    for( int row=0; row<infoHead.biHeight; row++ ){
+        fread( pTmp, sizeof(uint8_t), BPL, bmp );
+        for( int col=0; col<BPL; col++ ){
+            for(size_t cnt=0; cnt<8; cnt++){
+                if( col*8 + cnt < infoHead.biWidth ){
+                    pIMG->pBuffer[ (row/8)*infoHead.biWidth + col*8 + cnt ].data |= ( ( (pTmp[col]>>(7-cnt))&0x01 ) << (7-row%8) );
+                }
+                else
+                    break;
+            }
+            
+        }
+    }
+    fclose(bmp);
+    __free(pTmp);
+    
+    
+    // Reverse page data.
+    for( int p=0; p<(page>>1); p++ ){
+        __memswap( &pIMG->pBuffer[ p*infoHead.biWidth ], &pIMG->pBuffer[ (page-p-1)*infoHead.biWidth ], infoHead.biWidth*sizeof(uint8_t) );
+    }
+    
+    size_t dummyBit =  (page<<3) - infoHead.biHeight ;
+    for( int p=0; p<page; p++ ){
+        for( int c=0; c<col; c++ ){
+            if( p+1 < page ){
+                uint16_t tmp = (uint16_t)(((pIMG->pBuffer[ (p+1)*col+c ].data)<<8) | (pIMG->pBuffer[  p   *col+c ].data) );
+                tmp >>= dummyBit;
+                pIMG->pBuffer[  p*col+c ].data = (uint8_t)(tmp);
+            }else{
+                pIMG->pBuffer[  p*col+c ].data >>= dummyBit;
+            }
+        }
+    }
+    
+    for( int p=0; p<page; p++ ){
+        for( int c=0; c<col; c++ ){
+            printf("%02X ", pIMG->pBuffer[  p*col+c ].data);
+        }
+        printf("\n");
+    }
+    
+    return NULL;
+}
+    
+__ImageBIN_t*    __ImgBIN_create           (size_t width,size_t height){
+    __ImageBIN_t* pIMG = __malloc(sizeof(__ImageBIN_t));
+    __exitReturn( !pIMG, NULL );
+    pIMG->height          = height;
+    pIMG->width           = width;
+    pIMG->pBuffer         = __calloc((__RND8(height)>>3)*(pIMG->width), sizeof(uint8_t));
+    
+    if(pIMG->pBuffer == NULL){
+        __free(pIMG);
+        return NULL;
+    }
+    return pIMG;
+}
 
 __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
     FILE* bmp;
@@ -144,16 +236,14 @@ __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
 
 __ImageRGB565_t* __ImgRGB565_create        (size_t width,size_t height){
     __ImageRGB565_t* pIMG = __malloc(sizeof(__ImageRGB565_t));
-    if(pIMG == NULL)
-        return NULL;
+    __exitReturn( !pIMG, NULL );
     pIMG->height          = height;
     pIMG->width           = width;
-    pIMG->pBuffer         = __malloc((pIMG->height)*(pIMG->width)*sizeof(pIMG->pBuffer[0]));
+    pIMG->pBuffer         = __calloc((pIMG->height)*(pIMG->width), sizeof(pIMG->pBuffer[0]));
     if(pIMG->pBuffer == NULL){
         __free(pIMG);
         return NULL;
     }
-    memset(pIMG->pBuffer, 0, (pIMG->height)*(pIMG->width)*sizeof(pIMG->pBuffer[0]));
     return pIMG;
 }
 

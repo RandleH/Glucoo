@@ -2,6 +2,7 @@
 #define _RH_IMAGE_H
 
 #include "RH_common.h"
+#include "RH_lib.h"
 #include "RH_math.h"
 #ifdef __cplusplus
 extern "C" {
@@ -10,6 +11,22 @@ extern "C" {
 /*===========================================================================================================================
  > Image Processing Reference
 ============================================================================================================================*/
+typedef bool __PixelBIN_t;
+union __UNION_PixelBIN_t{
+    struct{
+        uint8_t BIT0 : 1;
+        uint8_t BIT1 : 1;
+        uint8_t BIT2 : 1;
+        uint8_t BIT3 : 1;
+        uint8_t BIT4 : 1;
+        uint8_t BIT5 : 1;
+        uint8_t BIT6 : 1;
+        uint8_t BIT7 : 1;
+    };
+    uint8_t data;
+};
+typedef union __UNION_PixelBIN_t __UNION_PixelBIN_t;
+
 struct __PixelRGB565_t{
     uint16_t B : 5;
     uint16_t G : 6;
@@ -43,7 +60,7 @@ typedef struct  __PixelRGB888_t         __PixelRGB888_t;
 typedef union   __UNION_PixelRGB888_t   __UNION_PixelRGB888_t;
 
 struct __ImageBIN_t{
-    bool*       pBuffer;
+    __UNION_PixelBIN_t*    pBuffer;
     size_t      width;
     size_t      height;
 };
@@ -63,6 +80,10 @@ struct __ImageRGB888_t{
     size_t      height;
 };
 typedef struct __ImageRGB888_t  __ImageRGB888_t;
+
+
+__ImageBIN_t*    MAKE_FUNC( ImgBIN    , load_bmp     ) (const char* __restrict__ path);//
+
 
 __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , create       ) (size_t width,size_t height);//
 __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , load_bmp     ) (const char* __restrict__ path);//
