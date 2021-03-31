@@ -37,15 +37,26 @@
                value = "pixCnt">
             </PersistentString>
             <PersistentString
-               value = "pIter1">
+               value = "pTextHead">
             </PersistentString>
             <PersistentString
-               value = "pTextHead">
+               value = "pIter1">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "__Font_exportStr:RH_font.c">
+      </ContextState>
+      <ContextState
+         contextName = "__ImgBIN_out_bmp:RH_image.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "pTmp[0]">
+            </PersistentString>
+            <PersistentString
+               value = "p-&gt;pBuffer[0]">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>

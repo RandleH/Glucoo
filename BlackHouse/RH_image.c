@@ -120,8 +120,13 @@ __ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
     size_t page   = (__RND8(infoHead.biHeight)>>3);
     size_t col    = infoHead.biWidth;
     pIMG->pBuffer = __calloc( page*col, sizeof(uint8_t) );
+    pIMG->height  = infoHead.biHeight;
+    pIMG->width   = infoHead.biWidth;
     
-    size_t BPL  = __RND4( (infoHead.biWidth>>3)+1 ); /* Bytes Per Line */
+    size_t BPL  = __RND4( (infoHead.biWidth>>3)+((infoHead.biWidth&0x07)!=0) ); /* Bytes Per Line */
+#ifdef RH_DEBUG
+    ASSERT( BPL==infoHead.biSizeImage/infoHead.biHeight );
+#endif
     fseek(bmp, fileHead.bfOffBits, SEEK_SET);
     
     uint8_t* pTmp = __malloc( BPL );
@@ -140,7 +145,7 @@ __ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
     }
     fclose(bmp);
     __free(pTmp);
-    
+
     
     // Reverse page data.
     for( int p=0; p<(page>>1); p++ ){
@@ -159,15 +164,14 @@ __ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
             }
         }
     }
+//    for( int p=0; p<page; p++ ){
+//        for( int c=0; c<col; c++ ){
+//            printf("%02X ", pIMG->pBuffer[  p*col+c ].data);
+//        }
+//        printf("\n");
+//    }
     
-    for( int p=0; p<page; p++ ){
-        for( int c=0; c<col; c++ ){
-            printf("%02X ", pIMG->pBuffer[  p*col+c ].data);
-        }
-        printf("\n");
-    }
-    
-    return NULL;
+    return pIMG;
 }
     
 __ImageBIN_t*    __ImgBIN_create           (size_t width,size_t height){
@@ -182,6 +186,86 @@ __ImageBIN_t*    __ImgBIN_create           (size_t width,size_t height){
         return NULL;
     }
     return pIMG;
+}
+    
+__ImageBIN_t*    __ImgBIN_copy             (const __ImageBIN_t* src,__ImageBIN_t* dst){
+    __exitReturn( src==NULL         ||dst==NULL          , dst );
+    __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
+    
+    memcpy(dst->pBuffer, src->pBuffer, (__RND8(src->height)>>3)*(src->width)*sizeof(__UNION_PixelBIN_t));
+    dst->height = src->height;
+    dst->width  = src->width;
+    return dst;
+}
+    
+__ImageBIN_t*    __ImgBIN_out_bmp          (const char* __restrict__ path,__ImageBIN_t* p){
+    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+    
+    FILE* bmp = fopen(path,"wb");
+    __exitReturn(bmp == NULL, NULL);
+    
+    size_t BPL  = __RND4( (p->width>>3)+((p->width&0x07)!=0) ); /* Bytes Per Line */
+    
+    BITMAPFILEHEADER fileHead = {
+        .bfType      = 0x4d42  ,
+        .bfSize      = 458     , //(uint32_t)((__RND8(p->height)>>3)*(p->width)*sizeof(__UNION_PixelBIN_t) + 54) ,
+        .bfReserved1 = 0       ,
+        .bfReserved2 = 0       ,
+        .bfOffBits   = 62      ,
+    };
+    
+    BITMAPINFOHEADER infoHead = {
+        .biBitCount  = 1              ,
+        .biSize      = 40             ,
+        .biWidth     = (int)p->width  ,
+        .biHeight    = (int)p->height ,
+        .biPlanes    = 1              ,
+        .biSizeImage = (DWORD)( BPL*p->height )
+    };
+    
+    const uint8_t color_plane[8] = {0x00,0x00,0x00,0x00,0xff,0xff,0xff,0x00};
+    
+    fseek(bmp,0L,SEEK_SET);
+    fwrite(&fileHead ,1 ,sizeof(BITMAPFILEHEADER) , bmp);
+    fwrite(&infoHead ,1 ,sizeof(BITMAPINFOHEADER) , bmp);
+    fseek(bmp,54L,SEEK_SET);
+    fwrite(color_plane ,1 ,8 , bmp);
+    fseek(bmp,fileHead.bfOffBits,SEEK_SET);
+    
+#ifdef RH_DEBUG
+    ASSERT( BPL==infoHead.biSizeImage/infoHead.biHeight );
+#endif
+    
+    uint8_t* pTmp = __calloc( infoHead.biSizeImage, sizeof(uint8_t) );
+    
+    for( int row=0; row<p->height; row++ ){
+        for( int col=0; col<BPL; col++ ){
+            for(size_t cnt=0; cnt<8; cnt++){
+                if( (col<<3)+cnt < p->width ){
+                    pTmp[ row*BPL + col ] |= (((p->pBuffer[ (row/8)*p->width + (col<<3)+cnt ].data)>>(row%8))&0x01)<<(7-cnt);
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+    
+    for( int row=0; row<(p->height>>1); row++ ){
+        __memswap(&pTmp[row*BPL], &pTmp[(p->height-row-1)*BPL], BPL);
+    }
+
+//    for( int row=0; row<p->height; row++ ){
+//        for( int c=0; c<BPL; c++ ){
+//            printf("%02X ", pTmp[  row*BPL + c ]);
+//        }
+//        printf("\n");
+//    }
+    
+    fwrite( pTmp, 1, infoHead.biSizeImage*sizeof(uint8_t), bmp );
+    
+    fclose(bmp);
+    __free(pTmp);
+    return p;
 }
 
 __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
