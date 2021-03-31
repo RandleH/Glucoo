@@ -13,15 +13,17 @@
 #include "RH_gui_api.h"
 #include "RH_font.h"
 #include "RH_lib.h"
-#include "RH_neuron.h"
 #include "RH_time.h"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
 
-    __ImgRGB888_load_png("/Users/randle_h/desktop/pig.png");
+    __ImgBIN_load_bmp("/Users/randle_h/desktop/BIN3.bmp");
     
-    
+//    uint8_t a[] = {1,2,3,4,5,6,7,8};
+//    uint8_t b[] = {8,7,6,5,4,3,2,1};
+//    __memswap(a, b, sizeof(a));
+//    printf("%d\n",__RND8(64)>>3);
     return 0;
 }
 
