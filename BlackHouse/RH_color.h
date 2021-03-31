@@ -10,7 +10,7 @@ extern "C" {
 
 #if ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
 
-  #define MAKE_COLOR(R_255,G_255,B_255)    (uint8_t)(((R+G+B)/3 > 128)?0xff:0x00)
+  #define MAKE_COLOR(R_255,G_255,B_255)    (uint8_t)(((R_255+G_255+B_255)/3 > 128)?0xff:0x00)
   #define COLOR_MASK_RED                   0x01
   #define COLOR_MASK_GREEN                 0x01
   #define COLOR_MASK_BLUE                  0x01

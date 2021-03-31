@@ -13,7 +13,7 @@ extern "C" {
 
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
 typedef __ImageBIN_t           __GraphInfo_t;
-typedef bool                   __GraphPixel_t;
+typedef uint8_t                __GraphPixel_t;
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
 typedef __ImageRGB565_t        __GraphInfo_t;
 typedef uint16_t               __GraphPixel_t;

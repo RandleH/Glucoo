@@ -87,6 +87,9 @@ __ImageBIN_t*    MAKE_FUNC( ImgBIN    , out_bmp      ) (const char* __restrict__
 
 __ImageBIN_t*    MAKE_FUNC( ImgBIN    , copy         ) (const __ImageBIN_t* src,__ImageBIN_t* dst);
 
+
+
+
 __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , create       ) (size_t width,size_t height);//
 __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , load_bmp     ) (const char* __restrict__ path);//
 __ImageRGB565_t* MAKE_FUNC( ImgRGB565 , out_bmp      ) (const char* __restrict__ path,__ImageRGB565_t* p);//

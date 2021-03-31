@@ -10,7 +10,7 @@ extern "C" {
 #define GRAPHIC_COLOR_BIN       (0U)  // < option >
 #define GRAPHIC_COLOR_RGB565    (1U)  // < option >
 #define GRAPHIC_COLOR_RGB888    (2U)  // < option >
-#define GRAPHIC_COLOR_TYPE      GRAPHIC_COLOR_RGB888 // < select >
+#define GRAPHIC_COLOR_TYPE      GRAPHIC_COLOR_BIN // < select >
 
 
 
