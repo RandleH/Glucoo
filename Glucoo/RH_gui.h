@@ -66,6 +66,39 @@ struct __GUI_Window_t{
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
 
+typedef enum{
+    kGUI_MenuType_macOS  ,
+    kGUI_MenuType_win10  ,
+    NUM_kGUI_MenuType    ,
+}E_GUI_MenuStyle_t;
+
+struct __GUI_MenuCFG_t{
+    const char*          text;
+};
+typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
+
+struct __GUI_Menu_t{
+    __Area_t             area;
+    E_GUI_MenuStyle_t    style;
+    E_GUI_Appearance_t   appearance;
+    size_t               size;
+    
+    __GUI_MenuCFG_t*     config;
+    size_t               nitems;
+    
+    
+};
+typedef struct __GUI_Menu_t __GUI_Menu_t;
+
+
+
+void                      GUI_rect_raw    ( int xs, int ys, int xe, int ye );
+void                      GUI_rect_edged  ( int xs, int ys, int xe, int ye );
+void                      GUI_rect_fill   ( int xs, int ys, int xe, int ye );
+void                      GUI_rect_round  ( int xs, int ys, int xe, int ye );
+
+
+
 ID_t            RH_RESULT GUI_create_window  ( const __GUI_Window_t* config );
 __GUI_Window_t*           GUI_easySet_window (       __GUI_Window_t* config );
 E_Status_t                GUI_insert_window  ( ID_t ID );

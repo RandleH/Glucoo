@@ -67,11 +67,13 @@ E_Status_t MAKE_FUNC( Graph , rect_round   ) (int xs,int ys,int xe,int ye, __Gra
 E_Status_t MAKE_FUNC( Graph , line_raw     ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 E_Status_t MAKE_FUNC( Graph , line_edged   ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 E_Status_t MAKE_FUNC( Graph , line_fill    ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
+E_Status_t MAKE_FUNC( Graph , line_sausage ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
+
 
 E_Status_t MAKE_FUNC( Graph , quad_raw     ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 E_Status_t MAKE_FUNC( Graph , quad_fill    ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
 
-E_Status_t __Graph_line_sausage(int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method);
+
 
 #ifdef __cplusplus
 }

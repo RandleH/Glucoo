@@ -12,20 +12,39 @@
 #include "RH_lib.h"
 #include "RH_gui.h"
 #include "RH_gui_api.h"
-#include "RH_neuron.h"
-#define MAKE_TYPE( file, name )   file##name
-
-typedef uint8_t MAKE_TYPE( __FILE_NAME__, U8 ) ;
+#include "RH_graphic.h"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-    size_t arrPtron[] = {748,15,10};
-    __FF_Layer_t* pL_in =  __FF_Net_create( arrPtron, 3 );
-    
-    printf("%ld\n",pL_in->pNext->object->_nPtrons_thisLayer );
 
+    Simul_API_Init();
+        
+    __UNION_PixelBIN_t GRAM[3][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ] = {0};
     
+    __GraphInfo_t GInfo = {
+        .pBuffer = GRAM[0][0]  ,
+        .height  = GUI_Y_WIDTH ,
+        .width   = GUI_X_WIDTH
+    };
     
+
+//    __Graph_rect_raw( 30, 30, 80, 50, &GInfo, kApplyPixel_fill );
+//    __Graph_rect_fill(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
+//    __Graph_line_raw (30, 30, 80, 50, &GInfo, kApplyPixel_fill );
+//    __Graph_circle_raw(45, 32, 20, &GInfo, kApplyPixel_fill );
+//    __Graph_circle_fill(45, 32, 40, &GInfo, kApplyPixel_fill );
+//    __Graph_circle_edged(45, 32, 40, &GInfo, kApplyPixel_fill );
+    __Graph_set_penSize(10);
+    __Graph_line_edged(10, 10, 50, 50, &GInfo, kApplyPixel_fill );
+//    __Graph_line_fill(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
+ 
+    
+
+    __ImgBIN_out_bmp("/Users/randle_h/desktop/BIN4.bmp", &GInfo);
     return 0;
 }
+
+
+
+

@@ -56,6 +56,12 @@ static struct{
 #endif
 }Screen;
 
+static __GraphInfo_t info_MainScreen = {
+    .height = GUI_Y_WIDTH ,
+    .width  = GUI_X_WIDTH ,
+    .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
+};
+
 static void __attribute__((constructor)) GUI_Init(void){
     
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
@@ -123,8 +129,6 @@ void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
 
 }
 
-
-
 void GUI_RefreashScreen(void){
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
@@ -167,20 +171,33 @@ void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
 }
 
 void GUI_rect_raw( int xs,int ys,int xe,int ye ){
-    __GraphInfo_t info = {
-        .height = GUI_Y_WIDTH ,
-        .width  = GUI_X_WIDTH ,
-        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
-    };
-    
-    __Graph_rect_raw(xs,ys,ys,ye,&info,kApplyPixel_fill);
-    
-    if( Screen.autoDisplay ){
-        
-    }else{
-        GUI_AddScreenArea(xs, ys, xe, ye);
-    }
+#ifdef RH_DEBUG
+#endif
+    __Graph_rect_raw( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
+
+void GUI_rect_edged( int xs, int ys, int xe, int ye ){
+#ifdef RH_DEBUG
+#endif
+    __Graph_rect_edged( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_rect_fill( int xs, int ys, int xe, int ye ){
+#ifdef RH_DEBUG
+#endif
+    __Graph_rect_fill( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_rect_round( int xs, int ys, int xe, int ye ){
+#ifdef RH_DEBUG
+#endif
+    __Graph_rect_round( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
 
 #if GUI_WINDOW_DISPLAY
 
