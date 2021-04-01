@@ -31,21 +31,37 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__Graph_rect_fill:RH_graphic.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "pInfo-&gt;pBuffer[30*128+30]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__Font_exportStr:RH_font.c">
+      </ContextState>
+      <ContextState
+         contextName = "__ApplyPixel_fill:RH_graphic.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "p[414]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__Font_exportText_Justify:RH_font.c">
          <PersistentStrings>
             <PersistentString
                value = "pixCnt">
             </PersistentString>
             <PersistentString
-               value = "pTextHead">
-            </PersistentString>
-            <PersistentString
                value = "pIter1">
             </PersistentString>
+            <PersistentString
+               value = "pTextHead">
+            </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__Font_exportStr:RH_font.c">
       </ContextState>
       <ContextState
          contextName = "__ImgBIN_out_bmp:RH_image.c">

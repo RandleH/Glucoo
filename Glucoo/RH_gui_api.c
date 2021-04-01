@@ -39,13 +39,28 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
   #error "[RH_gui_api]: Unknown color type."
 #endif
     }
-        
-    const size_t width   = __abs(x2 - x1) + 1;
-    const size_t height  = __abs(y2 - y1) + 1;
+
+#ifdef RH_DEBUG
+    ASSERT( x1<GUI_X_WIDTH && x1>=0 );
+    ASSERT( x2<GUI_X_WIDTH && x2>=0 );
+    ASSERT( y1<GUI_Y_WIDTH && y1>=0 );
+    ASSERT( y2<GUI_Y_WIDTH && y2>=0 );
+#endif
+    
     
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-    while(1)
+    const int xs = __min(x1, x2);
+    const int xe = __max(x1, x2);
+    const int ps = ((__min(y1, y2))>>3);
+    const int pe = ((__max(y1, y2))>>3);
+    for ( int p=ps; p<=pe; p++ ) {
+        memcpy(&pTmpScreenShot->pBuffer[ p*GUI_X_WIDTH + xs ].data, pixData, (xe-xs+1));
+        pixData += (xe-xs+1);
+    }
+        
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 ) || ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+    const size_t width   = __abs(x2 - x1) + 1;
+    const size_t height  = __abs(y2 - y1) + 1;
     for(int y=0;y<height;y++){
         for(int x=0;x<width;x++){
             pTmpScreenShot->pBuffer[(y1+y)*GUI_X_WIDTH + (x1+x)].data = pixData[ y*width+x];

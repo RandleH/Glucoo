@@ -22,13 +22,14 @@ extern "C"{
 
 #define GUI_WINDOW_DISPLAY          1   // 0=Disable   1=Enable
 
-#define GUI_Y_WIDTH                 480
-#define GUI_X_WIDTH                 800
+#define GUI_Y_WIDTH                 64
+#define GUI_X_WIDTH                 128
 
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-//typedef __ImageBIN_t           __PixelInfo_t;
-//typedef bool                   __Pixel_t;
-  #error "[RH_gui_config]: Not support yet."
+typedef __ImageBIN_t           __PixelInfo_t;
+typedef __UNION_PixelBIN_t     __PixelUnit_t;
+typedef uint8_t                __Pixel_t;
+//  #error "[RH_gui_config]: Not support yet."
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
 typedef __ImageRGB565_t        __PixelInfo_t;
 typedef __UNION_PixelRGB565_t  __PixelUnit_t;

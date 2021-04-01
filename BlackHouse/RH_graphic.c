@@ -53,7 +53,16 @@ static __GraphPixel_t __ApplyPixel_mark      (int x,int y,__GraphPixel_t nan   ,
 
     __exitReturn( x>=width || y>=height || x<0 || y<0, 0 );
 
+    
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    *(p+((y>>3)*width)+x) = __BIT_SET( *(p+((y>>3)*width)+x) , y%8 );
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+    ASSERT(0);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     *(p+(y*width)+x) = 1;
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
     return 0;
 }
 
@@ -67,7 +76,15 @@ static __GraphPixel_t __ApplyPixel_unmark    (int x,int y,__GraphPixel_t nan   ,
 
     __exitReturn( x>=width || y>=height || x<0 || y<0, 1 );
 
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    *(p+((y>>3)*width)+x) = __BIT_CLR( *(p+((y>>3)*width)+x) , y%8 );
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+    ASSERT(0);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     *(p+(y*width)+x) = 0;
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
     return 0;
 }
 
@@ -80,8 +97,17 @@ static __GraphPixel_t __ApplyPixel_fill      (int x,int y,__GraphPixel_t color ,
     size_t height  = pInfo->height;
 
     __exitReturn( x>=width || y>=height || x<0 || y<0 , 1 );
-   *(p+y*width+x) = color;
-
+    
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    *(p+((y>>3)*width)+x) = (color==0)?(__BIT_CLR( *(p+((y>>3)*width)+x) , y%8 )):(__BIT_SET( *(p+((y>>3)*width)+x) , y%8 ));
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+    ASSERT(0);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+    *(p+y*width+x) = color;
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    
     return 0;
 }
 
@@ -111,7 +137,9 @@ static __GraphPixel_t __ApplyPixel_lightness (int x,int y,__GraphPixel_t br_100,
     __exitReturn( x>=width || y>=height || x<0 || y<0 , br_100);
     
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-    #error "Not support"
+    __UNION_PixelBIN_t  temp = {
+        .data = *(p+y*width+x)
+    };
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
     __UNION_PixelRGB565_t temp = {
         .data = *(p+y*width+x)
@@ -142,7 +170,8 @@ static __GraphPixel_t __ApplyPixel_reverse   (int x,int y,__GraphPixel_t br_100,
     __exitReturn( x>=width || y>=height || x<0 || y<0 , 0);
     
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-    #error "Not support"
+    __UNION_PixelBIN_t temp = {.data = *(p+(y>>3)*width+x)};
+    ( (!__BIT_GET(temp.data, y%8) )==0)?(temp.data=__BIT_SET(temp.data, y%8)):(temp.data=__BIT_CLR(temp.data, y%8));
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
     __UNION_PixelRGB565_t temp = {.data = *(p+y*width+x)};
         temp.B = 31 - temp.B;
@@ -641,12 +670,28 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         case kApplyPixel_fill:
         case kApplyPixel_mark:
         case kApplyPixel_unmark:
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+            
+            for(int y = ys;y <= ye;y++){
+                ( *applyPixelMethod [method] )(xs,y,GCFG.penColor,pInfo);
+            }
+            
+            for(int y = ys;y <= ye;y++){
+                memset(&pInfo->pBuffer[(y>>3)*pInfo->width+xs+1].data, pInfo->pBuffer[(y>>3)*pInfo->width+xs].data, xe-xs );
+            }
+            
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+            ASSERT(0);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
             for(int x = xs;x <= xe;x++)
                 ( *applyPixelMethod [method] )(x,ys,GCFG.penColor,pInfo);
             for(int y = ys+1;y <= ye;y++)
                 memcpy((pInfo->pBuffer + y  * pInfo->width + xs),\
                        (pInfo->pBuffer + ys * pInfo->width + xs),\
                        ((xe-xs+1)*sizeof(pInfo->pBuffer[0])) );
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
             break;
         case kApplyPixel_blur:
         {
@@ -882,12 +927,12 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
         }
     }
     
-    ( *applyPixelMethod [method] )(x11,y11,M_COLOR_RED,pInfo);// GCFG.penColor
-    ( *applyPixelMethod [method] )(x22,y22,M_COLOR_YELLOW,pInfo);
-    ( *applyPixelMethod [method] )(x33,y33,M_COLOR_BLUE,pInfo);
-    ( *applyPixelMethod [method] )(x44,y44,M_COLOR_GREEN,pInfo);
+    ( *applyPixelMethod [method] )(x11,y11,GCFG.penColor,pInfo);    printf("(%3d,%3d)\n",x11,y11);
+    ( *applyPixelMethod [method] )(x22,y22,GCFG.penColor,pInfo);    printf("(%3d,%3d)\n",x22,y22);
+    ( *applyPixelMethod [method] )(x33,y33,GCFG.penColor,pInfo);    printf("(%3d,%3d)\n",x33,y33);
+    ( *applyPixelMethod [method] )(x44,y44,GCFG.penColor,pInfo);    printf("(%3d,%3d)\n",x44,y44);
     
-    __Graph_quad_fill(x11, y11, x22, y22, x33, y33, x44, y44, pInfo, method);
+//    __Graph_quad_fill(x11, y11, x22, y22, x33, y33, x44, y44, pInfo, method);
     
     if( blurCmd ){
         while(1);
@@ -1041,6 +1086,124 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
         }
     }
     free(pBuffer);
+    return kStatus_Success;
+}
+    
+E_Status_t __Graph_line_sausage(int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+//    GCFG.penColor = 0x00;
+    __Graph_line_raw(x1,y1,x2,y2,pInfo,method);
+    int dir_line = __Dir_Line(x1, y1, x2, y2);
+    
+    if( GCFG.penSize > 1 ){
+        switch(dir_line){
+            case 0:
+                {
+                 int xs = __min(x1, x2);
+                 int xe = __max(x1, x2);
+                 int ys = __min(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                 int ye = __max(y1, y2) + (int)(GCFG.penSize>>1);
+                 __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
+                 __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
+                 __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+                }
+                break;
+            case 1:
+            case -1:
+            {
+                int d = (int)(GCFG.penSize);
+                int r = d>>1;
+                int p = 3-(r<<1);
+                int x_tmp = 0,y_tmp = r;
+                bool eps  = (d%2==0);
+
+                int    dis_min = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+                int    dis_tmp = dis_min;
+                int    py1 =  y_tmp , px1 = eps-x_tmp , py2 = eps-y_tmp , px2 =  x_tmp;
+
+                for(;x_tmp<=y_tmp;x_tmp++){
+                    int cnt = y_tmp+1;
+                    while(cnt--){
+                        ( *applyPixelMethod [method] )(x1     + x_tmp ,y1     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1+eps - x_tmp ,y1     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1     + x_tmp ,y1+eps - cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1+eps - x_tmp ,y1+eps - cnt,GCFG.penColor,pInfo );
+
+                        ( *applyPixelMethod [method] )(x2     + x_tmp ,y2     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2+eps - x_tmp ,y2     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2     + x_tmp ,y2+eps - cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2+eps - x_tmp ,y2+eps - cnt,GCFG.penColor,pInfo );
+                    }
+                    cnt = x_tmp+1;
+                    while(cnt--){
+                        ( *applyPixelMethod [method] )(x1     + y_tmp ,y1     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1+eps - y_tmp ,y1     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1     + y_tmp ,y1+eps - cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x1+eps - y_tmp ,y1+eps - cnt,GCFG.penColor,pInfo );
+
+                        ( *applyPixelMethod [method] )(x2     + y_tmp ,y2     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2+eps - y_tmp ,y2     + cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2     + y_tmp ,y2+eps - cnt,GCFG.penColor,pInfo );
+                        ( *applyPixelMethod [method] )(x2+eps - y_tmp ,y2+eps - cnt,GCFG.penColor,pInfo );
+                    }
+                    // (x+∂x,y+∂y) & (x-∂x,y-∂y)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(eps-2*x_tmp) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  y_tmp ; px1 =  x_tmp;
+                        py2 = eps-y_tmp ; px2 = eps-x_tmp;
+                    }
+                    // (x-∂x,y+∂y) & (x+∂x,y-∂y)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*y_tmp) + (x2-x1)*(2*x_tmp-eps) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  y_tmp ; px1 = eps-x_tmp;
+                        py2 = eps-y_tmp ; px2 =  x_tmp;
+                    }
+                    // (x+∂y,y+∂x) & (x-∂y,y-∂x)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(eps-2*y_tmp) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  x_tmp ; px1 =  y_tmp;
+                        py2 = eps-x_tmp ; px2 = -y_tmp;
+                    }
+                    // (x-∂y,y+∂x) & (x+∂y,y-∂x)
+                    dis_tmp = __abs( (y2-y1)*(eps-2*x_tmp) + (x2-x1)*(2*y_tmp-eps) );
+                    if( dis_tmp < dis_min ){
+                        dis_min = dis_tmp;
+                        py1 =  x_tmp ; px1 = eps-y_tmp;
+                        py2 = eps-x_tmp ; px2 =  y_tmp;
+                    }
+
+                    if(p <= 0){
+                        p += (x_tmp<<2) + 6;
+                    }else{
+                        p += ((x_tmp-y_tmp)<<2) + 10;
+                        y_tmp--;
+                    }
+                }
+                
+//                GCFG.penColor = 0xff;
+//                ( *applyPixelMethod [method] )(x1+px1, y1+py1,GCFG.penColor,pInfo );
+//                ( *applyPixelMethod [method] )(x1+px2, y1+py2,GCFG.penColor,pInfo );
+//                ( *applyPixelMethod [method] )(x2+px1, y2+py1,GCFG.penColor,pInfo );
+//                ( *applyPixelMethod [method] )(x2+px2, y2+py2,GCFG.penColor,pInfo );
+                __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, pInfo, method);
+                
+            }
+            break;
+            case 65535:
+            {
+                int xs = __min(x1, x2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                int xe = __max(x1, x2) + (int)(GCFG.penSize>>1);
+                int ys = __min(y1, y2);
+                int ye = __max(y1, y2);
+                __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
+                __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
+                __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+            }
+            break;
+        }
+    }
     return kStatus_Success;
 }
     

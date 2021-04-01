@@ -307,7 +307,7 @@ void* __memsetDWORD(void* __b,uint32_t value,size_t num){
     return __b;
 }
     
-void* __memswap     (void* __a, void* __b, size_t size ){
+void* __memexch     (void* __a, void* __b, size_t size ){
     uint8_t* a = __a;
     uint8_t* b = __b;
     while(size--){

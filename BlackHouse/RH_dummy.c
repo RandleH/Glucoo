@@ -252,6 +252,16 @@ GUI_RefreashScreen();
 
 GUI_delete_window( ID_Window2 );
 
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+
 #endif
 
 

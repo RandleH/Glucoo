@@ -36,7 +36,13 @@ typedef __Stack_t    __LINK_AreaRefreash;
 typedef __LinkLoop_t __LINK_WindowCFG;
 
 static struct{
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+        ASSERT(false);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH][ GUI_X_WIDTH ];
+#endif
     size_t           allocated_byte;
 
     bool             autoDisplay;
@@ -51,7 +57,14 @@ static struct{
 }Screen;
 
 static void __attribute__((constructor)) GUI_Init(void){
+    
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+        ASSERT(false);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+#endif
     
     Screen.autoDisplay = false;
     
@@ -61,27 +74,56 @@ static void __attribute__((constructor)) GUI_Init(void){
     Screen.areaNeedRefreashPixelCnt = 0;
     
     Screen.windowCFG = NULL;
+    
+    __Graph_init();
 }
 
 void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
-//    printf("[%d,%d] -> [%d,%d]\n",xs,ys,xe,ye);
-    int x_width = xe-xs+1;
-    int y_width = ye-ys+1;
+    
     if(GUI_API_DrawArea != NULL){
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+        const int x_width = xe-xs+1;
+        const int ps      = ys>>3;
+        const int pe      = ye>>3;
+        const int p_width = (pe-ps);
+        __Pixel_t* p = (__Pixel_t*)__malloc((x_width)*(p_width)*sizeof(__Pixel_t));
+        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                                              sizeof(__Pixel_t)             ,\
+                                              GUI_X_WIDTH                   ,\
+                                              xs, ps, xe, pe                ) );
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+        ASSERT(false);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+        const int x_width = xe-xs+1;
+        const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)__malloc((x_width)*(y_width)*sizeof(__Pixel_t));
         (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                             __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
                                               xs, ys, xe, ye                ) );
+#endif
         __free(p);
     }
     else{
+        
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+        for(int y=ys;y<=ye;y++)
+            for(int x=xs;x<=xe;x++)
+                (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y>>3][x].data);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+        ASSERT(false);
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
         for(int y=ys;y<=ye;y++)
             for(int x=xs;x<=xe;x++)
                 (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y][x].data);
+#endif
     }
+
 }
+
+
 
 void GUI_RefreashScreen(void){
     __exit( Screen.areaNeedRefreashHead == NULL );
@@ -203,7 +245,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
                 size_t  index     = (y+font_ys)*info.width + (x+font_xs);
                 if( pixWeight != 0 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                    while(1);
+                    ASSERT(false);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
                     while(1);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
@@ -281,7 +323,6 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     const int ye = (int)(ys + config->area.height-1);
     const int bar_size   = __limit( (int)((config->size<<1)/3), 10, 256 );//38
     const int bar_size_2 = bar_size>>1;
-//    const int bar_size_4 = bar_size>>2;
     const int bar_edge   = config->win_edge;
     
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
@@ -322,7 +363,7 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
                 if( *pIterFont != 0x00 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                    while(1);
+                    ASSERT(false);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
                     while(1);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )

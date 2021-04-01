@@ -149,7 +149,7 @@ __ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
     
     // Reverse page data.
     for( int p=0; p<(page>>1); p++ ){
-        __memswap( &pIMG->pBuffer[ p*infoHead.biWidth ], &pIMG->pBuffer[ (page-p-1)*infoHead.biWidth ], infoHead.biWidth*sizeof(uint8_t) );
+        __memexch( &pIMG->pBuffer[ p*infoHead.biWidth ], &pIMG->pBuffer[ (page-p-1)*infoHead.biWidth ], infoHead.biWidth*sizeof(uint8_t) );
     }
     
     size_t dummyBit =  (page<<3) - infoHead.biHeight ;
@@ -251,7 +251,7 @@ __ImageBIN_t*    __ImgBIN_out_bmp          (const char* __restrict__ path,__Imag
     }
     
     for( int row=0; row<(p->height>>1); row++ ){
-        __memswap(&pTmp[row*BPL], &pTmp[(p->height-row-1)*BPL], BPL);
+        __memexch(&pTmp[row*BPL], &pTmp[(p->height-row-1)*BPL], BPL);
     }
 
 //    for( int row=0; row<p->height; row++ ){

@@ -241,6 +241,8 @@ void                                           __RH_free(void* ptr);
   #error " '__free' has been defined. "
 #endif
  
+#define __BIT_GET( x , b )                   (((x)>>(b)) & 0x01   )
+ 
 #define __BIT_SET( x , b )                   ((x) | (   1<<(b)    ) )
 #define __BIT_CLR( x , b )                   ((x) & ( ~(1<<(b))   ) )
  

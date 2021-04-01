@@ -7,48 +7,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CC066DB0-8CFC-4B01-BE85-239E553351F6"
+            uuid = "1B5EF2DE-BFE9-4677-92BF-5E68183A1E80"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../BlackHouse/RH_image.c"
+            filePath = "../BlackHouse/RH_graphic.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "650"
-            endingLineNumber = "650"
-            landmarkName = "__ImgRGB888_free_buffer(ptr)"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "__ApplyPixel_fill(x, y, color, pInfo)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4D9A53FA-4FA3-4947-9E26-7061BAE23492"
+            uuid = "DCA188E7-AAA9-492A-A8BD-647AE80F29C2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../BlackHouse/RH_image.c"
+            filePath = "../BlackHouse/RH_graphic.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "__ImgBIN_load_bmp(path)"
+            startingLineNumber = "680"
+            endingLineNumber = "680"
+            landmarkName = "__Graph_rect_fill(xs, ys, xe, ye, pInfo, method)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3A15BE7C-5B76-4FBA-BDD3-53FE32D32905"
+            uuid = "24CACA8F-EC17-46AD-8243-1D2D103FDFD7"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../BlackHouse/RH_image.c"
+            filePath = "../BlackHouse/RH_graphic.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "__ImgBIN_load_bmp(path)"
+            startingLineNumber = "937"
+            endingLineNumber = "937"
+            landmarkName = "__Graph_line_edged(x1, y1, x2, y2, pInfo, method)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "69F56501-6200-4AED-976A-EDD2F9C89309"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../BlackHouse/RH_graphic.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "910"
+            endingLineNumber = "910"
+            landmarkName = "__Graph_line_edged(x1, y1, x2, y2, pInfo, method)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
