@@ -60,28 +60,28 @@ static struct{
         };
     #endif
 
-static E_Status_t __gui_font_read( const char* path ){
-    FILE* fontFile = fopen( path , "rb" );
-#ifdef RH_DEBUG
-    ASSERT( fontFile );
-#endif
-    __exitReturn( !fontFile, kStatus_BadAccess );
+    static E_Status_t __gui_font_read( const char* path ){
+        FILE* fontFile = fopen( path , "rb" );
+    #ifdef RH_DEBUG
+        ASSERT( fontFile );
+    #endif
+        __exitReturn( !fontFile, kStatus_BadAccess );
 
-    fseek(fontFile, 0, SEEK_END);
-    size_t size = ftell(fontFile);
-    fseek(fontFile, 0, SEEK_SET);
+        fseek(fontFile, 0, SEEK_END);
+        size_t size = ftell(fontFile);
+        fseek(fontFile, 0, SEEK_SET);
 
-    if( !FCFG.font_data ){
-        free(FCFG.font_data);
+        if( !FCFG.font_data ){
+            free(FCFG.font_data);
+        }
+
+        FCFG.font_data = calloc(size, sizeof(uint8_t));
+
+        fread(FCFG.font_data, size, sizeof(uint8_t), fontFile);
+        fclose(fontFile);
+
+        return kStatus_Success;
     }
-
-    FCFG.font_data = calloc(size, sizeof(uint8_t));
-
-    fread(FCFG.font_data, size, sizeof(uint8_t), fontFile);
-    fclose(fontFile);
-
-    return kStatus_Success;
-}
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
     static const uint8_t* font_ptr[kGUI_NUM_FontStyle] = {
