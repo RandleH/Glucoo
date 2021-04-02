@@ -12,7 +12,8 @@ extern "C" {
 ============================================================================================================================*/
 #if defined    (_WIN32)
 #include <windows.h>
-#elif defined  (__APPLE__)
+//#elif defined  (__APPLE__)
+#else
 typedef uint8_t   BYTE;
 typedef uint16_t  WORD;
 typedef uint32_t  DWORD;
@@ -435,6 +436,7 @@ __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
     return pIMG;
 }
 
+#if 0
 __ImageRGB888_t* __ImgRGB888_load_png      (const char* __restrict__ path){
 #pragma pack(1)
 struct {
@@ -571,6 +573,7 @@ struct {
     
     return pIMG;
 }
+#endif
 
 __ImageRGB888_t* __ImgRGB888_copy          (const __ImageRGB888_t* src,__ImageRGB888_t* dst){
     __exitReturn( src==NULL         ||dst==NULL          , dst );
@@ -690,7 +693,7 @@ __ImageRGB888_t* __ImgRGB888_filter_OTUS   (const __ImageRGB888_t* src,__ImageRG
     __exitReturn( dst==NULL         , NULL);
     __exitReturn( dst->pBuffer==NULL, NULL);
     __ImgRGB888_data_OTUS(src, &threshold);
-    __exitReturn(threshold == -1, NULL);
+    __exitReturn(threshold == (uint32_t)(-1), NULL);
     
     for(int y=0;y<src->height;y++){
         for(int x=0;x<src->width;x++){
@@ -790,7 +793,7 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
     __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
     __UNION_PixelRGB888_t* pDstData = dst->pBuffer;
     if(pSrcData == dst->pBuffer){
-        while(1);
+        ASSERT(0);
         pDstData = __malloc(src->height*src->width*sizeof(__UNION_PixelRGB888_t));
     }
     
@@ -799,7 +802,7 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
         order--;
     
     
-BEGIN:{
+{
     unsigned long sum_R = 0, sum_G = 0, sum_B = 0;
     unsigned long div = 0;
     
@@ -1008,7 +1011,7 @@ BEGIN:{
 
 }
     if(src->pBuffer == dst->pBuffer){
-        while(1);
+        ASSERT(0);
         memcpy(dst->pBuffer,pDstData,src->height*src->width*sizeof(__UNION_PixelRGB888_t));
         __free(pDstData);
     }
@@ -1230,7 +1233,7 @@ __ImageRGB888_t* __ImgRGB888_conv2D        (const __ImageRGB888_t* src,__ImageRG
                     size_t offset_y  = j-(k->order>>1)+n;
                     size_t offset_x  = i-(k->order>>1)+m;
                     int selectKernel = *( k->pBuffer + n       * k->order + m       );
-                    if(offset_x<0||offset_y<0||offset_x>=src->width||offset_y>=src->height){
+                    if( offset_x>=src->width || offset_y>=src->height ){
                         div -= selectKernel;
                     }else{
                         uint8_t select_R  = (src->pBuffer + offset_y*src->width + offset_x)->R;
@@ -1267,7 +1270,7 @@ __ImageRGB888_t* __ImgRGB888_conv2D        (const __ImageRGB888_t* src,__ImageRG
 }
    
 void             __ImgRGB888_data_OTUS     (const __ImageRGB888_t* src,uint32_t* threshold){
-    *threshold = -1;
+    *threshold = (uint32_t)(-1);
     __exit( src          == NULL );
     __exit( src->pBuffer == NULL );
     
@@ -1369,7 +1372,7 @@ __ImageRGB565_t* __ImgRGB565_conv2D        (const __ImageRGB565_t* src,__ImageRG
                         size_t offset_y  = j-(k->order>>1)+n;
                         size_t offset_x  = i-(k->order>>1)+m;
                         int selectKernel = *( k->pBuffer + n       * k->order + m       );
-                        if(offset_x<0||offset_y<0||offset_x>=src->width||offset_y>=src->height){
+                        if( offset_x>=src->width || offset_y>=src->height ){
                             div -= selectKernel;
                         }else{
                             uint8_t select_R  = (src->pBuffer + offset_y*src->width + offset_x)->R;

@@ -11,42 +11,56 @@ static struct{
     float              scale;
     
     stbtt_fontinfo     stb_info;
-    uint8_t*           font_data;
+    const uint8_t*     font_data;
 }FCFG_copy,FCFG = {0};
 
-#if defined (__WIN32)
-#include <direct.h>
-static const char* font_path[kGUI_NUM_FontStyle] = {
-    "../Glucoo/Font/Courier New.ttf"        ,
-    "../Glucoo/Font/Courier New Italic.ttf" ,
-    "../Glucoo/Font/Courier New Bold.ttf"   ,
-    "../Glucoo/Font/NewYork.ttf"            ,
-    "../Glucoo/Font/NewYorkItalic.ttf"
-};
-#elif defined  (__APPLE__)
-#include <unistd.h>
-static const char* font_path[kGUI_NUM_FontStyle] = {
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"   ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYork.ttf"            ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      ,
-    "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Unicode.ttf"
-};
-#endif
 
 
 
-static void  RH_PREMAIN __gui_font_init(void){
-    __Font_setStyle( kGUI_FontStyle_CourierNew );
-    __Font_setSize ( 24 );
-    memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
-}
+
+
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
+    #if defined (__WIN32)
+        static const char* font_path[kGUI_NUM_FontStyle] = {
+            "../Glucoo/Font/Courier New.ttf"        ,
+        #if RH_CFG_FONT_STYLE__CourierNew_Italic        
+            "../Glucoo/Font/Courier New Italic.ttf" ,
+        #endif  
+        #if RH_CFG_FONT_STYLE__CourierNew_Bold      
+            "../Glucoo/Font/Courier New Bold.ttf"   ,
+        #endif
+        #if RH_CFG_FONT_STYLE__NewYork        
+            "../Glucoo/Font/NewYork.ttf"            ,
+        #endif
+        #if RH_CFG_FONT_STYLE__NewYork_Italic        
+            "../Glucoo/Font/NewYorkItalic.ttf"      ,
+        #endif
+        #if RH_CFG_FONT_STYLE__Arial_Unicode   
+            "../Glucoo/Font/Arial Unicode.ttf"      
+        #endif      
+        };
+    #elif defined  (__APPLE__)
+        static const char* font_path[kGUI_NUM_FontStyle] = {
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
+        #if RH_CFG_FONT_STYLE__CourierNew_Italic        
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
+        #endif  
+        #if RH_CFG_FONT_STYLE__CourierNew_Bold      
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Bold.ttf"   ,
+        #endif
+        #if RH_CFG_FONT_STYLE__NewYork        
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYork.ttf"            ,
+        #endif
+        #if RH_CFG_FONT_STYLE__NewYork_Italic        
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      ,
+        #endif
+        #if RH_CFG_FONT_STYLE__Arial_Unicode        
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Unicode.ttf"
+        #endif
+        };
+    #endif
 
 static E_Status_t __gui_font_read( const char* path ){
-//    char buf[300] = {0};
-//    getcwd( buf,300 );
-//    printf("%s\n",buf);
     FILE* fontFile = fopen( path , "rb" );
 #ifdef RH_DEBUG
     ASSERT( fontFile );
@@ -69,22 +83,61 @@ static E_Status_t __gui_font_read( const char* path ){
     return kStatus_Success;
 }
 
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
+    static const uint8_t* font_ptr[kGUI_NUM_FontStyle] = {
+        (const uint8_t*)Font_TTF_CourierNew      ,
+        (const uint8_t*)Font_TTF_CourierNew_Bold ,
+    };
+#else
+  #error "Unknown font data source."
+#endif
+
+
+
+static void  RH_PREMAIN __gui_font_init(void){
+    __Font_setStyle( kGUI_FontStyle_CourierNew );
+    __Font_setSize ( 24 );
+    memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
+}
+
+
+
 void __Font_setStyle(E_GUI_FontStyle_t style){
     switch(style){
         case kGUI_FontStyle_CourierNew:
+            
+            
+#if RH_CFG_FONT_STYLE__CourierNew_Italic
         case kGUI_FontStyle_CourierNew_Italic:
+#endif
+#if RH_CFG_FONT_STYLE__CourierNew_Bold
         case kGUI_FontStyle_CourierNew_Bold:
+#endif
+#if RH_CFG_FONT_STYLE__NewYork
         case kGUI_FontStyle_NewYork:
+#endif
+#if RH_CFG_FONT_STYLE__NewYork_Italic
         case kGUI_FontStyle_NewYork_Italic:
+#endif
+#if RH_CFG_FONT_STYLE__Arial_Unicode
         case kGUI_FontStyle_Arial_Unicode:
+#endif
+            
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
             __gui_font_read( font_path[style] );
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
+            FCFG.font_data = font_ptr[ style ];
+            ASSERT(0);
+#else
+  #error "Unknown font data source."
+#endif
             stbtt_InitFont(&FCFG.stb_info, FCFG.font_data, 0);
             break;
         default:
             return;
     }
     FCFG.style = style;
-    FCFG.scale       = stbtt_ScaleForPixelHeight( &FCFG.stb_info, FCFG.size );
+    FCFG.scale        = stbtt_ScaleForPixelHeight( &FCFG.stb_info, FCFG.size );
     stbtt_GetFontVMetrics( &FCFG.stb_info, &FCFG.info.ascent, &FCFG.info.descent, &FCFG.info.lineGap );
     FCFG.info.ascent  = roundf(FCFG.info.ascent * FCFG.scale);
     FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);

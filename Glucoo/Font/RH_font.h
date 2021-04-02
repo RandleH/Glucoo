@@ -1,29 +1,45 @@
 #ifndef _RH_GUI_FONT_H
 #define _RH_GUI_FONT_H
 
-#define STB_TRUETYPE_IMPLEMENTATION
 
 #include "RH_common.h"
+#include "RH_config.h"
 
 #ifdef __cpluplus
 extern "C"{
 #endif
 
 
-#define FONT_COURIERNEW          1
-#define FONT_COURIERNEW_BOLD     1
-#define FONT_COURIERNEW_ITALIC   0
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
 
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
 extern uint8_t Font_TTF_CourierNew       [684624];
 extern uint8_t Font_TTF_CourierNew_Bold  [691796];
+#else
+  #error "Unknown font data source."
+#endif
+
+
+
 
 typedef enum{
     kGUI_FontStyle_CourierNew        ,
+    
+#if RH_CFG_FONT_STYLE__CourierNew_Italic
     kGUI_FontStyle_CourierNew_Italic ,
+#endif
+#if RH_CFG_FONT_STYLE__CourierNew_Bold
     kGUI_FontStyle_CourierNew_Bold   ,
+#endif
+#if RH_CFG_FONT_STYLE__NewYork
     kGUI_FontStyle_NewYork           ,
+#endif
+#if RH_CFG_FONT_STYLE__NewYork_Italic
     kGUI_FontStyle_NewYork_Italic    ,
+#endif
+#if RH_CFG_FONT_STYLE__Arial_Unicode
     kGUI_FontStyle_Arial_Unicode     ,
+#endif
     kGUI_NUM_FontStyle
 }E_GUI_FontStyle_t;
 

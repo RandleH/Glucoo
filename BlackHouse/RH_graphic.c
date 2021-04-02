@@ -728,7 +728,7 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         }
             break;
         default:
-            while(1);
+            ASSERT(0);
             break;
     }
     

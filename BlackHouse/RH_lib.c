@@ -69,7 +69,7 @@ const char*       __ftoa_BIN     (float    x){
     static char pTmp[(sizeof(float)<<3)+1] = {0};
     char* pTmp_iter = pTmp;
     
-    void* pNum = ((uint8_t*)(&x))+sizeof(float) - 1;
+    uint8_t* pNum = ((uint8_t*)(&x))+sizeof(float) - 1;
     
     memset( pTmp , '\0' ,  (sizeof(float)<<3)+1 );
     size_t size = sizeof(float);
@@ -121,7 +121,7 @@ const char*       __ldtoa_BIN    (uint32_t x){
     static char pTmp[(sizeof(uint32_t)<<3)+1] = {0};
     char* pTmp_iter = pTmp;
     
-    void* pNum = ((uint8_t*)(&x))+sizeof(uint32_t) - 1;
+    uint8_t* pNum = ((uint8_t*)(&x))+sizeof(uint32_t) - 1;
     
     memset( pTmp , '\0' ,  (sizeof(uint32_t)<<3)+1 );
     size_t size = sizeof(uint32_t);
@@ -267,9 +267,12 @@ void __RH_free(void* ptr){
 
 void* __memsetWORD(void* __b,uint16_t value,size_t num){
     uint16_t* src = (uint16_t*)__b;
+#if !defined( __CC_ARM )
     if( sizeof(wchar_t) == sizeof(uint16_t) ){
         wmemset((wchar_t*)src, value, num);
-    }else{
+    }else
+#endif
+    {
         size_t remain = num;
         (*((uint16_t*)src)) = value;
         remain--;
@@ -288,9 +291,12 @@ void* __memsetWORD(void* __b,uint16_t value,size_t num){
 
 void* __memsetDWORD(void* __b,uint32_t value,size_t num){
     uint32_t* src = (uint32_t*)__b;
+#if !defined( __CC_ARM )
     if( sizeof(wchar_t) == sizeof(uint32_t) ){
         wmemset((wchar_t*)src, (int)value, num);
-    }else{
+    }else
+#endif
+    {
         size_t remain = num;
         (*((uint32_t*)src)) = (uint32_t)value;
         remain--;
@@ -327,7 +333,7 @@ void* __memset_Area(void* __b,int value,size_t size,size_t nmenb_line,long xs,lo
     
     for(size_t y = ys;y <= ye;y++){
         size_t offset = size*(nmenb_line*y + xs);
-        memset( (__b + offset) , value, num_objs );
+        memset( ((char*)__b + offset) , value, num_objs );
     }
     
     return __b;
@@ -342,7 +348,7 @@ void* __memcpy_Area(void* __restrict__ __dst,const void* __restrict__ __src,size
 
     for(size_t y = ys;y <= ye;y++){
         size_t offset = size*(nmenb_line*y + xs);
-        memcpy( (__dst + offset) , (__src + offset), num_objs );
+        memcpy( ((char*)__dst + offset) , ((char*)__src + offset), num_objs );
     }
 
     return __dst;
@@ -356,7 +362,7 @@ void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,siz
     char* p = __dst;
     for(size_t y = ys;y <= ye;y++){
         size_t offset = size*(nmenb_line*y + xs);
-        memmove( p , (__src+offset), num_objs );
+        memmove( p , ((char*)__src+offset), num_objs );
         p += num_objs;
     }
     

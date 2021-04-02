@@ -220,10 +220,10 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const int bar_edge   = config->win_edge;
     
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
     
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+//    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
     __Graph_backup_config();
     __Font_backup_config();
@@ -252,14 +252,14 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
         __Font_setSize(bar_size_2);
         __Font_setStyle( kGUI_FontStyle_CourierNew_Bold );
         __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
-        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
-        const int font_ys = ys + bar_size_4;
+//        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+//        const int font_ys = ys + bar_size_4;
         
         
         for( int y=0; y<pFontInfo->height; y++ ){
             for( int x=0; x<pFontInfo->width; x++ ){
                 uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
-                size_t  index     = (y+font_ys)*info.width + (x+font_xs);
+//                size_t  index     = (y+font_ys)*info.width + (x+font_xs);
                 if( pixWeight != 0 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
                     ASSERT(false);
@@ -272,7 +272,6 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-                    
                 }
             }
         }
@@ -345,7 +344,7 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
 //    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+//    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     
     __GraphInfo_t info = {
         .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,

@@ -262,6 +262,14 @@ GUI_delete_window( ID_Window2 );
   #error "[RH_graphic]: Unknown color type."
 #endif
 
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
+
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
+
+#else
+  #error "Unknown font data source."
+#endif
+
 #endif
 
 
