@@ -4,7 +4,7 @@
 #define _RH_LIB_H
 
 #include "RH_common.h"
-
+#include "RH_config.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,7 +40,7 @@ const char* __ftoa_BIN    (float     x); // ftoa_BIN
  > Memory Programming Reference
 ============================================================================================================================*/
 
-#define RH_ALLOC_CHUNK_SIZE             (614400000)
+
 
 extern size_t RH_alloc_byte;
 extern size_t RH_free_byte;

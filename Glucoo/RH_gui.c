@@ -250,7 +250,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     // Title
     if( config->title != NULL ){
         __Font_setSize(bar_size_2);
-        __Font_setStyle( kGUI_FontStyle_CourierNew_Bold );
+        __Font_setStyle( config->title_font );
         __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
 //        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
 //        const int font_ys = ys + bar_size_4;
@@ -535,9 +535,9 @@ __GUI_Window_t* GUI_easySet_window( __GUI_Window_t* config ){
     config->appearance   = kGUI_Appearance_Light;
     config->size         = 40;
     config->title        = NULL;
-    config->title_font   = kGUI_FontStyle_CourierNew;
+    config->title_font   = kGUI_FontStyle_ArialRounded_Bold;
     config->text         = NULL;
-    config->text_font    = kGUI_FontStyle_CourierNew_Bold;
+    config->text_font    = kGUI_FontStyle_ArialRounded_Bold;
     config->text_align   = kGUI_FontAlign_Justify;
     config->text_size    = 40;
     

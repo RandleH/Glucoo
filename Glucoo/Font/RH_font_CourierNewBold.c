@@ -1,7 +1,4 @@
 
-    
-    
-    
 #include <stdint.h>
 #include "RH_font.h"
 

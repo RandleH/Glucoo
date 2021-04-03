@@ -13,8 +13,13 @@ extern "C"{
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
-extern uint8_t Font_TTF_CourierNew       [684624];
-extern uint8_t Font_TTF_CourierNew_Bold  [691796];
+    extern uint8_t Font_TTF_ArialRoundedBold [49296];
+    #if RH_CFG_FONT_STYLE__CourierNew
+    extern uint8_t Font_TTF_CourierNew       [684624];
+    #endif
+    #if RH_CFG_FONT_STYLE__CourierNew_Bold
+    extern uint8_t Font_TTF_CourierNew_Bold  [691796];
+    #endif
 #else
   #error "Unknown font data source."
 #endif
@@ -23,8 +28,11 @@ extern uint8_t Font_TTF_CourierNew_Bold  [691796];
 
 
 typedef enum{
-    kGUI_FontStyle_CourierNew        ,
+    kGUI_FontStyle_ArialRounded_Bold ,
     
+#if RH_CFG_FONT_STYLE__CourierNew
+    kGUI_FontStyle_CourierNew        ,
+#endif
 #if RH_CFG_FONT_STYLE__CourierNew_Italic
     kGUI_FontStyle_CourierNew_Italic ,
 #endif

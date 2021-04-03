@@ -15,14 +15,12 @@ static struct{
 }FCFG_copy,FCFG = {0};
 
 
-
-
-
-
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
     #if defined (__WIN32)
         static const char* font_path[kGUI_NUM_FontStyle] = {
+        #if RH_CFG_FONT_STYLE__CourierNew
             "../Glucoo/Font/Courier New.ttf"        ,
+        #endif
         #if RH_CFG_FONT_STYLE__CourierNew_Italic        
             "../Glucoo/Font/Courier New Italic.ttf" ,
         #endif  
@@ -41,7 +39,9 @@ static struct{
         };
     #elif defined  (__APPLE__)
         static const char* font_path[kGUI_NUM_FontStyle] = {
+        #if RH_CFG_FONT_STYLE__CourierNew
             "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
+        #endif
         #if RH_CFG_FONT_STYLE__CourierNew_Italic        
             "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New Italic.ttf" ,
         #endif  
@@ -85,8 +85,17 @@ static struct{
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
     static const uint8_t* font_ptr[kGUI_NUM_FontStyle] = {
+        (const uint8_t*)Font_TTF_ArialRoundedBold  ,
+        
+        
+    #if RH_CFG_FONT_STYLE__CourierNew
         (const uint8_t*)Font_TTF_CourierNew      ,
+    #endif
+    #if RH_CFG_FONT_STYLE__CourierNew_Bold
         (const uint8_t*)Font_TTF_CourierNew_Bold ,
+    #endif
+        
+        
     };
 #else
   #error "Unknown font data source."
@@ -95,7 +104,7 @@ static struct{
 
 
 static void  RH_PREMAIN __gui_font_init(void){
-    __Font_setStyle( kGUI_FontStyle_CourierNew );
+    __Font_setStyle( kGUI_FontStyle_ArialRounded_Bold );
     __Font_setSize ( 24 );
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
 }
@@ -104,9 +113,10 @@ static void  RH_PREMAIN __gui_font_init(void){
 
 void __Font_setStyle(E_GUI_FontStyle_t style){
     switch(style){
+        case kGUI_FontStyle_ArialRounded_Bold:
+#if RH_CFG_FONT_STYLE__CourierNew
         case kGUI_FontStyle_CourierNew:
-            
-            
+#endif
 #if RH_CFG_FONT_STYLE__CourierNew_Italic
         case kGUI_FontStyle_CourierNew_Italic:
 #endif
@@ -127,7 +137,7 @@ void __Font_setStyle(E_GUI_FontStyle_t style){
             __gui_font_read( font_path[style] );
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
             FCFG.font_data = font_ptr[ style ];
-            ASSERT(0);
+//            ASSERT(0);
 #else
   #error "Unknown font data source."
 #endif

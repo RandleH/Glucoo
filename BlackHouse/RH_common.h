@@ -229,14 +229,14 @@ void* RH_RESULT                                __RH_calloc(size_t count, size_t 
 
 void* RH_RESULT                                __RH_malloc(size_t size);
 #ifndef __malloc
-  #define __malloc(x)                          __RH_malloc(x)//malloc(x)
+  #define __malloc(x)                          malloc(x)//malloc(x)
 #else
   #error " '__malloc' has been defined. "
 #endif
  
 void                                           __RH_free(void* ptr);
 #ifndef __free
-  #define __free(x)                            __RH_free(x)//free(x)
+  #define __free(x)                            free(x)//free(x)
 #else
   #error " '__free' has been defined. "
 #endif
