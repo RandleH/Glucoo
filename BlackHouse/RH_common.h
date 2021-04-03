@@ -55,7 +55,8 @@ typedef struct __Region_t __Area_t;
 #define RH_RESULT     __attribute__((warn_unused_result))
 #define RH_PREMAIN    __attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
-#define RH_FUNCONST   __attribute__((const)) 
+#define RH_FUNCONST   __attribute__((const))
+#define RH_WEAK       __attribute__((weak))
  
 #ifndef __restrict__
 #define __restrict__ __restrict
@@ -222,12 +223,12 @@ typedef volatile uint64_t       vu64;
  
 void* RH_RESULT                                __RH_calloc(size_t count, size_t size);
 #ifndef __calloc
-  #define __calloc(x,size)                     __RH_calloc(x,size)
+  #define __calloc(x,size)                     calloc(x,size)
 #else
   #error " '__calloc' has been defined. "
 #endif
 
-void* RH_RESULT                                __RH_malloc(size_t size);
+void* RH_RESULT                                malloc(size_t size);
 #ifndef __malloc
   #define __malloc(x)                          malloc(x)//malloc(x)
 #else

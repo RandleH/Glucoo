@@ -89,10 +89,10 @@ static struct{
         
         
     #if RH_CFG_FONT_STYLE__CourierNew
-        (const uint8_t*)Font_TTF_CourierNew      ,
+        (const uint8_t*)Font_TTF_CourierNew        ,
     #endif
     #if RH_CFG_FONT_STYLE__CourierNew_Bold
-        (const uint8_t*)Font_TTF_CourierNew_Bold ,
+        (const uint8_t*)Font_TTF_CourierNew_Bold   ,
     #endif
         
         
@@ -103,7 +103,7 @@ static struct{
 
 
 
-static void  RH_PREMAIN __gui_font_init(void){
+void  RH_PREMAIN __Font_init(void){
     __Font_setStyle( kGUI_FontStyle_ArialRounded_Bold );
     __Font_setSize ( 24 );
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));

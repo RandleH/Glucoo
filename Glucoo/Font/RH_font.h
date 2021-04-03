@@ -68,6 +68,8 @@ struct __GUI_Font_t{
 };
 typedef struct __GUI_Font_t __GUI_Font_t;
 
+void             RH_PREMAIN MAKE_FUNC( Font, init           ) (void);
+
 void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
 void                        MAKE_FUNC( Font, setSize        ) ( int               size    );
 

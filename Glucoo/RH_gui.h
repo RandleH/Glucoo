@@ -90,7 +90,7 @@ struct __GUI_Menu_t{
 };
 typedef struct __GUI_Menu_t __GUI_Menu_t;
 
-
+void           RH_PREMAIN GUI_Init        (void);
 
 void                      GUI_rect_raw    ( int xs, int ys, int xe, int ye );
 void                      GUI_rect_edged  ( int xs, int ys, int xe, int ye );

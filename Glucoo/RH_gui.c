@@ -62,26 +62,27 @@ static __GraphInfo_t info_MainScreen = {
     .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
 };
 
-static void __attribute__((constructor)) GUI_Init(void){
-    
-#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-    memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(false);
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
-    memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
-#endif
-    
+void RH_PREMAIN GUI_Init(void){
+
+    #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
+    #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+        ASSERT(0);
+    #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+    #endif
+
     Screen.autoDisplay = false;
-    
+
     Screen.allocated_byte = 0;
     Screen.areaNeedRefreashHead = __Stack_createBase( NULL );
     Screen.areaNeedRefreashCnt      = 0;
     Screen.areaNeedRefreashPixelCnt = 0;
-    
+
     Screen.windowCFG = NULL;
-    
+
     __Graph_init();
+    __Font_init();
 }
 
 void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
@@ -173,28 +174,28 @@ void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
 void GUI_rect_raw( int xs,int ys,int xe,int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_raw( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    __Graph_rect_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_edged( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_edged( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    __Graph_rect_edged( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_fill( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_fill( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    __Graph_rect_fill( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_round( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_round( xs, ys, ys, ye, &info_MainScreen, kApplyPixel_fill );
+    __Graph_rect_round( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 

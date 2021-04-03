@@ -21,8 +21,8 @@
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-//    Simul_API_Init();
-//
+    Simul_API_Init();
+
 //    __UNION_PixelBIN_t GRAM[3][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ] = {0};
 //
 //    __GraphInfo_t GInfo = {
@@ -31,6 +31,10 @@ int main(int argc, const char * argv[]) {
 //        .width   = GUI_X_WIDTH
 //    };
     
+    
+    GUI_Init();
+    GUI_rect_edged( 30, 30, 80, 50 );
+    GUI_RefreashScreen();
 //    __Graph_rect_raw( 30, 30, 80, 50, &GInfo, kApplyPixel_fill );
 //    __Graph_rect_fill(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
 //    __Graph_line_raw (30, 30, 80, 50, &GInfo, kApplyPixel_fill );

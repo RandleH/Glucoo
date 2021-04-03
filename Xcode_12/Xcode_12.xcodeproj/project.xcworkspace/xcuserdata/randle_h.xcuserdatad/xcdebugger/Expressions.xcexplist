@@ -42,10 +42,16 @@
          contextName = "__Font_exportStr:RH_font.c">
       </ContextState>
       <ContextState
+         contextName = "GUI_RefreashScreen:RH_gui.c">
+      </ContextState>
+      <ContextState
          contextName = "__ApplyPixel_fill:RH_graphic.c">
          <PersistentStrings>
             <PersistentString
-               value = "p[414]">
+               value = "info_MainScreen.pBuffer[414]">
+            </PersistentString>
+            <PersistentString
+               value = "info_MainScreen.pBuffer[798]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -56,10 +62,10 @@
                value = "pixCnt">
             </PersistentString>
             <PersistentString
-               value = "pIter1">
+               value = "pTextHead">
             </PersistentString>
             <PersistentString
-               value = "pTextHead">
+               value = "pIter1">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
