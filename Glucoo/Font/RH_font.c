@@ -169,7 +169,7 @@ E_GUI_FontStyle_t __Font_getStyle(void){
     return FCFG.style;
 }
 
-//#define STB_OUTPUT_FONT_PNG
+#define STB_OUTPUT_FONT_PNG
 
 #ifdef STB_OUTPUT_FONT_PNG
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -190,7 +190,9 @@ __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
     stbtt_MakeCodepointBitmap( &FCFG.stb_info, FCFG.info.output, (int)FCFG.info.width, (int)FCFG.info.height, (int)FCFG.info.width, FCFG.scale, FCFG.scale, unicode );
 #ifdef STB_OUTPUT_FONT_PNG
     stbi_write_png("/Users/randle_h/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
-    printf("ascent = %d\n"   , FCFG.info.ascent);
+    stbi_write_png("C:/Users/asus/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
+    
+	printf("ascent = %d\n"   , FCFG.info.ascent);
     printf("descent = %d\n"  , FCFG.info.descent);
     printf("lineGap = %d\n"   , FCFG.info.lineGap);
 #endif
@@ -247,6 +249,10 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     free(adv);
     free(lfB);
 #ifdef STB_OUTPUT_FONT_PNG
+printf("ascent = %d\n"   , FCFG.info.ascent);
+    printf("descent = %d\n"  , FCFG.info.descent);
+    printf("lineGap = %d\n"   , FCFG.info.lineGap);
+    stbi_write_png("C:/Users/asus/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
     stbi_write_png("/Users/randle_h/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif
     return &FCFG.info;
@@ -437,7 +443,11 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     }while( pIter3 );
     
 #ifdef STB_OUTPUT_FONT_PNG
-    stbi_write_png("/Users/randle_h/Desktop/o.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
+    printf("ascent = %d\n"   , FCFG.info.ascent);
+    printf("descent = %d\n"  , FCFG.info.descent);
+    printf("lineGap = %d\n"   , FCFG.info.lineGap);
+    stbi_write_png("C:/Users/asus/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
+//    stbi_write_png("/Users/randle_h/Desktop/o.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif
     __LINK_DB_removeAll(pTextHead);
     return &FCFG.info;

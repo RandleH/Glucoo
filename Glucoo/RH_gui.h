@@ -16,6 +16,8 @@ extern void (*GUI_API_DrawPixel)      (int x ,int y ,const __Pixel_t pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 
+void GUI_set_penSize        ( size_t    penSize  );
+void GUI_set_penColor       ( __Pixel_t penColor );
 
 void GUI_RefreashScreenArea ( int xs,int ys,int xe,int ye );
 void GUI_AddScreenArea      ( int xs,int ys,int xe,int ye );
@@ -23,6 +25,17 @@ void GUI_AddScreenArea      ( int xs,int ys,int xe,int ye );
 void GUI_RefreashScreen     (void);
 
 void GUI_rect_raw           ( int xs,int ys,int xe,int ye );
+void GUI_rect_edged         ( int xs,int ys,int xe,int ye );
+void GUI_rect_fill          ( int xs,int ys,int xe,int ye );
+void GUI_rect_round         ( int xs,int ys,int xe,int ye );
+
+void GUI_circle_raw         ( int x ,int y ,int d );
+void GUI_circle_edged       ( int x ,int y ,int d );
+void GUI_circle_fill        ( int x ,int y ,int d );
+void GUI_circle_qrt1        ( int x ,int y ,int r );
+void GUI_circle_qrt2        ( int x ,int y ,int r );
+void GUI_circle_qrt3        ( int x ,int y ,int r );
+void GUI_circle_qrt4        ( int x ,int y ,int r );
 
 typedef enum{
     kGUI_Appearance_Light  ,

@@ -172,6 +172,15 @@ void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
     __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
 }
 
+void GUI_set_penSize        ( size_t    penSize  ){
+    __Graph_set_penSize(penSize);
+}
+
+void GUI_set_penColor       ( __Pixel_t penColor ){
+    __Graph_set_penColor(penColor);
+}
+
+
 void GUI_rect_raw( int xs,int ys,int xe,int ye ){
 #ifdef RH_DEBUG
 #endif
@@ -200,6 +209,87 @@ void GUI_rect_round( int xs, int ys, int xe, int ye ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
+void GUI_circle_raw         ( int x ,int y ,int d ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_edged       ( int x ,int y ,int d ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_edged( x, y, d, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_fill         ( int x, int y, int d ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_fill( x, y, d, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_qrt1 (int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt1( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_qrt2 (int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt2( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_qrt3 (int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt3( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_qrt4 (int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt4( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+
+
+
+
 
 #if GUI_WINDOW_DISPLAY
 
@@ -215,17 +305,22 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const int ys = config->area.ys;
     const int xe = (int)(xs + config->area.width -1);
     const int ye = (int)(ys + config->area.height-1);
-    const int bar_size   = __limit( (int)(config->size), 10, 256 );//38
+    const int bar_size   = __limit( (int)(config->size), 5, 256 );//38
     const int bar_size_2 = bar_size>>1;
     const int bar_size_4 = bar_size>>2;
     const int bar_rad    = __limit( (int)(config->size), 5, 256 )/5;
     const int bar_edge   = config->win_edge;
-    
+#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
+    const __PixelUnit_t color_bar   = {.data = 0xff};
+    const __PixelUnit_t color_title = {.data = 0x00};
+    const __PixelUnit_t color_blank = {.data = 0x00};
+    const __PixelUnit_t color_text  = {.data = 0xff};
+#else
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    
-//    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};    
+    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+#endif    
     
     __Graph_backup_config();
     __Font_backup_config();
@@ -251,23 +346,29 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
-        __Font_setSize(bar_size_2);
+        __Font_setSize(40);
         __Font_setStyle( config->title_font );
         __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
-//        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
-//        const int font_ys = ys + bar_size_4;
+       const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+       const int font_ys = ys + bar_size_4;
         
         
         for( int y=0; y<pFontInfo->height; y++ ){
             for( int x=0; x<pFontInfo->width; x++ ){
                 uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
-//                size_t  index     = (y+font_ys)*info.width + (x+font_xs);
+                
                 if( pixWeight != 0 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                    ASSERT(false);
+                    // ASSERT(0);
+                    const size_t  index    = ((y+font_ys)>>3)*info.width + (x+font_xs);
+                    const size_t  offset   = (y+font_ys)%8;
+                    info.pBuffer[ index ].data = __BIT_CLR(info.pBuffer[ index ].data, offset);
+                    // (pixWeight==0)? info.pBuffer[ index ].data = __BIT_CLR(info.pBuffer[ index ].data, offset):\
+                    //                                              __BIT_SET(info.pBuffer[ index ].data, offset);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-                    while(1);
+                    ASSERT(0);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+                    const size_t  index     = (y+font_ys)*info.width + (x+font_xs);
                     info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_title.R - info.pBuffer[ index ].R) * pixWeight )>>8);
                     info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_title.G - info.pBuffer[ index ].G) * pixWeight )>>8);
                     info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_title.B - info.pBuffer[ index ].B) * pixWeight )>>8);
@@ -294,9 +395,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
                 if( *pIterFont != 0x00 ){
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                    while(1);
+                    ASSERT(0);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-                    while(1);
+                    ASSERT(0);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
                     pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
                     pIterScr->G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
@@ -454,7 +555,7 @@ static void __gui_remove_window_Win10(__GUI_Window_t* config){}
 
 #ifdef RH_DEBUG
 static inline void __gui_check_window(const __GUI_Window_t* config){
-    ASSERT( config->size      > 10                  );  /* Too small */
+    ASSERT( config->size      > 5                   );  /* Too small */
     ASSERT( config->text_size > 5                   );  /* Too small */
     ASSERT( config->type      < NUM_kGUI_WindowType );  /* Wrong enumeration reference */
     
@@ -492,22 +593,22 @@ ID_t GUI_create_window( const __GUI_Window_t* config ){
     }
     
     if( m_config->text != NULL ){
-        // 配置用户配置的文本字体和大小
+        // ??????????????
         __Font_setStyle(m_config->text_font);
         __Font_setSize(m_config->text_size);
-        // 设置文本白边, 暂定恒为5
+        // ??????, ????5
         __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
-        // 生成文本镜像
+        // ??????
         size_t fontW = m_config->area.width-((m_config->win_edge+m_config->text_margin)<<1);
         __GUI_Font_t* p =  __Font_exportText_Justify( m_config->text, fontW );
-        // 拷贝信息到结构体<__GUI_Window_t> config 中
-        // 创建缓存, 并将p->output的文本镜像拷贝至 config->text_bitMap
+        // ????????<__GUI_Window_t> config ?
+        // ????, ??p->output???????? config->text_bitMap
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitMap, __malloc(p->width*p->height*sizeof(*(p->output))));
 #ifdef RH_DEBUG
         ASSERT( m_config->text_bitMap );
 #endif
         memcpy((void*)m_config->text_bitMap, p->output, p->width*p->height*sizeof(*(p->output)) );
-        // 拷贝文本镜像的长和宽
+        // ??????????
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitH  , p->height);
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitW  , p->width );
         //...//
@@ -580,5 +681,6 @@ E_Status_t GUI_delete_window( ID_t ID ){
 
 
 #endif
+
 
 
