@@ -21,7 +21,7 @@ static __ImageRGB888_t* pTmpScreenShot = NULL;
 #endif
 
 #if defined __WIN32
-const char* dst_path = "D:/Personal/Desktop/screen.bmp";
+const char* dst_path = "C:/Users/asus/Desktop/screen.bmp";
 #elif defined  (__APPLE__)
 const char* dst_path = "/Users/randle_h/desktop/screen.bmp";
 #endif

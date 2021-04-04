@@ -18,7 +18,9 @@
 #include <complex.h>
 #include <assert.h>
 #include <errno.h>
-#include <alloca.h>
+#include <malloc.h>
+#include <memory.h>
+
 
 #ifdef __cplusplus
  extern "C" {
@@ -228,7 +230,7 @@ void* RH_RESULT                                __RH_calloc(size_t count, size_t 
   #error " '__calloc' has been defined. "
 #endif
 
-void* RH_RESULT                                malloc(size_t size);
+void* RH_RESULT                                __RH_malloc(size_t size);
 #ifndef __malloc
   #define __malloc(x)                          malloc(x)//malloc(x)
 #else
@@ -236,7 +238,7 @@ void* RH_RESULT                                malloc(size_t size);
 #endif
  
 void                                           __RH_free(void* ptr);
-#ifndef __free
+#ifndef __frees
   #define __free(x)                            free(x)//free(x)
 #else
   #error " '__free' has been defined. "

@@ -92,20 +92,21 @@ void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
         const int x_width = xe-xs+1;
         const int ps      = ys>>3;
         const int pe      = ye>>3;
-        const int p_width = (pe-ps);
-        __Pixel_t* p = (__Pixel_t*)__malloc((x_width)*(p_width)*sizeof(__Pixel_t));
-        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
-                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
-                                              sizeof(__Pixel_t)             ,\
-                                              GUI_X_WIDTH                   ,\
-                                              xs, ps, xe, pe                ) );
+        const int p_width = (pe-ps+1);
+        __Pixel_t* p = (__Pixel_t*)malloc((x_width)*(p_width)*sizeof(__Pixel_t));
+        
+       (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+                           __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                                             sizeof(__Pixel_t)             ,\
+                                             GUI_X_WIDTH                   ,\
+                                             xs, ps, xe, pe                ) );
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
         ASSERT(false);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)__malloc((x_width)*(y_width)*sizeof(__Pixel_t));
-        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+		(*GUI_API_DrawArea)( xs , ys , xe , ye ,
                             __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
