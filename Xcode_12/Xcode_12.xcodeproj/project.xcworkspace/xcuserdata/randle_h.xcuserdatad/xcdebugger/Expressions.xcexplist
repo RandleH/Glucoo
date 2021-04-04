@@ -40,6 +40,17 @@
       </ContextState>
       <ContextState
          contextName = "__Font_exportStr:RH_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "lfB[1]">
+            </PersistentString>
+            <PersistentString
+               value = "c_x[1]">
+            </PersistentString>
+            <PersistentString
+               value = "lfB[0]">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "GUI_RefreashScreen:RH_gui.c">
@@ -62,10 +73,10 @@
                value = "pixCnt">
             </PersistentString>
             <PersistentString
-               value = "pTextHead">
+               value = "pIter1">
             </PersistentString>
             <PersistentString
-               value = "pIter1">
+               value = "pTextHead">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

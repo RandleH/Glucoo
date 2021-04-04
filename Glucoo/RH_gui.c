@@ -346,11 +346,11 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
-        __Font_setSize(40);
+        __Font_setSize(40)
         __Font_setStyle( config->title_font );
         __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
-       const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
-       const int font_ys = ys + bar_size_4;
+        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+        const int font_ys = ys + bar_size_4
         
         
         for( int y=0; y<pFontInfo->height; y++ ){

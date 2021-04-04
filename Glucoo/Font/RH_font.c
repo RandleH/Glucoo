@@ -18,6 +18,7 @@ static struct{
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
     #if defined (__WIN32)
         static const char* font_path[kGUI_NUM_FontStyle] = {
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Rounded Bold.ttf" ,
         #if RH_CFG_FONT_STYLE__CourierNew
             "../Glucoo/Font/Courier New.ttf"        ,
         #endif
@@ -39,6 +40,7 @@ static struct{
         };
     #elif defined  (__APPLE__)
         static const char* font_path[kGUI_NUM_FontStyle] = {
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Rounded Bold.ttf" ,
         #if RH_CFG_FONT_STYLE__CourierNew
             "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Courier New.ttf"        ,
         #endif
@@ -55,7 +57,7 @@ static struct{
             "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/NewYorkItalic.ttf"      ,
         #endif
         #if RH_CFG_FONT_STYLE__Arial_Unicode        
-            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Unicode.ttf"
+            "/Users/randle_h/Desktop/Glucoo/Glucoo/Font/Arial Unicode.ttf"       
         #endif
         };
     #endif
@@ -72,12 +74,12 @@ static struct{
         fseek(fontFile, 0, SEEK_SET);
 
         if( !FCFG.font_data ){
-            free(FCFG.font_data);
+            free((void*)FCFG.font_data);
         }
 
         FCFG.font_data = calloc(size, sizeof(uint8_t));
 
-        fread(FCFG.font_data, size, sizeof(uint8_t), fontFile);
+        fread((void*)FCFG.font_data, size, sizeof(uint8_t), fontFile);
         fclose(fontFile);
 
         return kStatus_Success;
@@ -86,7 +88,6 @@ static struct{
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
     static const uint8_t* font_ptr[kGUI_NUM_FontStyle] = {
         (const uint8_t*)Font_TTF_ArialRoundedBold  ,
-        
         
     #if RH_CFG_FONT_STYLE__CourierNew
         (const uint8_t*)Font_TTF_CourierNew        ,
@@ -195,6 +196,9 @@ __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
 	printf("ascent = %d\n"   , FCFG.info.ascent);
     printf("descent = %d\n"  , FCFG.info.descent);
     printf("lineGap = %d\n"   , FCFG.info.lineGap);
+    
+    printf("w = %ld\n", FCFG.info.width  );
+    printf("h = %ld\n", FCFG.info.height );
 #endif
     return &FCFG.info;
 }
@@ -212,8 +216,8 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     FCFG.info.width  = 0;
     int* xs  = (int*)calloc(len,sizeof(int));
     int* ys  = (int*)calloc(len,sizeof(int));
-    int* c_x = (int*)malloc(len*sizeof(int));
-    int* c_y = (int*)malloc(len*sizeof(int));
+    int* c_x = (int*)calloc(len,sizeof(int));
+    int* c_y = (int*)calloc(len,sizeof(int));
     int* adv = (int*)malloc(len*sizeof(int));
     int* lfB = (int*)malloc(len*sizeof(int));
     for(int i=0; i<len; i++){
@@ -227,11 +231,16 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
         c_x[i] = c_x2-c_x1;
         c_y[i] = c_y2-c_y1;
         
+        if( c_x[i]==0 ){
+            stbtt_GetCodepointBitmapBox(&FCFG.stb_info, 'h', FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+            c_x[i] = c_x2-c_x1;
+        }
+        
         adv[i] = roundf( advanceWidth*FCFG.scale );
         lfB[i] = roundf( leftSideBearing*FCFG.scale );
-        FCFG.info.width += adv[i];
+        FCFG.info.width += c_x[i];
         if(i!=0)
-            xs[i]  = xs[i-1] + adv[i];
+            xs[i]  = xs[i-1] + c_x[i-1];
         ys[i]  = FCFG.info.ascent + c_y1;
 
     }
@@ -239,7 +248,12 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     FCFG.info.output = calloc(FCFG.info.width*FCFG.info.height, sizeof(uint8_t));
     
     for(int i=0; i<len; i++){
-        size_t byteOffset = ( lfB[i] + ys[i]*FCFG.info.width + xs[i] );
+        size_t byteOffset = 0;
+        if( i!=0 ){
+            byteOffset = ( lfB[i] + ys[i]*FCFG.info.width + xs[i] );
+        }else{
+            byteOffset = ( lfB[i] + ys[i]*FCFG.info.width + xs[i] );
+        }
         stbtt_MakeCodepointBitmap(&FCFG.stb_info, FCFG.info.output+byteOffset, c_x[i], c_y[i], (int)(FCFG.info.width), FCFG.scale, FCFG.scale, str[i]);
     }
     free(xs);
@@ -249,9 +263,12 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     free(adv);
     free(lfB);
 #ifdef STB_OUTPUT_FONT_PNG
-printf("ascent = %d\n"   , FCFG.info.ascent);
+    printf("ascent = %d\n"   , FCFG.info.ascent);
     printf("descent = %d\n"  , FCFG.info.descent);
     printf("lineGap = %d\n"   , FCFG.info.lineGap);
+    
+    printf("w = %ld\n", FCFG.info.width  );
+    printf("h = %ld\n", FCFG.info.height );
     stbi_write_png("C:/Users/asus/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
     stbi_write_png("/Users/randle_h/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif

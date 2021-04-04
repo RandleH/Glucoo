@@ -22,38 +22,31 @@ int main(int argc, const char * argv[]) {
     // insert code here...
     
     Simul_API_Init();
-
-//    __UNION_PixelBIN_t GRAM[3][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ] = {0};
-//
-//    __GraphInfo_t GInfo = {
-//        .pBuffer = GRAM[0][0]  ,
-//        .height  = GUI_Y_WIDTH ,
-//        .width   = GUI_X_WIDTH
-//    };
-    
     
     GUI_Init();
-    GUI_rect_edged( 30, 30, 80, 50 );
+    GUI_set_penSize(5);
+    __GUI_Window_t cfg;
+    GUI_easySet_window(&cfg);
+    cfg.area.xs     = 20;
+    cfg.area.ys     = 20;
+    cfg.area.height = 300;
+    cfg.area.width  = 600;
+    cfg.type        = kGUI_WindowType_macOS;
+    cfg.size        = 40;
+    cfg.appearance  = kGUI_Appearance_Light;
+    cfg.title       = "Text";
+
+    cfg.text        = NULL;
+    cfg.text_size   = 40;
+
+    ID_t ID_Window1 = GUI_create_window(&cfg);
+    GUI_insert_window( ID_Window1 );
+
     GUI_RefreashScreen();
-//    __Graph_rect_raw( 30, 30, 80, 50, &GInfo, kApplyPixel_fill );
-//    __Graph_rect_fill(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
-//    __Graph_line_raw (30, 30, 80, 50, &GInfo, kApplyPixel_fill );
-//    __Graph_circle_raw(45, 32, 20, &GInfo, kApplyPixel_fill );
-//    __Graph_circle_fill(45, 32, 40, &GInfo, kApplyPixel_fill );
-//    __Graph_circle_edged(45, 32, 40, &GInfo, kApplyPixel_fill );
-//    __Graph_set_penSize(10);
-//    __Graph_line_sausage(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
-//    __Graph_line_fill(30, 30, 80, 50, &GInfo, kApplyPixel_fill );
- 
-
-//    GUI_RefreashScreenArea(0,0,GUI_X_WIDTH-1,GUI_Y_WIDTH-1);
-    
-
-    
-//    __ImgBIN_out_bmp("/Users/randle_h/desktop/BIN4.bmp", &GInfo);
-    
-
-    
+//    __Font_init();
+//    __Font_exportChar('x');
+//    __Font_exportStr("This is a test");
+//    __Font_exportStr("xt");
     
     return 0;
 }
