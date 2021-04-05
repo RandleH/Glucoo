@@ -56,7 +56,7 @@ typedef struct __Region_t __Area_t;
 
  
 #define RH_RESULT     __attribute__((warn_unused_result))
-#define RH_PREMAIN    __attribute__((constructor))
+#define RH_PREMAIN    //__attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
 #define RH_FUNCONST   __attribute__((const))
 #define RH_WEAK       __attribute__((weak))

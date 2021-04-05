@@ -23,6 +23,7 @@ extern "C" {
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
+#define RH_CFG_FONT_DATA_LOCAL_BITMAP         (2U)                          // < option >
 #define RH_CFG_FONT_DATA_TYPE                 RH_CFG_FONT_DATA_LOCAL_ARRAY  // < select > < above option >
 
 

@@ -20,12 +20,21 @@ extern "C"{
     #if RH_CFG_FONT_STYLE__CourierNew_Bold
     extern uint8_t Font_TTF_CourierNew_Bold  [691796];
     #endif
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
+
 #else
+
   #error "Unknown font data source."
 #endif
 
 
-
+struct rhtt_fontinfo{
+    uint8_t   h;
+    uint8_t   w;
+    char      c;
+    uint8_t   *data; 
+};
+typedef struct rhtt_fontinfo rhtt_fontinfo;
 
 typedef enum{
     kGUI_FontStyle_ArialRounded_Bold ,

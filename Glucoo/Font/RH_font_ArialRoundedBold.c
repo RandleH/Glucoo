@@ -1,6 +1,205 @@
 
 #include <stdint.h>
+#include "RH_font.h"
 #include "RH_config.h"
+
+static const unsigned char __FONT_ASCII_32_0 [] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_1 [] = {0x00, 0x00, 0x00, 0x2f, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_2 [] = {0x00, 0x00, 0x07, 0x00, 0x07, 0x00};
+static const unsigned char __FONT_ASCII_32_3 [] = {0x00, 0x14, 0x7f, 0x14, 0x7f, 0x14};
+static const unsigned char __FONT_ASCII_32_4 [] = {0x00, 0x24, 0x2a, 0x7f, 0x2a, 0x12};
+static const unsigned char __FONT_ASCII_32_5 [] = {0x23, 0x13, 0x08, 0x64, 0x62, 0x00};
+static const unsigned char __FONT_ASCII_32_6 [] = {0x00, 0x36, 0x49, 0x55, 0x22, 0x50};
+static const unsigned char __FONT_ASCII_32_7 [] = {0x00, 0x00, 0x05, 0x03, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_8 [] = {0x00, 0x00, 0x1c, 0x22, 0x41, 0x00};
+static const unsigned char __FONT_ASCII_32_9 [] = {0x00, 0x00, 0x41, 0x22, 0x1c, 0x00};
+static const unsigned char __FONT_ASCII_32_10[] = {0x00, 0x14, 0x08, 0x3E, 0x08, 0x14};
+static const unsigned char __FONT_ASCII_32_11[] = {0x00, 0x08, 0x08, 0x3E, 0x08, 0x08};
+static const unsigned char __FONT_ASCII_32_12[] = {0x00, 0x00, 0x00, 0xA0, 0x60, 0x00};
+static const unsigned char __FONT_ASCII_32_13[] = {0x00, 0x08, 0x08, 0x08, 0x08, 0x08};
+static const unsigned char __FONT_ASCII_32_14[] = {0x00, 0x00, 0x60, 0x60, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_15[] = {0x00, 0x20, 0x10, 0x08, 0x04, 0x02};
+static const unsigned char __FONT_ASCII_32_16[] = {0x00, 0x3E, 0x51, 0x49, 0x45, 0x3E};
+static const unsigned char __FONT_ASCII_32_17[] = {0x00, 0x00, 0x42, 0x7F, 0x40, 0x00};
+static const unsigned char __FONT_ASCII_32_18[] = {0x00, 0x42, 0x61, 0x51, 0x49, 0x46};
+static const unsigned char __FONT_ASCII_32_19[] = {0x00, 0x21, 0x41, 0x45, 0x4B, 0x31};
+static const unsigned char __FONT_ASCII_32_20[] = {0x00, 0x18, 0x14, 0x12, 0x7F, 0x10};
+static const unsigned char __FONT_ASCII_32_21[] = {0x00, 0x27, 0x45, 0x45, 0x45, 0x39};
+static const unsigned char __FONT_ASCII_32_22[] = {0x00, 0x3C, 0x4A, 0x49, 0x49, 0x30};
+static const unsigned char __FONT_ASCII_32_23[] = {0x00, 0x01, 0x71, 0x09, 0x05, 0x03};
+static const unsigned char __FONT_ASCII_32_24[] = {0x00, 0x36, 0x49, 0x49, 0x49, 0x36};
+static const unsigned char __FONT_ASCII_32_25[] = {0x00, 0x06, 0x49, 0x49, 0x29, 0x1E};
+static const unsigned char __FONT_ASCII_32_26[] = {0x00, 0x00, 0x36, 0x36, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_27[] = {0x00, 0x00, 0x56, 0x36, 0x00, 0x00};
+static const unsigned char __FONT_ASCII_32_28[] = {0x00, 0x08, 0x14, 0x22, 0x41, 0x00};
+static const unsigned char __FONT_ASCII_32_29[] = {0x00, 0x14, 0x14, 0x14, 0x14, 0x14};
+static const unsigned char __FONT_ASCII_32_30[] = {0x00, 0x00, 0x41, 0x22, 0x14, 0x08};
+static const unsigned char __FONT_ASCII_32_31[] = {0x00, 0x02, 0x01, 0x51, 0x09, 0x06};
+static const unsigned char __FONT_ASCII_32_32[] = {0x00, 0x32, 0x49, 0x59, 0x51, 0x3E};
+static const unsigned char __FONT_ASCII_32_33[] = {0x00, 0x7C, 0x12, 0x11, 0x12, 0x7C};
+static const unsigned char __FONT_ASCII_32_34[] = {0x00, 0x7F, 0x49, 0x49, 0x49, 0x36};
+static const unsigned char __FONT_ASCII_32_35[] = {0x00, 0x3E, 0x41, 0x41, 0x41, 0x22};
+static const unsigned char __FONT_ASCII_32_36[] = {0x00, 0x7F, 0x41, 0x41, 0x22, 0x1C};
+static const unsigned char __FONT_ASCII_32_37[] = {0x00, 0x7F, 0x49, 0x49, 0x49, 0x41};
+static const unsigned char __FONT_ASCII_32_38[] = {0x00, 0x7F, 0x09, 0x09, 0x09, 0x01};
+static const unsigned char __FONT_ASCII_32_39[] = {0x00, 0x3E, 0x41, 0x49, 0x49, 0x7A};
+static const unsigned char __FONT_ASCII_32_40[] = {0x00, 0x7F, 0x08, 0x08, 0x08, 0x7F};
+static const unsigned char __FONT_ASCII_32_41[] = {0x00, 0x00, 0x41, 0x7F, 0x41, 0x00};
+static const unsigned char __FONT_ASCII_32_42[] = {0x00, 0x20, 0x40, 0x41, 0x3F, 0x01};
+static const unsigned char __FONT_ASCII_32_43[] = {0x00, 0x7F, 0x08, 0x14, 0x22, 0x41};
+static const unsigned char __FONT_ASCII_32_44[] = {0x00, 0x7F, 0x40, 0x40, 0x40, 0x40};
+static const unsigned char __FONT_ASCII_32_45[] = {0x00, 0x7F, 0x02, 0x0C, 0x02, 0x7F};
+static const unsigned char __FONT_ASCII_32_46[] = {0x00, 0x7F, 0x04, 0x08, 0x10, 0x7F};
+static const unsigned char __FONT_ASCII_32_47[] = {0x00, 0x3E, 0x41, 0x41, 0x41, 0x3E};
+static const unsigned char __FONT_ASCII_32_48[] = {0x00, 0x7F, 0x09, 0x09, 0x09, 0x06};
+static const unsigned char __FONT_ASCII_32_49[] = {0x00, 0x3E, 0x41, 0x51, 0x21, 0x5E};
+static const unsigned char __FONT_ASCII_32_50[] = {0x00, 0x7F, 0x09, 0x19, 0x29, 0x46};
+static const unsigned char __FONT_ASCII_32_51[] = {0x00, 0x46, 0x49, 0x49, 0x49, 0x31};
+static const unsigned char __FONT_ASCII_32_52[] = {0x00, 0x01, 0x01, 0x7F, 0x01, 0x01};
+static const unsigned char __FONT_ASCII_32_53[] = {0x00, 0x3F, 0x40, 0x40, 0x40, 0x3F};
+static const unsigned char __FONT_ASCII_32_54[] = {0x00, 0x1F, 0x20, 0x40, 0x20, 0x1F};
+static const unsigned char __FONT_ASCII_32_55[] = {0x00, 0x3F, 0x40, 0x38, 0x40, 0x3F};
+static const unsigned char __FONT_ASCII_32_56[] = {0x00, 0x63, 0x14, 0x08, 0x14, 0x63};
+static const unsigned char __FONT_ASCII_32_57[] = {0x00, 0x07, 0x08, 0x70, 0x08, 0x07};
+static const unsigned char __FONT_ASCII_32_58[] = {0x00, 0x61, 0x51, 0x49, 0x45, 0x43};
+static const unsigned char __FONT_ASCII_32_59[] = {0x00, 0x00, 0x7F, 0x41, 0x41, 0x00};
+static const unsigned char __FONT_ASCII_32_60[] = {0x00, 0x55, 0x2A, 0x55, 0x2A, 0x55};
+static const unsigned char __FONT_ASCII_32_61[] = {0x00, 0x00, 0x41, 0x41, 0x7F, 0x00};
+static const unsigned char __FONT_ASCII_32_62[] = {0x00, 0x04, 0x02, 0x01, 0x02, 0x04};
+static const unsigned char __FONT_ASCII_32_63[] = {0x00, 0x40, 0x40, 0x40, 0x40, 0x40};
+static const unsigned char __FONT_ASCII_32_64[] = {0x00, 0x00, 0x01, 0x02, 0x04, 0x00};
+static const unsigned char __FONT_ASCII_32_65[] = {0x00, 0x20, 0x54, 0x54, 0x54, 0x78};
+static const unsigned char __FONT_ASCII_32_66[] = {0x00, 0x7F, 0x48, 0x44, 0x44, 0x38};
+static const unsigned char __FONT_ASCII_32_67[] = {0x00, 0x38, 0x44, 0x44, 0x44, 0x20};
+static const unsigned char __FONT_ASCII_32_68[] = {0x00, 0x38, 0x44, 0x44, 0x48, 0x7F};
+static const unsigned char __FONT_ASCII_32_69[] = {0x00, 0x38, 0x54, 0x54, 0x54, 0x18};
+static const unsigned char __FONT_ASCII_32_70[] = {0x00, 0x08, 0x7E, 0x09, 0x01, 0x02};
+static const unsigned char __FONT_ASCII_32_71[] = {0x00, 0x18, 0xA4, 0xA4, 0xA4, 0x7C};
+static const unsigned char __FONT_ASCII_32_72[] = {0x00, 0x7F, 0x08, 0x04, 0x04, 0x78};
+static const unsigned char __FONT_ASCII_32_73[] = {0x00, 0x00, 0x44, 0x7D, 0x40, 0x00};
+static const unsigned char __FONT_ASCII_32_74[] = {0x00, 0x40, 0x80, 0x84, 0x7D, 0x00};
+static const unsigned char __FONT_ASCII_32_75[] = {0x00, 0x7F, 0x10, 0x28, 0x44, 0x00};
+static const unsigned char __FONT_ASCII_32_76[] = {0x00, 0x00, 0x41, 0x7F, 0x40, 0x00};
+static const unsigned char __FONT_ASCII_32_77[] = {0x00, 0x7C, 0x04, 0x18, 0x04, 0x78};
+static const unsigned char __FONT_ASCII_32_78[] = {0x00, 0x7C, 0x08, 0x04, 0x04, 0x78};
+static const unsigned char __FONT_ASCII_32_79[] = {0x00, 0x38, 0x44, 0x44, 0x44, 0x38};
+static const unsigned char __FONT_ASCII_32_80[] = {0x00, 0xFC, 0x24, 0x24, 0x24, 0x18};
+static const unsigned char __FONT_ASCII_32_81[] = {0x00, 0x18, 0x24, 0x24, 0x18, 0xFC};
+static const unsigned char __FONT_ASCII_32_82[] = {0x00, 0x7C, 0x08, 0x04, 0x04, 0x08};
+static const unsigned char __FONT_ASCII_32_83[] = {0x00, 0x48, 0x54, 0x54, 0x54, 0x20};
+static const unsigned char __FONT_ASCII_32_84[] = {0x00, 0x04, 0x3F, 0x44, 0x40, 0x20};
+static const unsigned char __FONT_ASCII_32_85[] = {0x00, 0x3C, 0x40, 0x40, 0x20, 0x7C};
+static const unsigned char __FONT_ASCII_32_86[] = {0x00, 0x1C, 0x20, 0x40, 0x20, 0x1C};
+static const unsigned char __FONT_ASCII_32_87[] = {0x00, 0x3C, 0x40, 0x30, 0x40, 0x3C};
+static const unsigned char __FONT_ASCII_32_88[] = {0x00, 0x44, 0x28, 0x10, 0x28, 0x44};
+static const unsigned char __FONT_ASCII_32_89[] = {0x00, 0x1C, 0xA0, 0xA0, 0xA0, 0x7C};
+static const unsigned char __FONT_ASCII_32_90[] = {0x00, 0x44, 0x64, 0x54, 0x4C, 0x44};
+static const unsigned char __FONT_ASCII_32_91[] = {0x14, 0x14, 0x14, 0x14, 0x14, 0x14};
+static const unsigned char __FONT_ASCII_32_92[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static const unsigned char __FONT_ASCII_32_93[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static const unsigned char __FONT_ASCII_32_94[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+static const unsigned char __FONT_ASCII_32_95[] = {0xff, 0x81, 0x81, 0x81, 0x81, 0xff};
+
+const rhtt_fontinfo Font_BIT_ArialRoundedBold_size_8[] = {
+    { .c = ' ' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_0  },
+    { .c = '!' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_1  },
+    { .c = '"' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_2  },
+    { .c = '#' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_3  },
+    { .c = '$' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_4  },
+    { .c = '%' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_5  },
+    { .c = '&' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_6  },
+    { .c = '\'', .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_7  },
+    { .c = '(' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_8  },
+    { .c = ')' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_9  },
+    { .c = '*' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_10 },
+    { .c = '+' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_11 },
+    { .c = ',' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_12 },
+    { .c = '-' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_13 },
+    { .c = '.' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_14 },
+    { .c = '/' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_15 },
+    { .c = '0' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_16 },
+    { .c = '1' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_17 },
+    { .c = '2' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_18 },
+    { .c = '3' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_19 },
+    { .c = '4' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_20 },
+    { .c = '5' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_21 },
+    { .c = '6' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_22 },
+    { .c = '7' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_23 },
+    { .c = '8' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_24 },
+    { .c = '9' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_25 },
+    { .c = ':' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_26 },
+    { .c = ';' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_27 },
+    { .c = '<' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_28 },
+    { .c = '=' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_29 },
+    { .c = '>' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_30 },
+    { .c = '?' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_31 },
+    { .c = '@' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_32 },
+    { .c = 'A' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_33 },
+    { .c = 'B' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_34 },
+    { .c = 'C' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_35 },
+    { .c = 'D' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_36 },
+    { .c = 'E' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_37 },
+    { .c = 'F' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_38 },
+    { .c = 'G' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_39 },
+    { .c = 'H' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_40 },
+    { .c = 'I' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_41 },
+    { .c = 'J' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_42 },
+    { .c = 'K' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_43 },
+    { .c = 'L' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_44 },
+    { .c = 'M' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_45 },
+    { .c = 'N' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_46 },
+    { .c = 'O' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_47 },
+    { .c = 'P' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_48 },
+    { .c = 'Q' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_49 },
+    { .c = 'R' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_50 },
+    { .c = 'S' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_51 },
+    { .c = 'T' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_52 },
+    { .c = 'U' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_53 },
+    { .c = 'V' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_54 },
+    { .c = 'W' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_55 },
+    { .c = 'X' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_56 },
+    { .c = 'Y' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_57 },
+    { .c = 'Z' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_58 },
+    { .c = '[' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_59 },
+    { .c = '\\', .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_60 },
+    { .c = ']' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_61 },
+    { .c = '^' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_62 },
+    { .c = '_' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_63 },
+    { .c = '`' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_64 },
+    { .c = 'a' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_65 },
+    { .c = 'b' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_66 },
+    { .c = 'c' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_67 },
+    { .c = 'd' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_68 },
+    { .c = 'e' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_69 },
+    { .c = 'f' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_70 },
+    { .c = 'g' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_71 },
+    { .c = 'h' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_72 },
+    { .c = 'i' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_73 },
+    { .c = 'j' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_74 },
+    { .c = 'k' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_75 },
+    { .c = 'l' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_76 },
+    { .c = 'm' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_77 },
+    { .c = 'n' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_78 },
+    { .c = 'o' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_79 },
+    { .c = 'p' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_80 },
+    { .c = 'q' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_81 },
+    { .c = 'r' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_82 },
+    { .c = 's' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_83 },
+    { .c = 't' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_84 },
+    { .c = 'u' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_85 },
+    { .c = 'v' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_86 },
+    { .c = 'w' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_87 },
+    { .c = 'x' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_88 },
+    { .c = 'y' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_89 },
+    { .c = 'z' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_90 },
+    { .c = '{' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_91 },
+    { .c = '|' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_92 },
+    { .c = '}' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_93 },
+    { .c = '~' , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_94 },
+    { .c = 127 , .h = 8 , .w = 6 , .data = (uint8_t*)__FONT_ASCII_32_95 },
+};
+
+#if ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
 
 uint8_t Font_TTF_ArialRoundedBold[49296] = {
 
@@ -2470,3 +2669,8 @@ uint8_t Font_TTF_ArialRoundedBold[49296] = {
 0x3F, 0x50, 0x62, 0xC6, 0xA1, 0xD1, 0xEE, 0x92, 0xAB, 0xD0, 0xC5, 0x53, 0x6C, 0x8D, 0x23, 0xC3, 0x06, 0x47, 0x51, 0xAF, 
 0x65, 0x71, 0x53, 0x9F, 0x5A, 0xB6, 0x51, 0x17, 0xF2, 0xF5, 0x18, 0xED, 0x83, 0x97, 0x00, 0x00
 };
+
+
+#endif
+
+

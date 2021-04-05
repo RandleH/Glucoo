@@ -22,8 +22,8 @@ extern "C"{
 
 #define GUI_WINDOW_DISPLAY          1   // 0=Disable   1=Enable
 
-#define GUI_Y_WIDTH                 480
-#define GUI_X_WIDTH                 800
+#define GUI_Y_WIDTH                 64
+#define GUI_X_WIDTH                 128
 
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
 typedef __ImageBIN_t           __PixelInfo_t;
