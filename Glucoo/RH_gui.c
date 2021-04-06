@@ -29,19 +29,20 @@ void __attribute__((weak)) GUI_Delay          (unsigned long ms){
 void (*GUI_API_DelayMs)                       (unsigned long ms)                               = GUI_Delay;
 
 #define M_SCREEN_MAIN   0
-#define M_SCREEN_CNT    3
+#define M_SCREEN_CNT    0
 
 
 typedef __Stack_t    __LINK_AreaRefreash;
 typedef __LinkLoop_t __LINK_WindowCFG;
 
+#pragma pack(1)
 static struct{
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(false);
+    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH][ GUI_X_WIDTH ];
+    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
 #endif
     size_t           allocated_byte;
 
@@ -67,7 +68,7 @@ void RH_PREMAIN GUI_Init(void){
     #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(0);
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #endif
@@ -100,9 +101,10 @@ void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
                                              sizeof(__Pixel_t)             ,\
                                              GUI_X_WIDTH                   ,\
                                              xs, ps, xe, pe                ) );
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(false);
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+//#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
+//        ASSERT(false);
+//#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+#else
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)__malloc((x_width)*(y_width)*sizeof(__Pixel_t));
@@ -364,9 +366,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
                     info.pBuffer[ index ].data = __BIT_CLR(info.pBuffer[ index ].data, offset);
                 }
 
-            #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-                    ASSERT(0);
-            #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+            #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 ) || ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
                 if( pixWeight != 0 ){
                     const size_t  index     = (y+font_ys)*info.width + (x+font_xs);
                     info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_title.R - info.pBuffer[ index ].R) * pixWeight )>>8);
@@ -404,9 +404,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
             pIterScr -= config->text_bitW;
             pIterScr += ((y+1)%8==0)*info.width;
         }
-    #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(0);
-    #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+    #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 ) || ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
         typeof(info.pBuffer) pIterScr  = &info.pBuffer[ (ys+bar_size)*info.width + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
@@ -435,7 +433,9 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     const __PixelUnit_t color_button_zm = {.data = 0x00};
     const __PixelUnit_t color_button_mi = {.data = 0x00};
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-    ASSERT(0);
+    const __PixelUnit_t color_button_cl = {.data = M_COLOR_BLOODYMEAT };
+    const __PixelUnit_t color_button_zm = {.data = M_COLOR_GOLDEN     };
+    const __PixelUnit_t color_button_mi = {.data = M_COLOR_LAWNGREEN  };
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     const __PixelUnit_t color_button_cl = {.data = M_COLOR_BLOODYMEAT };
     const __PixelUnit_t color_button_zm = {.data = M_COLOR_GOLDEN     };

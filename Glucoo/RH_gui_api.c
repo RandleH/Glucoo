@@ -32,7 +32,7 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
         pTmpScreenShot = __ImgBIN_create(GUI_X_WIDTH,GUI_Y_WIDTH);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        while(1);
+        pTmpScreenShot = __ImgRGB565_create(GUI_X_WIDTH,GUI_Y_WIDTH);
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
         pTmpScreenShot = __ImgRGB888_create(GUI_X_WIDTH,GUI_Y_WIDTH);
 #else

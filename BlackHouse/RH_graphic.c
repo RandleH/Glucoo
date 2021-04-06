@@ -57,7 +57,7 @@ static __GraphPixel_t __ApplyPixel_mark      (int x,int y,__GraphPixel_t nan   ,
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
     *(p+((y>>3)*width)+x) = __BIT_SET( *(p+((y>>3)*width)+x) , y%8 );
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-    ASSERT(0);
+    *(p+(y*width)+x) = 1;
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     *(p+(y*width)+x) = 1;
 #else
@@ -79,7 +79,7 @@ static __GraphPixel_t __ApplyPixel_unmark    (int x,int y,__GraphPixel_t nan   ,
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
     *(p+((y>>3)*width)+x) = __BIT_CLR( *(p+((y>>3)*width)+x) , y%8 );
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-    ASSERT(0);
+    *(p+(y*width)+x) = 0;
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     *(p+(y*width)+x) = 0;
 #else
@@ -92,7 +92,7 @@ static __GraphPixel_t __ApplyPixel_unmark    (int x,int y,__GraphPixel_t nan   ,
  > 在指定缓存区,填充一个像素点,颜色随设定
 ============================================*/
 static __GraphPixel_t __ApplyPixel_fill      (int x,int y,__GraphPixel_t color ,__GraphInfo_t* pInfo){
-    __GraphPixel_t* p = (__GraphPixel_t*)(pInfo->pBuffer);
+//    __GraphPixel_t* p = (__GraphPixel_t*)(pInfo->pBuffer);
     size_t width   = pInfo->width;
     size_t height  = pInfo->height;
 
@@ -101,7 +101,7 @@ static __GraphPixel_t __ApplyPixel_fill      (int x,int y,__GraphPixel_t color ,
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
     *(p+((y>>3)*width)+x) = (color==0)?(__BIT_CLR( *(p+((y>>3)*width)+x) , y%8 )):(__BIT_SET( *(p+((y>>3)*width)+x) , y%8 ));
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-    ASSERT(0);
+    pInfo->pBuffer[y*width+x].data = color;
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
     *(p+y*width+x) = color;
 #else
@@ -671,23 +671,17 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         case kApplyPixel_mark:
         case kApplyPixel_unmark:
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-            
             for( int y=ys; y<=ye; y++ ){
                 for( int x=xs; x<= xe; x++ )
                 ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
             }
             
-//            for(int y = ys;y <= ye;y++){
-//                memset(&pInfo->pBuffer[(y>>3)*pInfo->width+xs+1].data, pInfo->pBuffer[(y>>3)*pInfo->width+xs].data, xe-xs );
-//            }
-            
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-            ASSERT(0);
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 ) || ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+
             for(int x = xs;x <= xe;x++)
                 ( *applyPixelMethod [method] )(x,ys,GCFG.penColor,pInfo);
             for(int y = ys+1;y <= ye;y++)
-                memcpy((pInfo->pBuffer + y  * pInfo->width + xs),\
+                memmove((pInfo->pBuffer + y  * pInfo->width + xs),\
                        (pInfo->pBuffer + ys * pInfo->width + xs),\
                        ((xe-xs+1)*sizeof(pInfo->pBuffer[0])) );
 #else
@@ -1240,9 +1234,8 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
         for( int x=LF; x<=RH; x++ ){
             pBuffer[ (j>>3)*area_width+x ] = __BIT_SET( pBuffer[ (j>>3)*area_width+x ], j%8);
         }
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-        ASSERT(0);
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 ) || ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
+
         for(;LF < RH;LF++){
             if( 1 == pBuffer [ j*area_width + LF ] )                       break;
         }

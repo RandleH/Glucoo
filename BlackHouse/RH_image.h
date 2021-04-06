@@ -34,9 +34,9 @@ struct __PixelRGB565_t{
 };
 union __UNION_PixelRGB565_t{
     struct{
-        uint8_t B : 5;
-        uint8_t G : 6;
-        uint8_t R : 5;
+        uint16_t B : 5;
+        uint16_t G : 6;
+        uint16_t R : 5;
     };
     uint16_t data;
 };
