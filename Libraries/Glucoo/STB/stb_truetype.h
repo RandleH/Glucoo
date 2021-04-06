@@ -468,10 +468,9 @@ int main(int arg, char **argv)
    #define STBTT_free(x,u)    ((void)(u),free(x))
    #endif
 
-   #ifndef STBTT_assert 
-   // #include <assert.h>
-   #include "stm32f10x_conf.h"
-   #define STBTT_assert(x)    assert_param(x)
+   #ifndef STBTT_assert
+   #include <assert.h>
+   #define STBTT_assert(x)    assert(x)
    #endif
 
    #ifndef STBTT_strlen
@@ -1142,7 +1141,7 @@ static stbtt_uint8 stbtt__buf_peek8(stbtt__buf *b)
 
 static void stbtt__buf_seek(stbtt__buf *b, int o)
 {
-   assert_param(!(o > b->size || o < 0));
+   STBTT_assert(!(o > b->size || o < 0));
    b->cursor = (o > b->size || o < 0) ? b->size : o;
 }
 
@@ -4868,10 +4867,10 @@ static int stbtt_FindMatchingFont_internal(unsigned char *font_collection, char 
    }
 }
 
-// #if defined(__GNUC__) || defined(__clang__)
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wcast-qual"
-// #endif
+#if defined(__GNUC__) || defined(__clang__)
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wcast-qual"
+#endif
 
 STBTT_DEF int stbtt_BakeFontBitmap(const unsigned char *data, int offset,
                                 float pixel_height, unsigned char *pixels, int pw, int ph,
@@ -4905,9 +4904,9 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
    return stbtt_CompareUTF8toUTF16_bigendian_internal((char *) s1, len1, (char *) s2, len2);
 }
 
-// #if defined(__GNUC__) || defined(__clang__)
-// #pragma GCC diagnostic pop
-// #endif
+#if defined(__GNUC__) || defined(__clang__)
+//#pragma GCC diagnostic pop
+#endif
 
 #endif // STB_TRUETYPE_IMPLEMENTATION
 
