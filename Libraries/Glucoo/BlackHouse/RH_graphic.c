@@ -672,13 +672,14 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         case kApplyPixel_unmark:
 #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
             
-            for(int y = ys;y <= ye;y++){
-                ( *applyPixelMethod [method] )(xs,y,GCFG.penColor,pInfo);
+            for( int y=ys; y<=ye; y++ ){
+                for( int x=xs; x<= xe; x++ )
+                ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
             }
             
-            for(int y = ys;y <= ye;y++){
-                memset(&pInfo->pBuffer[(y>>3)*pInfo->width+xs+1].data, pInfo->pBuffer[(y>>3)*pInfo->width+xs].data, xe-xs );
-            }
+//            for(int y = ys;y <= ye;y++){
+//                memset(&pInfo->pBuffer[(y>>3)*pInfo->width+xs+1].data, pInfo->pBuffer[(y>>3)*pInfo->width+xs].data, xe-xs );
+//            }
             
 #elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
             ASSERT(0);

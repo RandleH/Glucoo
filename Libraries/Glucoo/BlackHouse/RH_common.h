@@ -18,7 +18,12 @@
 #include <complex.h>
 #include <assert.h>
 #include <errno.h>
-#include <alloca.h>
+
+#ifdef __x86_64
+#include <memory.h>
+#endif
+//#include <malloc.h>
+
 
 #ifdef __cplusplus
  extern "C" {
@@ -55,7 +60,8 @@ typedef struct __Region_t __Area_t;
 #define RH_RESULT     __attribute__((warn_unused_result))
 #define RH_PREMAIN    //__attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
-#define RH_FUNCONST   __attribute__((const)) 
+#define RH_FUNCONST   __attribute__((const))
+#define RH_WEAK       __attribute__((weak))
  
 #ifndef __restrict__
 #define __restrict__ __restrict
@@ -235,7 +241,7 @@ void* RH_RESULT                                __RH_malloc(size_t size);
 #endif
  
 void                                           __RH_free(void* ptr);
-#ifndef __free
+#ifndef __frees
   #define __free(x)                            free(x)//free(x)
 #else
   #error " '__free' has been defined. "
