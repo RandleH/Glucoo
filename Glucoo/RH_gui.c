@@ -622,22 +622,18 @@ ID_t GUI_create_window( const __GUI_Window_t* config ){
     }
     
     if( m_config->text != NULL ){
-        // ??????????????
         __Font_setStyle(m_config->text_font);
         __Font_setSize(m_config->text_size);
-        // ??????, ????5
         __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
-        // ??????
+
         size_t fontW = m_config->area.width-((m_config->win_edge+m_config->text_margin)<<1);
         __GUI_Font_t* p =  __Font_exportText_Justify( m_config->text, fontW );
-        // ????????<__GUI_Window_t> config ?
-        // ????, ??p->output???????? config->text_bitMap
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitMap, __malloc(p->width*p->height*sizeof(*(p->output))));
 #ifdef RH_DEBUG
         ASSERT( m_config->text_bitMap );
 #endif
         memcpy((void*)m_config->text_bitMap, p->output, p->width*p->height*sizeof(*(p->output)) );
-        // ??????????
+
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitH  , p->height);
         __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitW  , p->width );
         //...//

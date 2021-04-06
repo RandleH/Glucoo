@@ -46,8 +46,8 @@
             filePath = "../Glucoo/RH_gui.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "632"
-            endingLineNumber = "632"
+            startingLineNumber = "630"
+            endingLineNumber = "630"
             landmarkName = "GUI_create_window(config)"
             landmarkType = "9">
          </BreakpointContent>
@@ -97,22 +97,6 @@
             startingLineNumber = "634"
             endingLineNumber = "634"
             landmarkName = "__Font_exportText_Justify(str, width)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "81188E48-4AA1-4273-8E10-C7360A3F0E88"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Glucoo/RH_gui.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
-            landmarkName = "__gui_insert_window_MacOS(config)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

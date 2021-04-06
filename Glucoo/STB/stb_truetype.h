@@ -4868,8 +4868,8 @@ static int stbtt_FindMatchingFont_internal(unsigned char *font_collection, char 
 }
 
 #if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wcast-qual"
 #endif
 
 STBTT_DEF int stbtt_BakeFontBitmap(const unsigned char *data, int offset,
@@ -4905,7 +4905,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 }
 
 #if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 #endif
 
 #endif // STB_TRUETYPE_IMPLEMENTATION

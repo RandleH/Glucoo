@@ -35,8 +35,7 @@ int main(int argc, const char * argv[]) {
     cfg.size        = 9;
     cfg.appearance  = kGUI_Appearance_Light;
     cfg.title       = "Text";
-    cfg.text        = "abc def ghi";
-    cfg.text        = "abcde fghijk lmnopq rstuvw xyzABC DEFGHI JKLMNOP QRSTU VWXYZ";
+    cfg.text        = "Hello world";
     cfg.text_size   = 8;
 
     ID_t ID_Window1 = GUI_create_window(&cfg);

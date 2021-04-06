@@ -18,8 +18,10 @@
 #include <complex.h>
 #include <assert.h>
 #include <errno.h>
-#include <memory.h>
 
+#ifdef __x86_64
+#include <memory.h>
+#endif
 //#include <malloc.h>
 
 
