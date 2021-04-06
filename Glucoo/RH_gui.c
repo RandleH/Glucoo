@@ -358,7 +358,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
                 uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
                 
             #if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
-                if( pixWeight>128 ){
+                if( pixWeight ){
                     const size_t  index    = ((y+font_ys)>>3)*info.width + (x+font_xs);
                     const size_t  offset   = (y+font_ys)%8;
                     info.pBuffer[ index ].data = __BIT_CLR(info.pBuffer[ index ].data, offset);
@@ -446,10 +446,10 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     // Button
     __Graph_set_penColor(color_button_cl.data);
     __Graph_circle_fill  (xs+bar_size_2, __mid(ys,ys+bar_size), bar_size_2 , &info, kApplyPixel_fill);
-    
+
     __Graph_set_penColor(color_button_zm.data);
     __Graph_circle_fill  (xs+bar_size+bar_size_4, __mid(ys,ys+bar_size), bar_size_2 , &info, kApplyPixel_fill);
-    
+
     __Graph_set_penColor(color_button_mi.data);
     __Graph_circle_fill  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info, kApplyPixel_fill);
     

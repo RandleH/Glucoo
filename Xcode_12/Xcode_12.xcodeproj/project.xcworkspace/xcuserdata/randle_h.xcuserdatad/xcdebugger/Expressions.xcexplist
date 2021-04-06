@@ -31,6 +31,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "rhtt_MakeCodepointBitmap:RH_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "output[]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__Graph_rect_fill:RH_graphic.c">
          <PersistentStrings>
             <PersistentString
@@ -69,12 +77,6 @@
       <ContextState
          contextName = "__Font_exportText_Justify:RH_font.c">
          <PersistentStrings>
-            <PersistentString
-               value = "pixCnt">
-            </PersistentString>
-            <PersistentString
-               value = "pIter1">
-            </PersistentString>
             <PersistentString
                value = "pTextHead">
             </PersistentString>
