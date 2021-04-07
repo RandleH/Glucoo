@@ -24,7 +24,7 @@ int main(int argc, const char * argv[]) {
     cfg.area.ys     = 20;
     cfg.area.height = 40;
     cfg.area.width  = 90;
-    cfg.type        = kGUI_WindowType_macOS;
+    cfg.type        = kGUI_WindowType_win10;
     cfg.size        = 9;
     cfg.appearance  = kGUI_Appearance_Light;
     cfg.title       = "Text";
