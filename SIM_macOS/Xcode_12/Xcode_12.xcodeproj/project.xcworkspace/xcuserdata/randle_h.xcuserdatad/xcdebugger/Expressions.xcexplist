@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "__gui_insert_window_MacOS:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "color_title">
+            </PersistentString>
+            <PersistentString
+               value = "color_bar">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

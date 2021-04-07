@@ -1,0 +1,487 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E35B3B7F261D5BDA0031A366 /* RH_gui.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B3E261D5BDA0031A366 /* RH_gui.c */; };
+		E35B3B80261D5BDA0031A366 /* RH_time.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B42261D5BDA0031A366 /* RH_time.c */; };
+		E35B3B81261D5BDA0031A366 /* RH_neuron.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B44261D5BDA0031A366 /* RH_neuron.c */; };
+		E35B3B82261D5BDA0031A366 /* RH_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B46261D5BDA0031A366 /* RH_lib.c */; };
+		E35B3B83261D5BDA0031A366 /* RH_data.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B47261D5BDA0031A366 /* RH_data.c */; };
+		E35B3B84261D5BDA0031A366 /* RH_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B48261D5BDA0031A366 /* RH_dsp.c */; };
+		E35B3B85261D5BDA0031A366 /* RH_utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B4A261D5BDA0031A366 /* RH_utility.c */; };
+		E35B3B86261D5BDA0031A366 /* RH_math.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B4B261D5BDA0031A366 /* RH_math.c */; };
+		E35B3B87261D5BDA0031A366 /* RH_image.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B4D261D5BDA0031A366 /* RH_image.c */; };
+		E35B3B88261D5BDA0031A366 /* RH_graphic.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B4F261D5BDA0031A366 /* RH_graphic.c */; };
+		E35B3B89261D5BDA0031A366 /* RH_assert.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B52261D5BDA0031A366 /* RH_assert.c */; };
+		E35B3B8B261D5BDA0031A366 /* RH_font_ArialRoundedBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B72261D5BDA0031A366 /* RH_font_ArialRoundedBold.c */; };
+		E35B3B8C261D5BDA0031A366 /* RH_font_CourierNew.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B73261D5BDA0031A366 /* RH_font_CourierNew.c */; };
+		E35B3B8D261D5BDA0031A366 /* RH_font_CourierNewBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B77261D5BDA0031A366 /* RH_font_CourierNewBold.c */; };
+		E35B3B8E261D5BDA0031A366 /* RH_font.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B7E261D5BDA0031A366 /* RH_font.c */; };
+		E35B3B99261D5C990031A366 /* RH_gui_api.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B95261D5C990031A366 /* RH_gui_api.c */; };
+		E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B97261D5C990031A366 /* RH_dummy.c */; };
+		E35B3B9E261D5DD50031A366 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B9D261D5DD50031A366 /* main.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E35B3B2F261D5B850031A366 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		E35B3B31261D5B850031A366 /* Xcode_12 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode_12; sourceTree = BUILT_PRODUCTS_DIR; };
+		E35B3B3E261D5BDA0031A366 /* RH_gui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_gui.c; sourceTree = "<group>"; };
+		E35B3B40261D5BDA0031A366 /* RH_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_math.h; sourceTree = "<group>"; };
+		E35B3B41261D5BDA0031A366 /* RH_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_utility.h; sourceTree = "<group>"; };
+		E35B3B42261D5BDA0031A366 /* RH_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_time.c; sourceTree = "<group>"; };
+		E35B3B43261D5BDA0031A366 /* RH_graphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_graphic.h; sourceTree = "<group>"; };
+		E35B3B44261D5BDA0031A366 /* RH_neuron.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_neuron.c; sourceTree = "<group>"; };
+		E35B3B45261D5BDA0031A366 /* RH_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_image.h; sourceTree = "<group>"; };
+		E35B3B46261D5BDA0031A366 /* RH_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_lib.c; sourceTree = "<group>"; };
+		E35B3B47261D5BDA0031A366 /* RH_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_data.c; sourceTree = "<group>"; };
+		E35B3B48261D5BDA0031A366 /* RH_dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dsp.c; sourceTree = "<group>"; };
+		E35B3B49261D5BDA0031A366 /* RH_assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_assert.h; sourceTree = "<group>"; };
+		E35B3B4A261D5BDA0031A366 /* RH_utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_utility.c; sourceTree = "<group>"; };
+		E35B3B4B261D5BDA0031A366 /* RH_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_math.c; sourceTree = "<group>"; };
+		E35B3B4C261D5BDA0031A366 /* RH_neuron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_neuron.h; sourceTree = "<group>"; };
+		E35B3B4D261D5BDA0031A366 /* RH_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_image.c; sourceTree = "<group>"; };
+		E35B3B4E261D5BDA0031A366 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; };
+		E35B3B4F261D5BDA0031A366 /* RH_graphic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_graphic.c; sourceTree = "<group>"; };
+		E35B3B50261D5BDA0031A366 /* RH_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_time.h; sourceTree = "<group>"; };
+		E35B3B51261D5BDA0031A366 /* RH_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_lib.h; sourceTree = "<group>"; };
+		E35B3B52261D5BDA0031A366 /* RH_assert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_assert.c; sourceTree = "<group>"; };
+		E35B3B53261D5BDA0031A366 /* RH_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_dsp.h; sourceTree = "<group>"; };
+		E35B3B54261D5BDA0031A366 /* RH_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_data.h; sourceTree = "<group>"; };
+		E35B3B56261D5BDA0031A366 /* stb_c_lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_c_lexer.h; sourceTree = "<group>"; };
+		E35B3B57261D5BDA0031A366 /* temp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = temp; sourceTree = "<group>"; };
+		E35B3B58261D5BDA0031A366 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		E35B3B59261D5BDA0031A366 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_write.h; sourceTree = "<group>"; };
+		E35B3B5A261D5BDA0031A366 /* stb_image_resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_resize.h; sourceTree = "<group>"; };
+		E35B3B5B261D5BDA0031A366 /* stb_rect_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_rect_pack.h; sourceTree = "<group>"; };
+		E35B3B5C261D5BDA0031A366 /* stb_divide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_divide.h; sourceTree = "<group>"; };
+		E35B3B5D261D5BDA0031A366 /* stb_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_sprintf.h; sourceTree = "<group>"; };
+		E35B3B5E261D5BDA0031A366 /* stb_dxt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_dxt.h; sourceTree = "<group>"; };
+		E35B3B5F261D5BDA0031A366 /* stb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb.h; sourceTree = "<group>"; };
+		E35B3B61261D5BDA0031A366 /* stb_perlin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_perlin.h; sourceTree = "<group>"; };
+		E35B3B62261D5BDA0031A366 /* stretchy_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stretchy_buffer.h; sourceTree = "<group>"; };
+		E35B3B63261D5BDA0031A366 /* stb_connected_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_connected_components.h; sourceTree = "<group>"; };
+		E35B3B64261D5BDA0031A366 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
+		E35B3B65261D5BDA0031A366 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E35B3B66261D5BDA0031A366 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_truetype.h; sourceTree = "<group>"; };
+		E35B3B67261D5BDA0031A366 /* stb_leakcheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_leakcheck.h; sourceTree = "<group>"; };
+		E35B3B68261D5BDA0031A366 /* stb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_textedit.h; sourceTree = "<group>"; };
+		E35B3B69261D5BDA0031A366 /* stb_easy_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_easy_font.h; sourceTree = "<group>"; };
+		E35B3B6A261D5BDA0031A366 /* stb_herringbone_wang_tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_herringbone_wang_tile.h; sourceTree = "<group>"; };
+		E35B3B6B261D5BDA0031A366 /* stb_voxel_render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_voxel_render.h; sourceTree = "<group>"; };
+		E35B3B6C261D5BDA0031A366 /* stb_tilemap_editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_tilemap_editor.h; sourceTree = "<group>"; };
+		E35B3B6D261D5BDA0031A366 /* stb_include.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_include.h; sourceTree = "<group>"; };
+		E35B3B6E261D5BDA0031A366 /* stb_ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_ds.h; sourceTree = "<group>"; };
+		E35B3B6F261D5BDA0031A366 /* RH_gui_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_gui_config.h; sourceTree = "<group>"; };
+		E35B3B70261D5BDA0031A366 /* RH_gui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_gui.h; sourceTree = "<group>"; };
+		E35B3B72261D5BDA0031A366 /* RH_font_ArialRoundedBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_font_ArialRoundedBold.c; sourceTree = "<group>"; };
+		E35B3B73261D5BDA0031A366 /* RH_font_CourierNew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_font_CourierNew.c; sourceTree = "<group>"; };
+		E35B3B74261D5BDA0031A366 /* Courier New Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier New Bold.ttf"; sourceTree = "<group>"; };
+		E35B3B75261D5BDA0031A366 /* Courier New Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier New Italic.ttf"; sourceTree = "<group>"; };
+		E35B3B76261D5BDA0031A366 /* Arial Unicode.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arial Unicode.ttf"; sourceTree = "<group>"; };
+		E35B3B77261D5BDA0031A366 /* RH_font_CourierNewBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_font_CourierNewBold.c; sourceTree = "<group>"; };
+		E35B3B78261D5BDA0031A366 /* NewYork.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NewYork.ttf; sourceTree = "<group>"; };
+		E35B3B79261D5BDA0031A366 /* Courier New.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier New.ttf"; sourceTree = "<group>"; };
+		E35B3B7A261D5BDA0031A366 /* RH_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_font.h; sourceTree = "<group>"; };
+		E35B3B7B261D5BDA0031A366 /* NewYorkItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NewYorkItalic.ttf; sourceTree = "<group>"; };
+		E35B3B7C261D5BDA0031A366 /* Courier New Bold Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier New Bold Italic.ttf"; sourceTree = "<group>"; };
+		E35B3B7D261D5BDA0031A366 /* Arial Rounded Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arial Rounded Bold.ttf"; sourceTree = "<group>"; };
+		E35B3B7E261D5BDA0031A366 /* RH_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_font.c; sourceTree = "<group>"; };
+		E35B3B94261D5C990031A366 /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_common.h; sourceTree = "<group>"; };
+		E35B3B95261D5C990031A366 /* RH_gui_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_gui_api.c; sourceTree = "<group>"; };
+		E35B3B96261D5C990031A366 /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_config.h; sourceTree = "<group>"; };
+		E35B3B97261D5C990031A366 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dummy.c; sourceTree = "<group>"; };
+		E35B3B98261D5C990031A366 /* RH_gui_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_gui_api.h; sourceTree = "<group>"; };
+		E35B3B9D261D5DD50031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../../self/main.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E35B3B2E261D5B850031A366 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E35B3B28261D5B850031A366 = {
+			isa = PBXGroup;
+			children = (
+				E35B3B93261D5C990031A366 /* self */,
+				E35B3B3D261D5BDA0031A366 /* core */,
+				E35B3B33261D5B850031A366 /* Xcode_12 */,
+				E35B3B32261D5B850031A366 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E35B3B32261D5B850031A366 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B31261D5B850031A366 /* Xcode_12 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E35B3B33261D5B850031A366 /* Xcode_12 */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B9D261D5DD50031A366 /* main.c */,
+			);
+			path = Xcode_12;
+			sourceTree = "<group>";
+		};
+		E35B3B3D261D5BDA0031A366 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B3E261D5BDA0031A366 /* RH_gui.c */,
+				E35B3B70261D5BDA0031A366 /* RH_gui.h */,
+				E35B3B6F261D5BDA0031A366 /* RH_gui_config.h */,
+				E35B3B3F261D5BDA0031A366 /* BlackHouse */,
+				E35B3B55261D5BDA0031A366 /* STB */,
+				E35B3B71261D5BDA0031A366 /* Font */,
+			);
+			name = core;
+			path = ../../core;
+			sourceTree = "<group>";
+		};
+		E35B3B3F261D5BDA0031A366 /* BlackHouse */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B40261D5BDA0031A366 /* RH_math.h */,
+				E35B3B41261D5BDA0031A366 /* RH_utility.h */,
+				E35B3B42261D5BDA0031A366 /* RH_time.c */,
+				E35B3B43261D5BDA0031A366 /* RH_graphic.h */,
+				E35B3B44261D5BDA0031A366 /* RH_neuron.c */,
+				E35B3B45261D5BDA0031A366 /* RH_image.h */,
+				E35B3B46261D5BDA0031A366 /* RH_lib.c */,
+				E35B3B47261D5BDA0031A366 /* RH_data.c */,
+				E35B3B48261D5BDA0031A366 /* RH_dsp.c */,
+				E35B3B49261D5BDA0031A366 /* RH_assert.h */,
+				E35B3B4A261D5BDA0031A366 /* RH_utility.c */,
+				E35B3B4B261D5BDA0031A366 /* RH_math.c */,
+				E35B3B4C261D5BDA0031A366 /* RH_neuron.h */,
+				E35B3B4D261D5BDA0031A366 /* RH_image.c */,
+				E35B3B4E261D5BDA0031A366 /* RH_color.h */,
+				E35B3B4F261D5BDA0031A366 /* RH_graphic.c */,
+				E35B3B50261D5BDA0031A366 /* RH_time.h */,
+				E35B3B51261D5BDA0031A366 /* RH_lib.h */,
+				E35B3B52261D5BDA0031A366 /* RH_assert.c */,
+				E35B3B53261D5BDA0031A366 /* RH_dsp.h */,
+				E35B3B54261D5BDA0031A366 /* RH_data.h */,
+			);
+			path = BlackHouse;
+			sourceTree = "<group>";
+		};
+		E35B3B55261D5BDA0031A366 /* STB */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B56261D5BDA0031A366 /* stb_c_lexer.h */,
+				E35B3B57261D5BDA0031A366 /* temp */,
+				E35B3B58261D5BDA0031A366 /* LICENSE */,
+				E35B3B59261D5BDA0031A366 /* stb_image_write.h */,
+				E35B3B5A261D5BDA0031A366 /* stb_image_resize.h */,
+				E35B3B5B261D5BDA0031A366 /* stb_rect_pack.h */,
+				E35B3B5C261D5BDA0031A366 /* stb_divide.h */,
+				E35B3B5D261D5BDA0031A366 /* stb_sprintf.h */,
+				E35B3B5E261D5BDA0031A366 /* stb_dxt.h */,
+				E35B3B5F261D5BDA0031A366 /* stb.h */,
+				E35B3B61261D5BDA0031A366 /* stb_perlin.h */,
+				E35B3B62261D5BDA0031A366 /* stretchy_buffer.h */,
+				E35B3B63261D5BDA0031A366 /* stb_connected_components.h */,
+				E35B3B64261D5BDA0031A366 /* stb_image.h */,
+				E35B3B65261D5BDA0031A366 /* README.md */,
+				E35B3B66261D5BDA0031A366 /* stb_truetype.h */,
+				E35B3B67261D5BDA0031A366 /* stb_leakcheck.h */,
+				E35B3B68261D5BDA0031A366 /* stb_textedit.h */,
+				E35B3B69261D5BDA0031A366 /* stb_easy_font.h */,
+				E35B3B6A261D5BDA0031A366 /* stb_herringbone_wang_tile.h */,
+				E35B3B6B261D5BDA0031A366 /* stb_voxel_render.h */,
+				E35B3B6C261D5BDA0031A366 /* stb_tilemap_editor.h */,
+				E35B3B6D261D5BDA0031A366 /* stb_include.h */,
+				E35B3B6E261D5BDA0031A366 /* stb_ds.h */,
+			);
+			path = STB;
+			sourceTree = "<group>";
+		};
+		E35B3B71261D5BDA0031A366 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B7E261D5BDA0031A366 /* RH_font.c */,
+				E35B3B7A261D5BDA0031A366 /* RH_font.h */,
+				E35B3B72261D5BDA0031A366 /* RH_font_ArialRoundedBold.c */,
+				E35B3B73261D5BDA0031A366 /* RH_font_CourierNew.c */,
+				E35B3B77261D5BDA0031A366 /* RH_font_CourierNewBold.c */,
+				E35B3B7D261D5BDA0031A366 /* Arial Rounded Bold.ttf */,
+				E35B3B79261D5BDA0031A366 /* Courier New.ttf */,
+				E35B3B74261D5BDA0031A366 /* Courier New Bold.ttf */,
+				E35B3B75261D5BDA0031A366 /* Courier New Italic.ttf */,
+				E35B3B7C261D5BDA0031A366 /* Courier New Bold Italic.ttf */,
+				E35B3B76261D5BDA0031A366 /* Arial Unicode.ttf */,
+				E35B3B78261D5BDA0031A366 /* NewYork.ttf */,
+				E35B3B7B261D5BDA0031A366 /* NewYorkItalic.ttf */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
+		E35B3B93261D5C990031A366 /* self */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3B94261D5C990031A366 /* RH_common.h */,
+				E35B3B95261D5C990031A366 /* RH_gui_api.c */,
+				E35B3B96261D5C990031A366 /* RH_config.h */,
+				E35B3B97261D5C990031A366 /* RH_dummy.c */,
+				E35B3B98261D5C990031A366 /* RH_gui_api.h */,
+			);
+			name = self;
+			path = ../self;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E35B3B30261D5B850031A366 /* Xcode_12 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E35B3B38261D5B850031A366 /* Build configuration list for PBXNativeTarget "Xcode_12" */;
+			buildPhases = (
+				E35B3B2D261D5B850031A366 /* Sources */,
+				E35B3B2E261D5B850031A366 /* Frameworks */,
+				E35B3B2F261D5B850031A366 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Xcode_12;
+			productName = Xcode_12;
+			productReference = E35B3B31261D5B850031A366 /* Xcode_12 */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E35B3B29261D5B850031A366 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					E35B3B30261D5B850031A366 = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = E35B3B2C261D5B850031A366 /* Build configuration list for PBXProject "Xcode_12" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E35B3B28261D5B850031A366;
+			productRefGroup = E35B3B32261D5B850031A366 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E35B3B30261D5B850031A366 /* Xcode_12 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E35B3B2D261D5B850031A366 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */,
+				E35B3B82261D5BDA0031A366 /* RH_lib.c in Sources */,
+				E35B3B81261D5BDA0031A366 /* RH_neuron.c in Sources */,
+				E35B3B85261D5BDA0031A366 /* RH_utility.c in Sources */,
+				E35B3B89261D5BDA0031A366 /* RH_assert.c in Sources */,
+				E35B3B87261D5BDA0031A366 /* RH_image.c in Sources */,
+				E35B3B88261D5BDA0031A366 /* RH_graphic.c in Sources */,
+				E35B3B80261D5BDA0031A366 /* RH_time.c in Sources */,
+				E35B3B83261D5BDA0031A366 /* RH_data.c in Sources */,
+				E35B3B99261D5C990031A366 /* RH_gui_api.c in Sources */,
+				E35B3B8C261D5BDA0031A366 /* RH_font_CourierNew.c in Sources */,
+				E35B3B8B261D5BDA0031A366 /* RH_font_ArialRoundedBold.c in Sources */,
+				E35B3B86261D5BDA0031A366 /* RH_math.c in Sources */,
+				E35B3B8E261D5BDA0031A366 /* RH_font.c in Sources */,
+				E35B3B9E261D5DD50031A366 /* main.c in Sources */,
+				E35B3B8D261D5BDA0031A366 /* RH_font_CourierNewBold.c in Sources */,
+				E35B3B84261D5BDA0031A366 /* RH_dsp.c in Sources */,
+				E35B3B7F261D5BDA0031A366 /* RH_gui.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		E35B3B36261D5B850031A366 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E35B3B37261D5B850031A366 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E35B3B39261D5B850031A366 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E35B3B3A261D5B850031A366 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E35B3B2C261D5B850031A366 /* Build configuration list for PBXProject "Xcode_12" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E35B3B36261D5B850031A366 /* Debug */,
+				E35B3B37261D5B850031A366 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E35B3B38261D5B850031A366 /* Build configuration list for PBXNativeTarget "Xcode_12" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E35B3B39261D5B850031A366 /* Debug */,
+				E35B3B3A261D5B850031A366 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E35B3B29261D5B850031A366 /* Project object */;
+}
