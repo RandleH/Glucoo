@@ -24,7 +24,7 @@
 		E35B3B8E261D5BDA0031A366 /* RH_font.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B7E261D5BDA0031A366 /* RH_font.c */; };
 		E35B3B99261D5C990031A366 /* RH_gui_api.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B95261D5C990031A366 /* RH_gui_api.c */; };
 		E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B97261D5C990031A366 /* RH_dummy.c */; };
-		E35B3B9E261D5DD50031A366 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B9D261D5DD50031A366 /* main.c */; };
+		E35B3BA9261D8F450031A366 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3BA8261D8F450031A366 /* main.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,7 +107,7 @@
 		E35B3B96261D5C990031A366 /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_config.h; sourceTree = "<group>"; };
 		E35B3B97261D5C990031A366 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dummy.c; sourceTree = "<group>"; };
 		E35B3B98261D5C990031A366 /* RH_gui_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_gui_api.h; sourceTree = "<group>"; };
-		E35B3B9D261D5DD50031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../../self/main.c; sourceTree = "<group>"; };
+		E35B3BA8261D8F450031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../self/main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,9 +124,9 @@
 		E35B3B28261D5B850031A366 = {
 			isa = PBXGroup;
 			children = (
+				E35B3BA7261D8F380031A366 /* Xcode_12 */,
 				E35B3B93261D5C990031A366 /* self */,
 				E35B3B3D261D5BDA0031A366 /* core */,
-				E35B3B33261D5B850031A366 /* Xcode_12 */,
 				E35B3B32261D5B850031A366 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -137,14 +137,6 @@
 				E35B3B31261D5B850031A366 /* Xcode_12 */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		E35B3B33261D5B850031A366 /* Xcode_12 */ = {
-			isa = PBXGroup;
-			children = (
-				E35B3B9D261D5DD50031A366 /* main.c */,
-			);
-			path = Xcode_12;
 			sourceTree = "<group>";
 		};
 		E35B3B3D261D5BDA0031A366 /* core */ = {
@@ -253,6 +245,14 @@
 			path = ../self;
 			sourceTree = "<group>";
 		};
+		E35B3BA7261D8F380031A366 /* Xcode_12 */ = {
+			isa = PBXGroup;
+			children = (
+				E35B3BA8261D8F450031A366 /* main.c */,
+			);
+			name = Xcode_12;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -323,7 +323,7 @@
 				E35B3B8B261D5BDA0031A366 /* RH_font_ArialRoundedBold.c in Sources */,
 				E35B3B86261D5BDA0031A366 /* RH_math.c in Sources */,
 				E35B3B8E261D5BDA0031A366 /* RH_font.c in Sources */,
-				E35B3B9E261D5DD50031A366 /* main.c in Sources */,
+				E35B3BA9261D8F450031A366 /* main.c in Sources */,
 				E35B3B8D261D5BDA0031A366 /* RH_font_CourierNewBold.c in Sources */,
 				E35B3B84261D5BDA0031A366 /* RH_dsp.c in Sources */,
 				E35B3B7F261D5BDA0031A366 /* RH_gui.c in Sources */,
