@@ -16,6 +16,9 @@ extern void (*GUI_API_DrawPixel)      (int x ,int y ,const __Pixel_t pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 
+
+void RH_PREMAIN GUI_Init    (void);
+
 void GUI_set_penSize        ( size_t    penSize  );
 void GUI_set_penColor       ( __Pixel_t penColor );
 
@@ -37,11 +40,13 @@ void GUI_circle_qrt2        ( int x ,int y ,int r );
 void GUI_circle_qrt3        ( int x ,int y ,int r );
 void GUI_circle_qrt4        ( int x ,int y ,int r );
 
+
 typedef enum{
     kGUI_Appearance_Light  ,
     kGUI_Appearance_Dark   ,
     
 }E_GUI_Appearance_t;
+
 
 #if GUI_WINDOW_DISPLAY
 
@@ -79,45 +84,58 @@ struct __GUI_Window_t{
 };
 typedef struct __GUI_Window_t __GUI_Window_t;
 
-typedef enum{
-    kGUI_MenuType_macOS  ,
-    kGUI_MenuType_win10  ,
-    NUM_kGUI_MenuType    ,
-}E_GUI_MenuStyle_t;
-
-struct __GUI_MenuCFG_t{
-    const char*          text;
-};
-typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
-
-struct __GUI_Menu_t{
-    __Area_t             area;
-    E_GUI_MenuStyle_t    style;
-    E_GUI_Appearance_t   appearance;
-    size_t               size;
-    
-    __GUI_MenuCFG_t*     config;
-    size_t               nitems;
-    
-    
-};
-typedef struct __GUI_Menu_t __GUI_Menu_t;
-
-void           RH_PREMAIN GUI_Init        (void);
-
-void                      GUI_rect_raw    ( int xs, int ys, int xe, int ye );
-void                      GUI_rect_edged  ( int xs, int ys, int xe, int ye );
-void                      GUI_rect_fill   ( int xs, int ys, int xe, int ye );
-void                      GUI_rect_round  ( int xs, int ys, int xe, int ye );
-
-
-
-ID_t            RH_RESULT GUI_create_window  ( const __GUI_Window_t* config );
-__GUI_Window_t*           GUI_easySet_window (       __GUI_Window_t* config );
-E_Status_t                GUI_insert_window  ( ID_t ID );
-E_Status_t                GUI_delete_window  ( ID_t ID );
+ID_t            RH_RESULT GUI_window_create    ( const __GUI_Window_t* config );
+__GUI_Window_t*           GUI_window_quickSet  (       __GUI_Window_t* config );
+E_Status_t                GUI_window_insert    ( ID_t ID );
+E_Status_t                GUI_window_delete    ( ID_t ID );
 
 #endif
+
+
+typedef enum{
+    kGUI_ObjStyle_text  ,
+    kGUI_ObjStyle_num   ,
+    NUM_kGUI_ObjStyle   ,
+}E_GUI_ObjStyle_t;
+
+struct __GUI_Object_t{
+    __Area_t             area;
+    E_GUI_ObjStyle_t     style;
+    E_GUI_FontStyle_t    font;
+    
+    const char*          text;
+    size_t               text_size;
+    
+    int32_t              min;
+    int32_t              val;
+    int32_t              max;
+    
+    __Pixel_t            color;
+    
+    void (*insert_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
+    void (*remove_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
+    
+};
+typedef struct __GUI_Object_t __GUI_Object_t;
+
+ID_t            RH_RESULT GUI_object_create    ( const __GUI_Object_t* config );
+__GUI_Object_t*           GUI_object_quickSet  (       __GUI_Object_t* config );//
+
+E_Status_t                GUI_object_adjust    ( ID_t ID  , void* param, size_t size );//
+E_Status_t                GUI_object_showFrame ( ID_t ID  , bool  cmd   );//
+E_Status_t                GUI_object_show      ( ID_t ID );//
+E_Status_t                GUI_object_delete    ( ID_t ID );//
+
+
+
+
+
+
+
+
+
+
+
 
 
 

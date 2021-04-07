@@ -55,6 +55,7 @@ struct __Region_t{
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;
  
+ 
 
  
 #define RH_RESULT     __attribute__((warn_unused_result))

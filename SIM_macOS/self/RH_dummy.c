@@ -271,7 +271,29 @@ GUI_delete_window( ID_Window2 );
 #endif
 
 
+typedef enum{
+    kGUI_MenuType_macOS  ,
+    kGUI_MenuType_win10  ,
+    NUM_kGUI_MenuStyle   ,
+}E_GUI_MenuStyle_t;
 
+struct __GUI_MenuCFG_t{
+    const char*          text;
+};
+typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
+
+struct __GUI_Menu_t{
+    __Area_t             area;
+    E_GUI_MenuStyle_t    style;
+    E_GUI_Appearance_t   appearance;
+    size_t               size;
+    
+    __GUI_MenuCFG_t*     config;
+    size_t               nitems;
+    
+    
+};
+typedef struct __GUI_Menu_t __GUI_Menu_t;
 
 #endif
 

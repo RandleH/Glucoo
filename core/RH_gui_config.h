@@ -22,6 +22,8 @@ extern "C"{
 
 #define GUI_WINDOW_DISPLAY          1   // 0=Disable   1=Enable
 
+
+
 #define GUI_Y_WIDTH                 128
 #define GUI_X_WIDTH                 128
 

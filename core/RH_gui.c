@@ -288,9 +288,101 @@ void GUI_circle_qrt4 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
+static void __gui_insert_object_text( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->text );
+#endif
+    
+    __GraphInfo_t info = {
+        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
+        .height  = GUI_Y_WIDTH                    ,
+        .width   = GUI_X_WIDTH                    ,
+    };
+    
+    size_t cnt=0, w=0,w_tmp=0;
+    do{
+        __Font_getCharSize(&w_tmp,NULL,config->text[cnt++]);
+        w+=w_tmp;
+    }while(  cnt<strlen(config->text) && w<config->area.width);
+    cnt--;
+    
+    char* p = NULL;
+    if(cnt>0){
+        p = alloca( cnt+sizeof('\0') );
+        strncpy(p, config->text, cnt);
+        __GUI_Font_t* pF = __Font_exportStr(p);
+    #ifdef RH_DEBUG
+        RH_ASSERT( pF );
+        RH_ASSERT( pF->width < config->area.width );
+    #endif
+        
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        RH_ASSERT(0);
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++ ){
+                if( pF->output[y*pF->width+x] > 128 ){
+                    info.pBuffer[ (config->area.ys+y)*(info.width)+(config->area.xs+x) ].data = config->color;
+                }
+            }
+        }
+         
+    #endif
+        
+    }
+    
+}
 
+static void __gui_remove_object_text( const __GUI_Object_t* config ){
+    
+}
 
+#ifdef RH_DEBUG
+static inline void __gui_check_object(const __GUI_Object_t* config){
+    RH_ASSERT( config );
+    RH_ASSERT( config->min   <= config->max       );
+    RH_ASSERT( config->style <  NUM_kGUI_ObjStyle );
+    RH_ASSERT( config->area.xs + config->area.width  -1  < GUI_X_WIDTH   ); // Can be compromised, no need to abort the program.
+    RH_ASSERT( config->area.ys + config->area.height -1  < GUI_Y_WIDTH   ); // Can be compromised, no need to abort the program.
+}
+#endif
 
+ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
+    __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
+#ifdef RH_DEBUG
+    RH_ASSERT( m_config );
+    RH_ASSERT( config );
+    __gui_check_object(config);
+#endif
+    *m_config = *config;
+    
+    switch( m_config->style ){
+        case kGUI_ObjStyle_text:
+            m_config->insert_func = __gui_insert_object_text;
+            m_config->remove_func = __gui_remove_object_text;
+            __gui_insert_object_text(config);
+            break;
+        case kGUI_ObjStyle_num:
+            
+            break;
+        default:
+            RH_ASSERT(0);
+    }
+    
+    return (ID_t)m_config;
+}
+
+__GUI_Object_t*   GUI_object_quickSet  (       __GUI_Object_t* config ){
+    return NULL;
+}
+
+E_Status_t        GUI_object_show      ( ID_t ID ){
+    __GUI_Object_t* config = (__GUI_Object_t*)ID;
+    Screen.autoDisplay ? GUI_RefreashScreenArea(config->area.xs, config->area.ys, config->area.xs+config->area.width-1, config->area.ys+config->area.height-1) :\
+                         GUI_AddScreenArea(config->area.xs, config->area.ys, config->area.xs+config->area.width-1, config->area.ys+config->area.height-1);
+    return kStatus_Success;
+}
 
 
 #if GUI_WINDOW_DISPLAY
@@ -603,7 +695,7 @@ static inline void __gui_check_window(const __GUI_Window_t* config){
 }
 #endif
 
-ID_t GUI_create_window( const __GUI_Window_t* config ){
+ID_t GUI_window_create( const __GUI_Window_t* config ){
     __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
 
     __Font_backup_config();
@@ -660,7 +752,7 @@ ID_t GUI_create_window( const __GUI_Window_t* config ){
     return (ID_t)m_config;
 }
 
-__GUI_Window_t* GUI_easySet_window( __GUI_Window_t* config ){
+__GUI_Window_t* GUI_window_quickSet( __GUI_Window_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 #else
@@ -689,7 +781,7 @@ __GUI_Window_t* GUI_easySet_window( __GUI_Window_t* config ){
     return config;
 }
 
-E_Status_t GUI_insert_window( ID_t ID ){
+E_Status_t GUI_window_insert( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
 
     __exitReturn( !pCFG, kStatus_NotFound );
@@ -706,7 +798,7 @@ E_Status_t GUI_insert_window( ID_t ID ){
     return kStatus_Success;
 }
 
-E_Status_t GUI_delete_window( ID_t ID ){
+E_Status_t GUI_window_delete( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
     __exitReturn( !pCFG, kStatus_NotFound );
     
@@ -714,8 +806,6 @@ E_Status_t GUI_delete_window( ID_t ID ){
     RH_FREE((void*)ID);
     return kStatus_Success;
 }
-
-
 
 #endif
 
