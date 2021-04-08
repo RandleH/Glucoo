@@ -105,15 +105,20 @@ struct __GUI_Object_t{
     
     const char*          text;
     size_t               text_size;
+    __Pixel_t            text_color;
+    E_GUI_FontAlign_t    text_align;
     
-    int32_t              min;
-    int32_t              val;
-    int32_t              max;
+    __Pixel_t            bk_color;
     
-    __Pixel_t            color;
+    double               min;
+    double               val;
+    double               max;
+    
+    bool                 showFrame;
     
     void (*insert_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
     void (*remove_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
+    void (*adjust_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
     
 };
 typedef struct __GUI_Object_t __GUI_Object_t;
@@ -121,9 +126,9 @@ typedef struct __GUI_Object_t __GUI_Object_t;
 ID_t            RH_RESULT GUI_object_create    ( const __GUI_Object_t* config );
 __GUI_Object_t*           GUI_object_quickSet  (       __GUI_Object_t* config );//
 
-E_Status_t                GUI_object_adjust    ( ID_t ID  , void* param, size_t size );//
-E_Status_t                GUI_object_showFrame ( ID_t ID  , bool  cmd   );//
-E_Status_t                GUI_object_show      ( ID_t ID );//
+E_Status_t                GUI_object_adjust    ( ID_t ID  , double val   );//
+E_Status_t                GUI_object_frame     ( ID_t ID  , bool   cmd   );
+E_Status_t                GUI_object_insert    ( ID_t ID );
 E_Status_t                GUI_object_delete    ( ID_t ID );//
 
 

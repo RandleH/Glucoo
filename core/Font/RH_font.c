@@ -297,8 +297,6 @@ void  RH_PREMAIN __Font_init(void){
     FCFG.info.ascent  = roundf( FCFG.info.ascent  * FCFG.scale );
     FCFG.info.descent = roundf( FCFG.info.descent * FCFG.scale );
     
-    
-    
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
 }
 
@@ -360,7 +358,7 @@ void __Font_setStyle(E_GUI_FontStyle_t style){
     FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
 }
 
-void __Font_setSize(int size){
+void __Font_setSize(size_t size){
 #if ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
     FCFG.size = 8;
     FCFG.method = &rhtt;
@@ -524,6 +522,20 @@ void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
     }
     if( height )
         *height = FCFG.size;
+}
+
+int  __Font_getWordNum( const size_t width, const char* str ){
+    int cnt=0, w=0;
+    int c_x1 , c_y1 , c_x2 , c_y2;
+    
+    do{
+        (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, str[cnt++], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        w+=c_x2-c_x1;
+    }while(  cnt<strlen(str) && w<width);
+    if( w>= width )
+        cnt--;
+    
+    return cnt;
 }
 
 #include "RH_data.h"

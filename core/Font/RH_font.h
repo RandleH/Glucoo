@@ -63,6 +63,7 @@ typedef enum{
 typedef enum{
     kGUI_FontAlign_Right   ,
     kGUI_FontAlign_Left    ,
+    kGUI_FontAlign_Middle  ,
     kGUI_FontAlign_Justify
 }E_GUI_FontAlign_t;
 
@@ -80,7 +81,7 @@ typedef struct __GUI_Font_t __GUI_Font_t;
 void             RH_PREMAIN MAKE_FUNC( Font, init           ) (void);
 
 void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
-void                        MAKE_FUNC( Font, setSize        ) ( int               size    );
+void                        MAKE_FUNC( Font, setSize        ) ( size_t            size    );
 
 int                         MAKE_FUNC( Font, getSize        ) ( void );
 E_GUI_FontStyle_t           MAKE_FUNC( Font, getStyle       ) ( void );
@@ -92,7 +93,7 @@ __GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportChar     ) ( uint16_t     uni
 __GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportStr      ) ( const char*  str     );
 
 void                        MAKE_FUNC( Font, getCharSize    ) ( size_t *width, size_t *height, char c );
-
+int                         MAKE_FUNC( Font, getWordNum     ) ( const size_t width, const char* str   );
 
 __GUI_Font_t*               MAKE_FUNC( Font, exportText_Justify )( const char* str, size_t width );
 

@@ -33,7 +33,9 @@ typedef enum{
     kApplyPixel_depix   ,
     kApplyPixel_reverse ,
     kApplyPixel_pick    ,
-    kApplyPixel_blur
+    kApplyPixel_blur    ,
+    kAppltPixel_eor     ,
+    NUM_kApplyPixel
 }E_ApplyPixel_t;
 
 E_Status_t     MAKE_FUNC( Graph , init               ) (void);

@@ -14,8 +14,9 @@ static  __GraphPixel_t __ApplyPixel_lightness    (int x, int y , __GraphPixel_t 
 static  __GraphPixel_t __ApplyPixel_unzero       (int x, int y , __GraphPixel_t color  , __GraphInfo_t* pInfo);
 static  __GraphPixel_t __ApplyPixel_cpblur       (int x, int y , __GraphPixel_t nan    , __GraphInfo_t* pInfo);
 static  __GraphPixel_t __ApplyPixel_reverse      (int x, int y , __GraphPixel_t color  , __GraphInfo_t* pInfo);
+static  __GraphPixel_t __ApplyPixel_eor          (int x, int y , __GraphPixel_t color  , __GraphInfo_t* pInfo);
 
-static const func_ApplyPixelMethod applyPixelMethod[] = {
+static const func_ApplyPixelMethod applyPixelMethod[NUM_kApplyPixel] = {
     [ kApplyPixel_mark    ] = __ApplyPixel_mark      ,
     [ kApplyPixel_unmark  ] = __ApplyPixel_unmark    ,
     [ kApplyPixel_fill    ] = __ApplyPixel_fill      ,
@@ -23,7 +24,8 @@ static const func_ApplyPixelMethod applyPixelMethod[] = {
     [ kApplyPixel_depix   ] = __ApplyPixel_unzero    ,
     [ kApplyPixel_reverse ] = __ApplyPixel_reverse   ,
     [ kApplyPixel_pick    ] = NULL                   ,
-    [ kApplyPixel_blur    ] = __ApplyPixel_cpblur
+    [ kApplyPixel_blur    ] = __ApplyPixel_cpblur    ,
+    [ kAppltPixel_eor     ] = __ApplyPixel_eor
 };
 
 struct __GraphConfig_t{
@@ -213,7 +215,9 @@ static __GraphPixel_t __ApplyPixel_reverse   (int x,int y,__GraphPixel_t br_100,
     return 0;
 }
 
-    
+/*===========================================
+ > 从虚化缓存区拷贝一个像素至指定缓冲区
+============================================*/
 static  __GraphPixel_t __ApplyPixel_cpblur   (int x,int y,__GraphPixel_t nan   ,__GraphInfo_t* pInfo){
     __GraphPixel_t* p = (__GraphPixel_t*)(pInfo->pBuffer);
     size_t width      = pInfo->width;
@@ -221,6 +225,35 @@ static  __GraphPixel_t __ApplyPixel_cpblur   (int x,int y,__GraphPixel_t nan   ,
     __exitReturn( x>=width || y>=height || x<0 || y<0 , 0);
     
     *(p+y*width+x) = GCFG.blur_tmp.pBuffer[ GCFG.blur_tmp.width*(y-GCFG.blur_area.ys)+x-GCFG.blur_area.xs ].data;
+    return 0;
+}
+    
+/*===========================================
+ > 在指定缓冲区,异或一个像素颜色
+============================================*/
+static  __GraphPixel_t __ApplyPixel_eor      (int x,int y,__GraphPixel_t color ,__GraphInfo_t* pInfo){
+#ifdef RH_DEBUG
+    RH_ASSERT(pInfo);
+    RH_ASSERT(pInfo->pBuffer);
+#endif
+    size_t width   = pInfo->width;
+    size_t height  = pInfo->height;
+
+    __exitReturn( x>=width || y>=height || x<0 || y<0 , 1 );
+    
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __GraphPixel_t data = pInfo->pBuffer[(y>>3)*width+x].data;
+    bool  penColor = !(!color);
+    bool  pixColor = __BIT_GET(data, y%8);
+    pInfo->pBuffer[(y>>3)*width+x].data = (penColor^pixColor==0)?(__BIT_CLR( data , y%8 )):(__BIT_SET( data , y%8 ));
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    pInfo->pBuffer[y*width+x].data ^= color;
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    pInfo->pBuffer[y*width+x].data ^= color;
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    
     return 0;
 }
 
