@@ -14,8 +14,8 @@
             filePath = "../../core/RH_gui.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "694"
-            endingLineNumber = "694"
+            startingLineNumber = "703"
+            endingLineNumber = "703"
             landmarkName = "__gui_insert_window_MacOS(config)"
             landmarkType = "9">
          </BreakpointContent>

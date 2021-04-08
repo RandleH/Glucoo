@@ -528,6 +528,15 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , double val ){
 #endif
     config->val = val;
     (*config->adjust_func)(config);
+    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1) \
+                       :
+                         GUI_AddScreenArea     ( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1);
     
     return kStatus_Success;
 }

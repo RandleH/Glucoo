@@ -18,6 +18,7 @@
 #include <complex.h>
 #include <assert.h>
 #include <errno.h>
+#include <stdio.h>
 
 #ifdef __x86_64
 #include <memory.h>

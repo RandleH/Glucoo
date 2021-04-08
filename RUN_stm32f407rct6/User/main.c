@@ -50,27 +50,44 @@ int main(void)
     API_Init__STM32F407RCT6();
 
     GUI_Init();
-    GUI_set_penSize(5);
+
+    __GUI_Object_t cfg_obj = {0};
+
+    GUI_object_quickSet(&cfg_obj);
+
+    cfg_obj.style       = kGUI_ObjStyle_num;
+    cfg_obj.area.xs     = 30;
+    cfg_obj.area.ys     = 30;
+    cfg_obj.area.height = 12;
+    cfg_obj.area.width  = 70;
+    cfg_obj.min         = 0;
+    cfg_obj.max         = 256;
+    cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
+    cfg_obj.text_color  = M_COLOR_RED;
+    cfg_obj.text        = "size:";
+    cfg_obj.text_size   = 8;
+    cfg_obj.text_align  = kGUI_FontAlign_Left;
+    cfg_obj.showFrame   = false;
     
-    __GUI_Window_t cfg;
-    GUI_easySet_window(&cfg);
-    cfg.area.xs     = 10;
-    cfg.area.ys     = 10;
-    cfg.area.height = 60;
-    cfg.area.width  = 100;
-    cfg.type        = kGUI_WindowType_macOS;
-    cfg.size        = 15;
-    cfg.appearance  = kGUI_Appearance_Light;
-    cfg.title       = NULL;
-    cfg.text        = "Hello world";
-    cfg.text_size   = 8;
+    cfg_obj.bk_color    = M_COLOR_TAN;
 
-    ID_t ID_Window1 = GUI_create_window(&cfg);
-    GUI_insert_window( ID_Window1 );
-
+    cfg_obj.val         = 129;
+    
+    ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
+    GUI_object_insert(ID_Obj1);
+    GUI_object_frame(ID_Obj1,true);
+    
+    
+    
+    
+    
+    
     GUI_RefreashScreen();
 
-    while(1);	
+    while(1){
+        for( int i=0; i<128; i++ )
+            GUI_object_adjust(ID_Obj1, i);
+    }
 }
 
 
