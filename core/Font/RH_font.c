@@ -153,7 +153,7 @@ static __Method rhtt  = {   // Present by Randle Hemlslay  --> rh
 static struct{
     __GUI_Font_t       info;
     E_GUI_FontStyle_t  style;
-    int                size;
+    size_t             size;
     float              scale;
     
     stbtt_fontinfo     stb_info;
@@ -384,7 +384,7 @@ void __Font_setSize(size_t size){
     FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
 }
 
-int __Font_getSize(void){
+size_t __Font_getSize(void){
     return FCFG.size;
 }
 

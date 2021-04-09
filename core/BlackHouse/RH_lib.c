@@ -203,8 +203,7 @@ const char*       __ldtoa_BIN    (uint32_t x){
          
 #pragma pack(1)
 unsigned char __VERTUAL_HEAP[ RH_ALLOC_CHUNK_SIZE ];//__attribute__((at()));
-size_t RH_alloc_byte  = 0;
-size_t RH_free_byte   = 0;
+
 
 struct __MallocNode_t{
     unsigned long            index;
@@ -225,13 +224,15 @@ struct __MallocNode_t{
      * index=0                                                                   index=32768
      *
      --------------------------------------------------------------------------------------------------------*/
-
-void* __RH_malloc(size_t size){
+    
+size_t RH_Global_alloced_byte  = 0;
+size_t RH_Global_free_byte   = 0;
+void* __RH_Global_malloc(size_t size){
     size_t size_need       = size;
-    if( RH_alloc_byte + size_need > RH_ALLOC_CHUNK_SIZE )
+    if( RH_Global_alloced_byte + size_need > RH_ALLOC_CHUNK_SIZE )
         return NULL;
     else{
-        RH_alloc_byte += size_need;
+        RH_Global_alloced_byte += size_need;
         // It doesn't mean there is enough space to allocate.
     }
     
@@ -243,10 +244,6 @@ void* __RH_malloc(size_t size){
     
     pNewNode->byte      = size_need;
     pNewNode->pNextNode = NULL;
-    
-// Only for test.
-//    for(int i=0;i<RH_ALLOC_CHUNK_SIZE;i++)
-//        __VERTUAL_HEAP[i] = i;
     
     // Special Condition. There isn't any allocated memory.
     if(pNode == NULL){
@@ -287,14 +284,15 @@ void* __RH_malloc(size_t size){
     }else{
         // Fail to find enough space to allocate
         free(pNewNode);
-        RH_alloc_byte -= size_need;
+        RH_Global_alloced_byte -= size_need;
     }
+    RH_Global_free_byte = RH_ALLOC_CHUNK_SIZE - RH_Global_alloced_byte;
     return ptr;
 }
 
-void* __RH_calloc(size_t count, size_t size){
+void* __RH_Global_calloc(size_t count, size_t size){
     size_t  byt = count*size;
-    void*   ptr = __RH_malloc(byt);
+    void*   ptr = __RH_Global_malloc(byt);
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
 #else
@@ -303,8 +301,60 @@ void* __RH_calloc(size_t count, size_t size){
     
     return memset( ptr, 0, byt );
 }
+
     
-void __RH_free(void* ptr){
+size_t RH_Debug_alloced_byte = 0;
+size_t RH_Debug_free_byte    = 0;
+#include "RH_data.h"
+static __HashMap_t* pHEAD_HASHMAP_size_2_ptr = NULL;
+void* __RH_Debug_malloc( size_t size, void* (*__malloc_func)(size_t size) ){
+    if( !pHEAD_HASHMAP_size_2_ptr )
+        pHEAD_HASHMAP_size_2_ptr = __Hash_createMap();
+    size_t* pSize = malloc(sizeof(size_t));
+    *pSize = size;
+    
+    void* ptr = (*__malloc_func)(size);
+#ifdef RH_DEBUG
+    RH_ASSERT( ptr );
+#endif
+    RH_Debug_alloced_byte += *pSize;
+    
+    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pSize);
+    
+    return ptr;
+}
+
+void* __RH_Debug_calloc( size_t count, size_t size, void* (*__calloc_func)(size_t , size_t ) ){
+    
+    if( !pHEAD_HASHMAP_size_2_ptr )
+        pHEAD_HASHMAP_size_2_ptr = __Hash_createMap();
+    
+    void* ptr = (*__calloc_func)( count,size );
+    
+    size_t* pSize = malloc(sizeof(size_t));
+    *pSize = count*size;
+    RH_Debug_alloced_byte += *pSize;
+    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pSize);
+    
+    return ptr;
+}
+
+void __RH_Debug_free(void* ptr, void (*__free_func)(void*)){
+    size_t* p = (size_t*)__Hash_get(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
+    RH_Debug_alloced_byte -= *p;
+    
+    __Hash_remove(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
+    (*__free_func)(ptr);
+    free(p);
+}
+    
+void __RH_Debug_del_cache_info(void){
+    __Hash_removeAll(pHEAD_HASHMAP_size_2_ptr);
+    pHEAD_HASHMAP_size_2_ptr = NULL;
+    RH_Debug_alloced_byte    = 0;
+}
+    
+void __RH_Global_free(void* ptr){
     unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
     struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
     struct __MallocNode_t* pForeward = NULL;
@@ -312,7 +362,7 @@ void __RH_free(void* ptr){
         if(pNode->index == index && pNode->ptr == ptr){
             if(pForeward != NULL){
                 pForeward->pNextNode = pNode->pNextNode;
-                RH_alloc_byte -= pNode->byte;
+                RH_Global_alloced_byte -= pNode->byte;
                 free(pNode);
             }
             break;
@@ -320,6 +370,7 @@ void __RH_free(void* ptr){
         pForeward = pNode;
         pNode     = pNode->pNextNode;
     }
+    RH_Global_free_byte = RH_ALLOC_CHUNK_SIZE - RH_Global_alloced_byte;
 }
 
 void* __memsetWORD(void* __b,uint16_t value,size_t num){

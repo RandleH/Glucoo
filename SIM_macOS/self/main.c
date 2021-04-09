@@ -53,21 +53,41 @@ int main(int argc, const char * argv[]) {
     cfg_obj.text_size   = 8;
     cfg_obj.text_align  = kGUI_FontAlign_Left;
     cfg_obj.showFrame   = false;
-    
+
     cfg_obj.bk_color    = M_COLOR_TAN;
 
     cfg_obj.val         = 129;
-    
+
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
     GUI_RefreashScreen();
-    
+
     GUI_object_frame(ID_Obj1,true);
 
     GUI_object_adjust(ID_Obj1, 11);
 
-    
+
     GUI_RefreashScreen();
+    
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    
+    printf("size:%ld, alloc:%ld\n",sizeof(__GUI_Object_t),RH_Debug_alloced_byte);
+    
     
     
     

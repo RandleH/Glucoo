@@ -361,7 +361,6 @@ static void __gui_adjust_object_text( const __GUI_Object_t* config ){
 static void __gui_insert_object_num ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
-    RH_ASSERT( config->val );
 #endif
     char __str[GUI_X_WIDTH>>2] = {0};
 

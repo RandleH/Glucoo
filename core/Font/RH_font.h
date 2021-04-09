@@ -83,7 +83,7 @@ void             RH_PREMAIN MAKE_FUNC( Font, init           ) (void);
 void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
 void                        MAKE_FUNC( Font, setSize        ) ( size_t            size    );
 
-int                         MAKE_FUNC( Font, getSize        ) ( void );
+size_t                      MAKE_FUNC( Font, getSize        ) ( void );
 E_GUI_FontStyle_t           MAKE_FUNC( Font, getStyle       ) ( void );
 
 void                        MAKE_FUNC( Font, backup_config  ) (void);

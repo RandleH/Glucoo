@@ -8,6 +8,14 @@
 extern "C" {
 #endif
 
+#define RH_DATA_CALLOC(x,s)           __RH_Debug_calloc(x,size,calloc)//calloc(x,s)
+#define RH_DATA_MALLOC(x)             __RH_Debug_malloc(x,malloc)//malloc(x)
+#define RH_DATA_FREE(x)               __RH_Debug_free(x,free)//free(x)
+
+
+#define RH_DATA_HASH_CALLOC(x,s)      calloc(x,s)
+#define RH_DATA_HASH_MALLOC(x)        malloc(x)
+#define RH_DATA_HASH_FREE(x)          free(x)
 
 /*=====================================================================
 > Data Structure Reference
@@ -80,7 +88,7 @@ typedef struct __Queue_t __Queue_t;
 E_Status_t MAKE_FUNC( Queue , createHead ) ( void* object );
 
 
-#define RH_HASH_MAP_SIZE              (1024)
+
 struct __HashList_t{
     const size_t                     key;
     const void*                const object;
