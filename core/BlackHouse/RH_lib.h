@@ -50,9 +50,11 @@ void  __RH_Global_free   ( void* ptr    );
 
 extern size_t RH_Debug_alloced_byte;
 extern size_t RH_Debug_free_byte;
-void* __RH_Debug_malloc  ( size_t size               , void* (*__malloc_func)(size_t )          );
-void* __RH_Debug_calloc  ( size_t count , size_t size, void* (*__calloc_func)(size_t , size_t ) );
+void* __RH_Debug_malloc  ( size_t size               , char* FILE, int LINE, void* (*__malloc_func)( size_t         ) );
+void* __RH_Debug_calloc  ( size_t count , size_t size, char* FILE, int LINE, void* (*__calloc_func)( size_t, size_t ) );
 void  __RH_Debug_free    ( void*  ptr                , void  (*__free_func  )(void*  )          );
+
+void* __RH_Debug_print_memory_info(void* ptr, int (*__print_func)(const char * restrict format, ...));
 void  __RH_Debug_del_cache_info(void);
 
 

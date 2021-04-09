@@ -303,52 +303,94 @@ void* __RH_Global_calloc(size_t count, size_t size){
 }
 
     
+
+    
+    
+#include "RH_data.h"
 size_t RH_Debug_alloced_byte = 0;
 size_t RH_Debug_free_byte    = 0;
-#include "RH_data.h"
 static __HashMap_t* pHEAD_HASHMAP_size_2_ptr = NULL;
-void* __RH_Debug_malloc( size_t size, void* (*__malloc_func)(size_t size) ){
+    
+struct __RH_DebugMemoryInfo_t{
+    size_t      byte;
+    const char* FILE;
+    uint32_t    LINE;
+    void*       ptr;
+};
+    
+void* __RH_Debug_malloc( size_t size, char* FILE, int LINE, void* (*__malloc_func)(size_t size) ){
     if( !pHEAD_HASHMAP_size_2_ptr )
         pHEAD_HASHMAP_size_2_ptr = __Hash_createMap();
-    size_t* pSize = malloc(sizeof(size_t));
-    *pSize = size;
+//    size_t* pSize = malloc(sizeof(size_t));
+//    *pSize = size;
+    
+    struct __RH_DebugMemoryInfo_t* pInfo = malloc(sizeof(struct __RH_DebugMemoryInfo_t));
     
     void* ptr = (*__malloc_func)(size);
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
+    RH_ASSERT( pInfo );
 #endif
-    RH_Debug_alloced_byte += *pSize;
+    pInfo->ptr  = ptr;
+    pInfo->FILE = FILE;
+    pInfo->LINE = LINE;
+    pInfo->byte = size;
     
-    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pSize);
+    RH_Debug_alloced_byte += pInfo->byte;
+    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pInfo);
     
     return ptr;
 }
 
-void* __RH_Debug_calloc( size_t count, size_t size, void* (*__calloc_func)(size_t , size_t ) ){
+void* __RH_Debug_calloc( size_t count, size_t size, char* FILE, int LINE, void* (*__calloc_func)( size_t, size_t ) ){
     
     if( !pHEAD_HASHMAP_size_2_ptr )
         pHEAD_HASHMAP_size_2_ptr = __Hash_createMap();
     
+    struct __RH_DebugMemoryInfo_t* pInfo = malloc(sizeof(struct __RH_DebugMemoryInfo_t));
     void* ptr = (*__calloc_func)( count,size );
+#ifdef RH_DEBUG
+    RH_ASSERT( ptr );
+    RH_ASSERT( pInfo );
+#endif
     
-    size_t* pSize = malloc(sizeof(size_t));
-    *pSize = count*size;
-    RH_Debug_alloced_byte += *pSize;
-    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pSize);
+    pInfo->ptr  = ptr;
+    pInfo->FILE = FILE;
+    pInfo->LINE = LINE;
+    pInfo->byte = count*size;
+    
+    RH_Debug_alloced_byte += pInfo->byte;
+    __Hash_pair(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr, pInfo);
     
     return ptr;
 }
 
 void __RH_Debug_free(void* ptr, void (*__free_func)(void*)){
-    size_t* p = (size_t*)__Hash_get(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
-    RH_Debug_alloced_byte -= *p;
-    
-    __Hash_remove(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
+    struct __RH_DebugMemoryInfo_t* pInfo = (struct __RH_DebugMemoryInfo_t*)__Hash_get(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
+    RH_Debug_alloced_byte -= pInfo->byte;
+         
     (*__free_func)(ptr);
-    free(p);
+
 }
     
-void __RH_Debug_del_cache_info(void){
+void* __RH_Debug_print_memory_info(void* ptr, int (*__print_func)(const char * restrict format, ...)){
+    __exitReturn( __print_func==NULL, ptr);
+    
+    struct __RH_DebugMemoryInfo_t* pInfo = (struct __RH_DebugMemoryInfo_t*)__Hash_get(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
+#ifdef RH_DEBUG
+    RH_ASSERT( pInfo->ptr==ptr );
+#endif
+    size_t len = strlen("$DEBUG_MEM_INFO: [] [Ln ] [: byte]\n")+strlen(pInfo->FILE)+((sizeof(pInfo->LINE)+sizeof(pInfo->byte))<<3);
+    char*  str = alloca( len + sizeof('\0') );
+    
+    snprintf(str, len, "$DEBUG_MEM_INFO: [%s] [Ln %d] [%zu:%zu Byte]\n",pInfo->FILE,pInfo->LINE,pInfo->byte,RH_Debug_alloced_byte);
+    
+    (*__print_func)("%s",str);
+    
+    return ptr;
+}
+    
+void __RH_Debug_del_memory_info(void){
     __Hash_removeAll(pHEAD_HASHMAP_size_2_ptr);
     pHEAD_HASHMAP_size_2_ptr = NULL;
     RH_Debug_alloced_byte    = 0;

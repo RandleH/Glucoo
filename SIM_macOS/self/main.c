@@ -10,6 +10,11 @@
 #include "RH_gui_api.h"
 #include "RH_color.h"
 
+
+
+
+
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     
@@ -68,29 +73,33 @@ int main(int argc, const char * argv[]) {
 
 
     GUI_RefreashScreen();
-    
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
-    
-    printf("size:%ld, alloc:%ld\n",sizeof(__GUI_Object_t),RH_Debug_alloced_byte);
-    
-    
-    
-    
 
+    for( int i=0; i<128; i++ ){
+        printf("\n");
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    
+    
     return 0;
 }

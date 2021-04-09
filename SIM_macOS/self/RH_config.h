@@ -87,20 +87,21 @@ extern "C" {
 #endif
 
 #ifndef RH_CALLOC
-  #define RH_CALLOC(x,size)                   calloc(x,size)//__RH_Debug_calloc(x,size,calloc)
+  #define RH_CALLOC(x,size)                   __RH_Debug_print_memory_info( __RH_Debug_calloc(x,size,__FILE__,__LINE__,calloc), printf )
 #else
   #error " 'RH_CALLOC' has been defined. "
 #endif
 
 #ifndef RH_MALLOC
 #include "RH_lib.h"
-  #define RH_MALLOC(x)                        malloc(x)//__RH_Debug_malloc(x,malloc)
+  #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), printf )
+//  #define RH_MALLOC(x)                        __RH_Debug_malloc(x,__FILE__,__LINE__,malloc)
 #else
   #error " 'RH_MALLOC' has been defined. "
 #endif
 
 #ifndef RH_FREE
-  #define RH_FREE(x)                          free(x)//__RH_Debug_free(x,free)
+  #define RH_FREE(x)                          __RH_Debug_free(x,free)
 #else
   #error " 'RH_FREE' has been defined. "
 #endif

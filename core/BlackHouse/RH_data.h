@@ -8,9 +8,9 @@
 extern "C" {
 #endif
 
-#define RH_DATA_CALLOC(x,s)           __RH_Debug_calloc(x,size,calloc)//calloc(x,s)
-#define RH_DATA_MALLOC(x)             __RH_Debug_malloc(x,malloc)//malloc(x)
-#define RH_DATA_FREE(x)               __RH_Debug_free(x,free)//free(x)
+#define RH_DATA_CALLOC(x,s)           calloc(x,s)
+#define RH_DATA_MALLOC(x)             malloc(x)
+#define RH_DATA_FREE(x)               free(x)
 
 
 #define RH_DATA_HASH_CALLOC(x,s)      calloc(x,s)

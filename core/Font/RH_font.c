@@ -225,10 +225,10 @@ static struct{
         fseek(fontFile, 0, SEEK_SET);
 
         if( !FCFG.font_data ){
-            free((void*)FCFG.font_data);
+            RH_FREE((void*)FCFG.font_data);
         }
 
-        FCFG.font_data = calloc(size, sizeof(uint8_t));
+        FCFG.font_data = RH_CALLOC(size, sizeof(uint8_t));
 
         fread((void*)FCFG.font_data, size, sizeof(uint8_t), fontFile);
         fclose(fontFile);
@@ -407,10 +407,10 @@ __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
     FCFG.info.width  = c_x2-c_x1;
     
     if( FCFG.info.output ){
-        free(FCFG.info.output);
+        RH_FREE(FCFG.info.output);
         FCFG.info.output = NULL;
     }
-    FCFG.info.output = calloc( FCFG.info.height*FCFG.info.width , sizeof(uint8_t) );
+    FCFG.info.output = RH_CALLOC( FCFG.info.height*FCFG.info.width , sizeof(uint8_t) );
     
     (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, FCFG.info.output, (int)FCFG.info.width, (int)FCFG.info.height, (int)FCFG.info.width, FCFG.scale, FCFG.scale, unicode );
 #ifdef STB_OUTPUT_FONT_PNG
@@ -430,7 +430,7 @@ __GUI_Font_t*  __Font_exportChar(uint16_t unicode){
 __GUI_Font_t*  __Font_exportStr( const char* str ){
     
     if( FCFG.info.output ){
-        free(FCFG.info.output);
+        RH_FREE(FCFG.info.output);
         FCFG.info.output = NULL;
     }
     
@@ -438,12 +438,12 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     
     FCFG.info.height = FCFG.size;
     FCFG.info.width  = 0;
-    int* xs  = (int*)calloc(len,sizeof(int));
-    int* ys  = (int*)calloc(len,sizeof(int));
-    int* c_x = (int*)calloc(len,sizeof(int));
-    int* c_y = (int*)calloc(len,sizeof(int));
-    int* adv = (int*)malloc(len*sizeof(int));
-    int* lfB = (int*)malloc(len*sizeof(int));
+    int* xs  = (int*)RH_CALLOC(len,sizeof(int));
+    int* ys  = (int*)RH_CALLOC(len,sizeof(int));
+    int* c_x = (int*)RH_CALLOC(len,sizeof(int));
+    int* c_y = (int*)RH_CALLOC(len,sizeof(int));
+    int* adv = (int*)RH_MALLOC(len*sizeof(int));
+    int* lfB = (int*)RH_MALLOC(len*sizeof(int));
     for(int i=0; i<len; i++){
         int advanceWidth    = 0;
         int leftSideBearing = 0;
@@ -469,8 +469,7 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
 
     }
     
-    FCFG.info.output = calloc(FCFG.info.width*FCFG.info.height, sizeof(uint8_t));
-    
+    FCFG.info.output = RH_CALLOC(FCFG.info.width*FCFG.info.height, sizeof(uint8_t));
     for(int i=0; i<len; i++){
         size_t byteOffset = 0;
         if( i!=0 ){
@@ -480,12 +479,12 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
         }
         (*FCFG.method->_MakeCodepointBitmap)(&FCFG.stb_info, FCFG.info.output+byteOffset, c_x[i], c_y[i], (int)(FCFG.info.width), FCFG.scale, FCFG.scale, str[i]);
     }
-    free(xs);
-    free(ys);
-    free(c_x);
-    free(c_y);
-    free(adv);
-    free(lfB);
+    RH_FREE(xs);
+    RH_FREE(ys);
+    RH_FREE(c_x);
+    RH_FREE(c_y);
+    RH_FREE(adv);
+    RH_FREE(lfB);
 #ifdef STB_OUTPUT_FONT_PNG
     printf("ascent = %d\n"   , FCFG.info.ascent);
     printf("descent = %d\n"  , FCFG.info.descent);
@@ -657,13 +656,13 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     
     // 释放之前的缓存数据
     if( FCFG.info.output ){
-        free(FCFG.info.output);
+        RH_FREE(FCFG.info.output);
         FCFG.info.output = NULL;
     }
     // 重建缓存, 宽度为输入的width,高度为上述计算后的行数*字体高度即Font.size
     FCFG.info.width  = width;
     FCFG.info.height = rowCnt*FCFG.size;
-    FCFG.info.output = calloc( FCFG.info.height*FCFG.info.width, sizeof(uint8_t) );
+    FCFG.info.output = RH_CALLOC( FCFG.info.height*FCFG.info.width, sizeof(uint8_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( FCFG.info.output );
 #endif
@@ -714,6 +713,10 @@ void __Font_backup_config(void){
 
 void __Font_restore_config(void){
     if( backFCFG ){
+        if( FCFG.info.output ){
+            RH_FREE(FCFG.info.output);
+            FCFG.info.output=NULL;
+        }
         memcpy(&FCFG, &FCFG_copy, sizeof(FCFG));
         __Font_setStyle( FCFG.style );
         __Font_setSize( FCFG.size );
