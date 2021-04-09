@@ -68,7 +68,7 @@ void RH_PREMAIN GUI_Init(void){
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #endif
@@ -94,7 +94,7 @@ void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
         const int ps      = ys>>3;
         const int pe      = ye>>3;
         const int p_width = (pe-ps+1);
-        __Pixel_t* p = (__Pixel_t*)malloc((x_width)*(p_width)*sizeof(__Pixel_t));
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(p_width)*sizeof(__Pixel_t));
         
        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\

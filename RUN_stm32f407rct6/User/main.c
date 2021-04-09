@@ -37,6 +37,10 @@ void BOARD_LED(void){
 #include <string.h>
 #include <math.h>
 
+#include "RH_gui.h"
+#include "RH_gui_api.h"
+#include "RH_color.h"
+
 
 
 int main(void)
@@ -77,16 +81,14 @@ int main(void)
     GUI_object_insert(ID_Obj1);
     GUI_object_frame(ID_Obj1,true);
     
-    
-    
-    
-    
-    
     GUI_RefreashScreen();
 
     while(1){
-        for( int i=0; i<128; i++ )
+        for( int i=0; i<128; i++ ){
             GUI_object_adjust(ID_Obj1, i);
+		    GUI_RefreashScreen();
+            delay_ms(10);
+        }
     }
 }
 
