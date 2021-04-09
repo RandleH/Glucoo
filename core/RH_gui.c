@@ -300,6 +300,7 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
         .height  = GUI_Y_WIDTH                    ,
         .width   = GUI_X_WIDTH                    ,
     };
+    __Graph_backup_config();
     __Font_backup_config();
     
     __Font_setSize(config->text_size);
@@ -309,16 +310,14 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
     if(cnt>0){
         p = alloca( cnt+sizeof('\0') );
         strncpy(p, config->text, cnt);
+        p[cnt] = '\0';
         __GUI_Font_t* pF = __Font_exportStr(p);
     #ifdef RH_DEBUG
         RH_ASSERT( pF );
         RH_ASSERT( pF->output );
         RH_ASSERT( pF->width < config->area.width );
     #endif
-        
-    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        RH_ASSERT(0);
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+
         int x_fs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
         int y_fs = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
@@ -332,6 +331,22 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
                 RH_ASSERT(0);
         }
         __PixelUnit_t color_text = {.data = config->text_color};
+        
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                if( *pIter > 128 ){
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }else{
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }
+            
+            }
+        }
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++ ){
                 size_t index = (y_fs+y)*(info.width)+(x_fs+x);
@@ -348,7 +363,17 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
     #endif
         
     }
-    
+
+    if( config->showFrame ){
+        __Graph_set_penColor( M_COLOR_WHITE );
+        __Graph_rect_raw( config->area.xs, \
+                          config->area.ys, \
+                          config->area.xs+(int)(config->area.width )-1, \
+                          config->area.ys+(int)(config->area.height)-1, \
+                          &info_MainScreen, kAppltPixel_eor);
+
+    }
+    __Graph_restore_config();
     __Font_restore_config();
 }
 static void __gui_remove_object_text( const __GUI_Object_t* config ){
@@ -381,10 +406,6 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     if(__str[0]!='\0'){
 
         __GUI_Font_t* pF = __Font_exportStr(__str);
-    
-    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        RH_ASSERT(0);
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         int x_fs = 0;
         int y_fs = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
@@ -398,6 +419,21 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
                 RH_ASSERT(0);
         }
         __PixelUnit_t color_text = {.data = config->text_color};
+    
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height && y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                if( *pIter > 128 ){
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );               
+                }else{
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }
+            
+            }
+        }
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++ ){
                 size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
@@ -414,6 +450,17 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     #endif
         
     }
+
+    if( config->showFrame ){
+        __Graph_set_penColor( M_COLOR_WHITE );
+        __Graph_rect_raw( config->area.xs, \
+                          config->area.ys, \
+                          config->area.xs+(int)(config->area.width )-1, \
+                          config->area.ys+(int)(config->area.height)-1, \
+                          &info_MainScreen, kAppltPixel_eor);
+
+    }
+
     __Font_restore_config();
     __Graph_restore_config();
 }

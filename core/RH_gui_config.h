@@ -24,7 +24,7 @@ extern "C"{
 
 
 
-#define GUI_Y_WIDTH                 128
+#define GUI_Y_WIDTH                 64
 #define GUI_X_WIDTH                 128
 
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )

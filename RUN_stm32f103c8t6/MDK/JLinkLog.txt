@@ -1,0 +1,27 @@
+
+T0190 000:472 SEGGER J-Link V4.90 Log File (0001ms, 0264ms total)
+T0190 000:472 DLL Compiled: Jul 28 2014 10:35:20 (0001ms, 0264ms total)
+T0190 000:472 Logging started @ 2017-02-07 17:46 (0001ms, 0264ms total)
+T0190 000:473 JLINK_SetWarnOutHandler(...) (0000ms, 0264ms total)
+T0190 000:473 JLINK_OpenEx(...)
+Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
+Hardware: V7.00
+S/N: 20160927
+Feature(s): RDI,FlashDL,FlashBP,JFlash,GDBFull  returns O.K. (0258ms, 0522ms total)
+T0190 000:731 JLINK_SetErrorOutHandler(...) (0000ms, 0522ms total)
+T0190 000:731 JLINK_ExecCommand("ProjectFile = "F:\模块\模块资料\系统板模块资料\STM32核心板\STM32F103C8T6最小系统板\STM32F103C8T6核心板程序资料\STM32F103C8T6核心板测试程序(PC13闪烁)\MDK-ARM\JLinkSettings.ini"", ...)  returns 0x00 (0000ms, 0522ms total)
+T0190 000:732 JLINK_ExecCommand("Device = STM32F103C8", ...)Device "STM32F103C8" selected (64 KB flash, 20 KB RAM).  returns 0x00 (0000ms, 0522ms total)
+T0190 000:732 JLINK_ExecCommand("DisableConnectionTimeout", ...)  returns 0x01 (0000ms, 0522ms total)
+T0190 000:732 JLINK_GetHardwareVersion()  returns 0x11170 (0000ms, 0522ms total)
+T0190 000:732 JLINK_GetDLLVersion()  returns 49000 (0001ms, 0523ms total)
+T0190 000:733 JLINK_GetFirmwareString(...) (0000ms, 0523ms total)
+T0190 000:744 JLINK_GetDLLVersion()  returns 49000 (0000ms, 0523ms total)
+T0190 000:744 JLINK_GetCompileDateTime() (0000ms, 0523ms total)
+T0190 000:745 JLINK_GetFirmwareString(...) (0000ms, 0523ms total)
+T0190 000:747 JLINK_GetHardwareVersion()  returns 0x11170 (0000ms, 0523ms total)
+T0190 000:751 JLINK_TIF_Select(JLINKARM_TIF_JTAG)  returns 0x00 (0004ms, 0527ms total)
+T0190 000:755 JLINK_SetSpeed(20000) (0000ms, 0527ms total)
+T0190 000:755 JLINK_GetIdData(...) >0x2F8 JTAG>Could not measure total IR len. TDO is constant high. >0x30 JTAG>STM32Fxxxx: Cannot attach to CPU. Trying connect under reset. >0x2F8 JTAG>Could not measure total IR len. TDO is constant high. >0x30 JTAG> (0110ms, 0637ms total)
+T0190 008:444 JLINK_Close() (0000ms, 0637ms total)
+T0190 008:444  (0000ms, 0637ms total)
+T0190 008:444 Closed (0000ms, 0637ms total)
