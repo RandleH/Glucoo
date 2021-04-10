@@ -104,21 +104,22 @@ struct __GUI_Object_t{
     E_GUI_FontStyle_t    font;
     
     const char*          text;
-    size_t               text_size;
+    int16_t              text_size;
     __Pixel_t            text_color;
     E_GUI_FontAlign_t    text_align;
     
     __Pixel_t            bk_color;
     
-    double               min;
-    double               val;
-    double               max;
+    float                min;
+    float                val;
+    float                max;
     
     bool                 showFrame;
     
     void (*insert_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
     void (*remove_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
     void (*adjust_func)(const struct __GUI_Object_t*);  // DO NOT MODIFY
+    const void*   const  history;                       // DO NOT MODIFY
     
 };
 typedef struct __GUI_Object_t __GUI_Object_t;

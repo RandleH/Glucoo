@@ -59,7 +59,7 @@ int main(int argc, const char * argv[]) {
     cfg_obj.text_align  = kGUI_FontAlign_Left;
     cfg_obj.showFrame   = false;
 
-    cfg_obj.bk_color    = M_COLOR_TAN;
+    cfg_obj.bk_color    = M_COLOR_BLACK;
 
     cfg_obj.val         = 129;
 

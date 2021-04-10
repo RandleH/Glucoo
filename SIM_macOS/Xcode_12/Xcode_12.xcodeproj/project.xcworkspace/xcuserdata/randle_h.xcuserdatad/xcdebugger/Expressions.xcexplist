@@ -3,7 +3,39 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "Simul_API_DrawArea:RH_gui_api.c">
+         contextName = "__memgrab_Area:RH_lib.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GUI_AddScreenArea:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__gui_remove_object_text:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "pHistory">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GUI_RefreashScreenArea:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GUI_RefreashScreen:RH_gui.c">
          <PersistentStrings>
             <PersistentString
                value = "RH_Debug_alloced_byte">
@@ -19,31 +51,23 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__ImgRGB565_create:RH_image.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Simul_API_DrawArea:RH_gui_api.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "GUI_object_insert:RH_gui.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "GUI_RefreashScreenArea:RH_gui.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__Font_exportStr:RH_font.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "FCFG.info.output">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__memgrab_Area:RH_lib.c">
          <PersistentStrings>
             <PersistentString
                value = "RH_Debug_alloced_byte">
@@ -62,28 +86,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "GUI_RefreashScreen:RH_gui.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "GUI_AddScreenArea:RH_gui.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__ImgRGB565_create:RH_image.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "GUI_object_frame:RH_gui.c">
       </ContextState>
       <ContextState
          contextName = "__gui_insert_window_MacOS:RH_gui.c">
@@ -93,6 +96,14 @@
             </PersistentString>
             <PersistentString
                value = "color_bar">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__Font_exportStr:RH_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "FCFG.info.output">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

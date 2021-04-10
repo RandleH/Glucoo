@@ -288,23 +288,77 @@ void GUI_circle_qrt4 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
+static void __gui_remove_object_text( const __GUI_Object_t* config ){
+    struct{
+        __Area_t area;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
+    
+    __Graph_backup_config();
+    
+    if( !pHistory ){
+        __Graph_set_penColor( config->bk_color );
+        __Graph_rect_fill( config->area.xs+1, \
+                           config->area.ys+1, \
+                           config->area.xs+(int)config->area.width -1-1, \
+                           config->area.ys+(int)config->area.height-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+        if( config->showFrame ){
+            __Graph_set_penColor( config->bk_color );
+            __Graph_rect_raw( config->area.xs, \
+                              config->area.ys, \
+                              config->area.xs+(int)config->area.width -1, \
+                              config->area.ys+(int)config->area.height-1, \
+                              &info_MainScreen, kApplyPixel_fill);
+        }
+    }else{
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory->area.xs >= config->area.xs );
+        RH_ASSERT( pHistory->area.ys >= config->area.ys );
+        RH_ASSERT( pHistory->area.xs+pHistory->area.width  <= config->area.xs+config->area.width  );
+        RH_ASSERT( pHistory->area.ys+pHistory->area.height <= config->area.ys+config->area.height );
+    #endif
+        __Graph_set_penColor( config->bk_color );
+        __Graph_rect_fill( pHistory->area.xs, \
+                           pHistory->area.ys, \
+                           pHistory->area.xs+(int)pHistory->area.width -1, \
+                           pHistory->area.ys+(int)pHistory->area.height-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+        if( pHistory->showFrame && !config->showFrame ){
+            __Graph_set_penColor( config->bk_color );
+            __Graph_rect_raw( config->area.xs, \
+                              config->area.ys, \
+                              config->area.xs+(int)config->area.width -1, \
+                              config->area.ys+(int)config->area.height-1, \
+                              &info_MainScreen, kApplyPixel_fill);
+        }
+    }
+    
+    __Graph_restore_config();
+}
 static void __gui_insert_object_text( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
     RH_ASSERT( config->text );
 #endif
     
+    __gui_remove_object_text(config);
+
+    struct{
+        __Area_t area;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
     
-    __GraphInfo_t info = {
-        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
-        .height  = GUI_Y_WIDTH                    ,
-        .width   = GUI_X_WIDTH                    ,
-    };
+    if( !pHistory ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
+    }
+    
     __Graph_backup_config();
     __Font_backup_config();
     
     __Font_setSize(config->text_size);
-    size_t cnt = __Font_getWordNum( config->area.width, config->text );
+    int cnt = __Font_getWordNum( config->area.width, config->text );
 
     char* p = NULL;
     if(cnt>0){
@@ -317,15 +371,16 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
         RH_ASSERT( pF->output );
         RH_ASSERT( pF->width < config->area.width );
     #endif
-
-        int x_fs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
-        int y_fs = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+        /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
+        int x_fs = 0;
+        int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+        
         switch ( config->text_align ) {
             case kGUI_FontAlign_Left:
-                x_fs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGUI_FontAlign_Middle:
-                x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -333,6 +388,7 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
         __PixelUnit_t color_text = {.data = config->text_color};
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        /* 字体图像像素遍历pIter */
         uint8_t* pIter = pF->output;
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
@@ -346,7 +402,6 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++ ){
                 size_t index = (y_fs+y)*(info.width)+(x_fs+x);
@@ -362,7 +417,12 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
          
     #endif
         
+        /* 记录区域长宽到history, 方便下次清除区域 */
+        pHistory->area.height = __min( pF->height, config->area.height );
+        pHistory->area.width  = pF->width;
     }
+    
+    
 
     if( config->showFrame ){
         __Graph_set_penColor( M_COLOR_WHITE );
@@ -373,31 +433,46 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
                           &info_MainScreen, kAppltPixel_eor);
 
     }
+    pHistory->showFrame = config->showFrame;
+    
+    
     __Graph_restore_config();
     __Font_restore_config();
-}
-static void __gui_remove_object_text( const __GUI_Object_t* config ){
     
 }
 static void __gui_adjust_object_text( const __GUI_Object_t* config ){
     return;
 }
 
+static void __gui_remove_object_num ( const __GUI_Object_t* config ){
+    __gui_remove_object_text(config);
+}
 static void __gui_insert_object_num ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
 #endif
     char __str[GUI_X_WIDTH>>2] = {0};
-
+    __gui_remove_object_num(config);
+    
     __Font_backup_config();
     __Graph_backup_config();
     
-    __Graph_set_penColor(config->bk_color);
-    __Graph_rect_fill( config->area.xs+1, \
-                       config->area.ys+1, \
-                       config->area.xs+(int)(config->area.width) -1-1, \
-                       config->area.ys+(int)(config->area.height)-1-1, \
-                       &info_MainScreen, kApplyPixel_fill);
+//    __Graph_set_penColor(config->bk_color);
+//    __Graph_rect_fill( config->area.xs+1, \
+//                       config->area.ys+1, \
+//                       config->area.xs+(int)(config->area.width) -1-1, \
+//                       config->area.ys+(int)(config->area.height)-1-1, \
+//                       &info_MainScreen, kApplyPixel_fill);
+    
+    struct{
+        __Area_t area;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
+    
+    if( !pHistory ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
+    }
     
     __Font_setSize(config->text_size);
     snprintf(__str, sizeof(__str), "%d",(int32_t)config->val);
@@ -406,14 +481,17 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     if(__str[0]!='\0'){
 
         __GUI_Font_t* pF = __Font_exportStr(__str);
+        
+        /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
+        
         int x_fs = 0;
-        int y_fs = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+        int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
             case kGUI_FontAlign_Left:
-                x_fs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGUI_FontAlign_Middle:
-                x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -448,7 +526,9 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     #else
          
     #endif
-        
+        /* 记录区域长宽到history, 方便下次清除区域 */
+        pHistory->area.height = __min( pF->height, config->area.height );
+        pHistory->area.width  = pF->width;
     }
 
     if( config->showFrame ){
@@ -457,30 +537,15 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kAppltPixel_eor);
+                          &info_MainScreen, kApplyPixel_fill);
 
     }
+    pHistory->showFrame = config->showFrame;
 
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_remove_object_num ( const __GUI_Object_t* config ){
-    
-}
 static void __gui_adjust_object_num ( const __GUI_Object_t* config ){
-    
-//    __Graph_backup_config();
-//    
-//    __Graph_set_penColor(config->bk_color);
-//    __Graph_rect_fill( config->area.xs+1, \
-//                       config->area.ys+1, \
-//                       config->area.xs+(int)(config->area.width) -1-1, \
-//                       config->area.ys+(int)(config->area.height)-1-1, \
-//                       &info_MainScreen, kApplyPixel_fill);
-//    
-//    
-//    
-//    __Graph_restore_config();
     
     __gui_insert_object_num( config );
     
@@ -506,7 +571,9 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
     __gui_check_object(config);
 #endif
-    *m_config = *config;
+//    *m_config = *config;
+    memmove(m_config, config, sizeof(__GUI_Object_t));
+    __SET_STRUCT_MB(__GUI_Object_t, void*, m_config, history, NULL);
     
     switch( m_config->style ){
         case kGUI_ObjStyle_text:

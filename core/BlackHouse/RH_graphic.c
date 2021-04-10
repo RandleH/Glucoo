@@ -245,7 +245,7 @@ static  __GraphPixel_t __ApplyPixel_eor      (int x,int y,__GraphPixel_t color ,
     __GraphPixel_t data = pInfo->pBuffer[(y>>3)*width+x].data;
     bool  penColor = !(!color);
     bool  pixColor = __BIT_GET(data, y%8);
-    pInfo->pBuffer[(y>>3)*width+x].data = (penColor^pixColor==0)?(__BIT_CLR( data , y%8 )):(__BIT_SET( data , y%8 ));
+    pInfo->pBuffer[(y>>3)*width+x].data = ((penColor^pixColor)==0)?(__BIT_CLR( data , y%8 )):(__BIT_SET( data , y%8 ));
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     pInfo->pBuffer[y*width+x].data ^= color;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
