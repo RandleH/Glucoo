@@ -86,7 +86,7 @@ void RH_PREMAIN GUI_Init(void){
     __Font_init();
 }
 
-void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
+void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
     
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -133,7 +133,7 @@ void GUI_RefreashScreenArea( int xs,int ys,int xe,int ye ){
 
 }
 
-void GUI_RefreashScreen(void){
+void GUI_RefreashScreen     ( void ){
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
@@ -155,7 +155,7 @@ void GUI_RefreashScreen(void){
     Screen.areaNeedRefreashPixelCnt = 0;
 }
 
-void GUI_AddScreenArea( int xs,int ys,int xe,int ye ){
+void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
         while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
@@ -183,35 +183,35 @@ void GUI_set_penColor       ( __Pixel_t penColor ){
 }
 
 
-void GUI_rect_raw( int xs,int ys,int xe,int ye ){
+void GUI_rect_raw           ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_edged( int xs, int ys, int xe, int ye ){
+void GUI_rect_edged         ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_edged( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_fill( int xs, int ys, int xe, int ye ){
+void GUI_rect_fill          ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_fill( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_round( int xs, int ys, int xe, int ye ){
+void GUI_rect_round         ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_round( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_raw         ( int x ,int y ,int d ){
+void GUI_circle_raw         ( int x , int y , int d ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
@@ -222,7 +222,7 @@ void GUI_circle_raw         ( int x ,int y ,int d ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_edged       ( int x ,int y ,int d ){
+void GUI_circle_edged       ( int x , int y , int d ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
@@ -233,7 +233,7 @@ void GUI_circle_edged       ( int x ,int y ,int d ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_fill         ( int x, int y, int d ){
+void GUI_circle_fill        ( int x , int y , int d ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
@@ -244,7 +244,7 @@ void GUI_circle_fill         ( int x, int y, int d ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt1 (int x ,int y ,int r ){
+void GUI_circle_qrt1        ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
@@ -255,7 +255,7 @@ void GUI_circle_qrt1 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt2 (int x ,int y ,int r ){
+void GUI_circle_qrt2        ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -266,7 +266,7 @@ void GUI_circle_qrt2 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt3 (int x ,int y ,int r ){
+void GUI_circle_qrt3        ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -277,7 +277,7 @@ void GUI_circle_qrt3 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt4 (int x ,int y ,int r ){
+void GUI_circle_qrt4        ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
@@ -288,7 +288,7 @@ void GUI_circle_qrt4 (int x ,int y ,int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-static void __gui_remove_object_text( const __GUI_Object_t* config ){
+static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
     struct{
         __Area_t area;
         bool     showFrame;
@@ -336,7 +336,7 @@ static void __gui_remove_object_text( const __GUI_Object_t* config ){
     
     __Graph_restore_config();
 }
-static void __gui_insert_object_text( const __GUI_Object_t* config ){
+static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
     RH_ASSERT( config->text );
@@ -393,7 +393,7 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( *pIter > 128 ){
+                if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
                 }else{
                     info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -440,14 +440,14 @@ static void __gui_insert_object_text( const __GUI_Object_t* config ){
     __Font_restore_config();
     
 }
-static void __gui_adjust_object_text( const __GUI_Object_t* config ){
+static void __gui_adjust_object_text   ( const __GUI_Object_t* config ){
     return;
 }
 
-static void __gui_remove_object_num ( const __GUI_Object_t* config ){
+static void __gui_remove_object_num    ( const __GUI_Object_t* config ){
     __gui_remove_object_text(config);
 }
-static void __gui_insert_object_num ( const __GUI_Object_t* config ){
+static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
 #endif
@@ -456,13 +456,6 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     
     __Font_backup_config();
     __Graph_backup_config();
-    
-//    __Graph_set_penColor(config->bk_color);
-//    __Graph_rect_fill( config->area.xs+1, \
-//                       config->area.ys+1, \
-//                       config->area.xs+(int)(config->area.width) -1-1, \
-//                       config->area.ys+(int)(config->area.height)-1-1, \
-//                       &info_MainScreen, kApplyPixel_fill);
     
     struct{
         __Area_t area;
@@ -503,7 +496,7 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
         for( int y=0; y<pF->height && y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( *pIter > 128 ){
+                if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );               
                 }else{
                     info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -545,17 +538,123 @@ static void __gui_insert_object_num ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_num ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_num    ( const __GUI_Object_t* config ){
     
     __gui_insert_object_num( config );
     
 }
 
+static void __gui_remove_object_fnum   ( const __GUI_Object_t* config ){
+    //...//
+}
+static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+#endif
+    // 记录历史改动区域
+    struct{
+        __Area_t area;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
+    
+    if( !pHistory ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
+    }
+    
+    char __str[GUI_X_WIDTH>>2] = {'\0'};
+    __Font_setSize(config->text_size);
+    snprintf(__str, sizeof(__str), "%.3f",(float)config->val);
+    
+    // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
+    int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+    // 在临界位置截断字符串
+    __str[ maxWordCnt ] = '\0';
+    
+    // 计算该浮点数在这样宽度范围内是否可以被正确显示: [例] 假设最多显示3个字符  12.34 | 90.001 | 123.123 均可 而 1234.567 | 4253.000 不可能被显示正确
+    
+    bool isEnough = false;
+    for ( int i=0; i<strlen(__str)&&i<maxWordCnt; i++) {
+        if( __str[i] == '.' ){
+            if( __str[i+1] == '\0' ) // 小数点后字符串结束
+                __str[i] = '\0'; // 则小数点也无需显示
+            isEnough = true;
+            break;
+        }
+    }
+    // 不可能被显示正确的数字, 则显示全“#”, 以表示无法显示
+    if( !isEnough){
+        memset(__str, '#', maxWordCnt);
+    }
+    
+    __GUI_Font_t* pF = __Font_exportStr(__str);
+    /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
+    int x_fs = 0;
+    int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+    switch ( config->text_align ) {
+        case kGUI_FontAlign_Left:
+            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+            break;
+        case kGUI_FontAlign_Middle:
+            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+            break;
+        default:
+            RH_ASSERT(0);
+    }
+    __PixelUnit_t color_text = {.data = config->text_color};
+    
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    uint8_t* pIter = pF->output;
+    for( int y=0; y<pF->height && y<config->area.height; y++ ){
+        for( int x=0; x<pF->width; x++, pIter++ ){
+            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+            if( (*pIter<128) ^ (color_text.data!=0) ){
+                info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+            }else{
+                info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+            }
+        
+        }
+    }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+        for( int x=0; x<pF->width; x++ ){
+            size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
+            uint8_t pixWeight = pF->output[y*pF->width+x];
+            info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
+            info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
+            info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+        }
+    }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    RH_ASSERT(0);
+#else
+     
+#endif
+    /* 记录区域长宽到history, 方便下次清除区域 */
+    pHistory->area.height = __min( pF->height, config->area.height );
+    pHistory->area.width  = pF->width;
+        
+    
+    
+    if( config->showFrame ){
+        __Graph_set_penColor( M_COLOR_WHITE );
+        __Graph_rect_raw( config->area.xs, \
+                          config->area.ys, \
+                          config->area.xs+(int)(config->area.width )-1, \
+                          config->area.ys+(int)(config->area.height)-1, \
+                          &info_MainScreen, kApplyPixel_fill);
 
+    }
+    pHistory->showFrame = config->showFrame;
 
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){}
 
 #ifdef RH_DEBUG
-static inline void __gui_check_object(const __GUI_Object_t* config){
+static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
     RH_ASSERT( config->min   <= config->max       );
     RH_ASSERT( config->style <  NUM_kGUI_ObjStyle );
@@ -571,7 +670,6 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
     __gui_check_object(config);
 #endif
-//    *m_config = *config;
     memmove(m_config, config, sizeof(__GUI_Object_t));
     __SET_STRUCT_MB(__GUI_Object_t, void*, m_config, history, NULL);
     
@@ -585,6 +683,11 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->insert_func = __gui_insert_object_num;
             m_config->remove_func = __gui_remove_object_num;
             m_config->adjust_func = __gui_adjust_object_num;
+            break;
+        case kGUI_ObjStyle_fnum:
+            m_config->insert_func = __gui_insert_object_fnum;
+            m_config->remove_func = __gui_remove_object_fnum;
+            m_config->adjust_func = __gui_adjust_object_fnum;
             break;
         default:
             RH_ASSERT(0);
@@ -655,9 +758,12 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , double val ){
 }
 
 
+
+
+
 #if GUI_WINDOW_DISPLAY
 
-static void __gui_insert_window_MacOS(__GUI_Window_t* config){
+static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 
@@ -826,8 +932,7 @@ static void __gui_insert_window_MacOS(__GUI_Window_t* config){
     __Font_restore_config();
 
 }
-
-static void __gui_insert_window_Win10(__GUI_Window_t* config){
+static void __gui_insert_window_Win10  (__GUI_Window_t* config){
 #ifdef RH_DEBUG
     RH_ASSERT(config);
 #else
@@ -844,7 +949,7 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
     const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -878,23 +983,18 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     
     if( config->text != NULL ){
         uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
-        typeof(info.pBuffer) pIterScr  = &info.pBuffer[ (ys+bar_size)*info.width + xs+bar_edge+config->text_margin ];
         
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        RH_ASSERT(false);
+        typeof(info.pBuffer) pIterScr  = &info.pBuffer[ ((ys+bar_size)>>3)*info.width + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
         for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info.width ){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
-                if( *pIterFont != 0x00 ){
-#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                    RH_ASSERT(false);
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                    
-                    pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
-                    pIterScr->G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
-                    pIterScr->B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
-#else
-  #error "[RH_graphic]: Unknown color type."
-#endif
+                if( (*pIterFont>128) ^ (color_text.data) ){
+                    pIterScr->data = __BIT_SET( pIterScr->data, y%8 );
+                }else{
+                    pIterScr->data = __BIT_CLR( pIterScr->data, y%8 );
                 }
                 cntOfFontPix++;
             }
@@ -902,6 +1002,28 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
                 break;
             pIterScr -= config->text_bitW;
         }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        
+        typeof(info.pBuffer) pIterScr  = &info.pBuffer[ (ys+bar_size)*info.width + xs+bar_edge+config->text_margin ];
+        size_t               numOfFontPix = config->text_bitH*config->text_bitW;
+        size_t               cntOfFontPix = 0;
+        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info.width ){
+            for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
+                if( *pIterFont != 0x00 ){
+                    pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
+                    pIterScr->G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
+                    pIterScr->B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
+                }
+                cntOfFontPix++;
+            }
+            if(cntOfFontPix == numOfFontPix)
+                break;
+            pIterScr -= config->text_bitW;
+        }
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+            
     }
     
     // Button
@@ -950,14 +1072,13 @@ static void __gui_insert_window_Win10(__GUI_Window_t* config){
     __Font_restore_config();
 }
 
-static void __gui_remove_window_MacOS(__GUI_Window_t* config){
+static void __gui_remove_window_MacOS  (__GUI_Window_t* config){
     
 }
-
-static void __gui_remove_window_Win10(__GUI_Window_t* config){}
+static void __gui_remove_window_Win10  (__GUI_Window_t* config){}
 
 #ifdef RH_DEBUG
-static inline void __gui_check_window(const __GUI_Window_t* config){
+static inline void __gui_check_window  ( const __GUI_Window_t* config ){
     RH_ASSERT( config->size      > 5                   );  /* Too small */
     RH_ASSERT( config->text_size > 5                   );  /* Too small */
     RH_ASSERT( config->type      < NUM_kGUI_WindowType );  /* Wrong enumeration reference */
@@ -965,7 +1086,7 @@ static inline void __gui_check_window(const __GUI_Window_t* config){
 }
 #endif
 
-ID_t GUI_window_create( const __GUI_Window_t* config ){
+ID_t GUI_window_create                 ( const __GUI_Window_t* config ){
     __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
 
     __Font_backup_config();
@@ -1022,7 +1143,7 @@ ID_t GUI_window_create( const __GUI_Window_t* config ){
     return (ID_t)m_config;
 }
 
-__GUI_Window_t* GUI_window_quickSet( __GUI_Window_t* config ){
+__GUI_Window_t* GUI_window_quickSet    (       __GUI_Window_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 #else
@@ -1051,7 +1172,7 @@ __GUI_Window_t* GUI_window_quickSet( __GUI_Window_t* config ){
     return config;
 }
 
-E_Status_t GUI_window_insert( ID_t ID ){
+E_Status_t GUI_window_insert           ( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
 
     __exitReturn( !pCFG, kStatus_NotFound );
@@ -1068,7 +1189,7 @@ E_Status_t GUI_window_insert( ID_t ID ){
     return kStatus_Success;
 }
 
-E_Status_t GUI_window_delete( ID_t ID ){
+E_Status_t GUI_window_delete           ( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
     __exitReturn( !pCFG, kStatus_NotFound );
     

@@ -95,6 +95,9 @@ E_Status_t                GUI_window_delete    ( ID_t ID );
 typedef enum{
     kGUI_ObjStyle_text  ,
     kGUI_ObjStyle_num   ,
+    kGUI_ObjStyle_fnum  ,//
+    
+    kGUI_ObjStyle_switch,//
     NUM_kGUI_ObjStyle   ,
 }E_GUI_ObjStyle_t;
 

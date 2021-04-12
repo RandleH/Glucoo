@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #ifdef __x86_64
 #include <memory.h>

@@ -108,6 +108,13 @@ void  rhtt_MakeCodepointBitmap  (const stbtt_fontinfo *info, unsigned char *outp
     // codepoint  :  字符, 可以为ASCII, 也可以是UNICODE, 这里仅支持ASCII
 
     const rhtt_fontinfo *pInfo = (const rhtt_fontinfo*)(info->data);
+    if( !isprint(codepoint) ){
+    #ifdef RH_DEBUG
+        RH_ASSERT(0);
+    #else
+        codepoint = '?';
+    #endif
+    }
     pInfo += codepoint - ' ';
 #ifdef RH_DEBUG
     RH_ASSERT( pInfo );
@@ -445,6 +452,7 @@ __GUI_Font_t*  __Font_exportStr( const char* str ){
     int* adv = (int*)RH_MALLOC(len*sizeof(int));
     int* lfB = (int*)RH_MALLOC(len*sizeof(int));
     for(int i=0; i<len; i++){
+        
         int advanceWidth    = 0;
         int leftSideBearing = 0;
         (*FCFG.method->_GetCodepointHMetrics)( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
