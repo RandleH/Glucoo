@@ -608,18 +608,36 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
     __PixelUnit_t color_text = {.data = config->text_color};
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    uint8_t* pIter = pF->output;
+    uint8_t*       pIterFont = pF->output;
+    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer;
     for( int y=0; y<pF->height && y<config->area.height; y++ ){
-        for( int x=0; x<pF->width; x++, pIter++ ){
-            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-            if( (*pIter<128) ^ (color_text.data!=0) ){
-                info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+        pIterScr = info_MainScreen.pBuffer + ((y_fs+y)>>3)*(info_MainScreen.width)+x_fs;
+        for( int x=0; x<pF->width; x++, pIterFont++, pIterScr++ ){
+//            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+            if( (*pIterFont<128) ^ (color_text.data!=0) ){
+                pIterScr->data = __BIT_SET( pIterScr->data, (y_fs+y)%8 );
             }else{
-                info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                pIterScr->data = __BIT_CLR( pIterScr->data, (y_fs+y)%8 );
             }
         
         }
     }
+    
+//    for( int p=(y_fs>>3); p<(info_MainScreen.height>>3) && p<((y_fs+pF->height-1)>>3); p++ ){
+//
+//        if( p==(y_fs>>3) ){
+//            for( int x=0; x<pF->width; x++, pIter++ ){
+//
+//
+//            }
+//            continue;
+//        }
+//
+//        for( int x=0; x<pF->width; x++, pIter++ ){
+//
+//
+//        }
+//    }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     for( int y=0; y<pF->height&&y<config->area.height; y++ ){
         for( int x=0; x<pF->width; x++ ){
