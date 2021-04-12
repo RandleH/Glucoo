@@ -10,23 +10,37 @@
 #include "RH_gui.h"
 #include "RH_gui_api.h"
 #include "RH_color.h"
+#include <time.h>
 
 
 
 
+void Dummy(int x, int y){
+    printf("x=%d,y=%d\n",x,y);
+    size_t cnt = 9999;
+    while(cnt--);
+}
 
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     
+    
+    
     printf("[%d]\n",isprint(126));
     
     
-#if 1
+    __RECORD_TIME( Dummy(3,4), printf );
+    
     Simul_API_Init();
     
     GUI_Init();
     GUI_set_penSize(5);
+    GUI_sausage_raw(30,30,100,50);
+    GUI_RefreashScreen();
+    
+#if 0
+    
     
 //    __GUI_Window_t cfg;
 //    GUI_window_quickSet(&cfg);
@@ -71,7 +85,7 @@ int main(int argc, const char * argv[]) {
     GUI_object_insert(ID_Obj1);
     GUI_object_frame(ID_Obj1,true);
     
-    GUI_RefreashScreen();
+    __RECORD_TIME( GUI_RefreashScreen(), printf );
 
     GUI_object_frame(ID_Obj1,true);
 
@@ -80,7 +94,6 @@ int main(int argc, const char * argv[]) {
     GUI_RefreashScreen();
 
     for( int i=0; i<128; i++ ){
-        printf("\n");
         GUI_object_adjust(ID_Obj1, i);
         GUI_RefreashScreen();
     }
@@ -104,6 +117,8 @@ int main(int argc, const char * argv[]) {
         GUI_object_adjust(ID_Obj1, i);
         GUI_RefreashScreen();
     }
+    
+    __LOOP(20, printf("B"));
     
 #endif
     return 0;

@@ -288,6 +288,11 @@ void GUI_circle_qrt4        ( int x , int y , int r ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
+void GUI_sausage_raw        ( int xs, int ys, int xe, int ye ){
+    __Graph_sausage_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
 static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
     struct{
         __Area_t area;
@@ -344,8 +349,10 @@ static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
 }
 static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
+    RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
     RH_ASSERT( config->text );
+    RH_ASSERT( config->style == kGUI_ObjStyle_text );
 #endif
     
     __gui_remove_object_text(config);
@@ -455,7 +462,9 @@ static void __gui_remove_object_num    ( const __GUI_Object_t* config ){
 }
 static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
+    RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->style == kGUI_ObjStyle_num );
 #endif
     char __str[GUI_X_WIDTH>>2] = {0};
     __gui_remove_object_num(config);
@@ -553,7 +562,9 @@ static void __gui_remove_object_fnum   ( const __GUI_Object_t* config ){
 }
 static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
+    RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->style == kGUI_ObjStyle_fnum );
 #endif
     // 记录历史改动区域
     struct{
@@ -565,6 +576,10 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
+    __gui_remove_object_fnum(config);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
     
     char __str[GUI_X_WIDTH>>2] = {'\0'};
     __Font_setSize(config->text_size);
@@ -609,35 +624,24 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     uint8_t*       pIterFont = pF->output;
-    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer;
+    
+    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs>>3)*(info_MainScreen.width)+x_fs;
+    
     for( int y=0; y<pF->height && y<config->area.height; y++ ){
-        pIterScr = info_MainScreen.pBuffer + ((y_fs+y)>>3)*(info_MainScreen.width)+x_fs;
         for( int x=0; x<pF->width; x++, pIterFont++, pIterScr++ ){
-//            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
             if( (*pIterFont<128) ^ (color_text.data!=0) ){
                 pIterScr->data = __BIT_SET( pIterScr->data, (y_fs+y)%8 );
             }else{
                 pIterScr->data = __BIT_CLR( pIterScr->data, (y_fs+y)%8 );
             }
+        }
         
+        pIterScr -= pF->width;
+        if( ((y_fs+y+1)>>3) > ((y_fs+y)>>3) ){
+            pIterScr += info_MainScreen.width;
         }
     }
     
-//    for( int p=(y_fs>>3); p<(info_MainScreen.height>>3) && p<((y_fs+pF->height-1)>>3); p++ ){
-//
-//        if( p==(y_fs>>3) ){
-//            for( int x=0; x<pF->width; x++, pIter++ ){
-//
-//
-//            }
-//            continue;
-//        }
-//
-//        for( int x=0; x<pF->width; x++, pIter++ ){
-//
-//
-//        }
-//    }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     for( int y=0; y<pF->height&&y<config->area.height; y++ ){
         for( int x=0; x<pF->width; x++ ){
@@ -677,6 +681,38 @@ static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){
     __gui_insert_object_fnum( config );
 }
 
+static void __gui_remove_object_switch ( const __GUI_Object_t* config ){}
+static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->style == kGUI_ObjStyle_switch );
+#endif
+    __Font_backup_config();
+    __Graph_backup_config();
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+    __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    __Graph_set_penColor( color_switch_on.data );
+    __Graph_sausage_raw( config->area.xs, \
+                         config->area.ys, \
+                         config->area.xs+(int)config->area.width -1, \
+                         config->area.ys+(int)config->area.height-1,
+                         &info_MainScreen, kApplyPixel_fill);
+    
+    
+    //...//
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_adjust_object_switch ( const __GUI_Object_t* config ){}
+
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
@@ -712,6 +748,11 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->insert_func = __gui_insert_object_fnum;
             m_config->remove_func = __gui_remove_object_fnum;
             m_config->adjust_func = __gui_adjust_object_fnum;
+            break;
+        case kGUI_ObjStyle_switch:
+            m_config->insert_func = __gui_insert_object_switch;
+            m_config->remove_func = __gui_remove_object_switch;
+            m_config->adjust_func = __gui_adjust_object_switch;
             break;
         default:
             RH_ASSERT(0);

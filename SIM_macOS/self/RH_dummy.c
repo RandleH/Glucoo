@@ -252,15 +252,7 @@ GUI_RefreashScreen();
 
 GUI_delete_window( ID_Window2 );
 
-#if   ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_BIN    )
 
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB565 )
-
-#elif ( GRAPHIC_COLOR_TYPE == GRAPHIC_COLOR_RGB888 )
-
-#else
-  #error "[RH_graphic]: Unknown color type."
-#endif
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
 
@@ -344,6 +336,19 @@ GUI_object_adjust(ID_Obj1, 11);
 
 
 GUI_RefreashScreen();
+
+
+
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+
+
 
 #endif
 

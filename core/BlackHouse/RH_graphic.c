@@ -343,14 +343,14 @@ E_Status_t __Graph_circle_raw     (int x ,int y ,int d ,        __GraphInfo_t* p
     }
     
     for(int x_tmp=0,y_tmp = r;x_tmp<=y_tmp;x_tmp++){
-            ( *applyPixelMethod [method] )(x     + x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x+eps - x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x     + x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x+eps - x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x     + y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x+eps - y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x     + y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
-            ( *applyPixelMethod [method] )(x+eps - y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x     + x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x+eps - x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x     + x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x+eps - x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x     + y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x+eps - y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x     + y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(x+eps - y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
 
         if(p <= 0){
             p += (x_tmp<<2) + 6;
@@ -1331,7 +1331,51 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
     return kStatus_Success;
 }
     
+/*====================================
+ > 画空心香肠,线宽为1
+=====================================*/
+E_Status_t __Graph_sausage_raw    (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    int d = ye-ys+1;
+    int r = d>>1;
+    if( method == kApplyPixel_blur ){
+        RH_ASSERT(0);
+    }
+    for(int x=xs+r;x<xe-r;x++){
+        ( *applyPixelMethod [method] )(x,ys,GCFG.penColor,pInfo);
+        ( *applyPixelMethod [method] )(x,ye,GCFG.penColor,pInfo);
+    }
+    
+    
+    int p    = 3-2*r;
+    bool eps = (d%2==0);
+    int lx   = xs + r, rx = xe - r;
+    int y    = ys + r;
+    for(int x_tmp=0,y_tmp = r;x_tmp<=y_tmp && lx+eps-x_tmp>=xs && rx+x_tmp<=xe && lx+eps-y_tmp>=xs && rx+y_tmp<=xe;x_tmp++){
+        ( *applyPixelMethod [method] )(rx     + x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(lx+eps - x_tmp ,y     + y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(rx     + x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(lx+eps - x_tmp ,y+eps - y_tmp ,GCFG.penColor,pInfo );
+        
+        ( *applyPixelMethod [method] )(rx     + y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(lx+eps - y_tmp ,y     + x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(rx     + y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
+        ( *applyPixelMethod [method] )(lx+eps - y_tmp ,y+eps - x_tmp ,GCFG.penColor,pInfo );
 
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    if( method == kApplyPixel_blur ){
+        RH_ASSERT(0);
+    }
+    return kStatus_Success;
+}
+
+    
 #ifdef __cplusplus
 }
 #endif

@@ -14,8 +14,8 @@
             filePath = "../../core/RH_gui.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "533"
-            endingLineNumber = "533"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
             landmarkName = "__gui_insert_object_num(config)"
             landmarkType = "9">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "../../core/RH_gui.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "529"
-            endingLineNumber = "529"
+            startingLineNumber = "538"
+            endingLineNumber = "538"
             landmarkName = "__gui_insert_object_num(config)"
             landmarkType = "9">
          </BreakpointContent>

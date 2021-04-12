@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
 
 #ifdef __x86_64
 #include <memory.h>
@@ -226,8 +227,10 @@ typedef volatile uint64_t       vu64;
 #endif
  
 
-
-
+#define __RECORD_TIME(func, print_func)({ clock_t cs = clock();func;clock_t ce = clock();print_func("RECORD_TIME:%ld\n",ce-cs); })
+#define __LOOP( cnt, things )({size_t _ = cnt;while(_--){things;}})
+ 
+ 
  
 #define __BIT_GET( x , b )                   (((x)>>(b)) & 0x01   )
  

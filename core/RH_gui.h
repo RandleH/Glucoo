@@ -40,6 +40,7 @@ void GUI_circle_qrt2        ( int x ,int y ,int r );
 void GUI_circle_qrt3        ( int x ,int y ,int r );
 void GUI_circle_qrt4        ( int x ,int y ,int r );
 
+void GUI_sausage_raw        ( int xs, int ys, int xe, int ye );
 
 typedef enum{
     kGUI_Appearance_Light  ,
@@ -95,9 +96,9 @@ E_Status_t                GUI_window_delete    ( ID_t ID );
 typedef enum{
     kGUI_ObjStyle_text  ,
     kGUI_ObjStyle_num   ,
-    kGUI_ObjStyle_fnum  ,//
+    kGUI_ObjStyle_fnum  ,
     
-    kGUI_ObjStyle_switch,//
+    kGUI_ObjStyle_switch,
     NUM_kGUI_ObjStyle   ,
 }E_GUI_ObjStyle_t;
 
