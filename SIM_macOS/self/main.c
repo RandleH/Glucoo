@@ -70,39 +70,40 @@ int main(int argc, const char * argv[]) {
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
     GUI_object_frame(ID_Obj1,true);
+    
     GUI_RefreashScreen();
 
-//    GUI_object_frame(ID_Obj1,true);
-//
-//    GUI_object_adjust(ID_Obj1, 11);
-//
-//    GUI_RefreashScreen();
+    GUI_object_frame(ID_Obj1,true);
 
-//    for( int i=0; i<128; i++ ){
-//        printf("\n");
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
-//    for( int i=0; i<128; i++ ){
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
-//    for( int i=0; i<128; i++ ){
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
-//    for( int i=0; i<128; i++ ){
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
-//    for( int i=0; i<128; i++ ){
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
-//    for( int i=0; i<128; i++ ){
-//        GUI_object_adjust(ID_Obj1, i);
-//        GUI_RefreashScreen();
-//    }
+    GUI_object_adjust(ID_Obj1, 11);
+
+    GUI_RefreashScreen();
+
+    for( int i=0; i<128; i++ ){
+        printf("\n");
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
+    for( int i=0; i<128; i++ ){
+        GUI_object_adjust(ID_Obj1, i);
+        GUI_RefreashScreen();
+    }
     
 #endif
     return 0;

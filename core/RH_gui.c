@@ -294,6 +294,12 @@ static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
+#ifdef RH_DEBUG
+    RH_ASSERT( config->style == kGUI_ObjStyle_text || \
+               config->style == kGUI_ObjStyle_num  || \
+               config->style == kGUI_ObjStyle_fnum  );
+#endif
+    
     __Graph_backup_config();
     
     if( !pHistory ){
@@ -539,13 +545,11 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
     __Graph_restore_config();
 }
 static void __gui_adjust_object_num    ( const __GUI_Object_t* config ){
-    
     __gui_insert_object_num( config );
-    
 }
 
 static void __gui_remove_object_fnum   ( const __GUI_Object_t* config ){
-    //...//
+    __gui_remove_object_text(config);
 }
 static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
@@ -651,7 +655,9 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){}
+static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){
+    __gui_insert_object_fnum( config );
+}
 
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
