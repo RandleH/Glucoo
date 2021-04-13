@@ -23,78 +23,52 @@ int main(void){
 
     GUI_object_quickSet(&cfg_obj);
 
-    cfg_obj.style       = kGUI_ObjStyle_text;
-    cfg_obj.area.xs     = 0;
-    cfg_obj.area.ys     = 5;
+    cfg_obj.style       = kGUI_ObjStyle_switch;
+    cfg_obj.area.xs     = 10;
+    cfg_obj.area.ys     = 10;
     cfg_obj.area.height = 12;
-    cfg_obj.area.width  = 70;
+    cfg_obj.area.width  = 30;
     cfg_obj.min         = 0;
-    cfg_obj.max         = 256;
+    cfg_obj.max         = 128;
     cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
     cfg_obj.text_color  = M_COLOR_WHITE;
     cfg_obj.text        = "size:";
     cfg_obj.text_size   = 8;
-    cfg_obj.text_align  = kGUI_FontAlign_Left;
+    cfg_obj.text_align  = kGUI_FontAlign_Middle;
     cfg_obj.showFrame   = true;
     cfg_obj.bk_color    = M_COLOR_BLACK;
-    cfg_obj.val         = 129;
+    cfg_obj.val         = 0;
     
-    ID_t ID_Text_1 = GUI_object_create( &cfg_obj );
+    ID_t ID_SW_1 = GUI_object_create( &cfg_obj );
     
-
-    cfg_obj.text        = "vol:";
     cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Text_2 = GUI_object_create( &cfg_obj );
+    ID_t ID_SW_2 = GUI_object_create( &cfg_obj );
 
-
-    cfg_obj.text        = "ip:";
     cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Text_3 = GUI_object_create( &cfg_obj );
+    ID_t ID_SW_3 = GUI_object_create( &cfg_obj );
 
-    cfg_obj.text        = "speed:";
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Text_4 = GUI_object_create( &cfg_obj );
-
-    GUI_object_insert(ID_Text_1);
-    GUI_object_insert(ID_Text_2);
-    GUI_object_insert(ID_Text_3);
-    GUI_object_insert(ID_Text_4);
-    
-    cfg_obj.style       = kGUI_ObjStyle_num;
-    cfg_obj.area.xs    += cfg_obj.area.width;
-    cfg_obj.area.ys     = 5;
-    cfg_obj.area.height = 12;
-    cfg_obj.area.width  = 30;
-    ID_t ID_Num_1       = GUI_object_create( &cfg_obj );
-
-    cfg_obj.val         = 9;
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Num_2       = GUI_object_create( &cfg_obj );
+    cfg_obj.style       = kGUI_ObjStyle_barH;
+    cfg_obj.area.xs    += cfg_obj.area.width + 5;
+    cfg_obj.area.ys     = 10;
+    cfg_obj.area.width  = 60;
+    ID_t ID_BAR_1 = GUI_object_create( &cfg_obj );
 
 
-    cfg_obj.val         = 10;
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Num_3       = GUI_object_create( &cfg_obj );
 
-    cfg_obj.val         = 11;
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_Num_4       = GUI_object_create( &cfg_obj );
-
-    GUI_object_insert(ID_Num_1);
-    GUI_object_insert(ID_Num_2);
-    GUI_object_insert(ID_Num_3);
-    GUI_object_insert(ID_Num_4);
-
+    GUI_object_insert(ID_SW_1);
+    GUI_object_insert(ID_SW_2);
+    GUI_object_insert(ID_SW_3);
+    GUI_object_insert(ID_BAR_1);
     GUI_RefreashScreen();
-
+    
     while(1){
         for( int i=0; i<128; i++ ){
-            GUI_object_adjust(ID_Num_1, i);
-            GUI_object_adjust(ID_Num_2, i);
-            GUI_object_adjust(ID_Num_3, i);
-            GUI_object_adjust(ID_Num_4, i);
+            GUI_object_adjust(ID_SW_1, i%2);
+            GUI_object_adjust(ID_SW_2, !(i%2));
+            GUI_object_adjust(ID_SW_3, i%2);
+            GUI_object_adjust(ID_BAR_1, i);
             GUI_RefreashScreen();
-            // delay_ms(10);
+            // delay_ms(1);
         }
     }
 

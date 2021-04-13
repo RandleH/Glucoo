@@ -862,13 +862,18 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         
     }*pHistory = (void*)config->history;
+
+    __gui_remove_object_bar_h(config);
     
     if( !pHistory ){
         pHistory = RH_CALLOC(sizeof(*pHistory),1);
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory );
+    #endif
+        pHistory->bar_pos = config->area.xs;
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory );
     }
-    
-    __gui_remove_object_bar_h(config);
-    
+
     __Font_backup_config();
     __Graph_backup_config();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -894,28 +899,16 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
                       config->area.ys+(int)(config->area.height)-1, \
                       &info_MainScreen, kApplyPixel_fill);
     
-//    if( bar_pos < pHistory->bar_pos ){
-//        __Graph_set_penColor( color_bar_off.data );
-//        __Graph_rect_fill( bar_pos, \
-//                           config->area.ys+1, \
-//                           pHistory->bar_pos, \
-//                           config->area.ys+(int)(config->area.height)-1-1, \
-//                           &info_MainScreen, kApplyPixel_fill);
-//    }else{
-//        __Graph_set_penColor( color_bar_on.data );
-//        __Graph_rect_fill( pHistory->bar_pos, \
-//                           config->area.ys+1, \
-//                           bar_pos, \
-//                           config->area.ys+(int)(config->area.height)-1-1, \
-//                           &info_MainScreen, kApplyPixel_fill);
-//    }
-    
-    __Graph_set_penColor( color_bar_on.data );
-    __Graph_rect_fill( pHistory->bar_pos, \
-                       config->area.ys+1, \
-                       bar_pos, \
-                       config->area.ys+(int)(config->area.height)-1-1, \
-                       &info_MainScreen, kApplyPixel_fill);
+    if( pHistory->bar_pos < bar_pos ){
+        __Graph_set_penColor( color_bar_on.data );
+        __Graph_rect_fill( pHistory->bar_pos, \
+                           config->area.ys+1, \
+                           bar_pos, \
+                           config->area.ys+(int)(config->area.height)-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+
+    pHistory->bar_pos = bar_pos;
     
     __Font_restore_config();
     __Graph_restore_config();
