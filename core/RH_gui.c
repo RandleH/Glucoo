@@ -443,7 +443,7 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kAppltPixel_eor);
+                          &info_MainScreen, kApplyPixel_eor);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -681,12 +681,69 @@ static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){
     __gui_insert_object_fnum( config );
 }
 
-static void __gui_remove_object_switch ( const __GUI_Object_t* config ){}
+static void __gui_remove_object_switch ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->style == kGUI_ObjStyle_switch );
+#endif
+    
+    // 加载历史改动区域
+    struct{
+        bool     switchState;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+    
+    bool needRemove = !pHistory;
+    if( pHistory ){
+        needRemove |= (pHistory->switchState != ((int32_t)(config->val)!=0));
+        needRemove |= (pHistory->showFrame)^(config->showFrame);
+    }
+    
+    if( needRemove ){
+        __Graph_set_penColor(config->bk_color);
+        __Area_t area = config->area;
+        area.width  -=4;
+        area.height -=4;
+        area.xs     +=2;
+        area.ys     +=2;
+        __Graph_sausage_fill( area.xs, \
+                              area.ys, \
+                              area.xs+(int)(area.width  -1), \
+                              area.ys+(int)(area.height -1), \
+                              &info_MainScreen, kApplyPixel_fill);
+        __Graph_rect_raw( config->area.xs, \
+                          config->area.ys, \
+                          config->area.xs+(int)(config->area.width )-1, \
+                          config->area.ys+(int)(config->area.height)-1, \
+                          &info_MainScreen, kApplyPixel_fill);
+    }
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
 static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->style == kGUI_ObjStyle_switch );
 #endif
+    // 记录历史改动区域
+    struct{
+        bool     switchState;
+        bool     showFrame;
+    }*pHistory = (void*)config->history;
+    
+    if( !pHistory ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+    }
+#ifdef RH_DEBUG
+    RH_ASSERT( pHistory );
+#endif
+    
+    __gui_remove_object_switch(config);
+    
     __Font_backup_config();
     __Graph_backup_config();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -699,19 +756,58 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
   #error "[RH_graphic]: Unknown color type."
 #endif
     __Graph_set_penColor( color_switch_on.data );
-    __Graph_sausage_raw( config->area.xs, \
-                         config->area.ys, \
-                         config->area.xs+(int)config->area.width -1, \
-                         config->area.ys+(int)config->area.height-1,
-                         &info_MainScreen, kApplyPixel_fill);
     
+    __Area_t area = config->area;
+    area.width  -=4;
+    area.height -=4;
+    area.xs     +=2;
+    area.ys     +=2;
+    
+    if( (int32_t)config->val ){
+        __Graph_set_penColor( color_switch_on.data );
+        __Graph_sausage_fill( area.xs, \
+                              area.ys, \
+                              area.xs+(int)(area.width  -1), \
+                              area.ys+(int)(area.height -1), \
+                              &info_MainScreen, kApplyPixel_fill);
+        __Graph_set_penColor( color_switch_off.data );
+        __Graph_circle_fill ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
+                              area.ys+(int)(area.height>>1)-(area.height%2==0) , \
+                              (int)area.height                   , \
+                              &info_MainScreen, kApplyPixel_fill);
+        
+        
+        __Graph_set_penColor( color_switch_on.data );
+        __Graph_circle_raw  ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
+                              area.ys+(int)(area.height>>1)-(area.height%2==0) , \
+                              (int)area.height                   , \
+                              &info_MainScreen, kApplyPixel_fill);
+        pHistory->switchState = true;
+    }else{
+        __Graph_set_penColor( color_switch_on.data );
+        __Graph_sausage_raw ( area.xs, \
+                              area.ys, \
+                              area.xs+(int)(area.width  -1), \
+                              area.ys+(int)(area.height -1), \
+                              &info_MainScreen, kApplyPixel_fill);
+        
+        __Graph_circle_raw  ( area.xs+(int)(area.height>>1), \
+                              area.ys+(int)(area.height>>1)-(area.height%2==0), \
+                              (int)area.height                   , \
+                              &info_MainScreen, kApplyPixel_fill);
+        pHistory->switchState = false;
+    }
+    
+    __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     
     //...//
     
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_switch ( const __GUI_Object_t* config ){}
+static void __gui_adjust_object_switch ( const __GUI_Object_t* config ){
+    __gui_insert_object_switch(config);
+}
 
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
@@ -773,9 +869,9 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
     
     __Graph_backup_config();
     if( !p->showFrame && cmd ){
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kAppltPixel_eor);
+        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }else if( p->showFrame && !cmd ){
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kAppltPixel_eor);
+        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
     p->showFrame = cmd;
     return kStatus_Success;

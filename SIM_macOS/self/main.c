@@ -36,10 +36,9 @@ int main(int argc, const char * argv[]) {
     
     GUI_Init();
     GUI_set_penSize(5);
-    GUI_sausage_raw(30,30,100,50);
-    GUI_RefreashScreen();
-    
-#if 0
+//    GUI_sausage_raw(20, 20, 40, 30);
+//    GUI_RefreashScreen();
+#if 1
     
     
 //    __GUI_Window_t cfg;
@@ -63,11 +62,11 @@ int main(int argc, const char * argv[]) {
 
     GUI_object_quickSet(&cfg_obj);
 
-    cfg_obj.style       = kGUI_ObjStyle_fnum;
+    cfg_obj.style       = kGUI_ObjStyle_switch;
     cfg_obj.area.xs     = 30;
     cfg_obj.area.ys     = 30;
     cfg_obj.area.height = 12;
-    cfg_obj.area.width  = 35;
+    cfg_obj.area.width  = 30;
     cfg_obj.min         = 0;
     cfg_obj.max         = 256;
     cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
@@ -79,11 +78,11 @@ int main(int argc, const char * argv[]) {
 
     cfg_obj.bk_color    = M_COLOR_BLACK;
 
-    cfg_obj.val         = 13243.77;
+    cfg_obj.val         = 1.0;
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
-    GUI_object_frame(ID_Obj1,true);
+    GUI_object_frame(ID_Obj1,false);
     
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
@@ -94,19 +93,19 @@ int main(int argc, const char * argv[]) {
     GUI_RefreashScreen();
 
     for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
+        GUI_object_adjust(ID_Obj1, i%2);
         GUI_RefreashScreen();
     }
     for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
+        GUI_object_adjust(ID_Obj1, i%2);
         GUI_RefreashScreen();
     }
     for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
+        GUI_object_adjust(ID_Obj1, i%2);
         GUI_RefreashScreen();
     }
     for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
+        GUI_object_adjust(ID_Obj1, i%2);
         GUI_RefreashScreen();
     }
     for( int i=0; i<128; i++ ){
@@ -118,7 +117,6 @@ int main(int argc, const char * argv[]) {
         GUI_RefreashScreen();
     }
     
-    __LOOP(20, printf("B"));
     
 #endif
     return 0;
