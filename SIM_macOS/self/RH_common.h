@@ -278,7 +278,7 @@ typedef volatile uint64_t       vu64;
 #define __OUT_16BIT ( port, val )            __OUT_WORD  ( port, val )
 #define __OUT_32BIT ( port, val )            __OUT_DWORD ( port, val )
 
-
+ 
 #ifdef __cplusplus
  }
 #endif
