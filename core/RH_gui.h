@@ -99,6 +99,8 @@ typedef enum{
     kGUI_ObjStyle_fnum  ,
     
     kGUI_ObjStyle_switch,
+    kGUI_ObjStyle_barH  ,//
+    kGUI_ObjStyle_barV  ,//
     NUM_kGUI_ObjStyle   ,
 }E_GUI_ObjStyle_t;
 

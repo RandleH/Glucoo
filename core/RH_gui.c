@@ -800,13 +800,128 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
     
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     
-    //...//
-    
     __Font_restore_config();
     __Graph_restore_config();
 }
 static void __gui_adjust_object_switch ( const __GUI_Object_t* config ){
     __gui_insert_object_switch(config);
+}
+
+static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->style == kGUI_ObjStyle_barH );
+#endif
+    
+    // 记录历史改动区域
+    struct{
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+    }*pHistory = (void*)config->history;
+    
+    int32_t val = (int32_t)config->val;
+    int32_t min = (int32_t)config->min;
+    int32_t max = (int32_t)config->max;
+    val = __limit(val, min, max);
+    int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
+    __Font_backup_config();
+    __Graph_backup_config();
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    if( !pHistory ){
+        __Graph_set_penColor( color_bar_off.data );
+        __Graph_rect_fill( config->area.xs+1, \
+                           config->area.ys+1, \
+                           config->area.xs+(int)(config->area.width )-1-1, \
+                           config->area.ys+(int)(config->area.height)-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }else if(pHistory->bar_pos > bar_pos){
+        __Graph_set_penColor( color_bar_off.data );
+        __Graph_rect_fill( bar_pos, \
+                           config->area.ys+1, \
+                           pHistory->bar_pos, \
+                           config->area.ys+(int)(config->area.height)-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->style == kGUI_ObjStyle_barH );
+#endif
+    // 记录历史改动区域
+    struct{
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+        
+    }*pHistory = (void*)config->history;
+    
+    if( !pHistory ){
+        pHistory = RH_CALLOC(sizeof(*pHistory),1);
+    }
+    
+    __gui_remove_object_bar_h(config);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+//    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    int32_t val = (int32_t)config->val;
+    int32_t min = (int32_t)config->min;
+    int32_t max = (int32_t)config->max;
+    val = __limit(val, min, max);
+    
+    int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
+    
+    __Graph_set_penColor( color_bar_on.data );
+    __Graph_rect_raw( config->area.xs, \
+                      config->area.ys, \
+                      config->area.xs+(int)(config->area.width )-1, \
+                      config->area.ys+(int)(config->area.height)-1, \
+                      &info_MainScreen, kApplyPixel_fill);
+    
+//    if( bar_pos < pHistory->bar_pos ){
+//        __Graph_set_penColor( color_bar_off.data );
+//        __Graph_rect_fill( bar_pos, \
+//                           config->area.ys+1, \
+//                           pHistory->bar_pos, \
+//                           config->area.ys+(int)(config->area.height)-1-1, \
+//                           &info_MainScreen, kApplyPixel_fill);
+//    }else{
+//        __Graph_set_penColor( color_bar_on.data );
+//        __Graph_rect_fill( pHistory->bar_pos, \
+//                           config->area.ys+1, \
+//                           bar_pos, \
+//                           config->area.ys+(int)(config->area.height)-1-1, \
+//                           &info_MainScreen, kApplyPixel_fill);
+//    }
+    
+    __Graph_set_penColor( color_bar_on.data );
+    __Graph_rect_fill( pHistory->bar_pos, \
+                       config->area.ys+1, \
+                       bar_pos, \
+                       config->area.ys+(int)(config->area.height)-1-1, \
+                       &info_MainScreen, kApplyPixel_fill);
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_adjust_object_bar_h  ( const __GUI_Object_t* config ){
+    __gui_insert_object_bar_h(config);
 }
 
 #ifdef RH_DEBUG
@@ -849,6 +964,11 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->insert_func = __gui_insert_object_switch;
             m_config->remove_func = __gui_remove_object_switch;
             m_config->adjust_func = __gui_adjust_object_switch;
+            break;
+        case kGUI_ObjStyle_barH:
+            m_config->insert_func = __gui_insert_object_bar_h;
+            m_config->remove_func = __gui_remove_object_bar_h;
+            m_config->adjust_func = __gui_adjust_object_bar_h;
             break;
         default:
             RH_ASSERT(0);

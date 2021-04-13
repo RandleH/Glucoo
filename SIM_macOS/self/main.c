@@ -62,10 +62,10 @@ int main(int argc, const char * argv[]) {
 
     GUI_object_quickSet(&cfg_obj);
 
-    cfg_obj.style       = kGUI_ObjStyle_switch;
+    cfg_obj.style       = kGUI_ObjStyle_barH;
     cfg_obj.area.xs     = 30;
     cfg_obj.area.ys     = 30;
-    cfg_obj.area.height = 12;
+    cfg_obj.area.height = 3;
     cfg_obj.area.width  = 30;
     cfg_obj.min         = 0;
     cfg_obj.max         = 256;
@@ -78,44 +78,46 @@ int main(int argc, const char * argv[]) {
 
     cfg_obj.bk_color    = M_COLOR_BLACK;
 
-    cfg_obj.val         = 1.0;
+    cfg_obj.val         = 200;
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
     GUI_object_frame(ID_Obj1,false);
     
+    GUI_object_adjust(ID_Obj1, 0);
+    
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
-    GUI_object_frame(ID_Obj1,true);
-
-    GUI_object_adjust(ID_Obj1, 11);
-
-    GUI_RefreashScreen();
-
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i%2);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i%2);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i%2);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i%2);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
-    for( int i=0; i<128; i++ ){
-        GUI_object_adjust(ID_Obj1, i);
-        GUI_RefreashScreen();
-    }
+//    GUI_object_frame(ID_Obj1,true);
+//
+//    GUI_object_adjust(ID_Obj1, 11);
+//
+//    GUI_RefreashScreen();
+//
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i%2);
+//        GUI_RefreashScreen();
+//    }
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i%2);
+//        GUI_RefreashScreen();
+//    }
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i%2);
+//        GUI_RefreashScreen();
+//    }
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i%2);
+//        GUI_RefreashScreen();
+//    }
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i);
+//        GUI_RefreashScreen();
+//    }
+//    for( int i=0; i<128; i++ ){
+//        GUI_object_adjust(ID_Obj1, i);
+//        GUI_RefreashScreen();
+//    }
     
     
 #endif
