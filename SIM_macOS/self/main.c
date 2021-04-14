@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
 //    GUI_sausage_raw(20, 20, 40, 30);
 //    GUI_RefreashScreen();
-    
+
 #if 1
     
     
@@ -52,9 +52,9 @@ int main(int argc, const char * argv[]) {
     cfg_obj.area.height = 45;
     cfg_obj.area.width  = 46;
     cfg_obj.min[0]      = 0;
-    cfg_obj.max[0]      = 256;
+    cfg_obj.max[0]      = 4096;
     cfg_obj.min[1]      = 0;
-    cfg_obj.max[1]      = 256;
+    cfg_obj.max[1]      = 4096;
     
     cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
     cfg_obj.text_color  = M_COLOR_WHITE;
@@ -65,8 +65,8 @@ int main(int argc, const char * argv[]) {
 
     cfg_obj.bk_color    = M_COLOR_BLACK;
 
-    cfg_obj.val[0]      = 20;
-    cfg_obj.val[1]      = 250;
+    cfg_obj.val[0]      = 1000;
+    cfg_obj.val[1]      = 1000;
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
