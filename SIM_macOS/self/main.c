@@ -77,7 +77,8 @@ int main(int argc, const char * argv[]) {
     GUI_object_adjust(ID_Obj1, 2048,4096);
     GUI_object_adjust(ID_Obj1, 4096,2048);
     GUI_object_adjust(ID_Obj1, 4096,2048);
-    GUI_object_adjust(ID_Obj1, 4944,4944);
+    GUI_object_adjust(ID_Obj1, 3496,3496);
+    GUI_object_adjust(ID_Obj1, 1398,3864);
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
 

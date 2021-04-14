@@ -938,31 +938,31 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     __Font_backup_config();
     __Graph_backup_config();
     
-    int x = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
-    int y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
-    int d = (int)__min( config->area.height , config->area.width );
+    int X = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
+    int Y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
+    int D = (int)__min( config->area.height , config->area.width );
     
     if(  !pHistory  ){
-        __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
+        __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
     }else{
         switch( pHistory->cord ){
             
             case 1:
-                __Graph_circle_qrt1( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                __Graph_circle_qrt1( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
                 break;
             case 2:
-                __Graph_circle_qrt2( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                __Graph_circle_qrt2( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
                 break;
             case 3:
-                __Graph_circle_qrt3( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                __Graph_circle_qrt3( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
                 break;
             case 4:
-                __Graph_circle_qrt4( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                __Graph_circle_qrt4( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
                 break;
             case 0:
             case 5:
             case 6:
-                __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
+                __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
                 break;
         }
     }
@@ -971,42 +971,38 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );
     
     
-    int prr_max = ((3*d)>>3); // 两圆心距最大值
-//    int px = (val_x - (int32_t)config->min[0])*(pr<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - pr;
-//    int py = (val_y - (int32_t)config->min[1])*(pr<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - pr;
-//    int val_x_65535 = ((val_x - (int32_t)config->min[0])<<16)/((int32_t)config->max[0]-(int32_t)config->min[0]) - (1<<15);
-//    int val_y_65535 = ((val_y - (int32_t)config->min[1])<<16)/((int32_t)config->max[1]-(int32_t)config->min[1]) - (1<<15);
-//    printf("%f\n",hypotf(val_x_65535, val_y_65535));
-//    int pr = (int32_t)(hypotf(val_x_65535, val_y_65535))*prr_max>>15;
-//
-//    int px = pr*cosf(atan2f(val_y_65535, val_x_65535));
-//    int py = pr*sinf(atan2f(val_y_65535, val_x_65535));
+    int dis_cir_max = ((3*D)>>3); // 两圆心距最大值
+
     
-    int px = (val_x - (int32_t)config->min[0])*(prr_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - prr_max;
-    int py = (val_y - (int32_t)config->min[1])*(prr_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - prr_max;
+    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - dis_cir_max;
+    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - dis_cir_max;
     
-    int cord = __Point_toCord2D(px, py);
-    
-    if( hypotf(px, py) > prr_max ){
-        int pTmp_x = prr_max*cosf(atan2f(px, py));
-        int pTmp_y = prr_max*sinf(atan2f(px, py));
+//    printf("(%d,%d)\n",px,py);
+
+//    if( hypotf(px, py) > dis_cir_max ){
+    if( px*px +py*py >= dis_cir_max*dis_cir_max ){
+        int pTmp_x = dis_cir_max*cosf(atan2f(px, py));
+        int pTmp_y = dis_cir_max*sinf(atan2f(px, py));
         px = pTmp_x;
         py = pTmp_y;
     }
-    switch( cord ){
-        case 1:
-            __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
-            break;
-        case 2:
-            __Graph_circle_fill( x-px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
-            break;
-        case 3:
-            __Graph_circle_fill( x-px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
-            break;
-        case 4:
-            __Graph_circle_fill( x+px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
-            break;
-    }
+    
+    
+    
+//    switch( cord ){
+//        case 1:
+//            __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
+//            break;
+//        case 2:
+//            __Graph_circle_fill( x-px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
+//            break;
+//        case 3:
+//            __Graph_circle_fill( x-px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
+//            break;
+//        case 4:
+//            __Graph_circle_fill( x+px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
+//            break;
+//    }
     
 
     
