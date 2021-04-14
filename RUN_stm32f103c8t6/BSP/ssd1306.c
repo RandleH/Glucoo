@@ -1,10 +1,10 @@
 
 
-
+#include "stm32f10x_conf.h"
 #include "delay.h"
 #include "ssd1306.h"
 
-#include "stm32f10x_conf.h"
+
 
 
 #define I2C_PIN_SDA         GPIO_Pin_10

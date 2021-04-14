@@ -382,11 +382,6 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\main.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\src\stm32f10x_it.c</FilePath>
@@ -397,9 +392,19 @@
               <FilePath>..\USER\src\delay.c</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\main.c</FilePath>
+            </File>
+            <File>
               <FileName>RH_gui_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\self\RH_gui_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>isr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\src\isr.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -525,6 +530,11 @@
               <FileName>ssd1306.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\ssd1306.c</FilePath>
+            </File>
+            <File>
+              <FileName>joystick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\joystick.c</FilePath>
             </File>
           </Files>
         </Group>

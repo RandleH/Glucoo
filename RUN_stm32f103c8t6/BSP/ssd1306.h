@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#ifndef _OLED_H
-#define _OLED_H
+#ifndef _SSD1306_H
+#define _SSD1306_H
 
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
