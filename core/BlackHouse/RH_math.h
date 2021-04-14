@@ -83,7 +83,7 @@ int        __Dir_Line                  (int xs,int ys,int xe,int ye);
 int        __Point_toLine              (int xs,int ys,int xe,int ye,               int px,int py);
 int        __Point_toTriangle          (int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
 int        __Point_toCircle            (int xc,int yc,int radius,                  int px,int py);
-
+int        __Point_toCord2D            (int px,int py);
 
 #ifdef __cplusplus
 }

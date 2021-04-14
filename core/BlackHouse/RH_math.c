@@ -411,10 +411,10 @@ Vector3D_t __Vect3D_Cross(const Vector3D_t* vect1,const Vector3D_t* vect2){
     return vecResult;
 }
 
-     // -1    = Line is negative.
-     //  0    = Line is horizontal.
-     //  1    = Line is positive.
-     // 65535 = Line is vertical.
+ // -1    = Line is negative.
+ //  0    = Line is horizontal.
+ //  1    = Line is positive.
+ // 65535 = Line is vertical.
 int __Dir_Line(int xs,int ys,int xe,int ye){
     if(xs==xe)
         return 65535;
@@ -424,9 +424,9 @@ int __Dir_Line(int xs,int ys,int xe,int ye){
     return ((xe-xs)*(ye-ys)>0)?(1):(-1);
 }
 
-     // -1 = (px,py) is below the line.
-     //  0 = (px,py) is at the line.
-     //  1 = (px,py) is above the line.
+ // -1 = (px,py) is below the line.
+ //  0 = (px,py) is at the line.
+ //  1 = (px,py) is above the line.
 int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
     int param_1 = (xe>xs)?( (xe-xs)*py ):( (xs-xe)*py );
     int param_2 = (xe>xs)?( (ye-ys)*px+(ye*(xe-xs)-xe*(ye-ys)) ):( (ys-ye)*px+(ye*(xs-xe)-xe*(ys-ye)) );
@@ -439,9 +439,9 @@ int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
         return 0;
 }
 
-     // -1 = (px,py) is outside the triangle
-     //  0 = (px,py) is at the edge of triangle
-     //  1 = (px,py) is inside the triangle
+ // -1 = (px,py) is outside the triangle
+ //  0 = (px,py) is at the edge of triangle
+ //  1 = (px,py) is inside the triangle
 int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
     // Condition:
     // P = A + u*(CA) + v*(BA)
@@ -489,9 +489,9 @@ int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
         return 0;
 }
 
-     // -1 = (px,py) is outside the circle
-     //  0 = (px,py) is at the edge of circle
-     //  1 = (px,py) is inside the circle
+ // -1 = (px,py) is outside the circle
+ //  0 = (px,py) is at the edge of circle
+ //  1 = (px,py) is inside the circle
 int __Point_toCircle(int xc,int yc,int radius,int px,int py){
     int key = (xc-px)*(xc-px)+(yc-py)*(yc-py);
     int r_2 = radius*radius;
@@ -503,6 +503,22 @@ int __Point_toCircle(int xc,int yc,int radius,int px,int py){
         return 0;
 }
 
+    
+ // 0 = origin
+ // 1 = Cord 1
+ // 2 = Cord 2
+ // 3 = Cord 3
+ // 4 = Cord 4
+ // 5 = Axis X
+ // 6 = Axis Y
+int __Point_toCord2D(int px,int py){
+    if( px==0&&py==0 ) return 0;
+    if( px==0 )        return 5;
+    if( py==0 )        return 6;
+    uint8_t key = ((py<0)<<1)|(px<0);
+    return (int)(((key>>1)^key) +1);
+}
+    
 #ifdef __cplusplus
 }
 #endif

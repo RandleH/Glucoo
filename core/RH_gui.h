@@ -99,8 +99,10 @@ typedef enum{
     kGUI_ObjStyle_fnum  ,
     
     kGUI_ObjStyle_switch,
-    kGUI_ObjStyle_barH  ,//
+    kGUI_ObjStyle_barH  ,
     kGUI_ObjStyle_barV  ,//
+    
+    kGUI_ObjStyle_joystick ,
     NUM_kGUI_ObjStyle   ,
 }E_GUI_ObjStyle_t;
 
@@ -116,9 +118,9 @@ struct __GUI_Object_t{
     
     __Pixel_t            bk_color;
     
-    float                min;
-    float                val;
-    float                max;
+    float                min[2];
+    float                val[2];
+    float                max[2];
     
     bool                 showFrame;
     
@@ -133,7 +135,7 @@ typedef struct __GUI_Object_t __GUI_Object_t;
 ID_t            RH_RESULT GUI_object_create    ( const __GUI_Object_t* config );
 __GUI_Object_t*           GUI_object_quickSet  (       __GUI_Object_t* config );//
 
-E_Status_t                GUI_object_adjust    ( ID_t ID  , double val   );//
+E_Status_t                GUI_object_adjust    ( ID_t ID  , float  val_0 , float val_1 );
 E_Status_t                GUI_object_frame     ( ID_t ID  , bool   cmd   );
 E_Status_t                GUI_object_insert    ( ID_t ID );
 E_Status_t                GUI_object_delete    ( ID_t ID );//

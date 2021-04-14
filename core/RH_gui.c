@@ -583,7 +583,7 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
     
     char __str[GUI_X_WIDTH>>2] = {'\0'};
     __Font_setSize(config->text_size);
-    snprintf(__str, sizeof(__str), "%.3f",(float)config->val);
+    snprintf(__str, sizeof(__str), "%.3f",(float)config->val[0]);
     
     // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
     int maxWordCnt = __Font_getWordNum(config->area.width, __str);
@@ -917,6 +917,80 @@ static void __gui_adjust_object_bar_h  ( const __GUI_Object_t* config ){
     __gui_insert_object_bar_h(config);
 }
 
+static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
+    struct{
+        int      cord; // (x,y)象限信息
+        __Area_t area;
+    }*pHistory = (void*)config->history;
+    
+    
+    
+}
+static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
+    struct{
+        int      cord; // (x,y)象限信息
+        __Area_t area;
+    }*pHistory = (void*)config->history;
+    
+    
+    __gui_remove_object_joystick(config);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+    
+    int x = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
+    int y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
+    int d = (int)__min( config->area.height , config->area.width );
+    
+    if(  !pHistory  ){
+        __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
+    }else{
+        switch( pHistory->cord ){
+            
+            case 1:
+                __Graph_circle_qrt1( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                break;
+            case 2:
+                __Graph_circle_qrt2( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                break;
+            case 3:
+                __Graph_circle_qrt3( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                break;
+            case 4:
+                __Graph_circle_qrt4( x, y, (d>>1), &info_MainScreen, kApplyPixel_fill );
+                break;
+            case 0:
+            case 5:
+            case 6:
+                __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
+                break;
+        }
+    }
+    
+    int32_t val_x = __limit( (int32_t)config->val[0], (int32_t)config->min[0], (int32_t)config->max[0] );
+    int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );
+    
+    
+    int pr = ((3*d)>>4);
+    int px = (val_x - (int32_t)config->min[0])*(pr<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - pr;
+    int py = (val_y - (int32_t)config->min[1])*(pr<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - pr;
+    
+    
+    __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
+    
+    if( !pHistory ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
+    }
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+    
+}
+static void __gui_adjust_object_joystick  ( const __GUI_Object_t* config ){
+    __gui_insert_object_joystick(config); 
+}
+
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
@@ -962,6 +1036,11 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->insert_func = __gui_insert_object_bar_h;
             m_config->remove_func = __gui_remove_object_bar_h;
             m_config->adjust_func = __gui_adjust_object_bar_h;
+            break;
+        case kGUI_ObjStyle_joystick:
+            m_config->insert_func = __gui_insert_object_joystick;
+            m_config->remove_func = __gui_remove_object_joystick;
+            m_config->adjust_func = __gui_adjust_object_joystick;
             break;
         default:
             RH_ASSERT(0);
@@ -1010,13 +1089,14 @@ E_Status_t        GUI_object_insert    ( ID_t ID ){
     return kStatus_Success;
 }
 
-E_Status_t        GUI_object_adjust    ( ID_t ID  , double val ){
+E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
     __GUI_Object_t* config = (__GUI_Object_t*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->insert_func );
 #endif
-    config->val = val;
+    config->val[0] = val_0;
+    config->val[1] = val_1;
     (*config->adjust_func)(config);
     Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
                                                  config->area.ys, \
