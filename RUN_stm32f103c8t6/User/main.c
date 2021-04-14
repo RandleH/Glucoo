@@ -25,13 +25,15 @@ int main(void){
 
     GUI_object_quickSet(&cfg_obj);
 
-    cfg_obj.style       = kGUI_ObjStyle_num;
+    cfg_obj.style       = kGUI_ObjStyle_joystick;
     cfg_obj.area.xs     = 10;
     cfg_obj.area.ys     = 10;
-    cfg_obj.area.height = 12;
-    cfg_obj.area.width  = 30;
-    cfg_obj.min         = 0;
-    cfg_obj.max         = 4096;
+    cfg_obj.area.height = 45;
+    cfg_obj.area.width  = 45;
+    cfg_obj.min[0]      = 0;
+    cfg_obj.max[0]      = 4096;
+    cfg_obj.min[1]      = 0;
+    cfg_obj.max[1]      = 4096;
     cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
     cfg_obj.text_color  = M_COLOR_WHITE;
     cfg_obj.text        = "size:";
@@ -39,36 +41,17 @@ int main(void){
     cfg_obj.text_align  = kGUI_FontAlign_Middle;
     cfg_obj.showFrame   = true;
     cfg_obj.bk_color    = M_COLOR_BLACK;
-    cfg_obj.val         = 0;
+    cfg_obj.val[0]      = joystick_data[0];
+    cfg_obj.val[1]      = joystick_data[1];
     
-    ID_t ID_NUM_1       = GUI_object_create( &cfg_obj );
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_NUM_2       = GUI_object_create( &cfg_obj );
+    ID_t ID_JOY       = GUI_object_create( &cfg_obj );
 
-    cfg_obj.style       = kGUI_ObjStyle_barH;
-    cfg_obj.area.xs    += cfg_obj.area.width + 5;
-    cfg_obj.area.ys     = 10;
-    cfg_obj.area.width  = 60;
-    cfg_obj.max         = 128;
-    ID_t ID_BAR_1 = GUI_object_create( &cfg_obj );
-
-
-
-    GUI_object_insert(ID_NUM_1);
-    GUI_object_insert(ID_BAR_1);
-    GUI_RefreashScreen();
+    GUI_object_insert(ID_JOY);
     
     while(1){
-        for( int i=0; i<128; i++ ){
-            GUI_object_adjust(ID_NUM_1, joystick_data[0]);
-            GUI_object_adjust(ID_NUM_2, joystick_data[1]);
-
-            GUI_object_adjust(ID_BAR_1, i);
-            GUI_RefreashScreen();
-            // delay_ms(1);
-        }
+        GUI_object_adjust(ID_JOY, joystick_data[0], joystick_data[1]);
+        GUI_RefreashScreen();
     }
-
 }
 
 
