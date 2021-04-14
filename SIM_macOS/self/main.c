@@ -65,15 +65,19 @@ int main(int argc, const char * argv[]) {
 
     cfg_obj.bk_color    = M_COLOR_BLACK;
 
-    cfg_obj.val[0]      = 1000;
-    cfg_obj.val[1]      = 1000;
+    cfg_obj.val[0]      = 0;
+    cfg_obj.val[1]      = 2048;
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
 //    GUI_object_frame(ID_Obj1,false);
 //    
-//    GUI_object_adjust(ID_Obj1, 0,0);
-    
+    GUI_object_adjust(ID_Obj1, 0,2048);
+    GUI_object_adjust(ID_Obj1, 2048,0);
+    GUI_object_adjust(ID_Obj1, 2048,4096);
+    GUI_object_adjust(ID_Obj1, 4096,2048);
+    GUI_object_adjust(ID_Obj1, 4096,2048);
+    GUI_object_adjust(ID_Obj1, 4944,4944);
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
 

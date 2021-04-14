@@ -974,13 +974,24 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int prr_max = ((3*d)>>3); // 两圆心距最大值
 //    int px = (val_x - (int32_t)config->min[0])*(pr<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - pr;
 //    int py = (val_y - (int32_t)config->min[1])*(pr<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - pr;
-    int val_x_65535 = ((val_x - (int32_t)config->min[0])<<16)/((int32_t)config->max[0]-(int32_t)config->min[0]) - (1<<15);
-    int val_y_65535 = ((val_y - (int32_t)config->min[1])<<16)/((int32_t)config->max[1]-(int32_t)config->min[1]) - (1<<15);
+//    int val_x_65535 = ((val_x - (int32_t)config->min[0])<<16)/((int32_t)config->max[0]-(int32_t)config->min[0]) - (1<<15);
+//    int val_y_65535 = ((val_y - (int32_t)config->min[1])<<16)/((int32_t)config->max[1]-(int32_t)config->min[1]) - (1<<15);
+//    printf("%f\n",hypotf(val_x_65535, val_y_65535));
+//    int pr = (int32_t)(hypotf(val_x_65535, val_y_65535))*prr_max>>15;
+//
+//    int px = pr*cosf(atan2f(val_y_65535, val_x_65535));
+//    int py = pr*sinf(atan2f(val_y_65535, val_x_65535));
     
-    int pr = (int32_t)(hypotf(val_x_65535, val_y_65535))*prr_max>>15;
+    int px = (val_x - (int32_t)config->min[0])*(prr_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - prr_max;
+    int py = (val_y - (int32_t)config->min[1])*(prr_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - prr_max;
     
-    int px = pr*cosf(atan2f(val_y_65535, val_x_65535));
-    int py = pr*sinf(atan2f(val_y_65535, val_x_65535));
+    if( hypotf(px, py) > prr_max ){
+        int pTmp_x = prr_max*cosf(atan2f(px, py));
+        int pTmp_y = prr_max*sinf(atan2f(px, py));
+        px = pTmp_x;
+        py = pTmp_y;
+    }
+    
     __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
 
     
