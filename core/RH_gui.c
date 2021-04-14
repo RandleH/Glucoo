@@ -985,14 +985,29 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int px = (val_x - (int32_t)config->min[0])*(prr_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - prr_max;
     int py = (val_y - (int32_t)config->min[1])*(prr_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - prr_max;
     
+    int cord = __Point_toCord2D(px, py);
+    
     if( hypotf(px, py) > prr_max ){
         int pTmp_x = prr_max*cosf(atan2f(px, py));
         int pTmp_y = prr_max*sinf(atan2f(px, py));
         px = pTmp_x;
         py = pTmp_y;
     }
+    switch( cord ){
+        case 1:
+            __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
+            break;
+        case 2:
+            __Graph_circle_fill( x-px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
+            break;
+        case 3:
+            __Graph_circle_fill( x-px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
+            break;
+        case 4:
+            __Graph_circle_fill( x+px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
+            break;
+    }
     
-    __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
 
     
     
