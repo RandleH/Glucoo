@@ -65,7 +65,7 @@ int main(int argc, const char * argv[]) {
 
     cfg_obj.bk_color    = M_COLOR_BLACK;
 
-    cfg_obj.val[0]      = 240;
+    cfg_obj.val[0]      = 20;
     cfg_obj.val[1]      = 250;
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );

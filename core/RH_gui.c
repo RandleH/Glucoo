@@ -971,10 +971,14 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );
     
     
-    int pr = ((3*d)>>4);
-    int px = (val_x - (int32_t)config->min[0])*(pr<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - pr;
-    int py = (val_y - (int32_t)config->min[1])*(pr<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - pr;
+    int pr = ((3*d)>>3);
+//    int px = (val_x - (int32_t)config->min[0])*(pr<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - pr;
+//    int py = (val_y - (int32_t)config->min[1])*(pr<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - pr;
+    int val_x_65535 = ( (val_x - (int32_t)config->min[0])<<8 )/((int32_t)config->max[0]-(int32_t)config->min[0]);
+    int val_y_65535 = ( (val_y - (int32_t)config->min[1])<<8 )/((int32_t)config->max[1]-(int32_t)config->min[1]);
     
+    int px = pr*cosf(atan2f(val_y_65535, val_x_65535));
+    int py = pr*sinf(atan2f(val_y_65535, val_x_65535));
     
     __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
     
