@@ -483,7 +483,7 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
     }
     
     __Font_setSize(config->text_size);
-    snprintf(__str, sizeof(__str), "%d",(int32_t)config->val);
+    snprintf(__str, sizeof(__str), "%d",(int32_t)config->val[0]);
     __str[ __Font_getWordNum(config->area.width, __str) ] = '\0';
     
     if(__str[0]!='\0'){
@@ -818,9 +818,9 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
     }*pHistory = (void*)config->history;
     
-    int32_t val = (int32_t)config->val;
-    int32_t min = (int32_t)config->min;
-    int32_t max = (int32_t)config->max;
+    int32_t val = (int32_t)config->val[0];
+    int32_t min = (int32_t)config->min[0];
+    int32_t max = (int32_t)config->max[0];
     val = __limit(val, min, max);
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     __Font_backup_config();
@@ -885,9 +885,9 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-    int32_t val = (int32_t)config->val;
-    int32_t min = (int32_t)config->min;
-    int32_t max = (int32_t)config->max;
+    int32_t val = (int32_t)config->val[0];
+    int32_t min = (int32_t)config->min[0];
+    int32_t max = (int32_t)config->max[0];
     val = __limit(val, min, max);
     
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
@@ -974,20 +974,35 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int dis_cir_max = ((3*D)>>3); // 两圆心距最大值
 
     
-    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - dis_cir_max;
-    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - dis_cir_max;
-    
-//    printf("(%d,%d)\n",px,py);
+    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]);
+    px    -= dis_cir_max;
+    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]);
+    py    -= dis_cir_max;
 
-//    if( hypotf(px, py) > dis_cir_max ){
     if( px*px +py*py >= dis_cir_max*dis_cir_max ){
-        int pTmp_x = dis_cir_max*cosf(atan2f(px, py));
-        int pTmp_y = dis_cir_max*sinf(atan2f(px, py));
-        px = pTmp_x;
-        py = pTmp_y;
+        int cord   = __Point_toCord2D( px, py );
+        int pTmp_x = dis_cir_max*cosf(atan2f(py, px));
+        int pTmp_y = dis_cir_max*sinf(atan2f(py, px));
+        px = __abs(pTmp_x);
+        py = __abs(pTmp_y);
+        switch( cord ){
+            case 1:
+                px = px;
+                py = py;
+                break;
+            case 2:
+                px = -px;
+                break;
+            case 3:
+                px = -px;
+                py = -py;
+                break;
+            case 4:
+                py = -py;
+                break;
+        }
     }
-    
-    
+    __Graph_circle_fill( X+px, Y-py, 3, &info_MainScreen, kApplyPixel_fill);
     
 //    switch( cord ){
 //        case 1:

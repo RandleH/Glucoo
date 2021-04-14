@@ -44,12 +44,28 @@ int main(void){
     cfg_obj.val[0]      = joystick_data[0];
     cfg_obj.val[1]      = joystick_data[1];
     
-    ID_t ID_JOY       = GUI_object_create( &cfg_obj );
+    ID_t ID_JOY         = GUI_object_create( &cfg_obj );
+    
+    cfg_obj.style       = kGUI_ObjStyle_num;
+    cfg_obj.area.xs     = 80;
+    cfg_obj.area.ys     = 20;
+    cfg_obj.area.width  = 35;
+    cfg_obj.area.height = 12;
+    ID_t ID_NUM_1       = GUI_object_create( &cfg_obj );
+    
+    cfg_obj.area.ys    += cfg_obj.area.height;
+    ID_t ID_NUM_2       = GUI_object_create( &cfg_obj );
 
     GUI_object_insert(ID_JOY);
+    GUI_object_insert(ID_NUM_1);
+    GUI_object_insert(ID_NUM_2);
+    
     
     while(1){
+        // GUI_object_adjust(ID_JOY, 580, 702);
         GUI_object_adjust(ID_JOY, joystick_data[0], joystick_data[1]);
+        GUI_object_adjust(ID_NUM_1, joystick_data[0], 0);
+        GUI_object_adjust(ID_NUM_2, joystick_data[1], 0);
         GUI_RefreashScreen();
     }
 }
