@@ -922,9 +922,26 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
         int      cord; // (x,y)象限信息
         __Area_t area;
     }*pHistory = (void*)config->history;
-    
-    
-    
+    __Font_backup_config();
+    __Graph_backup_config();
+    __Graph_set_penColor( config->bk_color );
+    if( !pHistory ){
+        
+        __Graph_rect_fill( config->area.xs, \
+                           config->area.ys, \
+                           config->area.xs+(int)(config->area.width )-1, \
+                           config->area.ys+(int)(config->area.height)-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }else{
+        
+        __Graph_rect_fill( pHistory->area.xs, \
+                           pHistory->area.ys, \
+                           pHistory->area.xs+(int)(pHistory->area.width )-1, \
+                           pHistory->area.ys+(int)(pHistory->area.height)-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+    __Font_restore_config();
+    __Graph_restore_config();
 }
 static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     struct{
@@ -938,34 +955,36 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     __Font_backup_config();
     __Graph_backup_config();
     
+    __Graph_set_penColor( config->text_color );
+    
     int X = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
     int Y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
     int D = (int)__min( config->area.height , config->area.width );
-    
-    if(  !pHistory  ){
-        __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
-    }else{
-        switch( pHistory->cord ){
+    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+    // if(  !pHistory  ){
+    //     __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+    // }else{
+    //     switch( pHistory->cord ){
             
-            case 1:
-                __Graph_circle_qrt1( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-                break;
-            case 2:
-                __Graph_circle_qrt2( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-                break;
-            case 3:
-                __Graph_circle_qrt3( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-                break;
-            case 4:
-                __Graph_circle_qrt4( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-                break;
-            case 0:
-            case 5:
-            case 6:
-                __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
-                break;
-        }
-    }
+    //         case 1:
+    //             __Graph_circle_qrt1( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
+    //             break;
+    //         case 2:
+    //             __Graph_circle_qrt2( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
+    //             break;
+    //         case 3:
+    //             __Graph_circle_qrt3( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
+    //             break;
+    //         case 4:
+    //             __Graph_circle_qrt4( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
+    //             break;
+    //         case 0:
+    //         case 5:
+    //         case 6:
+    //             __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+    //             break;
+    //     }
+    // }
     
     int32_t val_x = __limit( (int32_t)config->val[0], (int32_t)config->min[0], (int32_t)config->max[0] );
     int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );
@@ -974,58 +993,53 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int dis_cir_max = ((3*D)>>3); // 两圆心距最大值
 
     
-    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]);
-    px    -= dis_cir_max;
-    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]);
-    py    -= dis_cir_max;
+    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - dis_cir_max;
+    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - dis_cir_max;
+    int pd = __limit( (D>>3), 1, D );
+
+    int cord   = __Point_toCord2D( px, py );// 记录游标圆心坐标的象限
 
     if( px*px +py*py >= dis_cir_max*dis_cir_max ){
-        int cord   = __Point_toCord2D( px, py );
+        
         int pTmp_x = dis_cir_max*cosf(atan2f(py, px));
         int pTmp_y = dis_cir_max*sinf(atan2f(py, px));
         px = __abs(pTmp_x);
         py = __abs(pTmp_y);
         switch( cord ){
-            case 1:
+            case 5: // Axis +X
+            case 7: // Axis +Y
+            case 1: // Cord 1
                 px = px;
                 py = py;
                 break;
-            case 2:
+            case 2: // Cord 2
                 px = -px;
                 break;
-            case 3:
+            case 6: // Axis -X
+            case 8: // Axis -Y
+            case 3: // Cord 3
                 px = -px;
                 py = -py;
                 break;
-            case 4:
+            case 4: // Cord 4
                 py = -py;
                 break;
         }
     }
-    __Graph_circle_fill( X+px, Y-py, 3, &info_MainScreen, kApplyPixel_fill);
-    
-//    switch( cord ){
-//        case 1:
-//            __Graph_circle_fill( x+px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
-//            break;
-//        case 2:
-//            __Graph_circle_fill( x-px, y-py, 3, &info_MainScreen, kApplyPixel_fill);
-//            break;
-//        case 3:
-//            __Graph_circle_fill( x-px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
-//            break;
-//        case 4:
-//            __Graph_circle_fill( x+px, y+py, 3, &info_MainScreen, kApplyPixel_fill);
-//            break;
-//    }
-    
-
-    
+    __Graph_circle_fill( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory );  
+    #endif
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
+    pHistory->cord        = cord;
+    pHistory->area.xs     = (X+px-(pd>>1));
+    pHistory->area.ys     = (Y-py-(pd>>1));
+    pHistory->area.width  = pd;
+    pHistory->area.height = pd;
     
     __Font_restore_config();
     __Graph_restore_config();

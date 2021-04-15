@@ -509,12 +509,20 @@ int __Point_toCircle(int xc,int yc,int radius,int px,int py){
  // 2 = Cord 2
  // 3 = Cord 3
  // 4 = Cord 4
- // 5 = Axis X
- // 6 = Axis Y
+ // 5 = Axis +X
+ // 6 = Axis -X
+ // 7 = Axis +Y
+ // 8 = Axis -Y
 int __Point_toCord2D(int px,int py){
     if( px==0&&py==0 ) return 0;
-    if( px==0 )        return 5;
-    if( py==0 )        return 6;
+    if( py==0 ){
+        if( px>0 )  return 5;
+        else        return 6;
+    } 
+    if( px==0 ){
+        if( py>0 )  return 7;
+        else        return 8;
+    }
     uint8_t key = ((py<0)<<1)|(px<0);
     return (int)(((key>>1)^key) +1);
 }
