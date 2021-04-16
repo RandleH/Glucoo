@@ -131,8 +131,10 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
+#include "os.h"
 void SysTick_Handler(void)
 {
+  OSTimeTick();
 }
 
 /******************************************************************************/

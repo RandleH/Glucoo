@@ -484,7 +484,7 @@ void  OS_CPU_SysTickHandler (void)
 * Note(s)    : 1) This function MUST be called after OSStart() & after processor initialization.
 *********************************************************************************************************
 */
-
+#if 1
 void  OS_CPU_SysTickInit (CPU_INT32U  cnts)
 {
     CPU_INT32U  prio;
@@ -505,7 +505,26 @@ void  OS_CPU_SysTickInit (CPU_INT32U  cnts)
 
     CPU_REG_SYST_CSR   |= CPU_REG_SYST_CSR_TICKINT;             /* Enable timer interrupt.                              */
 }
+#else
+#include "stm32f10x.h" // This must include before "core_cm3.h"
+#include "core_cm3.h"
+void OS_CPU_SysTickInit (CPU_INT32U ms)
+{
+    /* 设置重装载寄存器的值*/
+    SysTick->LOAD = ms * SystemCoreClock / 1000 - 1;
 
+    /* 配置中断优先级为最低*/
+    NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+
+    /* 复位当前计数器的值*/
+    SysTick->VAL = 0;
+
+    /* 选择时钟源、启用中断、启用计数器*/
+    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
+    SysTick_CTRL_TICKINT_Msk |
+    SysTick_CTRL_ENABLE_Msk;
+}
+#endif
 #ifdef __cplusplus
 }
 #endif

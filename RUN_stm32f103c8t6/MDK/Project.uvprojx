@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_ASSERT</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER\inc;..\Libraries\CMSIS\CM3\DeviceSupport;..\Libraries\Device;..\BSP;..\..\core\BlackHouse;..\..\core\Font;..\..\core\STB;..\self;..\..\core;..\Libraries\uC-OS3\Source;..\Libraries\uC-OS3\Ports\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-OS3\Cfg\RandleH;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU\Cfg\RandleH;..\Libraries\uC-LIB;..\Libraries\uC-LIB\Ports\ARM-Cortex-M3\RealView;..\Libraries\uC-LIB\Cfg\RandleH</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER\inc;..\Libraries\CMSIS\CM3\DeviceSupport;..\Libraries\Device;..\BSP;..\..\core\BlackHouse;..\..\core\Font;..\..\core\STB;..\self;..\..\core;..\Libraries\uC-OS3\Source;..\Libraries\uC-OS3\Ports\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-OS3\Cfg\RandleH;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU\Cfg\RandleH;..\Libraries\uC-LIB;..\Libraries\uC-LIB\Ports\ARM-Cortex-M3\RealView;..\Libraries\uC-LIB\Cfg\RandleH;..\Libraries\CMSIS\CM3\CoreSupport</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

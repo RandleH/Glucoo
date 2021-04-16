@@ -57,7 +57,7 @@
 
                                                                 /* ---------------------- TICKS ----------------------- */
                                                                 /* Tick rate in Hertz (10 to 1000 Hz)                   */
-#define  OS_CFG_TICK_RATE_HZ                            1000u
+#define  OS_CFG_TICK_RATE_HZ                             1000u
 
 
                                                                 /* --------------------- TIMERS ----------------------- */
