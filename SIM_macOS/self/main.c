@@ -36,10 +36,12 @@ int main(int argc, const char * argv[]) {
     
     GUI_Init();
     GUI_set_penSize(5);
-//    GUI_sausage_raw(20, 20, 40, 30);
-//    GUI_RefreashScreen();
+    GUI_set_penColor(M_COLOR_WHITE);
 
-#if 1
+//    GUI_sausage_raw(20, 20, 40, 30);
+    GUI_RefreashScreen();
+
+#if 0
     
     
     __GUI_Object_t cfg_obj = {0};

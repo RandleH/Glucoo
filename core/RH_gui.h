@@ -35,10 +35,14 @@ void GUI_rect_round         ( int xs,int ys,int xe,int ye );
 void GUI_circle_raw         ( int x ,int y ,int d );
 void GUI_circle_edged       ( int x ,int y ,int d );
 void GUI_circle_fill        ( int x ,int y ,int d );
-void GUI_circle_qrt1        ( int x ,int y ,int r );
-void GUI_circle_qrt2        ( int x ,int y ,int r );
-void GUI_circle_qrt3        ( int x ,int y ,int r );
-void GUI_circle_qrt4        ( int x ,int y ,int r );
+void GUI_circle_qrt1_fill   ( int x ,int y ,int r );
+void GUI_circle_qrt2_fill   ( int x ,int y ,int r );
+void GUI_circle_qrt3_fill   ( int x ,int y ,int r );
+void GUI_circle_qrt4_fill   ( int x ,int y ,int r );
+void GUI_circle_qrt1_raw    ( int x ,int y ,int r );
+void GUI_circle_qrt2_raw    ( int x ,int y ,int r );
+void GUI_circle_qrt3_raw    ( int x ,int y ,int r );
+void GUI_circle_qrt4_raw    ( int x ,int y ,int r );
 
 void GUI_sausage_raw        ( int xs, int ys, int xe, int ye );
 

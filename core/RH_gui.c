@@ -244,47 +244,88 @@ void GUI_circle_fill        ( int x , int y , int d ){
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt1        ( int x , int y , int r ){
+void GUI_circle_qrt1_fill   ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt1( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    __Graph_circle_qrt1_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt2        ( int x , int y , int r ){
+void GUI_circle_qrt2_fill   ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt2( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    __Graph_circle_qrt2_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt3        ( int x , int y , int r ){
+void GUI_circle_qrt3_fill   ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt3( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    __Graph_circle_qrt3_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt4        ( int x , int y , int r ){
+void GUI_circle_qrt4_fill   ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt4( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    __Graph_circle_qrt4_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_circle_qrt1_raw    ( int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt1_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+void GUI_circle_qrt2_raw    ( int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt2_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+void GUI_circle_qrt3_raw    ( int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt3_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+void GUI_circle_qrt4_raw    ( int x ,int y ,int r ){
+#ifdef RH_DEBUG
+#endif
+    int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
+    int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
+    int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
+    int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
+    __Graph_circle_qrt4_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
@@ -960,31 +1001,31 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int X = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
     int Y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
     int D = (int)__min( config->area.height , config->area.width );
-    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
-    // if(  !pHistory  ){
-    //     __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
-    // }else{
-    //     switch( pHistory->cord ){
+//    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+     if(  !pHistory  ){
+         __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+     }else{
+         switch( pHistory->cord ){
             
-    //         case 1:
-    //             __Graph_circle_qrt1( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-    //             break;
-    //         case 2:
-    //             __Graph_circle_qrt2( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-    //             break;
-    //         case 3:
-    //             __Graph_circle_qrt3( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-    //             break;
-    //         case 4:
-    //             __Graph_circle_qrt4( X, Y, (D>>1), &info_MainScreen, kApplyPixel_fill );
-    //             break;
-    //         case 0:
-    //         case 5:
-    //         case 6:
-    //             __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
-    //             break;
-    //     }
-    // }
+             case 1:
+                 __Graph_circle_qrt1_raw( X  , Y+1, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 break;
+             case 2:
+                 __Graph_circle_qrt2_raw( X+1, Y+1, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 break;
+             case 3:
+                 __Graph_circle_qrt3_raw( X+1, Y  , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 break;
+             case 4:
+                 __Graph_circle_qrt4_raw( X  , Y  , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 break;
+             case 0:
+             case 5:
+             case 6:
+                 __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+                 break;
+         }
+     }
     
     int32_t val_x = __limit( (int32_t)config->val[0], (int32_t)config->min[0], (int32_t)config->max[0] );
     int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );

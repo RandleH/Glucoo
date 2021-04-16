@@ -499,9 +499,180 @@ E_Status_t __Graph_circle_edged   (int x ,int y ,int d ,        __GraphInfo_t* p
 }
 
 /*====================================
- > 插入一个1/4圆
+ > 插入一个填充1/4圆
 =====================================*/
-E_Status_t __Graph_circle_qrt1    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t __Graph_circle_qrt1_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    int p = 3-((r-1)<<1);
+    int x_tmp = 0,y_tmp = (r-1);
+    
+    bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
+    if( blurCmd ){
+        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_tmp.pBuffer = RH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(__GraphPixel_t) );
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    }
+
+    for(;x_tmp<=y_tmp;x_tmp++){
+        ( *applyPixelMethod [method] )(x+x_tmp,y-y_tmp, GCFG.penColor, pInfo );
+        ( *applyPixelMethod [method] )(x+y_tmp,y-x_tmp, GCFG.penColor, pInfo );
+
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    if( blurCmd ){
+        RH_FREE(GCFG.blur_tmp.pBuffer);
+        memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
+        memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
+    }
+    return kStatus_Success;
+}
+E_Status_t __Graph_circle_qrt2_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    int p = 3-((r-1)<<1);
+    int x_tmp = 0,y_tmp = (r-1);
+    
+    bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
+    if( blurCmd ){
+        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_tmp.pBuffer = RH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(__GraphPixel_t) );
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    }
+
+    for(;x_tmp<=y_tmp;x_tmp++){
+        ( *applyPixelMethod [method] )(x-x_tmp,y-y_tmp, GCFG.penColor, pInfo );
+        ( *applyPixelMethod [method] )(x-y_tmp,y-x_tmp, GCFG.penColor, pInfo );
+
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    if( blurCmd ){
+        RH_FREE(GCFG.blur_tmp.pBuffer);
+        memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
+        memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
+    }
+    return kStatus_Success;
+}
+E_Status_t __Graph_circle_qrt3_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    int p = 3-((r-1)<<1);
+    int x_tmp = 0,y_tmp = (r-1);
+    
+    bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
+    if( blurCmd ){
+        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_tmp.pBuffer = RH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(__GraphPixel_t) );
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    }
+
+    for(;x_tmp<=y_tmp;x_tmp++){
+        ( *applyPixelMethod [method] )(x-x_tmp,y+y_tmp, GCFG.penColor, pInfo );
+        ( *applyPixelMethod [method] )(x-y_tmp,y+x_tmp, GCFG.penColor, pInfo );
+
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    if( blurCmd ){
+        RH_FREE(GCFG.blur_tmp.pBuffer);
+        memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
+        memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
+    }
+    return kStatus_Success;
+}
+E_Status_t __Graph_circle_qrt4_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    int p = 3-((r-1)<<1);
+    int x_tmp = 0,y_tmp = (r-1);
+    
+    bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
+    if( blurCmd ){
+        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_tmp.pBuffer = RH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(__GraphPixel_t) );
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        while(1);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    }
+
+    for(;x_tmp<=y_tmp;x_tmp++){
+        ( *applyPixelMethod [method] )(x+x_tmp,y+y_tmp, GCFG.penColor, pInfo );
+        ( *applyPixelMethod [method] )(x+y_tmp,y+x_tmp, GCFG.penColor, pInfo );
+
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    if( blurCmd ){
+        RH_FREE(GCFG.blur_tmp.pBuffer);
+        GCFG.blur_area.xs     = 0;
+        GCFG.blur_area.ys     = 0;
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = 0;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = 0;
+        GCFG.blur_tmp.pBuffer = NULL;
+    }
+    return kStatus_Success;
+}
+    
+/*====================================
+ > 插入一个填充1/4圆
+=====================================*/
+E_Status_t __Graph_circle_qrt1_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -549,7 +720,7 @@ E_Status_t __Graph_circle_qrt1    (int x ,int y ,int r ,        __GraphInfo_t* p
     }
     return kStatus_Success;
 }
-E_Status_t __Graph_circle_qrt2    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t __Graph_circle_qrt2_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -597,7 +768,7 @@ E_Status_t __Graph_circle_qrt2    (int x ,int y ,int r ,        __GraphInfo_t* p
     }
     return kStatus_Success;
 }
-E_Status_t __Graph_circle_qrt3    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t __Graph_circle_qrt3_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -645,7 +816,7 @@ E_Status_t __Graph_circle_qrt3    (int x ,int y ,int r ,        __GraphInfo_t* p
     }
     return kStatus_Success;
 }
-E_Status_t __Graph_circle_qrt4    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t __Graph_circle_qrt4_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -868,10 +1039,10 @@ E_Status_t __Graph_rect_round     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
     __Graph_rect_fill(xs    , ys+r+1, xs+r  , ye-r-1, pInfo, method);
     __Graph_rect_fill(xe-r  , ys+r+1, xe    , ye-r-1, pInfo, method);
 
-    __Graph_circle_qrt1(xe-r, ys+r, r, pInfo, method);
-    __Graph_circle_qrt2(xs+r, ys+r, r, pInfo, method);
-    __Graph_circle_qrt3(xs+r, ye-r, r, pInfo, method);
-    __Graph_circle_qrt4(xe-r, ye-r, r, pInfo, method);
+    __Graph_circle_qrt1_fill(xe-r, ys+r, r, pInfo, method);
+    __Graph_circle_qrt2_fill(xs+r, ys+r, r, pInfo, method);
+    __Graph_circle_qrt3_fill(xs+r, ye-r, r, pInfo, method);
+    __Graph_circle_qrt4_fill(xe-r, ye-r, r, pInfo, method);
     
     if( blurCmd ){
         RH_FREE(GCFG.blur_tmp.pBuffer);
