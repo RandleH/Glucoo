@@ -1005,19 +1005,20 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
      if(  !pHistory  ){
          __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      }else{
+         bool eps = ((D&0x01)==0);
          switch( pHistory->cord ){
-            
+             
              case 1:
-                 __Graph_circle_qrt1_raw( X  , Y+1, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt1_raw( X    , Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 2:
-                 __Graph_circle_qrt2_raw( X+1, Y+1, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt2_raw( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 3:
-                 __Graph_circle_qrt3_raw( X+1, Y  , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt3_raw( X+eps, Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 4:
-                 __Graph_circle_qrt4_raw( X  , Y  , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt4_raw( X    , Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 0:
              case 5:

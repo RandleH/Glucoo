@@ -37,8 +37,18 @@ int main(int argc, const char * argv[]) {
     GUI_Init();
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
+    GUI_circle_raw(32, 10, 19);
+    GUI_circle_qrt1_raw( 32  ,32  ,10 );
+    GUI_circle_qrt2_raw( 32  ,32  ,10 );
+    GUI_circle_qrt3_raw( 32  ,32  ,10 );
+    GUI_circle_qrt4_raw( 32  ,32  ,10 );
+    
+//    GUI_circle_raw(32, 10, 18);
+//    GUI_circle_qrt1_raw( 32  ,32+1,10 );
+//    GUI_circle_qrt2_raw( 32+1,32+1,10 );
+//    GUI_circle_qrt3_raw( 32+1,32  ,10 );
+//    GUI_circle_qrt4_raw( 32  ,32  ,10 );
 
-//    GUI_sausage_raw(20, 20, 40, 30);
     GUI_RefreashScreen();
 
 #if 0
