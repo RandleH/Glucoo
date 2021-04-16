@@ -14,6 +14,9 @@ void JOYSTICK_IRQHandler(void){
 	EXTI_ClearITPendingBit(EXTI_OK_LINE);
 }
 
+void assert_failed(uint8_t* file, uint32_t line){
+    while(1);
+}
 
 
 
