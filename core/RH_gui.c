@@ -6,6 +6,17 @@
 #include "RH_lib.h"
 #include "RH_graphic.h"
 
+#if ( RH_CFG_SCREEN_HEIGHT < 16 )
+  #warning "Screen height may be too small."
+#endif
+
+#if ( RH_CFG_SCREEN_WIDTH < 16 )
+  #warning "Screen width may be too small."
+#endif
+
+#define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
+#define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
+
 
 void __attribute__((weak)) GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
 // THIS MAY COST SOME TIME.

@@ -14,10 +14,10 @@ extern "C"{
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
 static __ImageBIN_t*    pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t GRAM[GUI_Y_WIDTH][GUI_X_WIDTH] = {0};
+    __PixelUnit_t GRAM[RH_CFG_SCREEN_HEIGHT][RH_CFG_SCREEN_WIDTH] = {0};
 static __ImageRGB565_t TmpScreenShot = {
-    .width   = GUI_X_WIDTH ,
-    .height  = GUI_Y_WIDTH ,
+    .width   = RH_CFG_SCREEN_WIDTH ,
+    .height  = RH_CFG_SCREEN_HEIGHT ,
     .pBuffer = GRAM[0]
 };
 static __ImageRGB565_t* pTmpScreenShot = &TmpScreenShot;
@@ -37,21 +37,21 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
 
     if( pTmpScreenShot == NULL ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        pTmpScreenShot = __ImgBIN_create(GUI_X_WIDTH,GUI_Y_WIDTH);
+        pTmpScreenShot = __ImgBIN_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        pTmpScreenShot = __ImgRGB565_create(GUI_X_WIDTH,GUI_Y_WIDTH);
+        pTmpScreenShot = __ImgRGB565_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        pTmpScreenShot = __ImgRGB888_create(GUI_X_WIDTH,GUI_Y_WIDTH);
+        pTmpScreenShot = __ImgRGB888_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
     }
 
 #ifdef RH_DEBUG
-    RH_ASSERT( x1<GUI_X_WIDTH && x1>=0 );
-    RH_ASSERT( x2<GUI_X_WIDTH && x2>=0 );
-    RH_ASSERT( y1<GUI_Y_WIDTH && y1>=0 );
-    RH_ASSERT( y2<GUI_Y_WIDTH && y2>=0 );
+    RH_ASSERT( x1<RH_CFG_SCREEN_WIDTH && x1>=0 );
+    RH_ASSERT( x2<RH_CFG_SCREEN_WIDTH && x2>=0 );
+    RH_ASSERT( y1<RH_CFG_SCREEN_HEIGHT && y1>=0 );
+    RH_ASSERT( y2<RH_CFG_SCREEN_HEIGHT && y2>=0 );
 #endif
     
     
@@ -61,7 +61,7 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
     const int ps = ((__min(y1, y2))>>3);
     const int pe = ((__max(y1, y2))>>3);
     for ( int p=ps; p<=pe; p++ ) {
-        memcpy(&pTmpScreenShot->pBuffer[ p*GUI_X_WIDTH + xs ].data, pixData, (xe-xs+1));
+        memcpy(&pTmpScreenShot->pBuffer[ p*RH_CFG_SCREEN_WIDTH + xs ].data, pixData, (xe-xs+1));
         pixData += (xe-xs+1);
     }
         
@@ -70,7 +70,7 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
     const size_t height  = __abs(y2 - y1) + 1;
     for(int y=0;y<height;y++){
         for(int x=0;x<width;x++){
-            pTmpScreenShot->pBuffer[(y1+y)*GUI_X_WIDTH + (x1+x)].data = pixData[ y*width+x];
+            pTmpScreenShot->pBuffer[(y1+y)*RH_CFG_SCREEN_WIDTH + (x1+x)].data = pixData[ y*width+x];
         }
     }
 #else
@@ -97,12 +97,12 @@ static void Simul_API_DrawPixel(int x ,int y ,const __Pixel_t pixData){
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        pTmpScreenShot = __ImgRGB888_create(GUI_X_WIDTH,GUI_Y_WIDTH);
+        pTmpScreenShot = __ImgRGB888_create(RH_CFG_SCREEN_WIDTH,RH_CFG_SCREEN_HEIGHT);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
     }
-    pTmpScreenShot->pBuffer[(y)*GUI_X_WIDTH + (x)].data = pixData;
+    pTmpScreenShot->pBuffer[(y)*RH_CFG_SCREEN_WIDTH + (x)].data = pixData;
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )

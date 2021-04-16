@@ -19,8 +19,6 @@ extern "C" {
 #define RH_CFG_FONT_DATA_LOCAL_BITMAP         (2U)                          // < option >
 #define RH_CFG_FONT_DATA_TYPE                 RH_CFG_FONT_DATA_LOCAL_ARRAY  // < select > < above option >
 
-
-
 #define RH_CFG_FONT_STYLE__CourierNew         (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__CourierNew_Italic  (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__CourierNew_Bold    (0U)                          // < select > < 0=disable : 1=enable >
@@ -28,6 +26,8 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__NewYork_Italic     (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Arial_Unicode      (0U)                          // < select > < 0=disable : 1=enable >
 
+#define RH_CFG_SCREEN_HEIGHT                  (64U)                         // < select >
+#define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
 
 #define RH_CFG_MALLOC_SIZE__NONE              ((1U)<<0)                     // < option >
 #define RH_CFG_MALLOC_SIZE__64B               ((1U)<<6)                     // < option > 
@@ -77,7 +77,6 @@ extern "C" {
 #define RH_CFG_HASHTABLE_SIZE                 RH_CFG_HASHTABLE_SIZE__64B    // < select > < above option >
 
 
-
 // Select or use your own function.
 #ifndef RH_ASSERT
   #define RH_ASSERT( expr )                   assert( expr )
@@ -95,7 +94,7 @@ extern "C" {
 #ifndef RH_MALLOC
 #include "RH_lib.h"
   #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), NULL )
-//  #define RH_MALLOC(x)                        __RH_Debug_malloc(x,__FILE__,__LINE__,malloc)
+
 #else
   #error " 'RH_MALLOC' has been defined. "
 #endif

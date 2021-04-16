@@ -19,8 +19,6 @@ extern "C" {
 #define RH_CFG_FONT_DATA_LOCAL_BITMAP         (2U)                          // < option >
 #define RH_CFG_FONT_DATA_TYPE                 RH_CFG_FONT_DATA_LOCAL_BITMAP // < select > < above option >
 
-
-
 #define RH_CFG_FONT_STYLE__CourierNew         (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__CourierNew_Italic  (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__CourierNew_Bold    (0U)                          // < select > < 0=disable : 1=enable >
@@ -28,6 +26,8 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__NewYork_Italic     (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Arial_Unicode      (0U)                          // < select > < 0=disable : 1=enable >
 
+#define RH_CFG_SCREEN_HEIGHT                  (128U)                         // < select >
+#define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
 
 #define RH_CFG_MALLOC_SIZE__NONE              ((1U)<<0)                     // < option >
 #define RH_CFG_MALLOC_SIZE__64B               ((1U)<<6)                     // < option > 
