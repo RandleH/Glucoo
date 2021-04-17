@@ -10,7 +10,7 @@ extern "C"{
 #endif
 
 
-void API_Init__STM32F103C8T6 (void){
+void GUI_API_Init (void){
     GUI_API_DrawArea     = SSD1306_API_DrawArea;
     
 }

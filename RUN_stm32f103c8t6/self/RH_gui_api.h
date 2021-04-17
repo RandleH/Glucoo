@@ -9,7 +9,7 @@ extern "C"{
 
 #define __RUN_ON_STM32F103C8T6__
 
-void API_Init__STM32F103C8T6 (void);
+void GUI_API_Init (void);
 
 #ifdef __cplusplcus
 }

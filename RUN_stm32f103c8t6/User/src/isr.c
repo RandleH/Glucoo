@@ -15,6 +15,8 @@ void JOYSTICK_IRQHandler(void){
 }
 
 void assert_failed(uint8_t* file, uint32_t line){
+	const char* FILE = file;
+	uint32_t    LINE = line;
     while(1);
 }
 

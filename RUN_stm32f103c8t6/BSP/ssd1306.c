@@ -112,7 +112,7 @@ void SSD1306_Init(void){
 	__writeCmd(0x8d); //--set DC-DC enable
 	__writeCmd(0x14); //
 	__writeCmd(0xaf); //--turn on oled panel
-
+    SSD1306_Clean();
 }
 
 void SSD1306_Clean(void){
