@@ -85,7 +85,7 @@ extern "C" {
 #else
   #error " 'RH_ASSERT' has been defined. "
 #endif
-
+#include "RH_lib.h"
 #ifndef RH_CALLOC
   #define RH_CALLOC(x,size)                   calloc(x,size)
 #else
@@ -93,7 +93,7 @@ extern "C" {
 #endif
 
 #ifndef RH_MALLOC
-  #define RH_MALLOC(x)                        malloc(x)
+  #define RH_MALLOC(x)                        malloc(x)//malloc(x)
 #else
   #error " 'RH_MALLOC' has been defined. "
 #endif

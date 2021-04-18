@@ -226,7 +226,7 @@ struct __MallocNode_t{
      --------------------------------------------------------------------------------------------------------*/
     
 size_t RH_Global_alloced_byte  = 0;
-size_t RH_Global_free_byte   = 0;
+size_t RH_Global_free_byte     = RH_ALLOC_CHUNK_SIZE;
 void* __RH_Global_malloc(size_t size){
     size_t size_need       = size;
     if( RH_Global_alloced_byte + size_need > RH_ALLOC_CHUNK_SIZE )
@@ -249,7 +249,8 @@ void* __RH_Global_malloc(size_t size){
     if(pNode == NULL){
         pHeapMemoryHeadNode = pNewNode;
         pNewNode->index     = 0;
-        ptr                 = &__VERTUAL_HEAP[pNewNode->index];
+        pNewNode->ptr       = ptr = &__VERTUAL_HEAP[pNewNode->index];
+        RH_Global_free_byte -= size_need;
         return ptr;
     }
     
@@ -302,7 +303,33 @@ void* __RH_Global_calloc(size_t count, size_t size){
     return memset( ptr, 0, byt );
 }
 
-    
+void __RH_Global_free(void* ptr){
+    unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
+    struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
+    struct __MallocNode_t* pForeward = NULL;
+    while(pNode != NULL){
+        if(pNode->index == index && pNode->ptr == ptr){
+            if(pForeward != NULL){
+                pForeward->pNextNode = pNode->pNextNode;
+                RH_Global_alloced_byte -= pNode->byte;
+                free(pNode);
+            }else{
+                // 前节点为空只可能pNode为pHeapMemoryHeadNode
+            #ifdef RH_DEBUG
+                RH_ASSERT( pNode == pHeapMemoryHeadNode );
+                RH_ASSERT( pNode->ptr == __VERTUAL_HEAP );
+            #endif
+                RH_Global_alloced_byte -= pNode->byte;
+                pHeapMemoryHeadNode = NULL;
+                free(pNode);
+            }
+            break;
+        }
+        pForeward = pNode;
+        pNode     = pNode->pNextNode;
+    }
+    RH_Global_free_byte = RH_ALLOC_CHUNK_SIZE - RH_Global_alloced_byte;
+}    
 
     
     
@@ -394,25 +421,6 @@ void __RH_Debug_del_memory_info(void){
     __Hash_removeAll(pHEAD_HASHMAP_size_2_ptr);
     pHEAD_HASHMAP_size_2_ptr = NULL;
     RH_Debug_alloced_byte    = 0;
-}
-    
-void __RH_Global_free(void* ptr){
-    unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
-    struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
-    struct __MallocNode_t* pForeward = NULL;
-    while(pNode != NULL){
-        if(pNode->index == index && pNode->ptr == ptr){
-            if(pForeward != NULL){
-                pForeward->pNextNode = pNode->pNextNode;
-                RH_Global_alloced_byte -= pNode->byte;
-                free(pNode);
-            }
-            break;
-        }
-        pForeward = pNode;
-        pNode     = pNode->pNextNode;
-    }
-    RH_Global_free_byte = RH_ALLOC_CHUNK_SIZE - RH_Global_alloced_byte;
 }
 
 void* __memsetWORD(void* __b,uint16_t value,size_t num){
