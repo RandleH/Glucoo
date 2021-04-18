@@ -181,7 +181,7 @@ void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
     pArea->ys      = ys;
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
-    Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
+    //Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
     __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
 }
 

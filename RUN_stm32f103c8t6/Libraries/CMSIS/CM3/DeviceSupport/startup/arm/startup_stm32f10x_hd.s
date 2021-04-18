@@ -42,7 +42,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00002000
+Heap_Size       EQU     0x00001000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -73,8 +73,8 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     SVC_Handler                ; SVCall Handler
                 DCD     DebugMon_Handler           ; Debug Monitor Handler
                 DCD     0                          ; Reserved
-                DCD     OS_CPU_PendSVHandler             ; PendSV Handler  ;// Modified by RandleH （原是 PendSV Handler）
-                DCD     OS_CPU_SysTickHandler            ; SysTick Handler ;// Modified by RandleH （原是 SysTick Handler）
+                DCD     PendSV_Handler             ; PendSV Handler
+                DCD     SysTick_Handler            ; SysTick Handler
 
                 ; External Interrupts
                 DCD     WWDG_IRQHandler            ; Window Watchdog
@@ -189,12 +189,12 @@ DebugMon_Handler\
                 EXPORT  DebugMon_Handler           [WEAK]
                 B       .
                 ENDP
-OS_CPU_PendSVHandler  PROC                                        ;// Modified by RandleH （原是 PendSV Handler）
-                EXPORT  OS_CPU_PendSVHandler             [WEAK]   ;// Modified by RandleH （原是 PendSV Handler）
+PendSV_Handler  PROC
+                EXPORT  PendSV_Handler             [WEAK]
                 B       .
                 ENDP
-OS_CPU_SysTickHandler PROC                                        ;// Modified by RandleH （原是 SysTick Handler）
-                EXPORT  OS_CPU_SysTickHandler            [WEAK]   ;// Modified by RandleH （原是 SysTick Handler）
+SysTick_Handler PROC
+                EXPORT  SysTick_Handler            [WEAK]
                 B       .
                 ENDP
 

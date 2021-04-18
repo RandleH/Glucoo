@@ -55,7 +55,7 @@ extern "C" {
 #define RH_CFG_MALLOC_SIZE__256MB             ((1U)<<28)                    // < option > 
 #define RH_CFG_MALLOC_SIZE__512MB             ((1U)<<29)                    // < option > 
 #define RH_CFG_MALLOC_SIZE__1GB               ((1U)<<30)                    // < option > 
-#define RH_CFG_MALLOC_SIZE                    RH_CFG_MALLOC_SIZE__NONE      // < select > < above option >
+#define RH_CFG_MALLOC_SIZE                    RH_CFG_MALLOC_SIZE__NONE     // < select > < above option >
 
 #define RH_CFG_OUTPUT_FONT_PNG                (0U)                          // < select > < 0=disable : 1=enable >
 
