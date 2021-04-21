@@ -54,6 +54,7 @@ struct __Region_t{
     int    ys;
     size_t width;
     size_t height;
+    void*  ram;
 };
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;

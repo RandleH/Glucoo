@@ -29,6 +29,13 @@ extern "C" {
 #define RH_CFG_SCREEN_HEIGHT                  (64U)                         // < select >
 #define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
 
+#define RH_CFG_GRAM_NONE                      (0U)                          // < option >
+#define RH_CFG_GRAM_INTERNAL                  (1U)                          // < option >
+#define RH_CFG_GRAM_EXTERNAL                  (2U)                          // < option >
+#define RH_CFG_GRAM_TYPE                      RH_CFG_GRAM_INTERNAL          // < select > < above option >
+
+#define RH_CFG_GRAM_ADDR                      (NULL)                        // < select > < only available when using "RH_CFG_GRAM_EXTERNAL" >
+
 #define RH_CFG_MALLOC_SIZE__NONE              ((1U)<<0)                     // < option >
 #define RH_CFG_MALLOC_SIZE__64B               ((1U)<<6)                     // < option > 
 #define RH_CFG_MALLOC_SIZE__128B              ((1U)<<7)                     // < option > 

@@ -337,7 +337,50 @@ GUI_object_adjust(ID_Obj1, 11);
 
 GUI_RefreashScreen();
 
+void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
+    
+    if(GUI_API_DrawArea != NULL){
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        const int x_width = xe-xs+1;
+        const int ps      = ys>>3;
+        const int pe      = ye>>3;
+        const int p_width = (pe-ps+1);
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(p_width)*sizeof(__Pixel_t));
+        
+       (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+                           __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                                             sizeof(__Pixel_t)             ,\
+                                             GUI_X_WIDTH                   ,\
+                                             xs, ps, xe, pe                ) );
 
+#else
+        const int x_width = xe-xs+1;
+        const int y_width = ye-ys+1;
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(y_width)*sizeof(__Pixel_t));
+        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                                              sizeof(__Pixel_t)             ,\
+                                              GUI_X_WIDTH                   ,\
+                                              xs, ys, xe, ye                ) );
+#endif
+        RH_FREE(p);
+    }
+    else{
+        
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        for(int y=ys;y<=ye;y++)
+            for(int x=xs;x<=xe;x++)
+                (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y>>3][x].data);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        RH_ASSERT(false);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        for(int y=ys;y<=ye;y++)
+            for(int x=xs;x<=xe;x++)
+                (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y][x].data);
+#endif
+    }
+
+}
 
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
 

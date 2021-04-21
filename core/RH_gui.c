@@ -18,22 +18,22 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 
 
-void __attribute__((weak)) GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
+void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
 // THIS MAY COST SOME TIME.
 }
 void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const __Pixel_t* pixData) = GUI_DrawArea;
 
-void __attribute__((weak)) GUI_DummyDrawPixel (int x,int y,const __Pixel_t pixData){
+void RH_WEAK GUI_DummyDrawPixel (int x,int y,const __Pixel_t pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
 }
 void (*GUI_API_DrawPixel)                     (int x ,int y ,const __Pixel_t pixData)          = GUI_DummyDrawPixel;
 
-void __attribute__((weak)) GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
+void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
 }
 void (*GUI_API_AssertParam)                   (bool expression,const char* WHAT_IS_WRONG)      = GUI_AsserParam;
 
-void __attribute__((weak)) GUI_Delay          (unsigned long ms){
+void RH_WEAK GUI_Delay          (unsigned long ms){
     ms*=1000;
     while(ms--){}
 }
@@ -48,12 +48,15 @@ typedef __LinkLoop_t __LINK_WindowCFG;
 
 #pragma pack(1)
 static struct{
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+#endif
+    
 #endif
     size_t           allocated_byte;
 
@@ -97,29 +100,37 @@ void RH_PREMAIN GUI_Init(void){
     __Font_init();
 }
 
-void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
-    
+void GUI_RefreashScreenArea ( const __Area_t* pArea ){
+    const int xs = pArea->xs;
+    const int ys = pArea->ys;
+    const int xe = (int)(pArea->xs+pArea->width -1);
+    const int ye = (int)(pArea->ys+pArea->height-1);
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        const int x_width = xe-xs+1;
         const int ps      = ys>>3;
         const int pe      = ye>>3;
-        const int p_width = (pe-ps+1);
-        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(p_width)*sizeof(__Pixel_t));
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((pArea->width)*((ye>>3)-(ys>>3)+1)*sizeof(__Pixel_t));
         
-       (*GUI_API_DrawArea)( xs , ys , xe , ye ,
+  #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        //...//
+  #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        // 从内部显存中提取数据,需做字节对齐 (静态本地 + 动态)
+        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                              sizeof(__Pixel_t)             ,\
                                              GUI_X_WIDTH                   ,\
                                              xs, ps, xe, pe                ) );
-//#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-//        RH_ASSERT(false);
-//#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+  #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
+        // 从区域结构体中导入数据(仅动态)
+        RH_ASSERT( pArea->ram );
+        (*GUI_API_DrawArea)( xs , ys , xe , ye , pArea->ram);
+  #endif
+        
 #else
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
-        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(y_width)*sizeof(__Pixel_t));
-		(*GUI_API_DrawArea)( xs , ys , xe , ye ,
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((xe-xs+1)*(ye-ys+1)*sizeof(__Pixel_t));
+        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                             __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
