@@ -30,7 +30,6 @@ extern "C"{
 typedef __ImageBIN_t           __PixelInfo_t;
 typedef __UNION_PixelBIN_t     __PixelUnit_t;
 typedef uint8_t                __Pixel_t;
-//  #error "[RH_gui_config]: Not support yet."
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
 typedef __ImageRGB565_t        __PixelInfo_t;
 typedef __UNION_PixelRGB565_t  __PixelUnit_t;

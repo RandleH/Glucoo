@@ -392,6 +392,15 @@ void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
 #endif
 
 
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
+
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    //...//
+#endif
+
+
 
 #endif
 

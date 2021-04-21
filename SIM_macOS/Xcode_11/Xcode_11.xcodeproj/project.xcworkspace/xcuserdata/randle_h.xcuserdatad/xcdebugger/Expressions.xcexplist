@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "__ApplyPixel_fill:RH_graphic.c">
+      </ContextState>
+      <ContextState
+         contextName = "GUI_RefreashScreen:RH_gui.c">
+      </ContextState>
+      <ContextState
+         contextName = "__Font_setSize:RH_font.c">
+      </ContextState>
+      <ContextState
+         contextName = "GUI_Init:RH_gui.c">
+      </ContextState>
+      <ContextState
+         contextName = "__Graph_rect_raw:RH_graphic.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "Screen.GRAM">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GUI_rect_raw:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "GRAM">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

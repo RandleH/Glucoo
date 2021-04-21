@@ -47,17 +47,26 @@ typedef __Stack_t    __LINK_AreaRefreash;
 typedef __LinkLoop_t __LINK_WindowCFG;
 
 #pragma pack(1)
-static struct{
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
-#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    #endif
 #endif
+
+#pragma pack(1)
+static struct{
     
-#endif
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH>>3][GUI_X_WIDTH];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
+    #endif
     size_t           allocated_byte;
 
     bool             autoDisplay;
@@ -71,26 +80,33 @@ static struct{
 #endif
 }Screen;
 
-static __GraphInfo_t info_MainScreen = {
-    .height = GUI_Y_WIDTH ,
-    .width  = GUI_X_WIDTH ,
-    .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
-};
+//static __GraphInfo_t info_MainScreen = {
+//    .height = GUI_Y_WIDTH ,
+//    .width  = GUI_X_WIDTH ,
+//};
 
 void RH_PREMAIN GUI_Init(void){
 
+    
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
+    Screen.GRAM = NULL;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    Screen.GRAM = GRAM;
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM[M_SCREEN_MAIN][0] , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM[M_SCREEN_MAIN][0] , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM[M_SCREEN_MAIN][0] , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #endif
-
+//    info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    //...//
+#endif
     Screen.autoDisplay = false;
 
     Screen.allocated_byte = 0;
-    Screen.areaNeedRefreashHead = __Stack_createBase( NULL );
+    Screen.areaNeedRefreashHead     = __Stack_createBase( NULL );
     Screen.areaNeedRefreashCnt      = 0;
     Screen.areaNeedRefreashPixelCnt = 0;
 
@@ -100,6 +116,22 @@ void RH_PREMAIN GUI_Init(void){
     __Font_init();
 }
 
+/*==============================================================================================
+ * GUI_RefreashScreenArea
+ ===============================================================================================
+ * 此函数将会调用显示屏API, 并立即在显示屏上显示图像.
+ *
+ * 以下情况,当API中支持区域刷新即 GUI_API_DrawArea不为NULL时:
+ * 如果配置为无显存, 那么图像数据将从传入的 pArea 中读取. 但不会释放 pArea中的缓存图像数据.
+ * 如果配置为内置显存, 那么图像数据将创建该区域的动态缓存,并从内置的 Screen.GRAM 中拷贝到其中(字节宽度对齐),刷新
+   屏幕后释放动态缓存.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+ *
+ * 以下情况,当API不支持区域刷新, 仅有单个画点函数时即 GUI_API_DrawPixel :
+ * 如果配置为无显存, 那么图像数据将从传入的 pArea 中读取. 但不会释放 pArea中的缓存图像数据.
+ * 如果配置为内置显存, 那么图像数据将直接从 Screen.GRAM 逐一画点.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+===============================================================================================*/
 void GUI_RefreashScreenArea ( const __Area_t* pArea ){
     const int xs = pArea->xs;
     const int ys = pArea->ys;
@@ -107,26 +139,32 @@ void GUI_RefreashScreenArea ( const __Area_t* pArea ){
     const int ye = (int)(pArea->ys+pArea->height-1);
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        const int ps      = ys>>3;
-        const int pe      = ye>>3;
-        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((pArea->width)*((ye>>3)-(ys>>3)+1)*sizeof(__Pixel_t));
-        
-  #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
-        //...//
-  #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    #if ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
+        // 从区域结构体中导入数据(仅动态)
+        RH_ASSERT( pArea->ram );
+        RH_ASSERT( Screen.GRAM == NULL );
+        (*GUI_API_DrawArea)( xs , ys , xe , ye , pArea->ram);
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
         // 从内部显存中提取数据,需做字节对齐 (静态本地 + 动态)
+        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((pArea->width)*((ye>>3)-(ys>>3)+1)*sizeof(__Pixel_t));
         (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                              sizeof(__Pixel_t)             ,\
                                              GUI_X_WIDTH                   ,\
-                                             xs, ps, xe, pe                ) );
-  #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
+                                             xs, (ys>>3), xe, (ye>>3)      ) );
+        RH_FREE(p);
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        //...//
+        RH_ASSERT(0);
+    #endif
+        
+#else
+        
+    #if ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE )
         // 从区域结构体中导入数据(仅动态)
         RH_ASSERT( pArea->ram );
         (*GUI_API_DrawArea)( xs , ys , xe , ye , pArea->ram);
-  #endif
-        
-#else
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)RH_MALLOC((xe-xs+1)*(ye-ys+1)*sizeof(__Pixel_t));
@@ -135,8 +173,14 @@ void GUI_RefreashScreenArea ( const __Area_t* pArea ){
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
                                               xs, ys, xe, ye                ) );
-#endif
         RH_FREE(p);
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        //...//
+        RH_ASSERT(0);
+    #endif
+        
+#endif
+        
     }
     else{
         
@@ -145,7 +189,7 @@ void GUI_RefreashScreenArea ( const __Area_t* pArea ){
             for(int x=xs;x<=xe;x++)
                 (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y>>3][x].data);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        RH_ASSERT(false);
+        RH_ASSERT(0);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         for(int y=ys;y<=ye;y++)
             for(int x=xs;x<=xe;x++)
@@ -155,11 +199,39 @@ void GUI_RefreashScreenArea ( const __Area_t* pArea ){
 
 }
 
+
+/*==============================================================================================
+ * GUI_RefreashScreen
+ ===============================================================================================
+ * 此函数将会根据缓存情况进行屏幕刷新.
+ *
+ * Screen.areaNeedRefreashHead 是用于记载屏幕待刷新区域的链表表头, 表头本身不存储数据, 有效数据从下一节点开始.
+   该链表表头于 GUI_Init 中被初始化. 该链表为栈链表, 类型为 <__Stack_t>.
+ * 如果配置为无显存, 那么图像数据将从待刷新区域的链表节点中数据即 <__Area_t> 结构体指针传入给
+   GUI_RefreashScreenArea并且完成后将会释放其中的缓存图像数据及结构体自身.
+ * 如果配置为内置显存, 那么将会判断屏幕总体待刷新像素点是否超过了屏幕像素总和, 如果超过了, 则释放所有链表节点,并刷新
+   全屏幕,没有超过则将链表节点中数据即 <__Area_t> 结构体指针传入给 GUI_RefreashScreenArea, 由于内置显存, 因此
+   <__Area_t>结构体指针不会有图像数据.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+===============================================================================================*/
 void GUI_RefreashScreen     ( void ){
-    __exit( Screen.areaNeedRefreashHead == NULL );
+    RH_ASSERT( Screen.areaNeedRefreashHead );
     __Area_t *p = NULL;
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
+        p = __Stack_pop( Screen.areaNeedRefreashHead );
+        GUI_RefreashScreenArea( p );
+        RH_FREE(p->ram);
+        RH_FREE(p);
+    }
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    // 如果待刷新区域像素总和超过屏幕总像素, 则刷新总屏幕, 释放所有区域缓存, 否则只刷新区域显存
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
-        GUI_RefreashScreenArea( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
+        p->ram    = Screen.GRAM[M_SCREEN_MAIN];
+        p->height = GUI_Y_WIDTH;
+        p->width  = GUI_X_WIDTH;
+        p->xs     = p->ys = 0;
+        GUI_RefreashScreenArea( p );
         while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
             p = __Stack_pop( Screen.areaNeedRefreashHead );
             RH_FREE(p);
@@ -167,16 +239,19 @@ void GUI_RefreashScreen     ( void ){
     }else{
         while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
             p = __Stack_pop( Screen.areaNeedRefreashHead );
-            GUI_RefreashScreenArea( (int)(p->xs)             ,\
-                                    (int)(p->ys)             ,\
-                                    (int)(p->xs+p->width-1)  ,\
-                                    (int)(p->ys+p->height-1) );
+            GUI_RefreashScreenArea( p );
             RH_FREE(p);
         }
     }
+#endif
     Screen.areaNeedRefreashPixelCnt = 0;
 }
 
+/*==============================================================================================
+ * GUI_AddScreenArea
+ ===============================================================================================
+ * ...
+===============================================================================================*/
 void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
@@ -192,7 +267,7 @@ void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
     pArea->ys      = ys;
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
-    //Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
+    Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
     __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
 }
 
@@ -205,32 +280,115 @@ void GUI_set_penColor       ( __Pixel_t penColor ){
 }
 
 
+
+
 void GUI_rect_raw           ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    
+    __Graph_rect_raw( xs, ys, xe, ye, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_edged         ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_edged( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_rect_edged( xs, ys, xe, ye, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_fill          ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_fill( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_rect_fill( xs, ys, xe, ye, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_rect_round         ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    __Graph_rect_round( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_rect_round( xs, ys, xe, ye, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_raw         ( int x , int y , int d ){
@@ -240,8 +398,28 @@ void GUI_circle_raw         ( int x , int y , int d ){
     int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_raw( x, y, d, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_raw( x, y, d, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_edged       ( int x , int y , int d ){
@@ -251,8 +429,28 @@ void GUI_circle_edged       ( int x , int y , int d ){
     int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_edged( x, y, d, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_edged( x, y, d, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_fill        ( int x , int y , int d ){
@@ -262,8 +460,28 @@ void GUI_circle_fill        ( int x , int y , int d ){
     int xe = __limit( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+(d>>1)+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_fill( x, y, d, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_fill( x, y, d, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_qrt1_fill   ( int x , int y , int r ){
@@ -273,8 +491,28 @@ void GUI_circle_qrt1_fill   ( int x , int y , int r ){
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt1_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt1_fill( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_qrt2_fill   ( int x , int y , int r ){
@@ -284,8 +522,28 @@ void GUI_circle_qrt2_fill   ( int x , int y , int r ){
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt2_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+   __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt2_fill( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_qrt3_fill   ( int x , int y , int r ){
@@ -295,8 +553,28 @@ void GUI_circle_qrt3_fill   ( int x , int y , int r ){
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt3_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt3_fill( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_qrt4_fill   ( int x , int y , int r ){
@@ -306,8 +584,28 @@ void GUI_circle_qrt4_fill   ( int x , int y , int r ){
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt4_fill( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+    #endif
+    __Graph_circle_qrt4_fill( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_circle_qrt1_raw    ( int x ,int y ,int r ){
@@ -317,8 +615,28 @@ void GUI_circle_qrt1_raw    ( int x ,int y ,int r ){
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt1_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt1_raw( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 void GUI_circle_qrt2_raw    ( int x ,int y ,int r ){
 #ifdef RH_DEBUG
@@ -327,8 +645,28 @@ void GUI_circle_qrt2_raw    ( int x ,int y ,int r ){
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y-r-1), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt2_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt2_raw( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 void GUI_circle_qrt3_raw    ( int x ,int y ,int r ){
 #ifdef RH_DEBUG
@@ -337,8 +675,28 @@ void GUI_circle_qrt3_raw    ( int x ,int y ,int r ){
     int xe = __limit( (x    ), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt3_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt3_raw( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 void GUI_circle_qrt4_raw    ( int x ,int y ,int r ){
 #ifdef RH_DEBUG
@@ -347,13 +705,53 @@ void GUI_circle_qrt4_raw    ( int x ,int y ,int r ){
     int xe = __limit( (x+r+1), 0, GUI_X_WIDTH-1 );
     int ys = __limit( (y    ), 0, GUI_Y_WIDTH-1 );
     int ye = __limit( (y+r+1), 0, GUI_Y_WIDTH-1 );
-    __Graph_circle_qrt4_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_circle_qrt4_raw( x, y, r, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 void GUI_sausage_raw        ( int xs, int ys, int xe, int ye ){
-    __Graph_sausage_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
-    Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+    __Area_t area = {
+        .xs     = xs,
+        .ys     = ys,
+        .height = ye-ys+1,
+        .width  = xe-xs+1,
+    };
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    area.ram      = RH_MALLOC( area.height*area.width*sizeof(__PixelUnit_t) );
+    graph.height  = area.height;
+    graph.width   = area.width;
+    graph.pBuffer = area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    area.ram      = NULL;
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
+    __Graph_sausage_raw( xs, ys, xe, ye, &graph, kApplyPixel_fill );
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &area ) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
 static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
@@ -367,23 +765,35 @@ static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
                config->style == kGUI_ObjStyle_num  || \
                config->style == kGUI_ObjStyle_fnum  );
 #endif
-    
     __Graph_backup_config();
     
+    __GraphInfo_t graph = {0};
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+    RH_ASSERT( config->area.ram );
+    graph.height  = config->area.height;
+    graph.width   = config->area.width;
+    graph.pBuffer = config->area.ram;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    graph.height  = GUI_Y_WIDTH;
+    graph.width   = GUI_X_WIDTH;
+    graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+    RH_ASSERT(0);
+#endif
     if( !pHistory ){
         __Graph_set_penColor( config->bk_color );
         __Graph_rect_fill( config->area.xs+1, \
                            config->area.ys+1, \
                            config->area.xs+(int)config->area.width -1-1, \
                            config->area.ys+(int)config->area.height-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
         if( config->showFrame ){
             __Graph_set_penColor( config->bk_color );
             __Graph_rect_raw( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         }
     }else{
     #ifdef RH_DEBUG
@@ -397,14 +807,14 @@ static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)pHistory->area.width -1, \
                            pHistory->area.ys+(int)pHistory->area.height-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
         if( pHistory->showFrame && !config->showFrame ){
             __Graph_set_penColor( config->bk_color );
             __Graph_rect_raw( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         }
     }
     
@@ -417,9 +827,7 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
     RH_ASSERT( config->text );
     RH_ASSERT( config->style == kGUI_ObjStyle_text );
 #endif
-    
     __gui_remove_object_text(config);
-
     struct{
         __Area_t area;
         bool     showFrame;
@@ -429,6 +837,20 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
+    
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
     
     __Graph_backup_config();
     __Font_backup_config();
@@ -468,11 +890,11 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
         uint8_t* pIter = pF->output;
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                size_t index = ((y_fs+y)>>3)*(graph.width)+(x_fs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                    graph.pBuffer[ index ].data = __BIT_SET( graph.pBuffer[ index ].data, (y_fs+y)%8 );
                 }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                    graph.pBuffer[ index ].data = __BIT_CLR( graph.pBuffer[ index ].data, (y_fs+y)%8 );
                 }
             
             }
@@ -482,9 +904,9 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
             for( int x=0; x<pF->width; x++ ){
                 size_t index = (y_fs+y)*(info.width)+(x_fs+x);
                 uint8_t pixWeight = pF->output[y*pF->width+x];
-                info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_text.R - info.pBuffer[ index ].R) * pixWeight )>>8);
-                info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_text.G - info.pBuffer[ index ].G) * pixWeight )>>8);
-                info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_text.B - info.pBuffer[ index ].B) * pixWeight )>>8);
+                graph.pBuffer[ index ].R = graph.pBuffer[ index ].R + (( (color_text.R - graph.pBuffer[ index ].R) * pixWeight )>>8);
+                graph.pBuffer[ index ].G = graph.pBuffer[ index ].G + (( (color_text.G - graph.pBuffer[ index ].G) * pixWeight )>>8);
+                graph.pBuffer[ index ].B = graph.pBuffer[ index ].B + (( (color_text.B - graph.pBuffer[ index ].B) * pixWeight )>>8);
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -506,7 +928,7 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_eor);
+                          &graph, kApplyPixel_eor);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -540,6 +962,20 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
+    
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
@@ -550,11 +986,9 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
     __str[ __Font_getWordNum(config->area.width, __str) ] = '\0';
     
     if(__str[0]!='\0'){
-
         __GUI_Font_t* pF = __Font_exportStr(__str);
         
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
-        
         int x_fs = 0;
         int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
@@ -573,11 +1007,11 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
         uint8_t* pIter = pF->output;
         for( int y=0; y<pF->height && y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                size_t index = ((y_fs+y)>>3)*(graph.width)+(x_fs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );               
+                    graph.pBuffer[ index ].data = __BIT_SET( graph.pBuffer[ index ].data, (y_fs+y)%8 );
                 }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                    graph.pBuffer[ index ].data = __BIT_CLR( graph.pBuffer[ index ].data, (y_fs+y)%8 );
                 }
             
             }
@@ -587,9 +1021,9 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
             for( int x=0; x<pF->width; x++ ){
                 size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
                 uint8_t pixWeight = pF->output[y*pF->width+x];
-                info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
-                info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
-                info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+                graph.pBuffer[ index ].R = graph.pBuffer[ index ].R + (( (color_text.R - graph.pBuffer[ index ].R) * pixWeight )>>8);
+                graph.pBuffer[ index ].G = graph.pBuffer[ index ].G + (( (color_text.G - graph.pBuffer[ index ].G) * pixWeight )>>8);
+                graph.pBuffer[ index ].B = graph.pBuffer[ index ].B + (( (color_text.B - graph.pBuffer[ index ].B) * pixWeight )>>8);
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -608,7 +1042,7 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &graph, kApplyPixel_fill);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -634,6 +1068,21 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
         __Area_t area;
         bool     showFrame;
     }*pHistory = (void*)config->history;
+    
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -688,7 +1137,7 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     uint8_t*       pIterFont = pF->output;
     
-    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs>>3)*(info_MainScreen.width)+x_fs;
+    __PixelUnit_t* pIterScr  = graph.pBuffer + (y_fs>>3)*(graph.width)+x_fs;
     
     for( int y=0; y<pF->height && y<config->area.height; y++ ){
         for( int x=0; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -701,7 +1150,7 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
         
         pIterScr -= pF->width;
         if( ((y_fs+y+1)>>3) > ((y_fs+y)>>3) ){
-            pIterScr += info_MainScreen.width;
+            pIterScr += graph.width;
         }
     }
     
@@ -710,9 +1159,9 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
         for( int x=0; x<pF->width; x++ ){
             size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
             uint8_t pixWeight = pF->output[y*pF->width+x];
-            info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
-            info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
-            info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+            graph.pBuffer[ index ].R = graph.pBuffer[ index ].R + (( (color_text.R - graph.pBuffer[ index ].R) * pixWeight )>>8);
+            graph.pBuffer[ index ].G = graph.pBuffer[ index ].G + (( (color_text.G - graph.pBuffer[ index ].G) * pixWeight )>>8);
+            graph.pBuffer[ index ].B = graph.pBuffer[ index ].B + (( (color_text.B - graph.pBuffer[ index ].B) * pixWeight )>>8);
         }
     }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -732,7 +1181,7 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &graph, kApplyPixel_fill);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -756,6 +1205,21 @@ static void __gui_remove_object_switch ( const __GUI_Object_t* config ){
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
+    
     __Font_backup_config();
     __Graph_backup_config();
     
@@ -776,12 +1240,12 @@ static void __gui_remove_object_switch ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         __Graph_rect_raw( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &graph, kApplyPixel_fill);
     }
     
     __Font_restore_config();
@@ -798,12 +1262,28 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
+    
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
     }
 #ifdef RH_DEBUG
     RH_ASSERT( pHistory );
 #endif
+    
     
     __gui_remove_object_switch(config);
     
@@ -832,19 +1312,19 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         __Graph_set_penColor( color_switch_off.data );
         __Graph_circle_fill ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         
         
         __Graph_set_penColor( color_switch_on.data );
         __Graph_circle_raw  ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         pHistory->switchState = true;
     }else{
         __Graph_set_penColor( color_switch_on.data );
@@ -852,12 +1332,12 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         
         __Graph_circle_raw  ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &graph, kApplyPixel_fill);
         pHistory->switchState = false;
     }
     
@@ -881,6 +1361,21 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
     }*pHistory = (void*)config->history;
     
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
+    
     int32_t val = (int32_t)config->val[0];
     int32_t min = (int32_t)config->min[0];
     int32_t max = (int32_t)config->max[0];
@@ -902,14 +1397,14 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
     }else if(pHistory->bar_pos > bar_pos){
         __Graph_set_penColor( color_bar_off.data );
         __Graph_rect_fill( bar_pos, \
                            config->area.ys+1, \
                            pHistory->bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
     }
     
     __Font_restore_config();
@@ -925,6 +1420,21 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         
     }*pHistory = (void*)config->history;
+    
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
 
     __gui_remove_object_bar_h(config);
     
@@ -960,7 +1470,7 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
                       config->area.ys, \
                       config->area.xs+(int)(config->area.width )-1, \
                       config->area.ys+(int)(config->area.height)-1, \
-                      &info_MainScreen, kApplyPixel_fill);
+                      &graph, kApplyPixel_fill);
     
     if( pHistory->bar_pos < bar_pos ){
         __Graph_set_penColor( color_bar_on.data );
@@ -968,7 +1478,7 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
     }
 
     pHistory->bar_pos = bar_pos;
@@ -985,6 +1495,22 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
         int      cord; // (x,y)象限信息
         __Area_t area;
     }*pHistory = (void*)config->history;
+    
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
+    
     __Font_backup_config();
     __Graph_backup_config();
     __Graph_set_penColor( config->bk_color );
@@ -994,14 +1520,14 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
                            config->area.ys, \
                            config->area.xs+(int)(config->area.width )-1, \
                            config->area.ys+(int)(config->area.height)-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
     }else{
         
         __Graph_rect_fill( pHistory->area.xs, \
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)(pHistory->area.width )-1, \
                            pHistory->area.ys+(int)(pHistory->area.height)-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &graph, kApplyPixel_fill);
     }
     __Font_restore_config();
     __Graph_restore_config();
@@ -1012,6 +1538,20 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
         __Area_t area;
     }*pHistory = (void*)config->history;
     
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
     
     __gui_remove_object_joystick(config);
     
@@ -1025,27 +1565,27 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int D = (int)__min( config->area.height , config->area.width );
 //    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      if(  !pHistory  ){
-         __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+         __Graph_circle_raw( X, Y, D, &graph, kApplyPixel_fill );
      }else{
          bool eps = ((D&0x01)==0);
          switch( pHistory->cord ){
              
              case 1:
-                 __Graph_circle_qrt1_raw( X    , Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt1_raw( X    , Y+eps, (D>>1)+1, &graph, kApplyPixel_fill );
                  break;
              case 2:
-                 __Graph_circle_qrt2_raw( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt2_raw( X+eps, Y+eps, (D>>1)+1, &graph, kApplyPixel_fill );
                  break;
              case 3:
-                 __Graph_circle_qrt3_raw( X+eps, Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt3_raw( X+eps, Y    , (D>>1)+1, &graph, kApplyPixel_fill );
                  break;
              case 4:
-                 __Graph_circle_qrt4_raw( X    , Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_qrt4_raw( X    , Y    , (D>>1)+1, &graph, kApplyPixel_fill );
                  break;
              case 0:
              case 5:
              case 6:
-                 __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+                 __Graph_circle_raw( X, Y, D, &graph, kApplyPixel_fill );
                  break;
          }
      }
@@ -1090,7 +1630,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
                 break;
         }
     }
-    __Graph_circle_fill( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);
+    __Graph_circle_fill( X+px, Y-py, pd, &graph, kApplyPixel_fill);
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -1180,12 +1720,26 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
     RH_ASSERT( ID );
 #endif
     __GUI_Object_t* p = (__GUI_Object_t*)(ID);
+    // 配置画布信息
+    __GraphInfo_t graph = {0};
+    #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_NONE     )
+        RH_ASSERT( config->area.ram );
+        graph.height  = config->area.height;
+        graph.width   = config->area.width;
+        graph.pBuffer = config->area.ram;
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+        graph.height  = GUI_Y_WIDTH;
+        graph.width   = GUI_X_WIDTH;
+        graph.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTERNAL )
+        RH_ASSERT(0);
+    #endif
     
     __Graph_backup_config();
     if( !p->showFrame && cmd ){
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &graph, kApplyPixel_fill);
     }else if( p->showFrame && !cmd ){
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &graph, kApplyPixel_fill);
     }
     p->showFrame = cmd;
     return kStatus_Success;
@@ -1199,10 +1753,7 @@ E_Status_t        GUI_object_insert    ( ID_t ID ){
 #endif
     
     (*config->insert_func)( config );
-    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1) \
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &config->area )  \
                        :
                          GUI_AddScreenArea     ( config->area.xs, \
                                                  config->area.ys, \
@@ -1220,10 +1771,7 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
     config->val[0] = val_0;
     config->val[1] = val_1;
     (*config->adjust_func)(config);
-    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1) \
+    Screen.autoDisplay ? GUI_RefreashScreenArea( &config->area ) \
                        :
                          GUI_AddScreenArea     ( config->area.xs, \
                                                  config->area.ys, \
