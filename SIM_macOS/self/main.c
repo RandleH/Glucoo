@@ -24,63 +24,49 @@ void Dummy(int x, int y){
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    
-
-    
+        
     Simul_API_Init();
     
     GUI_Init();
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
-    GUI_circle_raw(32, 10, 19);
+    
+//    GUI_rect_fill(20, 20, 40, 50);
     GUI_auto_display(0);
-//    GUI_circle_raw(32, 10, 18);
-//    GUI_circle_qrt1_raw( 32  ,32+1,10 );
-//    GUI_circle_qrt2_raw( 32+1,32+1,10 );
-//    GUI_circle_qrt3_raw( 32+1,32  ,10 );
-//    GUI_circle_qrt4_raw( 32  ,32  ,10 );
-
-    GUI_RefreashScreen();
-
+//    __RECORD_TIME( GUI_RefreashScreen(), printf );
 #if 1
+    __GUI_Menu_t cfg = {0};
     
+    cfg.area.xs = 10;
+    cfg.area.ys = 10;
+    cfg.area.height = 50;
+    cfg.area.width  = 90;
+    cfg.nItem = 10;
+    cfg.title = "Title";
+    cfg.color_title = M_COLOR_WHITE;
+    cfg.size  = 10;
     
-    __GUI_Object_t cfg_obj = {0};
-
-    GUI_object_quickSet(&cfg_obj);
-
-    cfg_obj.style       = kGUI_ObjStyle_joystick;
-    cfg_obj.area.xs     = 10;
-    cfg_obj.area.ys     = 10;
-    cfg_obj.area.height = 45;
-    cfg_obj.area.width  = 46;
-    cfg_obj.min[0]      = 0;
-    cfg_obj.max[0]      = 4096;
-    cfg_obj.min[1]      = 0;
-    cfg_obj.max[1]      = 4096;
+    cfg.bk_color = M_COLOR_BLACK;
+    cfg.sl_color = M_COLOR_WHITE;
+    cfg.text_color = M_COLOR_WHITE;
     
-    cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
-    cfg_obj.text_color  = M_COLOR_WHITE;
-    cfg_obj.text        = "size:";
-    cfg_obj.text_size   = 8;
-    cfg_obj.text_align  = kGUI_FontAlign_Left;
-    cfg_obj.showFrame   = false;
-
-    cfg_obj.bk_color    = M_COLOR_BLACK;
-
-    cfg_obj.val[0]      = 0;
-    cfg_obj.val[1]      = 2048;
-
-    ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
-    GUI_object_insert(ID_Obj1);
-
-    GUI_object_adjust(ID_Obj1, 0,2048);
-    GUI_object_adjust(ID_Obj1, 2048,0);
-    GUI_object_adjust(ID_Obj1, 2048,4096);
-    GUI_object_adjust(ID_Obj1, 4096,2048);
-    GUI_object_adjust(ID_Obj1, 4096,2048);
-    GUI_object_adjust(ID_Obj1, 3496,3496);
-    GUI_object_adjust(ID_Obj1, 1398,3864);
+    __GUI_MenuParam_t m[10] = {0};
+    m[0].text = "menu_0";
+    m[1].text = "menu_1";
+    m[2].text = "menu_2";
+    m[3].text = "menu_3";
+    m[4].text = "menu_4";
+    m[5].text = "menu_5";
+    m[6].text = "menu_6";
+    m[7].text = "menu_7";
+    m[8].text = "menu_8";
+    m[9].text = "menu_9";
+    
+    cfg.menuList = m;
+    
+    ID_t MENU = GUI_menu_create(&cfg);
+    GUI_menu_frame( MENU, 1 );
+    GUI_menu_insert(MENU);
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
 

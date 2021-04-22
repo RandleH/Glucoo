@@ -903,7 +903,13 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             for( int y=ys; y<=ye; y++ ){
                 for( int x=xs; x<= xe; x++ )
-                ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
+                    ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
+//                if( y==ys || y== ye ){
+//                    for( int x=xs; x<= xe; x++ )
+//                        ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
+//                }else{
+//                    memset(pInfo->pBuffer + y*pInfo->width+xs, GCFG.penColor, xe-xs+1);
+//                }
             }
             
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )

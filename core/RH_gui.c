@@ -137,9 +137,7 @@ void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
                                              sizeof(__Pixel_t)             ,\
                                              GUI_X_WIDTH                   ,\
                                              xs, ps, xe, pe                ) );
-//#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-//        RH_ASSERT(false);
-//#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+
 #else
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
@@ -1226,6 +1224,7 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
         __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
     p->showFrame = cmd;
+    __Graph_restore_config();
     return kStatus_Success;
 }
 
@@ -1270,9 +1269,6 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
     
     return kStatus_Success;
 }
-
-
-
 
 
 #if GUI_WINDOW_DISPLAY
@@ -1697,7 +1693,7 @@ E_Status_t GUI_window_insert           ( ID_t ID ){
     }else{
         GUI_AddScreenArea(      ((__GUI_Window_t*)ID)->area.xs ,\
                                 ((__GUI_Window_t*)ID)->area.ys ,\
-                          (int)(((__GUI_Window_t*)ID)->area.xs +  ((__GUI_Window_t*)ID)->area.width -1),\
+                          (int)(((__GUI_Window_t*)ID)->area.xs +       ((__GUI_Window_t*)ID)->area.width -1),\
                           (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
     }
     return kStatus_Success;
@@ -1713,6 +1709,259 @@ E_Status_t GUI_window_delete           ( ID_t ID ){
 }
 
 #endif
+
+static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
+    struct{
+        int8_t idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;        // 菜单栏行高 bar size
+        int8_t tSize;        // 标题行高 title size
+        int8_t tFontH;       // 菜单标题字体高度
+        int8_t bFontH;       // 菜单栏字体高度
+        int8_t nItemPer;     // 一版最多可显示菜单行数
+    }*pHistory = (void*)config->history;
+    
+    // 配置字体大小
+    __Font_setSize( pHistory->tFontH );
+    
+    int cnt = __Font_getWordNum( config->area.width, config->title ); // 计算最多可容纳的字符个数
+    char* p = NULL;
+    if( cnt>0 ){
+        p = alloca( cnt+sizeof('\0') );  // 分配空间
+        strncpy(p, config->title, cnt);  // 截取字符串到该空间
+        p[cnt] = '\0';                   // 末尾取0
+        __GUI_Font_t* pF = __Font_exportStr(p);
+        int x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1)     , 0, GUI_X_WIDTH-1 );
+        int y_fs = __limit( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+        
+        // 确认画笔颜色
+        __PixelUnit_t color_text = {.data = config->color_title};
+        // 确认画布信息
+        __GraphInfo_t canvas = {
+            .width   = GUI_X_WIDTH ,
+            .height  = GUI_Y_WIDTH ,
+            .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
+        };
+        
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        /* 字体图像像素遍历pIter */
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((y_fs+y)>>3)*(canvas.width)+(x_fs+x);
+                if( (*pIter<128) ^ (color_text.data!=0) ){
+                    canvas.pBuffer[ index ].data = __BIT_SET( canvas.pBuffer[ index ].data, (y_fs+y)%8 );
+                }else{
+                    canvas.pBuffer[ index ].data = __BIT_CLR( canvas.pBuffer[ index ].data, (y_fs+y)%8 );
+                }
+            
+            }
+        }
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        RH_ASSERT(0);
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        RH_ASSERT(0);
+    #endif
+        
+    }
+    
+}
+
+static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
+    struct{
+        int8_t idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;        // 菜单栏行高 bar size
+        int8_t tSize;        // 标题行高 title size
+        int8_t tFontH;       // 菜单标题字体高度
+        int8_t bFontH;       // 菜单栏字体高度
+        int8_t nItemPer;     // 一版最多可显示菜单行数
+    }*pHistory = (void*)config->history;
+    
+    // 配置字体大小
+    __Font_setSize( pHistory->bFontH );
+    
+    // 菜单内容字体的起始绘制坐标
+    int x_fs = __limit( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    int y_fs = __limit( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    
+    // 菜单栏起始绘制坐标,即右上角
+    int xs   = __limit( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
+    int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
+    
+    // 确认画笔颜色
+    __PixelUnit_t text_color = {.data = config->color_title};
+    
+    // 确认画布信息
+    __GraphInfo_t canvas = {
+        .width   = GUI_X_WIDTH ,
+        .height  = GUI_Y_WIDTH ,
+        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
+    };
+    
+    for ( int8_t i=0; i<pHistory->nItemPer; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
+        int cnt = __Font_getWordNum( config->area.width, config->menuList[i].text ); // 计算最多可容纳的字符个数
+        char* p = NULL;
+        
+        if( i == pHistory->cur ){  // 该行被选中, 颜色选反色
+            text_color.data = REVERSE_COLOR( config->text_color );
+            __Graph_set_penColor( config->sl_color );
+        }else{                     // 该行未被选中
+            text_color.data = config->text_color;
+            __Graph_set_penColor( config->bk_color );
+        }
+        
+        // 绘制背景色
+        __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &canvas, kApplyPixel_fill );
+        
+        if( cnt>0 ){
+            p = alloca( cnt+sizeof('\0') );             // 分配空间
+            strncpy(p, config->menuList[i].text, cnt);  // 截取字符串到该空间
+            p[cnt] = '\0';                              // 末尾取0
+            __GUI_Font_t* pF = __Font_exportStr(p);
+            
+            
+            
+            
+            
+        #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+            /* 字体图像像素遍历pIter */
+            uint8_t* pIter = pF->output;
+            for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+                for( int x=0; x<pF->width; x++, pIter++ ){
+                    size_t index = ((y_fs+y)>>3)*(canvas.width)+(x_fs+x);
+                    if( (*pIter<128) ^ (text_color.data!=0) ){
+                        canvas.pBuffer[ index ].data = __BIT_SET( canvas.pBuffer[ index ].data, (y_fs+y)%8 );
+                    }else{
+                        canvas.pBuffer[ index ].data = __BIT_CLR( canvas.pBuffer[ index ].data, (y_fs+y)%8 );
+                    }
+                
+                }
+            }
+        #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+            RH_ASSERT(0);
+        #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+            RH_ASSERT(0);
+        #endif
+        }
+    }
+}
+
+ID_t       GUI_menu_create             ( const __GUI_Menu_t* config ){
+    __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
+#ifdef RH_DEBUG
+    RH_ASSERT( m_config );
+    RH_ASSERT( config );
+#endif
+    memmove(m_config, config, sizeof(__GUI_Menu_t));
+    __SET_STRUCT_MB(__GUI_Object_t, void*, m_config, history, NULL);
+    
+    return (ID_t)m_config;
+}
+
+E_Status_t GUI_menu_insert             ( ID_t ID ){
+    
+    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    
+    struct{
+        int8_t idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;        // 菜单栏行高 bar size
+        int8_t tSize;        // 标题行高 title size
+        int8_t tFontH;       // 菜单标题字体高度
+        int8_t bFontH;       // 菜单栏字体高度
+        int8_t nItemPer;     // 一版最多可显示菜单行数
+    }*pHistory = (void*)config->history;
+    
+    __Graph_backup_config();
+    __Font_backup_config();
+    __Font_setStyle( config->font );
+    
+    if( pHistory == NULL ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory );
+    #endif
+        __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, pHistory);
+        pHistory->bSize     = 12;//
+        pHistory->tSize     = 12;//
+        pHistory->idx       = 0;
+        pHistory->nItemPer  = config->area.height/pHistory->bSize;
+        pHistory->tFontH    = 8; //
+        pHistory->bFontH    = 8; //
+        pHistory->nItemPer  = (config->area.height-pHistory->tSize)/pHistory->bSize;
+        pHistory->cur       = 0;
+    
+    }
+    // 绘制菜单标题名
+    __gui_insert_menu_title( config );
+    
+    // 绘制菜单栏
+    __gui_insert_menu_bar( config );
+    __Graph_restore_config();
+    __Font_restore_config();
+    
+    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1) \
+                       :
+                         GUI_AddScreenArea     ( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1);
+    
+    return kStatus_Success;
+}
+
+E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
+#ifdef RH_DEBUG
+    RH_ASSERT( ID );
+#endif
+    __GUI_Menu_t* p = (__GUI_Menu_t*)(ID);
+    
+    __Graph_backup_config();
+    if( cmd ){
+        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+    }
+
+    __Graph_restore_config();
+    return kStatus_Success;
+}
+
+int        GUI_menu_scroll             ( ID_t ID, int cmd ){
+    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    
+    struct{
+        int8_t idx;       // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;       // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;     // 菜单行高
+        int8_t nItemPer;  // 最多可显示菜单行数
+    }*pHistory = (void*)config->history;
+    
+    if( pHistory == NULL )
+        return 0;
+    
+    switch(cmd){
+        default:
+        case 0:   // No action
+            break;
+            
+        case 1:   // scroll up
+            if( pHistory->cur == 0 ){
+                if( pHistory->idx > 0 ){
+                    
+                }
+            }else{
+                
+            }
+            break;
+        case -1:  // scroll down
+            
+            break;
+    }
+    return kStatus_Success;
+}
 
 
 
