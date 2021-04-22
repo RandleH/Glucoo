@@ -47,13 +47,24 @@ typedef __Stack_t    __LINK_AreaRefreash;
 typedef __LinkLoop_t __LINK_WindowCFG;
 
 #pragma pack(1)
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    #endif
+#endif
+
+#pragma pack(1)
 static struct{
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
+    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH>>3][GUI_X_WIDTH];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
 #endif
     size_t           allocated_byte;
 
@@ -71,11 +82,11 @@ static struct{
 static __GraphInfo_t info_MainScreen = {
     .height = GUI_Y_WIDTH ,
     .width  = GUI_X_WIDTH ,
-    .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
 };
 
 void RH_PREMAIN GUI_Init(void){
-
+    Screen.GRAM = GRAM;
+    info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -97,6 +108,20 @@ void RH_PREMAIN GUI_Init(void){
     __Font_init();
 }
 
+/*==============================================================================================
+ * GUI_RefreashScreenArea
+ ===============================================================================================
+ * 此函数将会调用显示屏API, 并立即在显示屏上显示图像.
+ *
+ * 以下情况,当API中支持区域刷新即 GUI_API_DrawArea不为NULL时:
+ * 如果配置为内置显存, 那么图像数据将创建该区域的动态缓存,并从内置的 Screen.GRAM 中拷贝到其中(字节宽度对齐),刷新
+   屏幕后释放动态缓存.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+ *
+ * 以下情况,当API不支持区域刷新, 仅有单个画点函数时即 GUI_API_DrawPixel :
+ * 如果配置为内置显存, 那么图像数据将直接从 Screen.GRAM 逐一画点.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+===============================================================================================*/
 void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
     
     if(GUI_API_DrawArea != NULL){
@@ -144,6 +169,19 @@ void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
 
 }
 
+/*==============================================================================================
+ * GUI_RefreashScreen
+ ===============================================================================================
+ * 此函数将会根据缓存情况进行屏幕刷新.
+ *
+ * Screen.areaNeedRefreashHead 是用于记载屏幕待刷新区域的链表表头, 表头本身不存储数据, 有效数据从下一节点开始.
+   该链表表头于 GUI_Init 中被初始化. 该链表为栈链表, 类型为 <__Stack_t>.
+   GUI_RefreashScreenArea并且完成后将会释放其中的缓存图像数据及结构体自身.
+ * 如果配置为内置显存, 那么将会判断屏幕总体待刷新像素点是否超过了屏幕像素总和, 如果超过了, 则释放所有链表节点,并刷新
+   全屏幕,没有超过则将链表节点中数据即 <__Area_t> 结构体指针传入给 GUI_RefreashScreenArea, 由于内置显存, 因此
+   <__Area_t>结构体指针不会有图像数据.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+===============================================================================================*/
 void GUI_RefreashScreen     ( void ){
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
@@ -193,6 +231,17 @@ void GUI_set_penColor       ( __Pixel_t penColor ){
     __Graph_set_penColor(penColor);
 }
 
+void GUI_auto_display       ( bool      cmd      ){
+    if( cmd ){
+        GUI_RefreashScreen();
+#ifdef RH_DEBUG
+        RH_ASSERT( Screen.areaNeedRefreashCnt      == 0 );
+        RH_ASSERT( Screen.areaNeedRefreashPixelCnt == 0 );
+        RH_ASSERT( __Stack_empty( Screen.areaNeedRefreashHead ) );
+#endif
+    }
+    Screen.autoDisplay = cmd;
+}
 
 void GUI_rect_raw           ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG

@@ -25,12 +25,7 @@ void Dummy(int x, int y){
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-    
-    
-    printf("[%d]\n",isprint(126));
-    
-    
-    __RECORD_TIME( Dummy(3,4), printf );
+
     
     Simul_API_Init();
     
@@ -38,11 +33,7 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
     GUI_circle_raw(32, 10, 19);
-    GUI_circle_qrt1_raw( 32  ,32  ,10 );
-    GUI_circle_qrt2_raw( 32  ,32  ,10 );
-    GUI_circle_qrt3_raw( 32  ,32  ,10 );
-    GUI_circle_qrt4_raw( 32  ,32  ,10 );
-    
+    GUI_auto_display(0);
 //    GUI_circle_raw(32, 10, 18);
 //    GUI_circle_qrt1_raw( 32  ,32+1,10 );
 //    GUI_circle_qrt2_raw( 32+1,32+1,10 );
@@ -51,7 +42,7 @@ int main(int argc, const char * argv[]) {
 
     GUI_RefreashScreen();
 
-#if 0
+#if 1
     
     
     __GUI_Object_t cfg_obj = {0};
@@ -82,8 +73,7 @@ int main(int argc, const char * argv[]) {
 
     ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
-//    GUI_object_frame(ID_Obj1,false);
-//    
+
     GUI_object_adjust(ID_Obj1, 0,2048);
     GUI_object_adjust(ID_Obj1, 2048,0);
     GUI_object_adjust(ID_Obj1, 2048,4096);
@@ -94,8 +84,6 @@ int main(int argc, const char * argv[]) {
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
 
-    
-    
 #endif
     return 0;
 }

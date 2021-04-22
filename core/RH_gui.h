@@ -21,6 +21,7 @@ void RH_PREMAIN GUI_Init    (void);
 
 void GUI_set_penSize        ( size_t    penSize  );
 void GUI_set_penColor       ( __Pixel_t penColor );
+void GUI_auto_display       ( bool      cmd      );
 
 void GUI_RefreashScreenArea ( int xs,int ys,int xe,int ye );
 void GUI_AddScreenArea      ( int xs,int ys,int xe,int ye );

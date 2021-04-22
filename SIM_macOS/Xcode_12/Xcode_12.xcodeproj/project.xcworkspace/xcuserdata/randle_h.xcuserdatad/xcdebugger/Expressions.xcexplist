@@ -59,10 +59,26 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__compar:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "array">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "Simul_API_DrawArea:RH_gui_api.c">
          <PersistentStrings>
             <PersistentString
                value = "RH_Debug_alloced_byte">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__insertsort:RH_lib.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "array">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -75,6 +91,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "GUI_object_frame:RH_gui.c">
+      </ContextState>
+      <ContextState
          contextName = "__gui_insert_object_num:RH_gui.c">
          <PersistentStrings>
             <PersistentString
@@ -84,9 +103,6 @@
                value = "FCFG">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "GUI_object_frame:RH_gui.c">
       </ContextState>
       <ContextState
          contextName = "__gui_insert_window_MacOS:RH_gui.c">
