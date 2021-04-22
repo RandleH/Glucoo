@@ -1272,9 +1272,6 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
 }
 
 
-
-
-
 #if GUI_WINDOW_DISPLAY
 
 static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
@@ -1697,7 +1694,7 @@ E_Status_t GUI_window_insert           ( ID_t ID ){
     }else{
         GUI_AddScreenArea(      ((__GUI_Window_t*)ID)->area.xs ,\
                                 ((__GUI_Window_t*)ID)->area.ys ,\
-                          (int)(((__GUI_Window_t*)ID)->area.xs +  ((__GUI_Window_t*)ID)->area.width -1),\
+                          (int)(((__GUI_Window_t*)ID)->area.xs +       ((__GUI_Window_t*)ID)->area.width -1),\
                           (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
     }
     return kStatus_Success;
@@ -1713,6 +1710,118 @@ E_Status_t GUI_window_delete           ( ID_t ID ){
 }
 
 #endif
+
+static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
+    struct{
+        int8_t idx;       // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;       // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;     // 菜单行高
+        int8_t nItemPer;  // 最多可显示菜单行数
+        int8_t textH;     // 字体高度
+    }*pHistory = (void*)config->history;
+    
+    int cnt = __Font_getWordNum( config->area.width, config->name );
+    char* p = NULL;
+    if( cnt>0 ){
+        p = alloca( cnt+sizeof('\0') );
+        strncpy(p, config->name, cnt);
+        p[cnt] = '\0';
+        __GUI_Font_t* pF = __Font_exportStr(p);
+        int x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+        int y_fs = __limit( config->area.ys +(((int)(config->area.height - pHistory->textH))>>1) , 0, GUI_Y_WIDTH-1 );
+        
+        ...
+    }
+    
+}
+
+static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
+    
+}
+
+ID_t GUI_menu_create                   ( const __GUI_Menu_t* config ){
+    __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
+#ifdef RH_DEBUG
+    RH_ASSERT( m_config );
+    RH_ASSERT( config );
+#endif
+    memmove(m_config, config, sizeof(__GUI_Menu_t));
+    __SET_STRUCT_MB(__GUI_Object_t, void*, m_config, history, NULL);
+    
+    return (ID_t)m_config;
+}
+
+E_Status_t GUI_menu_insert             ( ID_t ID ){
+    
+    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    
+    struct{
+        int8_t idx;       // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;       // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;     // 菜单行高
+        int8_t nItemPer;  // 最多可显示菜单行数
+        int8_t textH;     // 字体高度
+    }*pHistory = (void*)config->history;
+    
+    __Graph_backup_config();
+    __Font_backup_config();
+    
+    
+    if( pHistory == NULL ){
+        pHistory = RH_MALLOC(sizeof(*pHistory));
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory );
+    #endif
+        __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, pHistory);
+        pHistory->bSize    = 12;
+        pHistory->idx      = 0;
+        pHistory->nItemPer = config->area.height/pHistory->bSize;
+        pHistory->textH    = 8;
+        // 绘制菜单标题名
+        __gui_insert_menu_title( config );
+        
+    }
+    
+
+    __Graph_restore_config();
+    __Font_restore_config();
+    return kStatus_Success;
+}
+
+
+int  GUI_menu_scroll( ID_t ID, int cmd ){
+    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    
+    struct{
+        int8_t idx;       // 上一次选中的菜单索引(一定小于config->nItem)
+        int8_t cur;       // 选中的菜单实际索引(一定小于 nIterPer)
+        int8_t bSize;     // 菜单行高
+        int8_t nItemPer;  // 最多可显示菜单行数
+    }*pHistory = (void*)config->history;
+    
+    if( pHistory == NULL )
+        return 0;
+    
+    switch(cmd){
+        default:
+        case 0:   // No action
+            break;
+            
+        case 1:   // scroll up
+            if( pHistory->cur == 0 ){
+                if( pHistory->idx > 0 ){
+                    
+                }
+            }else{
+                
+            }
+            break;
+        case -1:  // scroll down
+            
+            break;
+    }
+    return kStatus_Success;
+}
 
 
 

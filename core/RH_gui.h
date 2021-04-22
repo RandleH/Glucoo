@@ -146,12 +146,25 @@ E_Status_t                GUI_object_insert    ( ID_t ID );
 E_Status_t                GUI_object_delete    ( ID_t ID );//
 
 
+struct __GUI_MenuParam_t{
+    const char* text;
+    __Pixel_t   text_color;
+    __Pixel_t   bk_color;
+};
+typedef struct __GUI_MenuParam_t __GUI_MenuParam_t;
 
+struct __GUI_Menu_t{
+    const char*           name;
+    __Area_t              area;
+    int8_t                nItem;
+    __GUI_MenuParam_t*    menuList;
+    int8_t                size;
+    
+    const void*  const    history;
+};
+typedef struct __GUI_Menu_t __GUI_Menu_t;
 
-
-
-
-
+ID_t            RH_RESULT GUI_menu_create      ( const __GUI_Menu_t* config );
 
 
 
