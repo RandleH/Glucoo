@@ -19,6 +19,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__shellsort:RH_lib.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "a">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__gui_remove_object_text:RH_gui.c">
          <PersistentStrings>
             <PersistentString
@@ -51,18 +59,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__ImgRGB565_create:RH_image.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "RH_Debug_alloced_byte">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "__compar:main.c">
          <PersistentStrings>
             <PersistentString
                value = "array">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__ImgRGB565_create:RH_image.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "RH_Debug_alloced_byte">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

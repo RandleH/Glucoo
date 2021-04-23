@@ -13,18 +13,8 @@
 #include <time.h>
 
 
-
-
-void Dummy(int x, int y){
-    printf("x=%d,y=%d\n",x,y);
-    size_t cnt = 9999;
-    while(cnt--);
-}
-
-
 int main(int argc, const char * argv[]) {
-    // insert code here...
-        
+
     Simul_API_Init();
     
     GUI_Init();
@@ -32,7 +22,7 @@ int main(int argc, const char * argv[]) {
     GUI_set_penColor(M_COLOR_WHITE);
     
 //    GUI_rect_fill(20, 20, 40, 50);
-    GUI_auto_display(0);
+//    GUI_auto_display(0);
 //    __RECORD_TIME( GUI_RefreashScreen(), printf );
 #if 1
     __GUI_Menu_t cfg = {0};
@@ -69,7 +59,11 @@ int main(int argc, const char * argv[]) {
     GUI_menu_insert(MENU);
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
+    GUI_menu_scroll( MENU, -1 );
+    GUI_menu_scroll( MENU, -1 );
+    GUI_menu_scroll( MENU, -1 );
 
+    __RECORD_TIME( GUI_RefreashScreen(), printf );
 #endif
     return 0;
 }

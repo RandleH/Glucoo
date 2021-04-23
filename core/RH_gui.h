@@ -178,7 +178,7 @@ typedef struct __GUI_Menu_t __GUI_Menu_t;
 ID_t            RH_RESULT GUI_menu_create      ( const __GUI_Menu_t* config );
 E_Status_t                GUI_menu_insert      ( ID_t ID );
 E_Status_t                GUI_menu_frame       ( ID_t ID , bool cmd );
-
+int                       GUI_menu_scroll      ( ID_t ID , int  cmd );
 
 
 
