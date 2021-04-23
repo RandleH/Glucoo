@@ -19,64 +19,57 @@ int main(void){
     GUI_API_Init ();
     GUI_Init();
 
-    __GUI_Object_t cfg_obj = {0};
-
-    GUI_object_quickSet(&cfg_obj);
-
-    cfg_obj.style       = kGUI_ObjStyle_joystick;
-    cfg_obj.area.xs     = 10;
-    cfg_obj.area.ys     = 10;
-    cfg_obj.area.height = 45;
-    cfg_obj.area.width  = 45;
-    cfg_obj.min[0]      = 0;
-    cfg_obj.max[0]      = 4096;
-    cfg_obj.min[1]      = 0;
-    cfg_obj.max[1]      = 4096;
-    cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
-    cfg_obj.text_color  = M_COLOR_WHITE;
-    cfg_obj.text_size   = 8;
-    cfg_obj.text_align  = kGUI_FontAlign_Middle;
-    cfg_obj.showFrame   = true;
-    cfg_obj.bk_color    = M_COLOR_BLACK;
-    cfg_obj.val[0]      = joystick_data[0];
-    cfg_obj.val[1]      = joystick_data[1];
+    __GUI_Menu_t cfg = {0};
     
-    ID_t ID_JOY         = GUI_object_create( &cfg_obj );
+    cfg.area.xs = 10;
+    cfg.area.ys = 10;
+    cfg.area.height = 50;
+    cfg.area.width  = 90;
+    cfg.nItem = 10;
+    cfg.title = "Title";
+    cfg.color_title = M_COLOR_WHITE;
+    cfg.size  = 10;
     
-    cfg_obj.style       = kGUI_ObjStyle_num;
-    cfg_obj.area.xs     = 90;
-    cfg_obj.area.ys     = 20;
-    cfg_obj.area.width  = 35;
-    cfg_obj.area.height = 12;
-    ID_t ID_NUM_1       = GUI_object_create( &cfg_obj );
+    cfg.bk_color = M_COLOR_BLACK;
+    cfg.sl_color = M_COLOR_WHITE;
+    cfg.text_color = M_COLOR_WHITE;
     
-    cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_NUM_2       = GUI_object_create( &cfg_obj );
-
-    cfg_obj.style       = kGUI_ObjStyle_text;
+    __GUI_MenuParam_t m[10] = {0};
+    m[0].text = "menu_0";
+    m[1].text = "menu_1";
+    m[2].text = "menu_2";
+    m[3].text = "menu_3";
+    m[4].text = "menu_4";
+    m[5].text = "menu_5";
+    m[6].text = "menu_6";
+    m[7].text = "menu_7";
+    m[8].text = "menu_8";
+    m[9].text = "menu_9";
     
+    cfg.menuList = m;
     
-    cfg_obj.area.width  = 10;
-    cfg_obj.area.xs    -= cfg_obj.area.width-1;
-    cfg_obj.text        = "Y";
-    ID_t ID_TXT_Y       = GUI_object_create( &cfg_obj );
-    
-    cfg_obj.area.ys    -= cfg_obj.area.height;
-    cfg_obj.text        = "X";
-    ID_t ID_TXT_X       = GUI_object_create( &cfg_obj );
-
-    GUI_object_insert(ID_JOY);
-    GUI_object_insert(ID_NUM_1);
-    GUI_object_insert(ID_NUM_2);
-    
-    GUI_object_insert(ID_TXT_X);
-    GUI_object_insert(ID_TXT_Y);
+    ID_t MENU = GUI_menu_create(&cfg);
+    GUI_menu_frame( MENU, 1 );
+    GUI_menu_insert(MENU);
+    GUI_RefreashScreen();
 
     while(1){
         // GUI_object_adjust(ID_JOY, 2066, 0); 
-        GUI_object_adjust(ID_JOY, joystick_data[0], joystick_data[1]);
-        GUI_object_adjust(ID_NUM_1, joystick_data[0], 0);
-        GUI_object_adjust(ID_NUM_2, joystick_data[1], 0);
+        // GUI_object_adjust(ID_JOY, joystick_data[0], joystick_data[1]);
+        // GUI_object_adjust(ID_NUM_1, joystick_data[0], 0);
+        // GUI_object_adjust(ID_NUM_2, joystick_data[1], 0);
+        int ans = 0;
+
+        if( joystick_data[1] > 4000 ){
+            ans = -1;
+        }else if( joystick_data[1] < 1000 ){
+            ans = 1;
+        }else{
+            ans = 0;
+        }
+
+        GUI_menu_scroll( MENU, ans );
+
         GUI_RefreashScreen();
     }
 
