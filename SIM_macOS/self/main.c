@@ -32,7 +32,7 @@ int main(int argc, const char * argv[]) {
     cfg.area.ys = 10;
     cfg.area.height = 50;
     cfg.area.width  = 90;
-    cfg.nItem = 10;
+    cfg.nItem = 2;
     cfg.title = "Title";
     cfg.color_title = M_COLOR_WHITE;
     cfg.size  = 10;
@@ -44,14 +44,6 @@ int main(int argc, const char * argv[]) {
     __GUI_MenuParam_t m[10] = {0};
     m[0].text = "menu_0";
     m[1].text = "menu_1";
-    m[2].text = "menu_2";
-    m[3].text = "menu_3";
-    m[4].text = "menu_4";
-    m[5].text = "menu_5";
-    m[6].text = "menu_6";
-    m[7].text = "menu_7";
-    m[8].text = "menu_8";
-    m[9].text = "menu_9";
     
     cfg.menuList = m;
     
@@ -60,8 +52,8 @@ int main(int argc, const char * argv[]) {
     GUI_menu_insert(MENU);
     __RECORD_TIME( GUI_RefreashScreen(), printf );
 
-    GUI_menu_scroll( MENU, -1 );
-    GUI_menu_scroll( MENU, -1 );
+    GUI_menu_scroll( MENU, 1 );
+    GUI_menu_scroll( MENU, 1 );
     GUI_menu_scroll( MENU, -1 );
 
     __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
