@@ -84,7 +84,7 @@ static __GraphInfo_t info_MainScreen = {
     .width  = GUI_X_WIDTH ,
 };
 
-void RH_PREMAIN GUI_Init(void){
+void RH_PREMAIN GUI_Init        ( void ){
     Screen.GRAM = GRAM;
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -122,7 +122,7 @@ void RH_PREMAIN GUI_Init(void){
  * 如果配置为内置显存, 那么图像数据将直接从 Screen.GRAM 逐一画点.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================*/
-void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
+void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
     
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -142,7 +142,7 @@ void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(y_width)*sizeof(__Pixel_t));
-		(*GUI_API_DrawArea)( xs , ys , xe , ye ,
+        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                             __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
@@ -180,7 +180,7 @@ void GUI_RefreashScreenArea ( int xs, int ys, int xe, int ye ){
    <__Area_t>结构体指针不会有图像数据.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================*/
-void GUI_RefreashScreen     ( void ){
+void GUI_RefreashScreen         ( void ){
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
@@ -202,7 +202,7 @@ void GUI_RefreashScreen     ( void ){
     Screen.areaNeedRefreashPixelCnt = 0;
 }
 
-void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
+void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
         while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
@@ -221,15 +221,33 @@ void GUI_AddScreenArea      ( int xs, int ys, int xe, int ye ){
     __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
 }
 
-void GUI_set_penSize        ( size_t    penSize  ){
+/*==============================================================================================
+ * GUI_RefreashEntireScreen
+ ===============================================================================================
+ * 此函数将会刷新整屏.
+ *
+ * 此函数不会查看待刷新区域 Screen.areaNeedRefreashHead 的缓存情况, 直接清空链表, 并将显存内容全部刷新.
+ * 如果配置为内置显存, 那么将会把Screen中的显存全部刷新, 无论是否有待刷新区域, 都会执行整屏刷新.
+ * 如果配置为外置显存, 进死循环,暂未开发.
+===============================================================================================*/
+void GUI_RefreashEntireScreen   ( void ){
+    __Area_t *p = NULL;
+    GUI_RefreashScreenArea( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
+    while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
+        p = __Stack_pop( Screen.areaNeedRefreashHead );
+        RH_FREE(p);
+    }
+}
+
+void GUI_set_penSize            ( size_t    penSize  ){
     __Graph_set_penSize(penSize);
 }
 
-void GUI_set_penColor       ( __Pixel_t penColor ){
+void GUI_set_penColor           ( __Pixel_t penColor ){
     __Graph_set_penColor(penColor);
 }
 
-void GUI_auto_display       ( bool      cmd      ){
+void GUI_auto_display           ( bool      cmd      ){
     if( cmd ){
         GUI_RefreashScreen();
 #ifdef RH_DEBUG
@@ -241,28 +259,28 @@ void GUI_auto_display       ( bool      cmd      ){
     Screen.autoDisplay = cmd;
 }
 
-void GUI_rect_raw           ( int xs, int ys, int xe, int ye ){
+void GUI_rect_raw               ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_edged         ( int xs, int ys, int xe, int ye ){
+void GUI_rect_edged             ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_edged( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_fill          ( int xs, int ys, int xe, int ye ){
+void GUI_rect_fill              ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_fill( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     Screen.autoDisplay ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_rect_round         ( int xs, int ys, int xe, int ye ){
+void GUI_rect_round             ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
     __Graph_rect_round( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
@@ -611,7 +629,7 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
             for( int x=0; x<pF->width; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );               
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
                 }else{
                     info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
                 }
@@ -1131,7 +1149,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
     #ifdef RH_DEBUG
-        RH_ASSERT( pHistory );  
+        RH_ASSERT( pHistory );
     #endif
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
@@ -1146,7 +1164,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     
 }
 static void __gui_adjust_object_joystick  ( const __GUI_Object_t* config ){
-    __gui_insert_object_joystick(config); 
+    __gui_insert_object_joystick(config);
 }
 
 #ifdef RH_DEBUG
@@ -1299,9 +1317,9 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #else
     const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
     const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};    
+    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-#endif    
+#endif
     
     __Graph_backup_config();
     __Font_backup_config();

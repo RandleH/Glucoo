@@ -22,6 +22,7 @@ int main(int argc, const char * argv[]) {
     GUI_set_penColor(M_COLOR_WHITE);
     
 //    GUI_rect_fill(20, 20, 40, 50);
+//    GUI_rect_fill(41, 20, 61, 49);
 //    GUI_auto_display(0);
 //    __RECORD_TIME( GUI_RefreashScreen(), printf );
 #if 1
@@ -63,7 +64,7 @@ int main(int argc, const char * argv[]) {
     GUI_menu_scroll( MENU, -1 );
     GUI_menu_scroll( MENU, -1 );
 
-    __RECORD_TIME( GUI_RefreashScreen(), printf );
+    __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
 #endif
     return 0;
 }
