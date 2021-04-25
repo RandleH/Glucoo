@@ -37,8 +37,8 @@ int main(int argc, const char * argv[]) {
     cfg.color_title = M_COLOR_WHITE;
     cfg.size  = 10;
     
-    cfg.bk_color = M_COLOR_BLACK;
-    cfg.sl_color = M_COLOR_WHITE;
+    cfg.bk_color   = M_COLOR_BLACK;
+    cfg.sl_color   = M_COLOR_WHITE;
     cfg.text_color = M_COLOR_WHITE;
     
     __GUI_MenuParam_t m[10] = {0};
@@ -58,5 +58,10 @@ int main(int argc, const char * argv[]) {
 
     __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
 #endif
+    
+    GUI_menu_delete( MENU );
+    __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
+    
+    printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
     return 0;
 }

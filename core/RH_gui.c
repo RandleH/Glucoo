@@ -232,7 +232,7 @@ void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
 ===============================================================================================*/
 void GUI_RefreashEntireScreen   ( void ){
     __Area_t *p = NULL;
-    GUI_RefreashScreenArea( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
+    (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (__Pixel_t*)Screen.GRAM[M_SCREEN_MAIN][0] );
     while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
         p = __Stack_pop( Screen.areaNeedRefreashHead );
         RH_FREE(p);
@@ -2194,13 +2194,13 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
 }
 
 ID_t       GUI_menu_create             ( const __GUI_Menu_t* config ){
-    __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
+    __GUI_Menu_t* m_config = (__GUI_Menu_t*)RH_MALLOC( sizeof(__GUI_Menu_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
 #endif
     memmove(m_config, config, sizeof(__GUI_Menu_t));
-    __SET_STRUCT_MB(__GUI_Object_t, void*, m_config, history, NULL);
+    __SET_STRUCT_MB(__GUI_Menu_t, void*, m_config, history, NULL);
     
     return (ID_t)m_config;
 }
@@ -2313,6 +2313,45 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
     
+    return kStatus_Success;
+}
+
+E_Status_t GUI_menu_delete             ( ID_t ID ){
+    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    
+    RH_FREE( (void*)config->history );
+    
+    __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, NULL);
+    
+    // 确认画布信息
+    __GraphInfo_t canvas = {
+        .width   = GUI_X_WIDTH ,
+        .height  = GUI_Y_WIDTH ,
+        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
+    };
+    
+    __Graph_backup_config();
+    
+    __Graph_set_penColor(config->bk_color);
+    
+    __Graph_rect_fill( config->area.xs, \
+                       config->area.ys, \
+                       config->area.xs+(int)(config->area.width )-1, \
+                       config->area.ys+(int)(config->area.height)-1, &canvas, kApplyPixel_fill);
+    
+    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1) \
+                       :
+                         GUI_AddScreenArea     ( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1);
+    
+    RH_FREE( config );
+    __Graph_restore_config();
+
     return kStatus_Success;
 }
 
