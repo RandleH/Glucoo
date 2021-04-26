@@ -26,6 +26,7 @@ int main(int argc, const char * argv[]) {
 //    GUI_auto_display(0);
 //    __RECORD_TIME( GUI_RefreashScreen(), printf );
 #if 1
+{
     __GUI_Menu_t cfg = {0};
     
     cfg.area.xs = 10;
@@ -61,7 +62,37 @@ int main(int argc, const char * argv[]) {
     
     GUI_menu_delete( MENU );
     __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
+}
     
+    printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
+    
+    __GUI_Object_t cfg = {0};
+
+    GUI_object_quickSet(&cfg);
+
+    cfg.style       = kGUI_ObjStyle_text;
+    cfg.area.xs     = 30;
+    cfg.area.ys     = 30;
+    cfg.area.height = 12;
+    cfg.area.width  = 70;
+    cfg.font        = kGUI_FontStyle_ArialRounded_Bold;
+    cfg.text_color  = M_COLOR_WHITE;
+    cfg.text        = "No preview.";
+    cfg.text_size   = 8;
+    cfg.text_align  = kGUI_FontAlign_Left;
+    cfg.showFrame   = false;
+
+    cfg.bk_color    = M_COLOR_BLACK;
+    ID_t ID_Object = 0;
+    
+    
+    ID_Object = GUI_object_create( &cfg );
+
+    GUI_object_insert( ID_Object );
+    GUI_RefreashScreen();
+
+    GUI_object_delete( ID_Object );
+    GUI_RefreashScreen();
     printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
     return 0;
 }

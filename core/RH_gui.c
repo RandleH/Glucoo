@@ -1288,6 +1288,43 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
     return kStatus_Success;
 }
 
+E_Status_t        GUI_object_delete    ( ID_t ID ){
+    __GUI_Object_t* config = (__GUI_Object_t*)( ID );
+    RH_FREE( (void*)config->history );
+    __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, NULL);
+    
+    // 确认画布信息
+    __GraphInfo_t canvas = {
+        .width   = GUI_X_WIDTH ,
+        .height  = GUI_Y_WIDTH ,
+        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
+    };
+    
+    __Graph_backup_config();
+    __Font_backup_config();
+    __Graph_set_penColor(config->bk_color);
+    
+    __Graph_rect_fill( config->area.xs, \
+                       config->area.ys, \
+                       config->area.xs+(int)(config->area.width )-1, \
+                       config->area.ys+(int)(config->area.height)-1, &canvas, kApplyPixel_fill);
+    
+    Screen.autoDisplay ? GUI_RefreashScreenArea( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1) \
+                       :
+                         GUI_AddScreenArea     ( config->area.xs, \
+                                                 config->area.ys, \
+                                                 config->area.xs+(int)(config->area.width )-1, \
+                                                 config->area.ys+(int)(config->area.height)-1);
+    
+    RH_FREE( config );
+    __Graph_restore_config();
+    __Font_restore_config();
+    
+    return kStatus_Success;
+}
 
 #if GUI_WINDOW_DISPLAY
 
