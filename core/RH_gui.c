@@ -880,7 +880,7 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
     area.xs     +=2;
     area.ys     +=2;
     
-    if( (int32_t)config->val ){
+    if( (int32_t)config->val[0] ){
         __Graph_set_penColor( color_switch_on.data );
         __Graph_sausage_fill( area.xs, \
                               area.ys, \

@@ -66,33 +66,25 @@ int main(int argc, const char * argv[]) {
     
     printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
     
-    __GUI_Object_t cfg = {0};
-
-    GUI_object_quickSet(&cfg);
-
-    cfg.style       = kGUI_ObjStyle_text;
-    cfg.area.xs     = 30;
-    cfg.area.ys     = 30;
-    cfg.area.height = 12;
-    cfg.area.width  = 70;
-    cfg.font        = kGUI_FontStyle_ArialRounded_Bold;
-    cfg.text_color  = M_COLOR_WHITE;
-    cfg.text        = "No preview.";
-    cfg.text_size   = 8;
-    cfg.text_align  = kGUI_FontAlign_Left;
-    cfg.showFrame   = false;
-
-    cfg.bk_color    = M_COLOR_BLACK;
-    ID_t ID_Object = 0;
     
     
-    ID_Object = GUI_object_create( &cfg );
+    __GUI_Window_t cfg2;
+    GUI_window_quickSet(&cfg2);
+    cfg2.area.xs     = 0;
+    cfg2.area.ys     = 0;
+    cfg2.area.height = 63;
+    cfg2.area.width  = 127;
+    cfg2.type        = kGUI_WindowType_macOS;
+    cfg2.size        = 8;
+    cfg2.appearance  = kGUI_Appearance_Light;
+    cfg2.title       = "To: Pr.WenKai";
+    cfg2.text_size   = 8;
+    cfg2.text_font   = kGUI_FontStyle_ArialRounded_Bold;//kGUI_FontStyle_NewYork;
+    cfg2.text        = "Hello, this is not a regular dialog box and either not a snapshot from my computer. It is a simple UI designed for my command desk which is a embedded device targeting on STM32.";
+    ID_t ID_Window2 = GUI_window_create(&cfg2);
 
-    GUI_object_insert( ID_Object );
+    GUI_window_insert( ID_Window2 );
     GUI_RefreashScreen();
 
-    GUI_object_delete( ID_Object );
-    GUI_RefreashScreen();
-    printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
     return 0;
 }
