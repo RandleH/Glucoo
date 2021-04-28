@@ -119,6 +119,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "largestRectangleArea:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "ans">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__Font_exportStr:RH_font.c">
          <PersistentStrings>
             <PersistentString

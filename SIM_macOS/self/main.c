@@ -12,79 +12,64 @@
 #include "RH_color.h"
 #include <time.h>
 
+#include "RH_data.h"
+
+
+
+
+struct __Element_t{
+    int     val;
+    size_t  idx;
+};
+
+int largestRectangleArea(int* heights, int heightsSize){
+    typedef long var;
+    
+    
+    int ans      = 0;                            // 最终结果
+    
+    __Stack_t* s = __Stack_createBase( NULL );   // 创建栈, 记录的数据为下标索引
+    
+    __Stack_push(s, (void*)(-1));                          // [边界问题] 初始化, 第一个入栈元素,下标为-1, 假设最开始元素高度为0
+    
+    for( size_t i=0; i<=heightsSize; i++ ){
+        if( i!=heightsSize ){                              // [边界问题] 最后一个元素, 下标为heightsSize, 假设最后一个元素高度为0, 因此无需入栈了
+            if( heights[(int)__Stack_top(s)] <= heights[i] ){  // 栈顶元素小于等于当前遍历的元素, 则入栈
+                __Stack_push(s, (void*)i);
+                continue;
+            }
+        }
+        int h = (i==heightsSize)?0:heights[i];
+        while( (var)__Stack_top(s)!=-1 && heights[(var)__Stack_top(s)] > h ){   // 直到栈顶元素比当前遍历的元素还要小,否则退栈并结算矩形面积
+            var idx_pop = (var)__Stack_pop(s);                  // [关键] 该元素为当前栈顶存储的下标索引
+            var idx_top = (var)__Stack_top(s);                  // [关键] 该元素为新栈顶存储的下标索引
+            
+            // idx_pop 与 idx_top 不一样
+            
+            
+            if( heights[idx_pop] * (i-idx_top-1) > ans ) {      // 矩形面积 = 栈顶元素对应的高度 * (当前遍历元素的下标-退栈后新栈顶元素-1)
+                ans = (int)( heights[idx_pop]*(i-idx_top-1) );
+            }
+            printf("ans=%ld h=%d L=%ld R=%ld\n",heights[idx_pop] * (i-idx_top-1), heights[idx_pop], idx_top, i);
+        }
+        
+        __Stack_push(s, (void*)i);
+    }
+    
+    return ans;
+}
+
+int array[] = { 2,1,5,6,2,3 };
 
 int main(int argc, const char * argv[]) {
 
-    Simul_API_Init();
-    
-    GUI_Init();
-    GUI_set_penSize(5);
-    GUI_set_penColor(M_COLOR_WHITE);
-    
-//    GUI_rect_fill(20, 20, 40, 50);
-//    GUI_rect_fill(41, 20, 61, 49);
-//    GUI_auto_display(0);
-//    __RECORD_TIME( GUI_RefreashScreen(), printf );
-#if 1
-{
-    __GUI_Menu_t cfg = {0};
-    
-    cfg.area.xs = 10;
-    cfg.area.ys = 10;
-    cfg.area.height = 50;
-    cfg.area.width  = 90;
-    cfg.nItem = 2;
-    cfg.title = "Title";
-    cfg.color_title = M_COLOR_WHITE;
-    cfg.size  = 10;
-    
-    cfg.bk_color   = M_COLOR_BLACK;
-    cfg.sl_color   = M_COLOR_WHITE;
-    cfg.text_color = M_COLOR_WHITE;
-    
-    __GUI_MenuParam_t m[10] = {0};
-    m[0].text = "menu_0";
-    m[1].text = "menu_1";
-    
-    cfg.menuList = m;
-    
-    ID_t MENU = GUI_menu_create(&cfg);
-    GUI_menu_frame( MENU, 1 );
-    GUI_menu_insert(MENU);
-    __RECORD_TIME( GUI_RefreashScreen(), printf );
+//    Simul_API_Init();
+//
+//    GUI_Init();
+//    GUI_set_penSize(5);
+//    GUI_set_penColor(M_COLOR_WHITE);
 
-    GUI_menu_scroll( MENU, 1 );
-    GUI_menu_scroll( MENU, 1 );
-    GUI_menu_scroll( MENU, -1 );
-
-    __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
-#endif
     
-    GUI_menu_delete( MENU );
-    __RECORD_TIME( GUI_RefreashEntireScreen(), printf );
-}
-    
-    printf("Remain Allocated Memory: %ld Byte\n",RH_Debug_alloced_byte);
-    
-    
-    
-    __GUI_Window_t cfg2;
-    GUI_window_quickSet(&cfg2);
-    cfg2.area.xs     = 0;
-    cfg2.area.ys     = 0;
-    cfg2.area.height = 63;
-    cfg2.area.width  = 127;
-    cfg2.type        = kGUI_WindowType_macOS;
-    cfg2.size        = 8;
-    cfg2.appearance  = kGUI_Appearance_Light;
-    cfg2.title       = "To: Pr.WenKai";
-    cfg2.text_size   = 8;
-    cfg2.text_font   = kGUI_FontStyle_ArialRounded_Bold;//kGUI_FontStyle_NewYork;
-    cfg2.text        = "Hello, this is not a regular dialog box and either not a snapshot from my computer. It is a simple UI designed for my command desk which is a embedded device targeting on STM32.";
-    ID_t ID_Window2 = GUI_window_create(&cfg2);
-
-    GUI_window_insert( ID_Window2 );
-    GUI_RefreashScreen();
-
+    largestRectangleArea( array, sizeof(array)/sizeof(*array) );
     return 0;
 }

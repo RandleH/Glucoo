@@ -2237,6 +2237,10 @@ ID_t       GUI_menu_create             ( const __GUI_Menu_t* config ){
     RH_ASSERT( config );
 #endif
     memmove(m_config, config, sizeof(__GUI_Menu_t));
+
+    m_config->menuList = RH_MALLOC( config->nItem*sizeof(__GUI_MenuParam_t) );
+    memmove(m_config->menuList, config->menuList, config->nItem*sizeof(__GUI_MenuParam_t));
+
     __SET_STRUCT_MB(__GUI_Menu_t, void*, m_config, history, NULL);
     
     return (ID_t)m_config;
@@ -2357,7 +2361,7 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     RH_FREE( (void*)config->history );
-    
+    RH_FREE( config->menuList );
     __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, NULL);
     
     // 确认画布信息
