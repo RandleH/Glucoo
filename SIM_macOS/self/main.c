@@ -14,62 +14,69 @@
 
 #include "RH_data.h"
 
-
-
-
-struct __Element_t{
-    int     val;
-    size_t  idx;
+enum __Dummy_t{
+    k0,
+    k1,
+    k2
 };
 
-int largestRectangleArea(int* heights, int heightsSize){
-    typedef long var;
-    
-    
-    int ans      = 0;                            // 最终结果
-    
-    __Stack_t* s = __Stack_createBase( NULL );   // 创建栈, 记录的数据为下标索引
-    
-    __Stack_push(s, (void*)(-1));                          // [边界问题] 初始化, 第一个入栈元素,下标为-1, 假设最开始元素高度为0
-    
-    for( size_t i=0; i<=heightsSize; i++ ){
-        if( i!=heightsSize ){                              // [边界问题] 最后一个元素, 下标为heightsSize, 假设最后一个元素高度为0, 因此无需入栈了
-            if( heights[(int)__Stack_top(s)] <= heights[i] ){  // 栈顶元素小于等于当前遍历的元素, 则入栈
-                __Stack_push(s, (void*)i);
-                continue;
-            }
-        }
-        int h = (i==heightsSize)?0:heights[i];
-        while( (var)__Stack_top(s)!=-1 && heights[(var)__Stack_top(s)] > h ){   // 直到栈顶元素比当前遍历的元素还要小,否则退栈并结算矩形面积
-            var idx_pop = (var)__Stack_pop(s);                  // [关键] 该元素为当前栈顶存储的下标索引
-            var idx_top = (var)__Stack_top(s);                  // [关键] 该元素为新栈顶存储的下标索引
-            
-            // idx_pop 与 idx_top 不一样
-            
-            
-            if( heights[idx_pop] * (i-idx_top-1) > ans ) {      // 矩形面积 = 栈顶元素对应的高度 * (当前遍历元素的下标-退栈后新栈顶元素-1)
-                ans = (int)( heights[idx_pop]*(i-idx_top-1) );
-            }
-            printf("ans=%ld h=%d L=%ld R=%ld\n",heights[idx_pop] * (i-idx_top-1), heights[idx_pop], idx_top, i);
-        }
-        
-        __Stack_push(s, (void*)i);
-    }
-    
-    return ans;
-}
-
-int array[] = { 2,1,5,6,2,3 };
-
 int main(int argc, const char * argv[]) {
-
-//    Simul_API_Init();
-//
-//    GUI_Init();
-//    GUI_set_penSize(5);
-//    GUI_set_penColor(M_COLOR_WHITE);
-
     
-    largestRectangleArea( array, sizeof(array)/sizeof(*array) );
+    
+    printf("%ld\n",sizeof(0xffff));
+    Simul_API_Init();
+
+    GUI_Init();
+    GUI_set_penSize(5);
+    GUI_set_penColor(M_COLOR_WHITE);
+
+//    ID_t ID_Addr[5]    = {0};
+//
+//    __GUI_Object_t cfg = {0};
+//
+//    cfg.style       = kGUI_ObjStyle_num;
+//    cfg.area.width  = 23;
+//    cfg.area.height = 12;
+//    cfg.area.xs     = (int)((RH_CFG_SCREEN_WIDTH - 5*cfg.area.width)>>1);
+//    cfg.area.ys     = 32;
+//
+//    cfg.bk_color    = M_COLOR_BLACK;
+//    cfg.font        = kGUI_FontStyle_ArialRounded_Bold;
+//    cfg.text_align  = kGUI_FontAlign_Middle;
+//    cfg.text_color  = M_COLOR_WHITE;
+//    cfg.text_size   = 8;
+//    cfg.max[0]      = 255;
+//    cfg.min[0]      = 0;
+//    cfg.val[0]      = 888;
+//    cfg.showFrame   = true;
+//    ID_Addr[0] = GUI_object_create( &cfg );
+//
+//    cfg.showFrame  = false;
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[1] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[2] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[3] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[4] = GUI_object_create( &cfg );
+//
+//
+//    GUI_object_insert( ID_Addr[0] );
+//    GUI_object_insert( ID_Addr[1] );
+//    GUI_object_insert( ID_Addr[2] );
+//    GUI_object_insert( ID_Addr[3] );
+//    GUI_object_insert( ID_Addr[4] );
+//
+//    GUI_RefreashScreen();
+//
+//
     return 0;
 }

@@ -29,6 +29,17 @@ extern "C" {
 #define RH_CFG_SCREEN_HEIGHT                  (64U)                         // < select >
 #define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
 
+#define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >
+#define RH_CFG_GRAM_EXTADDR                   (1U)                          // < option >
+#define RH_CFG_GRAM_EXTSECT                   (2U)                          // < option >
+#define RH_CFG_GRAM_EXTPTR                    (3U)                          // < option >
+#define RH_CFG_GRAM_TYPE                      RH_CFG_GRAM_INTERNAL          // < select > < above option >
+
+#define RH_CFG_GRAM_ADDRESS                   0x81C00000                    // <   ...  > < only useful when RH_CFG_GRAM_TYPE==RH_CFG_GRAM_EXTADDR >
+#define RH_CFG_GRAM_SECTION                   "NonCacheable.init"           // <   ...  > < only useful when RH_CFG_GRAM_TYPE==RH_CFG_GRAM_EXTSECT >
+#define RH_CFG_GRAM_POINTER                   s_psBufferLcd                 // <   ...  > < only useful when RH_CFG_GRAM_TYPE==RH_CFG_GRAM_EXTPTR  >
+extern void* RH_CFG_GRAM_POINTER;
+
 #define RH_CFG_MALLOC_SIZE__NONE              ((1U)<<0)                     // < option >
 #define RH_CFG_MALLOC_SIZE__64B               ((1U)<<6)                     // < option > 
 #define RH_CFG_MALLOC_SIZE__128B              ((1U)<<7)                     // < option > 

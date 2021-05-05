@@ -47,7 +47,7 @@ typedef __Stack_t    __LINK_AreaRefreash;
 typedef __LinkLoop_t __LINK_WindowCFG;
 
 #pragma pack(1)
-#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -55,6 +55,12 @@ typedef __LinkLoop_t __LINK_WindowCFG;
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
     #endif
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )
+    
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
+
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
+
 #endif
 
 #pragma pack(1)
@@ -85,7 +91,16 @@ static __GraphInfo_t info_MainScreen = {
 };
 
 void RH_PREMAIN GUI_Init        ( void ){
+#if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     Screen.GRAM = GRAM;
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )
+    
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
+
+#elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
+    Screen.GRAM = RH_CFG_GRAM_POINTER;
+#endif
+    
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );

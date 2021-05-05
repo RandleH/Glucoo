@@ -39,16 +39,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3D11609B-2381-47C3-8DBC-CCA93E286833"
-            shouldBeEnabled = "Yes"
+            uuid = "1734B40F-7346-446D-8ADC-5B0833C81A12"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../self/main.c"
+            filePath = "../../core/RH_gui.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "largestRectangleArea(heights, heightsSize)"
+            startingLineNumber = "628"
+            endingLineNumber = "628"
+            landmarkName = "__gui_insert_object_num(config)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "888F35A4-9C82-486F-911A-8DEAB1E50DC4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../core/RH_gui.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "GUI_Init()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

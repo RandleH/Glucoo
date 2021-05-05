@@ -67,6 +67,7 @@ typedef struct __Region_t __Area_t;
 #define RH_FUNCONST   __attribute__((const))
 #define RH_WEAK       __attribute__((weak))
  
+ 
 #ifndef __restrict__
 #define __restrict__ __restrict
 #endif

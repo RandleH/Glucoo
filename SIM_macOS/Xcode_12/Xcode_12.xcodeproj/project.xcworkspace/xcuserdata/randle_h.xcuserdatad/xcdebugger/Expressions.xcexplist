@@ -81,6 +81,14 @@
          contextName = "GUI_window_insert:RH_gui.c">
       </ContextState>
       <ContextState
+         contextName = "GUI_Init:RH_gui.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "GRAM">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__compar:main.c">
          <PersistentStrings>
             <PersistentString
