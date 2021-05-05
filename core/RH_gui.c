@@ -98,7 +98,7 @@ void RH_PREMAIN GUI_Init        ( void ){
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
 
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
-    Screen.GRAM = RH_CFG_GRAM_POINTER;
+    Screen.GRAM = (__PixelUnit_t (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
 #endif
     
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
@@ -196,6 +196,7 @@ void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================*/
 void GUI_RefreashScreen         ( void ){
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )      
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
@@ -215,9 +216,11 @@ void GUI_RefreashScreen         ( void ){
         }
     }
     Screen.areaNeedRefreashPixelCnt = 0;
+#endif
 }
 
 void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )    
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
         while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
@@ -232,8 +235,9 @@ void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
     pArea->ys      = ys;
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
-    //Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
+    Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
     __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
+#endif
 }
 
 /*==============================================================================================
@@ -246,12 +250,14 @@ void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================*/
 void GUI_RefreashEntireScreen   ( void ){
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )      
     __Area_t *p = NULL;
     (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (__Pixel_t*)Screen.GRAM[M_SCREEN_MAIN][0] );
     while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
         p = __Stack_pop( Screen.areaNeedRefreashHead );
         RH_FREE(p);
     }
+#endif
 }
 
 void GUI_set_penSize            ( size_t    penSize  ){
@@ -549,11 +555,11 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++ ){
-                size_t index = (y_fs+y)*(info.width)+(x_fs+x);
+                size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
                 uint8_t pixWeight = pF->output[y*pF->width+x];
-                info.pBuffer[ index ].R = info.pBuffer[ index ].R + (( (color_text.R - info.pBuffer[ index ].R) * pixWeight )>>8);
-                info.pBuffer[ index ].G = info.pBuffer[ index ].G + (( (color_text.G - info.pBuffer[ index ].G) * pixWeight )>>8);
-                info.pBuffer[ index ].B = info.pBuffer[ index ].B + (( (color_text.B - info.pBuffer[ index ].B) * pixWeight )>>8);
+                info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
+                info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
+                info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -882,7 +888,8 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
     __PixelUnit_t color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
     __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    
+    __PixelUnit_t color_switch_on  = {.data = M_COLOR_GREEN};
+    __PixelUnit_t color_switch_off = {.data = M_COLOR_BLACK};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -960,7 +967,7 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    
+    __PixelUnit_t color_bar_off = {.data = config->bk_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -1012,7 +1019,7 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
     __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 //    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    
+    __PixelUnit_t color_bar_on  = {.data = M_COLOR_WHITE};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
