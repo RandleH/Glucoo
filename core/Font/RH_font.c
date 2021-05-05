@@ -225,7 +225,7 @@ static struct{
     #ifdef RH_DEBUG
         RH_ASSERT( fontFile );
     #endif
-        __exitReturn( !fontFile, kStatus_BadAccess );
+        __exitReturn( !fontFile, MAKE_ENUM( kStatus_BadAccess ) );
 
         fseek(fontFile, 0, SEEK_END);
         size_t size = ftell(fontFile);

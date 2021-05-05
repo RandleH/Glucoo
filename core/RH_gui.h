@@ -1,7 +1,7 @@
 #ifndef _RH_GUI_H
 #define _RH_GUI_H
 
-#include "RH_common.h"
+
 #include "RH_gui_config.h"
 #include "RH_font.h"
 

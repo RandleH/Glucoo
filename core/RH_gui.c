@@ -1,6 +1,6 @@
 
 
-
+#include "RH_common.h"
 #include "RH_gui.h"
 #include "RH_data.h"
 #include "RH_lib.h"
@@ -1258,7 +1258,7 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
     }
     p->showFrame = cmd;
     __Graph_restore_config();
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t        GUI_object_insert    ( ID_t ID ){
@@ -1278,7 +1278,7 @@ E_Status_t        GUI_object_insert    ( ID_t ID ){
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
@@ -1300,7 +1300,7 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , float val_0, float val_1 ){
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t        GUI_object_delete    ( ID_t ID ){
@@ -1338,7 +1338,7 @@ E_Status_t        GUI_object_delete    ( ID_t ID ){
     __Graph_restore_config();
     __Font_restore_config();
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 #if GUI_WINDOW_DISPLAY
@@ -1755,7 +1755,7 @@ __GUI_Window_t* GUI_window_quickSet    (       __GUI_Window_t* config ){
 E_Status_t GUI_window_insert           ( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
 
-    __exitReturn( !pCFG, kStatus_NotFound );
+    __exitReturn( !pCFG, MAKE_ENUM( kStatus_NotFound ) );
     
     (*((__GUI_Window_t*)ID)->insert_func)( (__GUI_Window_t*)ID );
     if( Screen.autoDisplay ){
@@ -1766,16 +1766,16 @@ E_Status_t GUI_window_insert           ( ID_t ID ){
                           (int)(((__GUI_Window_t*)ID)->area.xs +       ((__GUI_Window_t*)ID)->area.width -1),\
                           (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t GUI_window_delete           ( ID_t ID ){
     __LINK_WindowCFG* pCFG = __LINK_Loop_find( Screen.windowCFG, (void*)ID );
-    __exitReturn( !pCFG, kStatus_NotFound );
+    __exitReturn( !pCFG, MAKE_ENUM( kStatus_NotFound ) );
     
     __LINK_Loop_remove( Screen.windowCFG, (void*)ID );
     RH_FREE((void*)ID);
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 #endif
@@ -2313,7 +2313,7 @@ E_Status_t GUI_menu_insert             ( ID_t ID ){
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
@@ -2331,7 +2331,7 @@ E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
 
     __Graph_restore_config();
     __Font_restore_config();
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 int        GUI_menu_scroll             ( ID_t ID, int cmd ){
@@ -2346,7 +2346,7 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
     switch(cmd){
         default:
         case 0:   // No action
-            return kStatus_Success;
+            return MAKE_ENUM( kStatus_Success );
             
         case -1:  // scroll up
             __gui_scroll_menu_up( config );
@@ -2369,7 +2369,7 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 E_Status_t GUI_menu_delete             ( ID_t ID ){
@@ -2408,7 +2408,7 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
     RH_FREE( config );
     __Graph_restore_config();
 
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 

@@ -269,7 +269,7 @@ E_Status_t __Graph_init                (void){
     GCFG.blur_tmp.height  = 0;
     GCFG.blur_tmp.width   = 0;
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
  
 void __Graph_set_penSize         (size_t         penSize      ){
@@ -374,7 +374,7 @@ E_Status_t __Graph_circle_raw     (int x ,int y ,int d ,        __GraphInfo_t* p
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -434,7 +434,7 @@ E_Status_t __Graph_circle_fill    (int x ,int y ,int d ,        __GraphInfo_t* p
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -503,7 +503,7 @@ E_Status_t __Graph_circle_edged   (int x ,int y ,int d ,        __GraphInfo_t* p
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -548,7 +548,7 @@ E_Status_t __Graph_circle_qrt1_raw    (int x ,int y ,int r ,        __GraphInfo_
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt2_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -589,7 +589,7 @@ E_Status_t __Graph_circle_qrt2_raw    (int x ,int y ,int r ,        __GraphInfo_
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt3_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -630,7 +630,7 @@ E_Status_t __Graph_circle_qrt3_raw    (int x ,int y ,int r ,        __GraphInfo_
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt4_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -674,7 +674,7 @@ E_Status_t __Graph_circle_qrt4_raw    (int x ,int y ,int r ,        __GraphInfo_
         GCFG.blur_area.height = GCFG.blur_tmp.height = 0;
         GCFG.blur_tmp.pBuffer = NULL;
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
 /*====================================
@@ -726,7 +726,7 @@ E_Status_t __Graph_circle_qrt1_fill    (int x ,int y ,int r ,        __GraphInfo
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt2_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -774,7 +774,7 @@ E_Status_t __Graph_circle_qrt2_fill    (int x ,int y ,int r ,        __GraphInfo
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt3_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -822,7 +822,7 @@ E_Status_t __Graph_circle_qrt3_fill    (int x ,int y ,int r ,        __GraphInfo
         memset(&GCFG.blur_area , 0, sizeof(GCFG.blur_area));
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t __Graph_circle_qrt4_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
@@ -873,7 +873,7 @@ E_Status_t __Graph_circle_qrt4_fill    (int x ,int y ,int r ,        __GraphInfo
         GCFG.blur_area.height = GCFG.blur_tmp.height = 0;
         GCFG.blur_tmp.pBuffer = NULL;
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
     
@@ -896,7 +896,7 @@ E_Status_t __Graph_rect_raw       (int xs,int ys,int xe,int ye, __GraphInfo_t* p
     if( method == kApplyPixel_blur ){
         while(1);
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -993,7 +993,7 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
             break;
     }
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -1044,7 +1044,7 @@ E_Status_t __Graph_rect_edged     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         RH_FREE(GCFG.blur_tmp.pBuffer);
         GCFG.blur_tmp.pBuffer = NULL;
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -1086,7 +1086,7 @@ E_Status_t __Graph_rect_round     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         memset(&GCFG.blur_tmp  , 0, sizeof(GCFG.blur_tmp ));
     }
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
 /*====================================
@@ -1134,7 +1134,7 @@ E_Status_t __Graph_line_raw       (int x1,int y1,int x2,int y2, __GraphInfo_t* p
     if(method == kApplyPixel_blur){
         while(1);
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
    
 /*====================================
@@ -1235,7 +1235,7 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
     if( blurCmd ){
         while(1);
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -1357,7 +1357,7 @@ E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* p
             break;
         }
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
         
     
@@ -1419,7 +1419,7 @@ E_Status_t __Graph_quad_raw       (int x1,int y1,int x2,int y2,int x3,int y3,int
         
     __Graph_line_raw( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,pInfo,method);
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
 /*====================================
@@ -1535,7 +1535,7 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
        
     }
     free(pBuffer);
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
 /*====================================
@@ -1579,7 +1579,7 @@ E_Status_t __Graph_sausage_raw    (int xs,int ys,int xe,int ye, __GraphInfo_t* p
     if( method == kApplyPixel_blur ){
         RH_ASSERT(0);
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
 
 /*====================================
@@ -1632,7 +1632,7 @@ E_Status_t __Graph_sausage_fill   (int xs,int ys,int xe,int ye, __GraphInfo_t* p
     if( method == kApplyPixel_blur ){
         RH_ASSERT(0);
     }
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
     
