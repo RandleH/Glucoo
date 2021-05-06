@@ -8349,6 +8349,9 @@
     <group>
         <name>user</name>
         <file>
+            <name>$PROJ_DIR$\..\User\bsp\touch\bsp_i2c_touch.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\User\bsp\lcd\bsp_lcd.c</name>
         </file>
         <file>
@@ -8356,6 +8359,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\User\bsp\systick\bsp_systick.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\User\bsp\touch\bsp_touch_gtxx.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\User\bsp\delay\core_delay.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\User\bsp\font\fonts.c</name>

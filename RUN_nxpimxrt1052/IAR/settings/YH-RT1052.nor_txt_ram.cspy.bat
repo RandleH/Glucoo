@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\asus\Desktop\DEMO-NXP-iMX105x\IAR\settings\YH-RT1052.nor_txt_ram.general.xcl" --backend -f "C:\Users\asus\Desktop\DEMO-NXP-iMX105x\IAR\settings\YH-RT1052.nor_txt_ram.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\asus\Desktop\Glucoo\RUN_nxpimxrt1052\IAR\settings\YH-RT1052.nor_txt_ram.general.xcl" --backend -f "C:\Users\asus\Desktop\Glucoo\RUN_nxpimxrt1052\IAR\settings\YH-RT1052.nor_txt_ram.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\asus\Desktop\DEMO-NXP-iMX105x\IAR\settings\YH-RT1052.nor_txt_ram.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\asus\Desktop\DEMO-NXP-iMX105x\IAR\settings\YH-RT1052.nor_txt_ram.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\asus\Desktop\Glucoo\RUN_nxpimxrt1052\IAR\settings\YH-RT1052.nor_txt_ram.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\asus\Desktop\Glucoo\RUN_nxpimxrt1052\IAR\settings\YH-RT1052.nor_txt_ram.driver.xcl" 
 
 @echo off 
 :end

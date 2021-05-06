@@ -12,6 +12,9 @@
 #include "./led/bsp_led.h" 
 #include "./lcd/bsp_lcd.h" 
 #include "./systick/bsp_systick.h"
+#include "./touch/bsp_touch_gtxx.h"
+#include "./touch/bsp_i2c_touch.h"
+#include "./delay/core_delay.h"   
 
 #include "RH_gui.h"
 #include "RH_color.h"
@@ -30,11 +33,11 @@ int main(void)
 
     BOARD_InitDebugConsole();
 
-
+    CPU_TS_TmrInit();
     LED_GPIO_Config();
 
     SysTick_Init();
-    
+    GTP_Init_Panel();
     LCD_Init(LCD_INTERRUPT_ENABLE);
 
     GUI_Init();
@@ -49,9 +52,17 @@ int main(void)
     GUI_rect_fill  ( 40, 40, 80, 80 );
 
 
-
+    __Pixel_t p[3] = {M_COLOR_GREEN,M_COLOR_WHITE,M_COLOR_BLUE};
+    int i = 0;
     while(1){
-        s_psBufferLcd[0][40][40] = M_COLOR_BLUE;
+        if(g_TouchPadInputSignal){
+            GTP_TouchProcess();    
+            g_TouchPadInputSignal = false;
+            GUI_set_penColor(p[i%3]);
+            GUI_rect_round (100,200,400,300 );
+            i++;
+        }
+        // CPU_TS_Tmr_Delay_MS(100);
     }
 }
 

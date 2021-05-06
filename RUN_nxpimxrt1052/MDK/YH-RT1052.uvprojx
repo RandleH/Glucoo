@@ -440,6 +440,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -544,6 +549,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1108,6 +1128,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1212,6 +1237,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1346,7 +1386,7 @@
       <TargetName>sdram_txt_ram_debug</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -1660,7 +1700,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>0</uGnu>
+            <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -1677,7 +1717,7 @@
 </MiscControls>
               <Define>CPU_MIMXRT1052CVL5B,SKIP_SYSCLK_INIT,PRINTF_FLOAT_ENABLE=1, SCANF_FLOAT_ENABLE=1, PRINTF_ADVANCED_ENABLE=1, SCANF_ADVANCED_ENABLE=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\libraries\CMSIS\Include;..\..\libraries\drivers;..\..\libraries\utilities;..\..\libraries\utilities\str;..\..\libraries\utilities\log;..\..\libraries\utilities\io;..\..\libraries\xip;..\..\user;..\..\user\bsp</IncludePath>
+              <IncludePath>..\libraries\CMSIS\Include;..\libraries\drivers;..\libraries\utilities;..\libraries\utilities\str;..\libraries\utilities\log;..\libraries\utilities\io;..\libraries\xip;..\user;..\user\bsp;..\..\core;..\..\core\BlackHouse;..\..\core\STB;..\..\core\Font;..\self</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1775,6 +1815,11 @@
               <FileName>fsl_elcdif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1880,6 +1925,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2058,7 +2118,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\nor_txt_ram\Listings\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -2445,6 +2505,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2549,6 +2614,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3114,6 +3194,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3218,6 +3303,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3783,6 +3883,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3887,6 +3992,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -4452,6 +4572,11 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\fsl_elcdif.c</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\fsl_lpi2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4556,6 +4681,21 @@
               <FileName>bsp_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\bsp\delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>

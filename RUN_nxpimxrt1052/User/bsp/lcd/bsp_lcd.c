@@ -12,7 +12,7 @@
 #include "./lcd/bsp_lcd.h" 
 
 
-
+LCD_TypeDef cur_lcd = INCH_5;
 /* 帧中断标志 */
 volatile bool s_frameDone = false;
 
@@ -25,7 +25,6 @@ AT_NONCACHEABLE_SECTION_ALIGN( pixel_t s_psBufferLcd[2][LCD_PIXEL_HEIGHT][LCD_PI
 static pixel_t CurrentTextColor   = CL_BLACK;
 static pixel_t CurrentBackColor   = CL_BLACK;
 
-/* 指向当前的显存，由于是地址，所以用32位变量 */
 static uint32_t CurrentFrameBuffer = (uint32_t)s_psBufferLcd[0];
 
 #define LCD_PAD_CONFIG_DATA            ( SRE_1_FAST_SLEW_RATE      | \
