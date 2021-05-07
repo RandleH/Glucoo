@@ -14,13 +14,7 @@ extern "C"{
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
 static __ImageBIN_t*    pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t GRAM[RH_CFG_SCREEN_HEIGHT][RH_CFG_SCREEN_WIDTH] = {0};
-static __ImageRGB565_t TmpScreenShot = {
-    .width   = RH_CFG_SCREEN_WIDTH ,
-    .height  = RH_CFG_SCREEN_HEIGHT ,
-    .pBuffer = GRAM[0]
-};
-static __ImageRGB565_t* pTmpScreenShot = &TmpScreenShot;
+static __ImageRGB565_t* pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 static __ImageRGB888_t* pTmpScreenShot = NULL;
 #else

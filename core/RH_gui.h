@@ -100,33 +100,71 @@ E_Status_t                GUI_window_delete    ( ID_t ID );
 
 
 typedef enum{
-    kGUI_ObjStyle_text  ,
-    kGUI_ObjStyle_num   ,
-    kGUI_ObjStyle_fnum  ,
+    kGUI_ObjStyle_text     ,
+    kGUI_ObjStyle_num      ,
+    kGUI_ObjStyle_fnum     ,
     
-    kGUI_ObjStyle_switch,
-    kGUI_ObjStyle_barH  ,
-    kGUI_ObjStyle_barV  ,//
+    kGUI_ObjStyle_switch   ,
+    kGUI_ObjStyle_barH     ,
+    kGUI_ObjStyle_barV     ,//
     
     kGUI_ObjStyle_joystick ,
-    NUM_kGUI_ObjStyle   ,
-}E_GUI_ObjStyle_t;
+    NUM_kGUI_ObjWidgets    ,
+}E_GUI_ObjWidget_t;
+
+struct __GUI_ObjDataScr_text{
+    const char* text;
+};
+
+struct __GUI_ObjDataScr_num{
+    int32_t value;
+};
+
+struct __GUI_ObjDataScr_fnum{
+    float_t value;
+};
+
+struct __GUI_ObjDataScr_switch{
+    bool    cmd;
+};
+
+struct __GUI_ObjDataScr_barH{
+    int32_t value;
+    int32_t max;
+    int32_t min;
+};
+
+struct __GUI_ObjDataScr_barV{
+    int32_t value;
+    int32_t max;
+    int32_t min;
+};
+
+struct __GUI_ObjDataScr_joystick{
+    int32_t value[2];
+    int32_t max  [2];
+    int32_t min  [2];
+};
+
 
 struct __GUI_Object_t{
     __Area_t             area;
-    E_GUI_ObjStyle_t     style;
+    E_GUI_ObjWidget_t    widget;
     E_GUI_FontStyle_t    font;
     
     const char*          text;
     int16_t              text_size;
-    __Pixel_t            text_color;
+    
     E_GUI_FontAlign_t    text_align;
     
+    __Pixel_t            obj_color;
     __Pixel_t            bk_color;
     
     float                min[2];
     float                val[2];
     float                max[2];
+    
+    void*                dataScr;
     
     bool                 showFrame;
     
@@ -139,9 +177,9 @@ struct __GUI_Object_t{
 typedef struct __GUI_Object_t __GUI_Object_t;
 
 ID_t            RH_RESULT GUI_object_create    ( const __GUI_Object_t* config );
-__GUI_Object_t*           GUI_object_quickSet  (       __GUI_Object_t* config );//
+E_Status_t                GUI_object_template  (       __GUI_Object_t* config  , E_GUI_ObjWidget_t widget );
 
-E_Status_t                GUI_object_adjust    ( ID_t ID  , float  val_0 , float val_1 );
+E_Status_t                GUI_object_adjust    ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                GUI_object_frame     ( ID_t ID  , bool   cmd   );
 E_Status_t                GUI_object_insert    ( ID_t ID );
 E_Status_t                GUI_object_delete    ( ID_t ID );//
