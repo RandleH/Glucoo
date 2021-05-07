@@ -138,7 +138,8 @@ void RH_PREMAIN GUI_Init        ( void ){
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================*/
 void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
-    
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )  
+   
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         const int x_width = xe-xs+1;
@@ -180,6 +181,7 @@ void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
 #endif
     }
 
+#endif
 }
 
 /*==============================================================================================

@@ -30,13 +30,13 @@
 
 
 /* LCD背光引脚，高电平点亮 */
-#define LCD_BL_GPIO                       GPIO1
-#define LCD_BL_GPIO_PIN               (15U)
+#define LCD_BL_GPIO                      GPIO1
+#define LCD_BL_GPIO_PIN                  (15U)
 #define LCD_BL_IOMUXC                    IOMUXC_GPIO_AD_B0_15_GPIO1_IO15
 
 /* LCD 分辨率 */
-#define LCD_PIXEL_WIDTH     800
-#define LCD_PIXEL_HEIGHT    480
+#define LCD_PIXEL_WIDTH                  800
+#define LCD_PIXEL_HEIGHT                 480
 
 typedef enum
 { 
@@ -66,25 +66,17 @@ extern LCD_TypeDef cur_lcd;
 
 
 /* 缓冲区对齐配置, 为了提高性能, LCDIF缓冲区要64B对齐 */
-#define FRAME_BUFFER_ALIGN    64
+#define FRAME_BUFFER_ALIGN       64
 
 /* 配置是否使用中断的标志 */
-#define LCD_INTERRUPT_DISABLE   0
-#define LCD_INTERRUPT_ENABLE    (!LCD_INTERRUPT_DISABLE)
+#define LCD_INTERRUPT_DISABLE    0
+#define LCD_INTERRUPT_ENABLE     (!LCD_INTERRUPT_DISABLE)
 
 /* 绘制横线和垂线的标志 */
 #define LINE_DIR_HORIZONTAL       0x0
 #define LINE_DIR_VERTICAL         0x1
 
-/*
-    LCD 颜色代码，CL_是Color的简写
-    16Bit由高位至低位， RRRR RGGG GGGB BBBB
 
-    下面的RGB 宏将24位的RGB值转换为16位格式。
-    启动windows的画笔程序，点击编辑颜色，选择自定义颜色，可以获得的RGB值。
-
-    推荐使用迷你取色器软件获得你看到的界面颜色。
-*/
 #if LCD_RGB_888
 
     /* eLCDIF 像素格式配置 */
@@ -159,7 +151,7 @@ enum
  * 全局变量声明
  ******************************************************************************/
 extern volatile bool s_frameDone;
-extern pixel_t s_psBufferLcd[2][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH];
+extern pixel_t s_psBufferLcd[1][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH];
 
 /*******************************************************************************
  * 函数声明

@@ -20,9 +20,9 @@ volatile bool s_frameDone = false;
 __IO uint32_t s_frame_count = 0;
 
 /* ÏÔ´æ */
-AT_NONCACHEABLE_SECTION_ALIGN( pixel_t s_psBufferLcd[2][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH], FRAME_BUFFER_ALIGN);
+AT_NONCACHEABLE_SECTION_ALIGN( pixel_t s_psBufferLcd[1][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH], FRAME_BUFFER_ALIGN);
 
-static pixel_t CurrentTextColor   = CL_BLACK;
+static pixel_t CurrentTextColor   = CL_RED;
 static pixel_t CurrentBackColor   = CL_BLACK;
 
 static uint32_t CurrentFrameBuffer = (uint32_t)s_psBufferLcd[0];
@@ -219,7 +219,6 @@ void LCD_Init(bool enableInterrupt){
     *((uint32_t *)0x41044104) = 0x0000000f;
 #endif
     
-    /* ³õÊ¼»¯eLCDIFÒý½Å¡¢Ê±ÖÓ ¡¢Ä£Ê½¡¢±³¹âÒÔ¼°ÖÐ¶Ï*/
     LCD_IOMUXC_MUX_Config();
     LCD_IOMUXC_PAD_Config();
     LCD_InitClock();
@@ -265,13 +264,9 @@ void LCD_SetFrameBuffer(uint8_t index){
   CurrentFrameBuffer = (uint32_t)s_psBufferLcd[index];
 }
 
-/**
-  * @brief ÉèÖÃºóÃæÒªÏÔÊ¾µÄÏÔ´æÇøÓò
-  * @param  index: 0»ò1
-  * @retval None
-  */
+
 void LCD_SetDisplayBuffer(uint8_t index){
-  /* ÉèÖÃELCDIFµÄÏÂÒ»¸ö»º³åÇøµØÖ· */
+
   ELCDIF_SetNextBufferAddr(LCDIF, (uint32_t)s_psBufferLcd[index]);
 
 }

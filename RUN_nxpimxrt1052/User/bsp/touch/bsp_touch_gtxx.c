@@ -159,6 +159,9 @@ const TOUCH_PARAM_TypeDef touch_param[4] =
     }
 };
 
+static void __touchinfo_Init(void){
+    memset( TouchData.track, -1, GTP_MAX_TOUCH*sizeof(TouchData.track[0]) );
+}
 
 static int I2C_Transfer( struct i2c_msg *msgs,int num){
     int im = 0;
@@ -292,20 +295,13 @@ void GTP_IRQ_Enable(void){
 }
 
 
-static int16_t pre_x[GTP_MAX_TOUCH] ={-1,-1,-1,-1,-1};
-static int16_t pre_y[GTP_MAX_TOUCH] ={-1,-1,-1,-1,-1};
-
 static void GTP_Touch_Down(int32_t id,int32_t x,int32_t y,int32_t w){
 
-    pre_x[id] = x; 
-    pre_y[id] = y;
   
 }
 
 static void GTP_Touch_Up( int32_t id){
-  
-    pre_x[id] = -1;
-    pre_y[id] = -1;        
+      
   
 }
 
@@ -463,6 +459,8 @@ struct{
     uint8_t data;
 }ExitInfo = {0};    
 
+    bool* trackRecord = NULL;
+
     REG_Data.addrH = (uint8_t)(GTP_READ_COOR_ADDR>>8  );
     REG_Data.addrL = (uint8_t)(GTP_READ_COOR_ADDR&0xff);
 
@@ -473,7 +471,7 @@ struct{
     GTP_DEBUG_FUNC();
     
     // 先读取状态寄存器 和 第一个触点数据
-    GTP_I2C_Read( GTP_ADDRESS, (uint8_t*)&REG_Data, sizeof(REG_Data.REG_0x814E)+2 );
+    GTP_I2C_Read( GTP_ADDRESS, (uint8_t*)&REG_Data, sizeof(REG_Data.REG_0x814E)+sizeof(REG_Data.CordInfo[0])+2 );
     
     // 状态寄存器未就绪
     if( REG_Data.REG_0x814E.buffer_status == false )
@@ -487,16 +485,59 @@ struct{
     if( REG_Data.REG_0x814E.num_of_touchpoint > 1 )
         GTP_I2C_Read( GTP_ADDRESS, (uint8_t*)&REG_Data, sizeof(REG_Data) );
 
-    TouchData.num_Fingers = REG_Data.REG_0x814E.num_of_touchpoint;
 
-    if( cache_num_Fingers > TouchData.num_Fingers ){
-        for( int8_t i=0; i<cache_num_Fingers; i++ ){
-            for( int8_t j=0; j<TouchData.num_Fingers; j++ ){
-                
+
+
+
+    trackRecord = alloca( REG_Data.REG_0x814E.num_of_touchpoint*sizeof(bool) ); // false = 新轨迹; true = 老轨迹
+    memset( trackRecord, false, REG_Data.REG_0x814E.num_of_touchpoint*sizeof(bool) );
+    // 在记录的track轨迹中找现有仍然存在的轨迹
+    for( int8_t i=0; i<TouchData.num_Fingers; i++ ){
+        for( int8_t j=0; j<REG_Data.REG_0x814E.num_of_touchpoint; j++ ){
+
+            if ( TouchData.track[i].ID == -1 ){
+                continue;
+            }
+
+            if( TouchData.track[i].ID==REG_Data.CordInfo[j].trackID && trackRecord[j]==false ){
+                // 寻找到之前记录的轨迹
+                TouchData.track[i].pos_X = (int16_t)((REG_Data.CordInfo[j].XH<<8)|(REG_Data.CordInfo[j].XL));
+                TouchData.track[i].pos_Y = (int16_t)((REG_Data.CordInfo[j].YH<<8)|(REG_Data.CordInfo[j].YL));
+                TouchData.track[i].size  = (int16_t)((REG_Data.CordInfo[j].pointSizeH<<8)|(REG_Data.CordInfo[j].pointSizeL));
+                trackRecord[j] = true;
+                goto NEXT_SEARCH_IN_RECORD;
             }
         }
-        //...//
+        
+        // 未寻找到之前记录的轨迹, 说明这条轨迹已经结束
+        TouchData.track[i].ID    = -1;
+        TouchData.track[i].pos_X = -1;
+        TouchData.track[i].pos_Y = -1;
+        TouchData.track[i].size  = -1;
+
+    NEXT_SEARCH_IN_RECORD:    
+        continue;
     }
+    // 至此 所有上一轮有记录但现在不存在了的轨迹都已被置-1, 所有上一轮有记录现在仍然存在的轨迹都已更新数据
+    // 因此仅剩上一轮没有记录, 而现在却存在了的轨迹 即 新轨迹 需要被创建
+    
+    for( int8_t j=0, i=0; j<REG_Data.REG_0x814E.num_of_touchpoint; j++ ){
+
+        if( trackRecord[j]==false ){
+            // 发现一条新轨迹
+            for( ;i<GTP_MAX_TOUCH; i++ ){
+                if( TouchData.track[i].ID == -1 ){ 
+                    // 找到未被使用的轨迹记录数组
+                    TouchData.track[i].ID    = REG_Data.CordInfo[j].trackID;
+                    TouchData.track[i].pos_X = (int16_t)((REG_Data.CordInfo[j].XH<<8)|(REG_Data.CordInfo[j].XL));
+                    TouchData.track[i].pos_Y = (int16_t)((REG_Data.CordInfo[j].YH<<8)|(REG_Data.CordInfo[j].YL));
+                    TouchData.track[i].size  = (int16_t)((REG_Data.CordInfo[j].pointSizeH<<8)|(REG_Data.CordInfo[j].pointSizeL));
+                    break;
+                }
+            }
+        }
+    }
+
 
     if( cache_num_Fingers > 0 ){
 
@@ -505,12 +546,10 @@ struct{
     if( TouchData.num_Fingers > 0 ){
 
     }
-
-    cache_num_Fingers = TouchData.num_Fingers;
     
     //...//
 
-
+    TouchData.num_Fingers = REG_Data.REG_0x814E.num_of_touchpoint;
 EXIT:
     {
         GTP_I2C_Write( GTP_ADDRESS, (uint8_t*)&ExitInfo, sizeof(ExitInfo) );
@@ -574,11 +613,6 @@ int8_t GTP_Send_Command(uint8_t command)
   return ret;
 }
 
-/**
-* @brief   »½ÐÑ´¥ÃþÆÁ
-* @param ÎÞ
-* @retval 0Îª³É¹¦£¬ÆäËüÎªÊ§°Ü
-*/
 int8_t GTP_WakeUp_Sleep(void)
 {
   uint8_t retry = 0;
@@ -771,8 +805,7 @@ int32_t GTP_Init_Panel(void)
   
   
   
-#if 1    //¶Á³öÐ´ÈëµÄÊý¾Ý£¬¼ì²éÊÇ·ñÕý³£Ð´Èë
-  //¼ìÑé¶Á³öµÄÊý¾ÝÓëÐ´ÈëµÄÊÇ·ñÏàÍ¬
+#if 1   
   {
     uint16_t i;
     uint8_t buf[250];
@@ -815,6 +848,7 @@ int32_t GTP_Init_Panel(void)
   
   free(config);
   
+  __touchinfo_Init();
   return 0;
 }
 

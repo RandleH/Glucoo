@@ -42,25 +42,34 @@ int main(void)
 
     GUI_Init();
     GUI_set_penSize(5);
-    GUI_set_penColor(M_COLOR_WHITE);
+    GUI_set_penColor(M_COLOR_CYAN);
 
-    extern pixel_t s_psBufferLcd[2][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH];
+    extern pixel_t s_psBufferLcd[1][LCD_PIXEL_HEIGHT][LCD_PIXEL_WIDTH];
 
     RGB_LED_COLOR_RED;
-    LCD_Clear(CL_RED);
-    GUI_rect_round (100,200,400,300 );
-    GUI_rect_fill  ( 40, 40, 80, 80 );
+    // LCD_Clear(CL_RED);
+    // GUI_rect_round (100,200,400,300 );
+    // GUI_rect_fill  ( 40, 40, 80, 80 );
 
 
-    __Pixel_t p[3] = {M_COLOR_GREEN,M_COLOR_WHITE,M_COLOR_BLUE};
+    __Pixel_t p[2] = {M_COLOR_YELLOW,M_COLOR_BLUE};
     int i = 0;
     while(1){
-        if(g_TouchPadInputSignal){
+        if(g_TouchPadInputSignal ){
             GTP_TouchProcess();    
             g_TouchPadInputSignal = false;
-            GUI_set_penColor(p[i%3]);
-            GUI_rect_round (100,200,400,300 );
-            i++;
+            if( TouchData.track[0].ID != -1 ){
+                GUI_set_penColor(p[i%2]);
+                GUI_rect_fill (50,100,500,400 ); 
+
+                s_psBufferLcd[0][100][50] = 0x001f;
+                s_psBufferLcd[0][100][51] = 0x001f;
+                s_psBufferLcd[0][100][52] = 0x001f;
+                s_psBufferLcd[0][100][53] = 0x001f;
+                s_psBufferLcd[0][100][54] = 0x001f;
+                PutPixel( 50, 100 );
+                i++;
+            }
         }
         // CPU_TS_Tmr_Delay_MS(100);
     }

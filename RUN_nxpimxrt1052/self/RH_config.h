@@ -26,7 +26,7 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__NewYork_Italic     (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Arial_Unicode      (0U)                          // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_SCREEN_HEIGHT                  (480U)                         // < select >
+#define RH_CFG_SCREEN_HEIGHT                  (480U)                        // < select >
 #define RH_CFG_SCREEN_WIDTH                   (800U)                        // < select >
 
 #define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >
@@ -97,21 +97,21 @@ extern "C" {
 #endif
 
 #ifndef RH_CALLOC
-  #define RH_CALLOC(x,size)                   __RH_Debug_print_memory_info( __RH_Debug_calloc(x,size,__FILE__,__LINE__,calloc), printf )
+  #define RH_CALLOC(x,size)                   calloc(x,size)
 #else
   #error " 'RH_CALLOC' has been defined. "
 #endif
 
 #ifndef RH_MALLOC
 #include "RH_lib.h"
-  #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), printf )
+  #define RH_MALLOC(x)                        malloc(x)
 
 #else
   #error " 'RH_MALLOC' has been defined. "
 #endif
 
 #ifndef RH_FREE
-  #define RH_FREE(x)                          __RH_Debug_free(x,free)
+  #define RH_FREE(x)                          free(x)
 #else
   #error " 'RH_FREE' has been defined. "
 #endif
