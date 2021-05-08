@@ -12,7 +12,7 @@ extern "C" {
 #define RH_CFG_GRAPHIC_COLOR_BIN              (0U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
-#define RH_CFG_GRAPHIC_COLOR_TYPE             RH_CFG_GRAPHIC_COLOR_RGB565   // < select > < above option >
+#define RH_CFG_GRAPHIC_COLOR_TYPE             RH_CFG_GRAPHIC_COLOR_RGB565      // < select > < above option >
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
@@ -97,14 +97,14 @@ extern void* RH_CFG_GRAM_POINTER;
 #endif
 
 #ifndef RH_CALLOC
-  #define RH_CALLOC(x,size)                   __RH_Debug_print_memory_info( __RH_Debug_calloc(x,size,__FILE__,__LINE__,calloc), printf )
+  #define RH_CALLOC(x,size)                   __RH_Debug_print_memory_info( __RH_Debug_calloc(x,size,__FILE__,__LINE__,calloc), NULL )
 #else
   #error " 'RH_CALLOC' has been defined. "
 #endif
 
 #ifndef RH_MALLOC
 #include "RH_lib.h"
-  #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), printf )
+  #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), NULL )
 
 #else
   #error " 'RH_MALLOC' has been defined. "

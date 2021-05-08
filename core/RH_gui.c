@@ -896,9 +896,9 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
     __PixelUnit_t color_switch     = {.data = 0x00};
     //...//
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_switch_on  = {.data = M_COLOR_GREEN };
-    __PixelUnit_t color_switch_off = {.data = M_COLOR_COAL  };
-    __PixelUnit_t color_switch     = {.data = M_COLOR_WHITE };
+    __PixelUnit_t color_switch_on  = {.data = config->obj_color };
+    __PixelUnit_t color_switch_off = {.data = M_COLOR_COAL      };
+    __PixelUnit_t color_switch     = {.data = M_COLOR_WHITESMOKE     };
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -991,9 +991,9 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
     }*pHistory = (void*)config->history;
     
-    int32_t val = (int32_t)config->val[0];
-    int32_t min = (int32_t)config->min[0];
-    int32_t max = (int32_t)config->max[0];
+    int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
+    int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
+    int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
     val = __limit(val, min, max);
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     __Font_backup_config();
@@ -1053,14 +1053,14 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
     __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 //    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_bar_on  = {.data = M_COLOR_WHITE};
+    __PixelUnit_t color_bar_on  = {.data = config->obj_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-    int32_t val = (int32_t)config->val[0];
-    int32_t min = (int32_t)config->min[0];
-    int32_t max = (int32_t)config->max[0];
+    int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
+    int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
+    int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
     val = __limit(val, min, max);
     
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
@@ -1130,14 +1130,16 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     
     __Graph_set_penColor( config->obj_color );
     
-    int X = (int)__mid( config->area.xs     , config->area.xs+config->area.width -1 );
-    int Y = (int)__mid( config->area.ys     , config->area.ys+config->area.height-1 );
+    
     int D = (int)__min( config->area.height , config->area.width );
+    bool eps = ((D&0x01)==0);
+    int X = (int)( config->area.xs + (D>>1) - eps );
+    int Y = (int)( config->area.ys + (D>>1) - eps  );
 //    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      if(  !pHistory  ){
          __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      }else{
-         bool eps = ((D&0x01)==0);
+         
          switch( pHistory->cord ){
              
              case 1:
@@ -1160,15 +1162,17 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
          }
      }
     
-    int32_t val_x = __limit( (int32_t)config->val[0], (int32_t)config->min[0], (int32_t)config->max[0] );
-    int32_t val_y = __limit( (int32_t)config->val[1], (int32_t)config->min[1], (int32_t)config->max[1] );
+    struct __GUI_ObjDataScr_joystick* pDataSrc = ((struct __GUI_ObjDataScr_joystick*)config->dataScr);
+    
+    int32_t val_x = __limit( (int32_t)pDataSrc->value[0], (int32_t)pDataSrc->min[0], (int32_t)pDataSrc->max[0] );
+    int32_t val_y = __limit( (int32_t)pDataSrc->value[1], (int32_t)pDataSrc->min[1], (int32_t)pDataSrc->max[1] );
     
     
     int dis_cir_max = ((3*D)>>3); // 两圆心距最大值
 
     
-    int px = (val_x - (int32_t)config->min[0])*(dis_cir_max<<1)/((int32_t)config->max[0]-(int32_t)config->min[0]) - dis_cir_max;
-    int py = (val_y - (int32_t)config->min[1])*(dis_cir_max<<1)/((int32_t)config->max[1]-(int32_t)config->min[1]) - dis_cir_max;
+    int px = (val_x - (int32_t)pDataSrc->min[0])*(dis_cir_max<<1)/((int32_t)pDataSrc->max[0]-(int32_t)pDataSrc->min[0]) - dis_cir_max;
+    int py = (val_y - (int32_t)pDataSrc->min[1])*(dis_cir_max<<1)/((int32_t)pDataSrc->max[1]-(int32_t)pDataSrc->min[1]) - dis_cir_max;
     int pd = __limit( (D>>3), 1, D );
 
     int cord   = __Point_toCord2D( px, py );// 记录游标圆心坐标的象限
@@ -1210,8 +1214,8 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
     pHistory->cord        = cord;
-    pHistory->area.xs     = (X+px-(pd>>1));
-    pHistory->area.ys     = (Y-py-(pd>>1));
+    pHistory->area.xs     = (X+px-(pd>>1)+eps);
+    pHistory->area.ys     = (Y-py-(pd>>1)+eps);
     pHistory->area.width  = pd;
     pHistory->area.height = pd;
     
@@ -1272,11 +1276,19 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->insert_func = __gui_insert_object_bar_h;
             m_config->remove_func = __gui_remove_object_bar_h;
             m_config->adjust_func = __gui_adjust_object_bar_h;
+            m_config->dataScr     = RH_MALLOC( sizeof(struct __GUI_ObjDataScr_barH) );
             break;
         case kGUI_ObjStyle_joystick:
             m_config->insert_func = __gui_insert_object_joystick;
             m_config->remove_func = __gui_remove_object_joystick;
             m_config->adjust_func = __gui_adjust_object_joystick;
+            m_config->dataScr     = RH_MALLOC( sizeof(struct __GUI_ObjDataScr_joystick) );
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[0]   = 100;
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[1]   = 100;
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[0]   = 0;
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[1]   = 0;
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[0] = 50;
+            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[1] = 50;
             break;
         default:
             RH_ASSERT(0);
@@ -1314,12 +1326,29 @@ E_Status_t        GUI_object_template  ( __GUI_Object_t* config, E_GUI_ObjWidget
             
         case kGUI_ObjStyle_switch:
             config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
-            config->area.width  = 30;//__limit( __limit((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 12, 64),0,GUI_X_WIDTH);
-            config->area.height = 15;//__limit( config->area.width>>1, 5, 32);
+            config->obj_color   = M_COLOR_GREEN;
+            config->area.width  = (int)((hypotf(GUI_X_WIDTH, GUI_Y_WIDTH)+646)/26.3);
+            config->area.height = config->area.width>>1;
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
+            
+        case kGUI_ObjStyle_barH:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.width  = GUI_X_WIDTH>>2;
+            config->area.height = config->area.width>>3;
+            config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
+            config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
+            break;
+        case kGUI_ObjStyle_joystick:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.width  = config->area.height = __min(GUI_X_WIDTH, GUI_Y_WIDTH)>>1;
+            config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
+            config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
+            break;
+            
         default:
             break;
     }
@@ -1336,9 +1365,11 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
     __GUI_Object_t* p = (__GUI_Object_t*)(ID);
     
     __Graph_backup_config();
-    if( !p->showFrame && cmd ){
+    if( cmd ){
+        __Graph_set_penColor( p->obj_color );
         __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
-    }else if( p->showFrame && !cmd ){
+    }else{
+        __Graph_set_penColor( p->bk_color );
         __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
     p->showFrame = cmd;

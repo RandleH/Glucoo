@@ -60,7 +60,12 @@ struct __Region_t{
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;
  
- 
+struct __Range_t{
+    int   val;
+    int   max;
+    int   min;
+};
+typedef struct __Range_t __Range_t;
 
  
 #define RH_RESULT     __attribute__((warn_unused_result))
