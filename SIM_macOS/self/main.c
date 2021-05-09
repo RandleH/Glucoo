@@ -7,83 +7,86 @@
 
 #include <stdio.h>
 #include <ctype.h>
-#include "RH_gui.h"
 #include "RH_gui_api.h"
 #include "RH_color.h"
 #include <time.h>
 
+#include "RH_data.h"
 
 
-
-void Dummy(int x, int y){
-    printf("x=%d,y=%d\n",x,y);
-    size_t cnt = 9999;
-    while(cnt--);
-}
-
+#include "GLU_glucoo.h"
+enum __Dummy_t{
+    k0,
+    k1,
+    k2
+};
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    
-
-    
+//    printf("%f\n",hypotf(64,128));
     Simul_API_Init();
-    
+
     GUI_Init();
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
-    GUI_circle_raw(32, 10, 19);
-    GUI_auto_display(0);
-//    GUI_circle_raw(32, 10, 18);
-//    GUI_circle_qrt1_raw( 32  ,32+1,10 );
-//    GUI_circle_qrt2_raw( 32+1,32+1,10 );
-//    GUI_circle_qrt3_raw( 32+1,32  ,10 );
-//    GUI_circle_qrt4_raw( 32  ,32  ,10 );
+    int d = 11;
+    bool eps = ((d&0x01)==0);
+    int x = 32, y = 32;
+    GUI_circle_raw( x, y, d );
+    
+    GUI_set_penColor(M_COLOR_RED);
+    int xs = x - (d>>1) + eps;
+    int ys = y - (d>>1) + eps;
+    GUI_rect_raw( xs, ys, xs+d-1, ys+d-1 );
+    
+    GUI_RefreashScreen();
+    __GUI_Object_t cfg = {0};
 
+    GUI_object_template( &cfg, kGUI_ObjStyle_joystick );
+    
+//    cfg.area.height++;
+//    cfg.area.width++;
+
+    ID_t ID_Text = GUI_object_create( &cfg );
+
+    GUI_object_insert( ID_Text );
     GUI_RefreashScreen();
 
-#if 1
-    
-    
-    __GUI_Object_t cfg_obj = {0};
+    struct __GUI_ObjDataScr_joystick data = {
+        .value = { 3500, 3000},
+        .max   = { 4096, 4096},
+        .min   = {    0,    0}
+    };
 
-    GUI_object_quickSet(&cfg_obj);
+    GUI_object_adjust( ID_Text, &data, sizeof(data));
 
-    cfg_obj.style       = kGUI_ObjStyle_joystick;
-    cfg_obj.area.xs     = 10;
-    cfg_obj.area.ys     = 10;
-    cfg_obj.area.height = 45;
-    cfg_obj.area.width  = 46;
-    cfg_obj.min[0]      = 0;
-    cfg_obj.max[0]      = 4096;
-    cfg_obj.min[1]      = 0;
-    cfg_obj.max[1]      = 4096;
-    
-    cfg_obj.font        = kGUI_FontStyle_ArialRounded_Bold;
-    cfg_obj.text_color  = M_COLOR_WHITE;
-    cfg_obj.text        = "size:";
-    cfg_obj.text_size   = 8;
-    cfg_obj.text_align  = kGUI_FontAlign_Left;
-    cfg_obj.showFrame   = false;
-
-    cfg_obj.bk_color    = M_COLOR_BLACK;
-
-    cfg_obj.val[0]      = 0;
-    cfg_obj.val[1]      = 2048;
-
-    ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
-    GUI_object_insert(ID_Obj1);
-
-    GUI_object_adjust(ID_Obj1, 0,2048);
-    GUI_object_adjust(ID_Obj1, 2048,0);
-    GUI_object_adjust(ID_Obj1, 2048,4096);
-    GUI_object_adjust(ID_Obj1, 4096,2048);
-    GUI_object_adjust(ID_Obj1, 4096,2048);
-    GUI_object_adjust(ID_Obj1, 3496,3496);
-    GUI_object_adjust(ID_Obj1, 1398,3864);
-    __RECORD_TIME( GUI_RefreashScreen(), printf );
-
-
-#endif
+    GUI_RefreashScreen();
+//
+//    cfg.showFrame  = false;
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[1] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[2] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[3] = GUI_object_create( &cfg );
+//
+//    cfg.area.xs   += cfg.area.width;
+//    cfg.val[0]     = 888;
+//    ID_Addr[4] = GUI_object_create( &cfg );
+//
+//
+//    GUI_object_insert( ID_Addr[0] );
+//    GUI_object_insert( ID_Addr[1] );
+//    GUI_object_insert( ID_Addr[2] );
+//    GUI_object_insert( ID_Addr[3] );
+//    GUI_object_insert( ID_Addr[4] );
+//
+//    GUI_RefreashScreen();
+//
+//
     return 0;
 }

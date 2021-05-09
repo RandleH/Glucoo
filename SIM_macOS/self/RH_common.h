@@ -36,18 +36,20 @@
  
 #define RH_DEBUG
  
+#define MAKE_ENUM(name)  RH_ENUM_ ## name
 typedef enum{
-    kStatus_Success    ,
-    kStatus_Busy       ,
-    kStatus_BadAccess  ,
-    kStatus_Denied     ,
-    kStatus_Exist      ,
-    kStatus_NoSpace    ,
-    kStatus_ErrorID    ,
-    kStatus_NotFound   ,
-    kStatus_Warning    ,
-    kStatus_Empty
+    MAKE_ENUM( kStatus_Success   )    ,
+    MAKE_ENUM( kStatus_Busy      )    ,
+    MAKE_ENUM( kStatus_BadAccess )    ,
+    MAKE_ENUM( kStatus_Denied    )    ,
+    MAKE_ENUM( kStatus_Exist     )    ,
+    MAKE_ENUM( kStatus_NoSpace   )    ,
+    MAKE_ENUM( kStatus_ErrorID   )    ,
+    MAKE_ENUM( kStatus_NotFound  )    ,
+    MAKE_ENUM( kStatus_Warning   )    ,
+    MAKE_ENUM( kStatus_Empty     )
 }E_Status_t;
+
  
 struct __Region_t{
     int    xs;
@@ -58,7 +60,12 @@ struct __Region_t{
 typedef struct __Region_t __Region_t;
 typedef struct __Region_t __Area_t;
  
- 
+struct __Range_t{
+    int   val;
+    int   max;
+    int   min;
+};
+typedef struct __Range_t __Range_t;
 
  
 #define RH_RESULT     __attribute__((warn_unused_result))
@@ -66,6 +73,7 @@ typedef struct __Region_t __Area_t;
 #define RH_AFTMAIN    __attribute__((destructor))
 #define RH_FUNCONST   __attribute__((const))
 #define RH_WEAK       __attribute__((weak))
+ 
  
 #ifndef __restrict__
 #define __restrict__ __restrict

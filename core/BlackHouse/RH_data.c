@@ -481,7 +481,7 @@ void*           __Stack_deleteBase           (       __Stack_t *pBase ){
     
 E_Status_t      __Queue_createHead           ( void* object ){
     
-    return kStatus_Success;
+    return MAKE_ENUM( kStatus_Success );
 }
     
     
