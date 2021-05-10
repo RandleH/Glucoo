@@ -112,7 +112,7 @@ void GUI_circle_qrt4_fill   ( int x , int y , int r ){
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
 
-void GUI_circle_qrt1_raw    ( int x ,int y ,int r ){
+void GUI_circle_qrt1_raw    ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );
@@ -122,7 +122,7 @@ void GUI_circle_qrt1_raw    ( int x ,int y ,int r ){
     __Graph_circle_qrt1_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
-void GUI_circle_qrt2_raw    ( int x ,int y ,int r ){
+void GUI_circle_qrt2_raw    ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -132,7 +132,7 @@ void GUI_circle_qrt2_raw    ( int x ,int y ,int r ){
     __Graph_circle_qrt2_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
-void GUI_circle_qrt3_raw    ( int x ,int y ,int r ){
+void GUI_circle_qrt3_raw    ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -142,7 +142,7 @@ void GUI_circle_qrt3_raw    ( int x ,int y ,int r ){
     __Graph_circle_qrt3_raw( x, y, r, &info_MainScreen, kApplyPixel_fill );
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
 }
-void GUI_circle_qrt4_raw    ( int x ,int y ,int r ){
+void GUI_circle_qrt4_raw    ( int x , int y , int r ){
 #ifdef RH_DEBUG
 #endif
     int xs = __limit( (x    ), 0, GUI_X_WIDTH-1 );

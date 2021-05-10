@@ -20,22 +20,22 @@
  * [ GUI_API_AssertParam ] 断言输出
  * [ GUI_API_DelayMs     ] (未使用)
 ===============================================================================================================*/
-void __attribute__((weak)) GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
+void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
 // THIS MAY COST SOME TIME.
 }
 void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const __Pixel_t* pixData) = GUI_DrawArea;
 
-void __attribute__((weak)) GUI_DummyDrawPixel (int x,int y,const __Pixel_t pixData){
+void RH_WEAK GUI_DummyDrawPixel (int x,int y,const __Pixel_t pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
 }
 void (*GUI_API_DrawPixel)                     (int x ,int y ,const __Pixel_t pixData)          = GUI_DummyDrawPixel;
 
-void __attribute__((weak)) GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
+void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
 }
 void (*GUI_API_AssertParam)                   (bool expression,const char* WHAT_IS_WRONG)      = GUI_AsserParam;
 
-void __attribute__((weak)) GUI_Delay          (unsigned long ms){
+void RH_WEAK GUI_Delay          (unsigned long ms){
     ms*=1000;
     while(ms--){}
 }
