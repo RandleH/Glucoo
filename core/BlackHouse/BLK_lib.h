@@ -1,7 +1,7 @@
 
 
-#ifndef _RH_LIB_H
-#define _RH_LIB_H
+#ifndef _BLK_LIB_H
+#define _BLK_LIB_H
 
 #include "RH_common.h"
 #include "RH_config.h"

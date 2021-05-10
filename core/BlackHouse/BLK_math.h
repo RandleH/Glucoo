@@ -1,5 +1,5 @@
-#ifndef _RH_MATH_H
-#define _RH_MATH_H
+#ifndef _BLK_MATH_H
+#define _BLK_MATH_H
 
 #include "RH_common.h"
 

@@ -1,9 +1,9 @@
-#ifndef _RH_IMAGE_H
-#define _RH_IMAGE_H
+#ifndef _BLK_IMAGE_H
+#define _BLK_IMAGE_H
 
 #include "RH_common.h"
-#include "RH_lib.h"
-#include "RH_math.h"
+#include "BLK_lib.h"
+#include "BLK_math.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1,7 +1,7 @@
 
 #include "../GLU_glucoo.h"
 
-#include "RH_graphic.h"
+#include "BLK_graphic.h"
 
 #define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH

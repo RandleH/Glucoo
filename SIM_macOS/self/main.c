@@ -7,19 +7,16 @@
 
 #include <stdio.h>
 #include <ctype.h>
-#include "RH_gui_api.h"
-#include "RH_color.h"
 #include <time.h>
 
-#include "RH_data.h"
+#include "RH_color.h"
+
+#include "GLU_api.h"
+#include "BLK_data.h"
 
 
 #include "GLU_glucoo.h"
-enum __Dummy_t{
-    k0,
-    k1,
-    k2
-};
+
 
 int main(int argc, const char * argv[]) {
 //    printf("%f\n",hypotf(64,128));
