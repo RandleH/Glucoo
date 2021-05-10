@@ -1,5 +1,5 @@
-#ifndef _RH_TIME_H
-#define _RH_TIME_H
+#ifndef _BLK_TIME_H
+#define _BLK_TIME_H
 
 #include "RH_common.h"
 

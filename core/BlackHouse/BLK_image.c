@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include "RH_image.h"
+#include "BLK_image.h"
 
 #ifdef __cplusplus
 extern "C" {

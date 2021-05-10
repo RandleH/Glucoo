@@ -1,11 +1,11 @@
-#ifndef _RH_GRAPHIC_H
-#define _RH_GRAPHIC_H
+#ifndef _BLK_GRAPHIC_H
+#define _BLK_GRAPHIC_H
 
 #include "RH_common.h"
 #include "RH_config.h"
 #include "RH_color.h"
-#include "RH_image.h"
-#include "RH_math.h"
+#include "BLK_image.h"
+#include "BLK_math.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -103,7 +103,7 @@ extern void* RH_CFG_GRAM_POINTER;
 #endif
 
 #ifndef RH_MALLOC
-#include "RH_lib.h"
+#include "BLK_lib.h"
   #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), NULL )
 
 #else

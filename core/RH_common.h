@@ -1,8 +1,6 @@
 
-
 #ifndef _RH_COMMON_H
 #define _RH_COMMON_H
-#define _BLACK_HOUSE_SUPPORT_
 
 #include <string.h>
 #include <stdlib.h>

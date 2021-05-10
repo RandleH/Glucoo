@@ -2,10 +2,13 @@
 
     
 #include <stdio.h>
-#include "RH_image.h"
-#include "RH_gui.h"
-#include "RH_gui_api.h"
+#include "BLK_image.h"
+
+
 #include "RH_common.h"
+
+#include "GLU_api.h"
+#include "GLU_glucoo.h"
 
 #ifdef __cplusplcus
 extern "C"{
