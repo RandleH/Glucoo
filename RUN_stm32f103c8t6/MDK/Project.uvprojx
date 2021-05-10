@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_ASSERT</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER\inc;..\Libraries\CMSIS\CM3\DeviceSupport;..\Libraries\Device;..\BSP;..\..\core\BlackHouse;..\..\core\Font;..\..\core\STB;..\self;..\..\core;..\Libraries\uC-OS3\Source;..\Libraries\uC-OS3\Ports\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-OS3\Cfg\RandleH;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU;..\Libraries\uC-CPU\ARM-Cortex-M\ARMv6-M\ARM;..\Libraries\uC-CPU\Cfg\RandleH;..\Libraries\uC-LIB;..\Libraries\uC-LIB\Ports\ARM-Cortex-M3\RealView;..\Libraries\uC-LIB\Cfg\RandleH;..\Libraries\CMSIS\CM3\CoreSupport</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\startup\arm;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Libraries\STM32F10x_StdPeriph_Driver\src;..\USER\inc;..\Libraries\CMSIS\CM3\DeviceSupport;..\Libraries\Device;..\BSP;..\..\core\BlackHouse;..\..\core\STB;..\self;..\..\core;..\Libraries\CMSIS\CM3\CoreSupport;..\..\core\Glucoo;..\..\core\Glucoo\draw;..\..\core\Glucoo\menu;..\..\core\Glucoo\object;..\..\core\Glucoo\window;..\..\core\Glucoo\font</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -397,14 +397,14 @@
               <FilePath>..\USER\main.c</FilePath>
             </File>
             <File>
-              <FileName>RH_gui_api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\self\RH_gui_api.c</FilePath>
-            </File>
-            <File>
               <FileName>isr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\src\isr.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\self\GLU_api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -552,34 +552,49 @@
           <GroupName>Glucoo</GroupName>
           <Files>
             <File>
-              <FileName>RH_gui.c</FileName>
+              <FileName>GLU_glucoo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\RH_gui.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Font</GroupName>
-          <Files>
-            <File>
-              <FileName>RH_font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\Font\RH_font.c</FilePath>
+              <FilePath>..\..\core\Glucoo\GLU_glucoo.c</FilePath>
             </File>
             <File>
-              <FileName>RH_font_ArialRoundedBold.c</FileName>
+              <FileName>GLU_draw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\Font\RH_font_ArialRoundedBold.c</FilePath>
+              <FilePath>..\..\core\Glucoo\draw\GLU_draw.c</FilePath>
             </File>
             <File>
-              <FileName>RH_font_CourierNew.c</FileName>
+              <FileName>GLU_window.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\Font\RH_font_CourierNew.c</FilePath>
+              <FilePath>..\..\core\Glucoo\window\GLU_window.c</FilePath>
             </File>
             <File>
-              <FileName>RH_font_CourierNewBold.c</FileName>
+              <FileName>GLU_object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\Font\RH_font_CourierNewBold.c</FilePath>
+              <FilePath>..\..\core\Glucoo\object\GLU_object.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\Glucoo\menu\GLU_menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\Glucoo\font\GLU_font.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_font_ArialRoundedBold.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\Glucoo\font\GLU_font_ArialRoundedBold.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_font_CourierNew.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\Glucoo\font\GLU_font_CourierNew.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLU_font_CourierNewBold.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\Glucoo\font\GLU_font_CourierNewBold.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -597,49 +612,44 @@
           <GroupName>BlackHouse</GroupName>
           <Files>
             <File>
-              <FileName>RH_color.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_color.h</FilePath>
+              <FileName>BLK_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\BlackHouse\BLK_data.c</FilePath>
             </File>
             <File>
-              <FileName>RH_data.c</FileName>
+              <FileName>BLK_dsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_data.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_dsp.c</FilePath>
             </File>
             <File>
-              <FileName>RH_dsp.c</FileName>
+              <FileName>BLK_graphic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_dsp.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_graphic.c</FilePath>
             </File>
             <File>
-              <FileName>RH_graphic.c</FileName>
+              <FileName>BLK_image.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_graphic.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_image.c</FilePath>
             </File>
             <File>
-              <FileName>RH_image.c</FileName>
+              <FileName>BLK_lib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_image.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_lib.c</FilePath>
             </File>
             <File>
-              <FileName>RH_lib.c</FileName>
+              <FileName>BLK_math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_lib.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_math.c</FilePath>
             </File>
             <File>
-              <FileName>RH_math.c</FileName>
+              <FileName>BLK_time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_math.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_time.c</FilePath>
             </File>
             <File>
-              <FileName>RH_time.c</FileName>
+              <FileName>BLK_utility.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_time.c</FilePath>
-            </File>
-            <File>
-              <FileName>RH_utility.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\BlackHouse\RH_utility.c</FilePath>
+              <FilePath>..\..\core\BlackHouse\BLK_utility.c</FilePath>
             </File>
           </Files>
         </Group>

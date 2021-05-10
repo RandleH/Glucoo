@@ -96,7 +96,7 @@ extern void* RH_CFG_GRAM_POINTER;
 #else
   #error " 'RH_ASSERT' has been defined. "
 #endif
-#include "RH_lib.h"
+#include "BLK_lib.h"
 #ifndef RH_CALLOC
   #define RH_CALLOC(x,size)                   calloc(x,size)
 #else

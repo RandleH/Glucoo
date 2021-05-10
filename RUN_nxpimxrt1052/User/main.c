@@ -71,6 +71,15 @@ int main(void)
                 i++;
             }
         }
+        
+        for( uint16_t y=0; y<300; y++ ){
+            for( uint16_t x=0; x<5
+            00; x++ ){
+            
+                s_psBufferLcd[0][y][x] = CL_BLUE;
+            }
+        }
+                
         // CPU_TS_Tmr_Delay_MS(100);
     }
 }
