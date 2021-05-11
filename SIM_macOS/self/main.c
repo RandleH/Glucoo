@@ -25,65 +25,89 @@ int main(int argc, const char * argv[]) {
     GUI_Init();
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
-    int d = 11;
-    bool eps = ((d&0x01)==0);
-    int x = 32, y = 32;
-    GUI_circle_raw( x, y, d );
     
-    GUI_set_penColor(M_COLOR_RED);
-    int xs = x - (d>>1) + eps;
-    int ys = y - (d>>1) + eps;
-    GUI_rect_raw( xs, ys, xs+d-1, ys+d-1 );
+#if 1
+    const char* pStrs[] = {
+        "Jd" , // Jade
+        "Gs" , // Ginseng
+        "Sl" , // Silk
+        "Ng"   // Nutmeg
+    };
     
-    GUI_RefreashScreen();
+    ID_t ID_BoatStatus[3] = {0};
+    ID_t ID_CargoName[3]  = {0};
+    ID_t ID_DiceRound     = {0};
     __GUI_Object_t cfg = {0};
 
-    GUI_object_template( &cfg, kGUI_ObjStyle_joystick );
+    GUI_object_template( &cfg, kGUI_ObjStyle_trunk );
+    cfg.obj_color  = M_COLOR_AQUA;
+    cfg.area.xs    = 10;
+    cfg.area.ys    = 3;
+    cfg.area.width = 14;
     
-//    cfg.area.height++;
-//    cfg.area.width++;
-
-    ID_t ID_Text = GUI_object_create( &cfg );
-
-    GUI_object_insert( ID_Text );
-    GUI_RefreashScreen();
-
-    struct __GUI_ObjDataScr_joystick data = {
-        .value = { 3500, 3000},
-        .max   = { 4096, 4096},
-        .min   = {    0,    0}
+    ID_BoatStatus[0] = GUI_object_create( &cfg );
+    cfg.area.xs += cfg.area.width+2;
+    ID_BoatStatus[1] = GUI_object_create( &cfg );
+    cfg.area.xs += cfg.area.width+2;
+    ID_BoatStatus[2] = GUI_object_create( &cfg );
+    
+    GUI_object_insert( ID_BoatStatus[0] );
+    GUI_object_insert( ID_BoatStatus[1] );
+    GUI_object_insert( ID_BoatStatus[2] );
+    
+    __GUI_ObjDataScr_barV data = {
+        .min   = 0,
+        .max   = 14,
+        .value = 2
     };
+    GUI_object_adjust( ID_BoatStatus[0], &data, sizeof(data));
+    
+    data.value = 14;
+    GUI_object_adjust( ID_BoatStatus[1], &data, sizeof(data));
 
-    GUI_object_adjust( ID_Text, &data, sizeof(data));
+    data.value = 11;
+    GUI_object_adjust( ID_BoatStatus[2], &data, sizeof(data));
 
-    GUI_RefreashScreen();
-//
-//    cfg.showFrame  = false;
-//    cfg.area.xs   += cfg.area.width;
-//    cfg.val[0]     = 888;
-//    ID_Addr[1] = GUI_object_create( &cfg );
-//
-//    cfg.area.xs   += cfg.area.width;
-//    cfg.val[0]     = 888;
-//    ID_Addr[2] = GUI_object_create( &cfg );
-//
-//    cfg.area.xs   += cfg.area.width;
-//    cfg.val[0]     = 888;
-//    ID_Addr[3] = GUI_object_create( &cfg );
-//
-//    cfg.area.xs   += cfg.area.width;
-//    cfg.val[0]     = 888;
-//    ID_Addr[4] = GUI_object_create( &cfg );
-//
-//
-//    GUI_object_insert( ID_Addr[0] );
-//    GUI_object_insert( ID_Addr[1] );
-//    GUI_object_insert( ID_Addr[2] );
-//    GUI_object_insert( ID_Addr[3] );
-//    GUI_object_insert( ID_Addr[4] );
-//
-//    GUI_RefreashScreen();
-//
-//
+    GUI_set_penColor(M_COLOR_AQUA);
+    GUI_line_raw(67, 7, 67, 57);
+
+    GUI_object_template(&cfg, kGUI_ObjStyle_text);
+    cfg.area.xs     = 10;
+    cfg.area.ys     = 52;
+    cfg.area.height = 12;
+    cfg.area.width  = 14;
+    cfg.text        = pStrs[0];
+    cfg.showFrame   = true;
+    cfg.obj_color   = M_COLOR_AQUA;
+    ID_CargoName[0] = GUI_object_create( &cfg );
+
+    cfg.text = pStrs[1];
+    cfg.area.xs += cfg.area.width +2;
+    ID_CargoName[1] = GUI_object_create( &cfg );
+
+    cfg.text = pStrs[2];
+    cfg.area.xs += cfg.area.width +2;
+    ID_CargoName[2] = GUI_object_create( &cfg );
+    GUI_object_insert( ID_CargoName[0] );
+    GUI_object_insert( ID_CargoName[1] );
+    GUI_object_insert( ID_CargoName[2] );
+    GUI_object_frame(ID_BoatStatus[0], true);
+    
+    cfg.text        = "Round:";
+    cfg.area.xs     = 76;
+    cfg.area.ys     = 10;
+    cfg.area.height = 11;
+    cfg.area.width  = strlen(cfg.text)*6+2;
+    cfg.showFrame   = false;
+    ID_DiceRound    = GUI_object_create( &cfg );
+    GUI_object_insert( ID_DiceRound );
+    
+    GUI_RefreashEntireScreen();
+#endif
+
     return 0;
 }
+
+
+
+

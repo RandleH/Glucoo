@@ -7,6 +7,8 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 extern __GraphInfo_t info_MainScreen; //...//
 
+#define canvas info_MainScreen
+
 void GUI_rect_raw           ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
@@ -156,6 +158,12 @@ void GUI_circle_qrt4_raw    ( int x , int y , int r ){
 void GUI_sausage_raw        ( int xs, int ys, int xe, int ye ){
     __Graph_sausage_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(xs, ys, xe, ye) : GUI_AddScreenArea(xs, ys, xe, ye);
+}
+
+void GUI_line_raw           ( int x1, int y1, int x2, int y2 ){
+    __Graph_line_raw( x1,y1,x2,y2, &canvas, kApplyPixel_fill );
+    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea(__min(x1, x2), __min(y1, y2), __max(x1, x2), __max(y1, y2)) : \
+                           GUI_AddScreenArea     (__min(x1, x2), __min(y1, y2), __max(x1, x2), __max(y1, y2));
 }
 
 

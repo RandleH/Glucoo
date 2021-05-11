@@ -8,15 +8,15 @@ extern "C" {
 /*===========================================================================================================================
  > Algebra Reference
 ============================================================================================================================*/
-long __sign(long x){
+long BLK_sign(long x){
     return (x>=0)?(1):(-1);
 }
       
-long __step(long x){
+long BLK_step(long x){
     return (long)( x >= 0 );
 }
 
-long __sqrt(long x){
+long BLK_sqrt(long x){
     if(x <= 0) return 0;
     long l   = 1;
     long r   = x;
@@ -54,26 +54,6 @@ long __sqrt(long x){
  > Φ = 0.003497056850704      0.000061035156174208773      tan(Φ) = 1/16384
 //========================================================================================================*/
     
-//const static uint16_t angle_rad_65535[] = {
-//    // When 1 rad = 65535, then...
-//    51471 , 
-//    30385 , 
-//    16055 , 
-//    8150  , 
-//    4091  , 
-//    2047  , 
-//    1024  , 
-//    512   , 
-//    256   , 
-//    128   , 
-//    64    , 
-//    32    , 
-//    16    , 
-//    8     , 
-//    4     , 
-//    2
-//};
-
 const static uint16_t angle_dec_256[] = {
     // When 1 deg = 256, then...
     11520 , 
@@ -93,7 +73,7 @@ const static uint16_t angle_dec_256[] = {
     1       
 };
 
-double __cordic_tan(long dec){
+double BLK_cordic_tan(long dec){
 
     long x = 0xffff;
     long y = 0;
@@ -121,7 +101,7 @@ double __cordic_tan(long dec){
     return y/((double)(x));
 }
 
-double __cordic_atan(long y,long x){
+double BLK_cordic_atan(long y,long x){
     
     __exitReturn( x==0 && y==0 ,    0 );
     __exitReturn( x==0 && y<0  ,  -90 );

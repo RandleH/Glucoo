@@ -71,7 +71,7 @@
 		E35B3B96261D5C990031A366 /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_config.h; sourceTree = "<group>"; };
 		E35B3B97261D5C990031A366 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dummy.c; sourceTree = "<group>"; };
 		E35B3B98261D5C990031A366 /* GLU_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLU_api.h; sourceTree = "<group>"; };
-		E35B3BA8261D8F450031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../self/main.c; sourceTree = "<group>"; };
+		E35B3BA8261D8F450031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../self/main.c; sourceTree = "<group>"; wrapsLines = 0; };
 		E38C37922647C7500057F552 /* GLU_glucoo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_glucoo.c; path = Glucoo/GLU_glucoo.c; sourceTree = "<group>"; };
 		E38C37932647C7500057F552 /* GLU_glucoo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_glucoo.h; path = Glucoo/GLU_glucoo.h; sourceTree = "<group>"; };
 		E38C379A2647C7BE0057F552 /* GLU_draw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_draw.c; path = Glucoo/draw/GLU_draw.c; sourceTree = "<group>"; };

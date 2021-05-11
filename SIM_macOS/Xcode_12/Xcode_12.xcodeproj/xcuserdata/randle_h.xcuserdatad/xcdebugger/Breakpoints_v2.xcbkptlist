@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0994E0E8-FB7B-4729-A880-DE78042BBC07"
+            uuid = "279CB102-5DAA-4F9C-8A7B-748FE21D96A0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../self/main.c"
+            filePath = "../../core/Glucoo/object/GLU_object.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "main(argc, argv)"
+            startingLineNumber = "966"
+            endingLineNumber = "966"
+            landmarkName = "__gui_remove_object_trunk(config)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

@@ -7,7 +7,7 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 extern __GraphInfo_t info_MainScreen; //...//
 
-static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
+static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
     struct{
         __Area_t area;
         bool     showFrame;
@@ -61,7 +61,7 @@ static void __gui_remove_object_text   ( const __GUI_Object_t* config ){
     
     __Graph_restore_config();
 }
-static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
+static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
@@ -152,7 +152,7 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
     
 
     if( config->showFrame ){
-        __Graph_set_penColor( M_COLOR_WHITE );
+        __Graph_set_penColor( config->obj_color );
         __Graph_rect_raw( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
@@ -162,27 +162,25 @@ static void __gui_insert_object_text   ( const __GUI_Object_t* config ){
     }
     pHistory->showFrame = config->showFrame;
     
-    
     __Graph_restore_config();
     __Font_restore_config();
     
 }
-static void __gui_adjust_object_text   ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_text      ( const __GUI_Object_t* config ){
 //    struct __GUI_ObjDataScr_text* p = config->dataScr;
 //    config->text = p->text;
     __gui_insert_object_text( config );
 }
 
-static void __gui_remove_object_num    ( const __GUI_Object_t* config ){
+static void __gui_remove_object_num       ( const __GUI_Object_t* config ){
     __gui_remove_object_text(config);
 }
-static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
+static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
     RH_ASSERT( config->widget == kGUI_ObjStyle_num );
 #endif
-    char __str[GUI_X_WIDTH>>2] = {0};
     __gui_remove_object_num(config);
     
     __Font_backup_config();
@@ -198,9 +196,27 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
     
+    // 绘制数字
+    char __str[GUI_X_WIDTH>>2] = {0};
     __Font_setSize(config->text_size);
-    snprintf(__str, sizeof(__str), "%d",((struct __GUI_ObjDataScr_num*)config->dataScr)->value);
-    __str[ __Font_getWordNum(config->area.width, __str) ] = '\0';
+    
+    // 计算数值共占有多少十进制位
+    int wordCnt = snprintf(__str, sizeof(__str), "%d",((struct __GUI_ObjDataScr_num*)config->dataScr)->value);
+    
+    // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
+    int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+    // 在临界位置截断字符串
+    __str[ maxWordCnt ] = '\0';
+    
+    // 计算该数在这样宽度范围内是否可以被正确显示: [例] 假设最多显示3个字符  123 | 90 | 1 均可 而 1234 | 4253 不可能被显示正确
+    bool isEnough = wordCnt <= maxWordCnt;
+    
+    // 不可能被显示正确的数字, 则显示全“#”, 以表示无法显示
+    if( !isEnough){
+        memset(__str, '#', maxWordCnt);
+    }
+ 
+    
     
     if(__str[0]!='\0'){
 
@@ -269,14 +285,14 @@ static void __gui_insert_object_num    ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_num    ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_num       ( const __GUI_Object_t* config ){
     __gui_insert_object_num( config );
 }
 
-static void __gui_remove_object_fnum   ( const __GUI_Object_t* config ){
+static void __gui_remove_object_fnum      ( const __GUI_Object_t* config ){
     __gui_remove_object_text(config);
 }
-static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
+static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->font < kGUI_NUM_FontStyle );
@@ -395,11 +411,11 @@ static void __gui_insert_object_fnum   ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_fnum   ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_fnum      ( const __GUI_Object_t* config ){
     __gui_insert_object_fnum( config );
 }
 
-static void __gui_remove_object_switch ( const __GUI_Object_t* config ){
+static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGUI_ObjStyle_switch );
@@ -442,7 +458,7 @@ static void __gui_remove_object_switch ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
+static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGUI_ObjStyle_switch );
@@ -550,11 +566,11 @@ static void __gui_insert_object_switch ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_switch ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_switch    ( const __GUI_Object_t* config ){
     __gui_insert_object_switch(config);
 }
 
-static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
+static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGUI_ObjStyle_barH );
@@ -599,7 +615,7 @@ static void __gui_remove_object_bar_h  ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
+static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGUI_ObjStyle_barH );
@@ -625,7 +641,6 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
     __Graph_backup_config();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
-//    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     __PixelUnit_t color_bar_on  = {.data = config->obj_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -660,8 +675,116 @@ static void __gui_insert_object_bar_h  ( const __GUI_Object_t* config ){
     __Font_restore_config();
     __Graph_restore_config();
 }
-static void __gui_adjust_object_bar_h  ( const __GUI_Object_t* config ){
+static void __gui_adjust_object_bar_h     ( const __GUI_Object_t* config ){
     __gui_insert_object_bar_h(config);
+}
+
+static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->widget == kGUI_ObjStyle_barV );
+#endif
+    // 记录历史改动区域
+    struct{
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+    }*pHistory = (void*)config->history;
+    
+    int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
+    int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
+    int32_t val = __limit(((struct __GUI_ObjDataScr_barH*)config->dataScr)->value, min, max);
+    int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    __PixelUnit_t color_bar_off = {.data = config->bk_color};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    if( !pHistory ){
+        __Graph_set_penColor( color_bar_off.data );
+        __Graph_rect_fill( config->area.xs+1, \
+                           config->area.ys+1, \
+                           config->area.xs+(int)(config->area.width )-1-1, \
+                           config->area.ys+(int)(config->area.height)-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }else if(pHistory->bar_pos < bar_pos){
+        __Graph_set_penColor( color_bar_off.data );
+        __Graph_rect_fill( config->area.xs+1, \
+                           pHistory->bar_pos, \
+                           config->area.xs+(int)(config->area.width )-1-1, \
+                           bar_pos, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->widget == kGUI_ObjStyle_barV );
+#endif
+    // 记录历史改动区域
+    struct{
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+        
+    }*pHistory = (void*)config->history;
+
+    __gui_remove_object_bar_v(config);
+    
+    if( !pHistory ){
+        pHistory = RH_CALLOC(sizeof(*pHistory),1);
+    #ifdef RH_DEBUG
+        RH_ASSERT( pHistory );
+    #endif
+        pHistory->bar_pos = config->area.ys + (int)config->area.height-1;
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory );
+    }
+    
+    int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
+    int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
+    int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
+    val = __limit(val, min, max);
+    int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    __PixelUnit_t color_bar_on  = {.data = config->obj_color};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    __Graph_set_penColor( color_bar_on.data );
+    __Graph_rect_raw( config->area.xs, \
+                      config->area.ys, \
+                      config->area.xs+(int)(config->area.width )-1, \
+                      config->area.ys+(int)(config->area.height)-1, \
+                      &info_MainScreen, kApplyPixel_fill);
+    
+    if( pHistory->bar_pos > bar_pos ){
+        __Graph_set_penColor( color_bar_on.data );
+        __Graph_rect_fill( config->area.xs+1, \
+                           bar_pos, \
+                           config->area.xs+(int)(config->area.width)-1, \
+                           pHistory->bar_pos, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+
+    pHistory->bar_pos = bar_pos;
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+    
+}
+static void __gui_adjust_object_bar_v     ( const __GUI_Object_t* config ){
+    __gui_insert_object_bar_v(config);
 }
 
 static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
@@ -801,6 +924,191 @@ static void __gui_adjust_object_joystick  ( const __GUI_Object_t* config ){
     __gui_insert_object_joystick(config);
 }
 
+static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
+#ifdef RH_DEBUG
+    RH_ASSERT( config );
+    RH_ASSERT( config->widget == kGUI_ObjStyle_trunk );
+#endif
+    // 记录历史改动区域
+    struct{
+        int     bar_s;   /* 进度条的起始位置 */
+        int     bar_e;   /* 进度条的终末位置 */
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+        int     margin;  /* 留白 */
+    }*cache = (void*)config->history;
+    
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+    
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color  = {.data = (config->bk_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    __PixelUnit_t color  = {.data = config->bk_color};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    __Graph_set_penColor( color.data );
+    if( !cache ){
+        __Graph_rect_fill( config->area.xs+1, \
+                           config->area.ys+1, \
+                           config->area.xs+(int)(config->area.width )-1-1, \
+                           config->area.ys+(int)(config->area.height)-1-1, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }else{
+        int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
+        int32_t max = ((__GUI_ObjDataScr_trunk*)config->dataScr)->max;
+        int32_t val = __limit(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
+        int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
+        
+        if( cache->bar_pos - config->text_size < bar_pos ){
+            __Graph_rect_fill( config->area.xs+1, \
+                               cache->bar_pos - config->text_size, \
+                               config->area.xs+(int)(config->area.width )-1-1, \
+                               bar_pos, \
+                               &info_MainScreen, kApplyPixel_fill);
+        }
+        //...//
+    }
+    
+    __Font_restore_config();
+    __Graph_restore_config();
+}
+static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
+    // 记录历史改动区域
+    struct{
+        int     bar_s;   /* 进度条的起始位置 */
+        int     bar_e;   /* 进度条的终末位置 */
+        int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
+        int     margin;  /* 留白 */
+    }*cache = (void*)config->history;
+    
+    __gui_remove_object_trunk(config);
+    
+    if( !cache ){
+        cache = RH_CALLOC(sizeof(*cache),1);
+    #ifdef RH_DEBUG
+        RH_ASSERT( cache );
+    #endif
+        cache->margin = 2;
+        cache->bar_s = config->area.ys + config->text_size + cache->margin;
+        cache->bar_e = config->area.ys + (int)config->area.height-1-1;
+        cache->bar_pos = cache->bar_e;
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, cache );
+    }
+    
+    int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
+    int32_t max = ((__GUI_ObjDataScr_trunk*)config->dataScr)->max;
+    int32_t val = __limit(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
+    int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
+    
+    __Font_backup_config();
+    __Graph_backup_config();
+    
+    // 确认画笔颜色
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    __PixelUnit_t color  = {.data = (config->obj_color==0x00)?0x00:0xff};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    __PixelUnit_t color  = {.data = config->obj_color};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+#else
+  #error "[RH_graphic]: Unknown color type."
+#endif
+    // 当且仅当进度条所占区域大于原先所占区域(坐标值相反)
+    if( cache->bar_pos >= bar_pos ){
+        __Graph_set_penColor( color.data );
+        __Graph_rect_fill( config->area.xs+cache->margin, \
+                           bar_pos, \
+                           config->area.xs+(int)(config->area.width)-1-cache->margin, \
+                           cache->bar_pos, \
+                           &info_MainScreen, kApplyPixel_fill);
+    }
+    cache->bar_pos = bar_pos;
+
+    // 绘制数字
+    __GUI_Font_t* pF = NULL;
+    {
+        char __str[GUI_X_WIDTH>>2] = {0};
+        __Font_setSize(config->text_size);
+        snprintf(__str, sizeof(__str), "%d",val);
+        __str[ __Font_getWordNum(config->area.width, __str) ] = '\0';
+        
+    #ifdef RH_DEBUG
+        RH_ASSERT( __str[0] != '\0' );
+    #endif
+        
+        // 计算数值共占有多少十进制位
+        int wordCnt = snprintf(__str, sizeof(__str), "%d",val);
+        
+        // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
+        int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+        // 在临界位置截断字符串
+        __str[ maxWordCnt ] = '\0';
+        
+        // 计算该数在这样宽度范围内是否可以被正确显示: [例] 假设最多显示3个字符  123 | 90 | 1 均可 而 1234 | 4253 不可能被显示正确
+        bool isEnough = wordCnt <= maxWordCnt;
+        
+        // 不可能被显示正确的数字, 则显示全“#”, 以表示无法显示
+        if( !isEnough){
+            memset(__str, '#', maxWordCnt);
+        }
+        pF = __Font_exportStr(__str);
+    }
+#ifdef RH_DEBUG
+    RH_ASSERT( pF );
+#endif
+    int x_fs = 0;
+    int y_fs = bar_pos - config->text_size;
+    switch ( config->text_align ) {
+        case kGUI_FontAlign_Left:
+            x_fs = config->area.xs;
+            break;
+        case kGUI_FontAlign_Middle:
+            x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+            break;
+        default:
+            RH_ASSERT(0);
+    }
+    __PixelUnit_t color_text = {.data = config->obj_color};
+
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    uint8_t* pIter = pF->output;
+    for( int y=0; y<pF->height && y<config->area.height; y++ ){
+        for( int x=0; x<pF->width; x++, pIter++ ){
+            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+            if( (*pIter<128) ^ (color_text.data!=0) ){
+                info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+            }else{
+                info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+            }
+        
+        }
+    }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+        for( int x=0; x<pF->width; x++ ){
+            size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
+            uint8_t pixWeight = pF->output[y*pF->width+x];
+            info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
+            info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
+            info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+        }
+    }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    RH_ASSERT(0);
+#else
+     
+#endif
+
+    __Font_restore_config();
+    __Graph_restore_config();
+    
+}
+static void __gui_adjust_object_trunk     ( const __GUI_Object_t* config ){
+    __gui_insert_object_trunk(config);
+}
+
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
@@ -852,6 +1160,24 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
             m_config->adjust_func = __gui_adjust_object_bar_h;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_barH) );
             break;
+        case kGUI_ObjStyle_barV:
+            m_config->insert_func = __gui_insert_object_bar_v;
+            m_config->remove_func = __gui_remove_object_bar_v;
+            m_config->adjust_func = __gui_adjust_object_bar_v;
+            m_config->dataScr     = RH_CALLOC( 1U, sizeof(       __GUI_ObjDataScr_barV) );
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            break;
+        case kGUI_ObjStyle_trunk:
+            m_config->insert_func = __gui_insert_object_trunk;
+            m_config->remove_func = __gui_remove_object_trunk;
+            m_config->adjust_func = __gui_adjust_object_trunk;
+            m_config->dataScr     = RH_CALLOC( 1U, sizeof(       __GUI_ObjDataScr_trunk) );
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
+            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            break;
         case kGUI_ObjStyle_joystick:
             m_config->insert_func = __gui_insert_object_joystick;
             m_config->remove_func = __gui_remove_object_joystick;
@@ -902,7 +1228,7 @@ E_Status_t        GUI_object_template  ( __GUI_Object_t* config, E_GUI_ObjWidget
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_GREEN;
             config->area.width  = (int)((hypotf(GUI_X_WIDTH, GUI_Y_WIDTH)+646)/26.3);
-            config->area.height = config->area.width>>1;
+            config->area.height = __limit( (signed)(config->area.width>>1), 4, GUI_Y_WIDTH);
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
@@ -915,12 +1241,31 @@ E_Status_t        GUI_object_template  ( __GUI_Object_t* config, E_GUI_ObjWidget
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
+        case kGUI_ObjStyle_barV:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.height = (GUI_Y_WIDTH*3)>>3;
+            config->area.width  = __limit( (signed)(config->area.height>>3), 4, GUI_X_WIDTH );
+            config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
+            config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
+            break;
         case kGUI_ObjStyle_joystick:
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
             config->area.width  = config->area.height = __min(GUI_X_WIDTH, GUI_Y_WIDTH)>>1;
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
+            break;
+            
+        case kGUI_ObjStyle_trunk:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.height = (GUI_Y_WIDTH*3)>>2;
+            config->area.width  = __limit( (signed)(config->area.height>>1), 4, GUI_X_WIDTH );
+            config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
+            config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
+            config->text_size   = 8;
+            config->text_align  = kGUI_FontAlign_Middle;
             break;
             
         default:

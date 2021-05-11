@@ -16,13 +16,13 @@ struct __Kernel_t{
 };
 typedef struct __Kernel_t       __Kernel_t;
 
-long         __sign            (long   x);
-long         __step            (long   x);
-long         __sqrt            (long   x);
-double       __sigmold         (double x);
+long         BLK_sign            (long   x);
+long         BLK_step            (long   x);
+long         BLK_sqrt            (long   x);
+double       BLK_sigmold         (double x);
 
-double       __cordic_tan      (long   dec);
-double       __cordic_atan     (long   y,long x     );
+double       BLK_cordic_tan      (long   dec);
+double       BLK_cordic_atan     (long   y,long x     );
 
 double       __gussian         (long   x,long __miu  ,double __sigma);
 double       __gussian2D       (long   x,long y      ,double __sigma);
