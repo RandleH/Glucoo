@@ -59,6 +59,20 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "SMP_Proj_Manila_analyze:manila.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "prob_A_Success">
+            </PersistentString>
+            <PersistentString
+               value = "prob_B_Success">
+            </PersistentString>
+            <PersistentString
+               value = "prob_C_Success">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "GUI_object_template:RH_gui.c">
       </ContextState>
       <ContextState

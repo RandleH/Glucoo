@@ -11,9 +11,9 @@ extern "C" {
 #if ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
   #define REVERSE_COLOR( M_COLOR )         (((M_COLOR)==0)?(0xff):(0x00))
   #define MAKE_COLOR(R_255,G_255,B_255)    (uint8_t)(((R_255+G_255+B_255)/3 > 128)?0xff:0x00)
-  #define COLOR_MASK_RED                   0x01
-  #define COLOR_MASK_GREEN                 0x01
-  #define COLOR_MASK_BLUE                  0x01
+  #define COLOR_MASK_RED                   0xff
+  #define COLOR_MASK_GREEN                 0xff
+  #define COLOR_MASK_BLUE                  0xff
   
   #define DARKEN_COLOR_1Bit(C)             (uint8_t)((C)&0)
   #define DARKEN_COLOR_2Bit(C)             (uint8_t)((C)&0)

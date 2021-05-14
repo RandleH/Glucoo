@@ -911,35 +911,49 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
         case kApplyPixel_unmark:
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         {
+            
+#if 0
+            for( int y=ys; y<=ye; y++ ){
+                for( int x=xs; x<= xe; x++ )
+                    ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
+            }
+#else
             int ps = ys>>3;
             int pe = ye>>3;
-
-//            for( int y=ys; y<=ye; y++ ){
-//                 for( int x=xs; x<= xe; x++ )
-//                     ( *applyPixelMethod [method] )(x,y,GCFG.penColor,pInfo);
-//             }
-            
-             for( int p=ps; p<=pe; p++ ){
-                 if( p==ps ){
-                     for( int x=xs; x<= xe; x++ ){
-                         if( GCFG.penColor == 0x00 )
-                             pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)(0xff<<(ys%8)) );
-                         else
-                             pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)(0xff<<(ys%8))  ;
-                     }
-                     continue;
-                 }
-                 if( p==pe ){
-                     for( int x=xs; x<= xe; x++ ){
-                         if( GCFG.penColor == 0x00 )
-                             pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)((1<<(ye%8+1))-1) );
-                         else
-                             pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)((1<<(ye%8+1))-1)  ;
-                     }
-                     continue;
-                 }
-                 memset(pInfo->pBuffer + p*pInfo->width+xs, GCFG.penColor, xe-xs+1);
-             }
+            for( int p=ps; p<=pe; p++ ){
+                switch( ((p==ps)<<1)|(p==pe) ){
+                    case 0: // p!=ps && p!=pe
+                        memset(pInfo->pBuffer + p*pInfo->width+xs, GCFG.penColor, xe-xs+1);
+                        break;
+                    case 1: // p!=ps && p==pe
+                        for( int x=xs; x<= xe; x++ ){
+                            if( GCFG.penColor == 0x00 )
+                                pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)((1<<((ye&7)+1))-1) );
+                            else
+                                pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)((1<<((ye&7)+1))-1)  ;
+                        }
+                        break;
+                    case 2: // p==ps && p!=pe
+                        for( int x=xs; x<= xe; x++ ){
+                            if( GCFG.penColor == 0x00 )
+                                pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)(0xff<<(ys&7)) );
+                            else
+                                pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)(0xff<<(ys&7))  ;
+                        }
+                        break;
+                    case 3: // ps == pe
+                        for( int x=xs; x<= xe; x++ ){
+                            if( GCFG.penColor == 0x00 ){
+                                pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7))) );
+                            }else{
+                                pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7)))  ;
+                            }
+                        }
+                        break;
+                }
+             
+            }
+#endif
         }
             
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )

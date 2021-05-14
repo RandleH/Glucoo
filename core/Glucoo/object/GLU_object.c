@@ -167,8 +167,9 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     
 }
 static void __gui_adjust_object_text      ( const __GUI_Object_t* config ){
-//    struct __GUI_ObjDataScr_text* p = config->dataScr;
+    struct __GUI_ObjDataScr_text* p = config->dataScr;
 //    config->text = p->text;
+    __SET_STRUCT_MB(__GUI_Object_t, char*, config, text, p->text);
     __gui_insert_object_text( config );
 }
 
@@ -950,6 +951,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
   #error "[RH_graphic]: Unknown color type."
 #endif
     __Graph_set_penColor( color.data );
+    
     if( !cache ){
         __Graph_rect_fill( config->area.xs+1, \
                            config->area.ys+1, \
@@ -1025,7 +1027,6 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
                            &info_MainScreen, kApplyPixel_fill);
     }
     cache->bar_pos = bar_pos;
-
     // 绘制数字
     __GUI_Font_t* pF = NULL;
     {

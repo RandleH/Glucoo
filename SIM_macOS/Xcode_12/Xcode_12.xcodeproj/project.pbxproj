@@ -17,6 +17,7 @@
 		E38C37AB2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */; };
 		E38C37AE2647E0C50057F552 /* GLU_window.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37AD2647E0C50057F552 /* GLU_window.c */; };
 		E38C37B12647E55D0057F552 /* GLU_menu.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37B02647E55D0057F552 /* GLU_menu.c */; };
+		E39EA2B0264E72A80004ED5A /* manila.c in Sources */ = {isa = PBXBuildFile; fileRef = E39EA2AF264E72A80004ED5A /* manila.c */; };
 		E3A277982648E64200D29934 /* GLU_font_CourierNew.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277962648E64200D29934 /* GLU_font_CourierNew.c */; };
 		E3A277992648E64200D29934 /* GLU_font_CourierNewBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277972648E64200D29934 /* GLU_font_CourierNewBold.c */; };
 		E3A277AE2648EF6E00D29934 /* BLK_utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A2779D2648EF6E00D29934 /* BLK_utility.c */; };
@@ -84,6 +85,8 @@
 		E38C37AD2647E0C50057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = Glucoo/window/GLU_window.c; sourceTree = "<group>"; };
 		E38C37AF2647E55D0057F552 /* GLU_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_menu.h; path = Glucoo/menu/GLU_menu.h; sourceTree = "<group>"; };
 		E38C37B02647E55D0057F552 /* GLU_menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_menu.c; path = Glucoo/menu/GLU_menu.c; sourceTree = "<group>"; };
+		E39EA2AE264E72A80004ED5A /* manila.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = manila.h; path = ../../../../Desktop/manila.h; sourceTree = "<group>"; };
+		E39EA2AF264E72A80004ED5A /* manila.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = manila.c; path = ../../../../Desktop/manila.c; sourceTree = "<group>"; };
 		E3A277962648E64200D29934 /* GLU_font_CourierNew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_CourierNew.c; path = Glucoo/font/GLU_font_CourierNew.c; sourceTree = "<group>"; };
 		E3A277972648E64200D29934 /* GLU_font_CourierNewBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_CourierNewBold.c; path = Glucoo/font/GLU_font_CourierNewBold.c; sourceTree = "<group>"; };
 		E3A2779D2648EF6E00D29934 /* BLK_utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_utility.c; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 				E35B3B93261D5C990031A366 /* self */,
 				E35B3B3D261D5BDA0031A366 /* core */,
 				E35B3B32261D5B850031A366 /* Products */,
+				E39EA2AF264E72A80004ED5A /* manila.c */,
+				E39EA2AE264E72A80004ED5A /* manila.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -346,6 +351,7 @@
 				E3A277AF2648EF6E00D29934 /* BLK_lib.c in Sources */,
 				E3A277B02648EF6E00D29934 /* BLK_image.c in Sources */,
 				E3A277AE2648EF6E00D29934 /* BLK_utility.c in Sources */,
+				E39EA2B0264E72A80004ED5A /* manila.c in Sources */,
 				E38C37AB2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c in Sources */,
 				E3A277B22648EF6E00D29934 /* BLK_time.c in Sources */,
 				E38C37AE2647E0C50057F552 /* GLU_window.c in Sources */,

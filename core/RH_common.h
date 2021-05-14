@@ -177,6 +177,10 @@ typedef volatile uint64_t       vu64;
 #else
   #error " '__abs' has been defined. "
 #endif
+ 
+#ifndef __roll
+  #define __roll(a, lowerbound, upperbound)    (((a) > (upperbound)) ? lowerbound : (((a) < (lowerbound)) ? (upperbound) : (a) ))
+#endif
 
 #ifndef __limit
   #define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
