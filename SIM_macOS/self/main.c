@@ -43,7 +43,7 @@ int main(int argc, const char * argv[]) {
     Manila->boat[1].pos = 3;
     Manila->boat[2].pos = 5;
     
-    Manila->dice_round = 1;
+    Manila->dice_round = 2;
     
     SMP_Proj_Manila_analyze();
     
