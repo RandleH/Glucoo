@@ -17,7 +17,7 @@
 
 #include "GLU_glucoo.h"
 
-
+#include "BLK_poker.h"
 
 #define DICE_NUM_MAX      6
 #define DICE_NUM_MIN      1
@@ -27,7 +27,6 @@
 #define PROJ_MAX(a,b)                           (((a)>(b))?(a):(b))
 
 
-#include "manila.h"
 
 int main(int argc, const char * argv[]) {
 //    printf("%f\n",hypotf(64,128));
@@ -37,25 +36,7 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
     
-    SMP_Proj_Manila_init();
-    
-    Manila->boat[0].pos = 1;
-    Manila->boat[1].pos = 3;
-    Manila->boat[2].pos = 5;
-    
-    Manila->dice_round = 2;
-    
-    SMP_Proj_Manila_analyze();
-    
-//    printf("%d %d %d\n",Manila->shipyard_A.prob_profit,Manila->shipyard_B.prob_profit,Manila->shipyard_C.prob_profit);
-    printf("%f %f %f\n",Manila->shipyard_A.prob_profit,Manila->shipyard_B.prob_profit,Manila->shipyard_C.prob_profit);
-    printf("%f %f %f\n",Manila->wharf_A.prob_profit,Manila->wharf_B.prob_profit,Manila->wharf_C.prob_profit);
-    
-    
-    
 
-    SMP_Proj_Manila_deinit();
-    
     
 #if 0
     const char* pStrs[] = {
