@@ -4,6 +4,13 @@
 #include "RH_common.h"
 
 
+
+#define BLK_POKER_MALLOC(x)         malloc(x)
+#define BLK_POKER_CALLOC(x)         calloc(x)
+#define BLK_POKER_FREE(x)           free(x)
+#define BLK_POKER_ASSERT(expr)      assert(expr)
+
+
 enum E_PokerOpt_t{
     MAKE_ENUM( kBLK_POKER_ALL        ) = (    0U ),
     MAKE_ENUM( kBLK_POKER_NO_JOKER   ) = ( 1<<0U ),
@@ -17,7 +24,8 @@ enum E_PokerOpt_t{
 typedef enum E_PokerOpt_t E_PokerOpt_t;
 
 enum E_PokerNum_t{
-    MAKE_ENUM( kBLK_POKER_JOKER ),
+    MAKE_ENUM( kBLK_POKER_JRED  ),
+    MAKE_ENUM( kBLK_POKER_JBLK  ),
     MAKE_ENUM( kBLK_POKER_A     ),
     MAKE_ENUM( kBLK_POKER_2     ),
     MAKE_ENUM( kBLK_POKER_3     ),
@@ -39,6 +47,8 @@ enum E_PokerSuit_t{
     MAKE_ENUM( kBLK_POKER_HEART   ),
     MAKE_ENUM( kBLK_POKER_CLUB    ),
     MAKE_ENUM( kBLK_POKER_DIAMOND ),
+    MAKE_ENUM( kBLK_POKER_JOKER   ),
+    
 };
 typedef enum E_PokerSuit_t E_PokerSuit_t;
 
@@ -50,16 +60,19 @@ struct S_PokerCard_t{
 typedef struct S_PokerCard_t S_PokerCard_t;
 
 struct S_PokerDeck_t{
+    E_PokerOpt_t   opt;
     S_PokerCard_t* cards;
-    size_t         size;
+    int8_t         size;
 };
 typedef struct S_PokerDeck_t S_PokerDeck_t;
 
-S_PokerDeck_t* RH_RESULT MAKE_FUNC( Poker, init   ) ( void           );//
-void                     MAKE_FUNC( Poker, option ) ( E_PokerOpt_t   );//
-S_PokerDeck_t*           MAKE_FUNC( Poker, wash   ) ( S_PokerDeck_t* );//
+S_PokerDeck_t* RH_RESULT MAKE_FUNC( Poker, create ) ( void           );
+void                     MAKE_FUNC( Poker, option ) ( E_PokerOpt_t   );
 
 
+S_PokerDeck_t*           MAKE_FUNC( Poker, wash   ) (       S_PokerDeck_t* deck );//
+void                     MAKE_FUNC( Poker, delete ) (       S_PokerDeck_t* deck );
+void                     MAKE_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck , int (*print)(const char*,...) );
 
 
 #endif
