@@ -109,7 +109,7 @@ static void __poker_delete( void ){
 
 
 
-S_PokerDeck_t* RH_RESULT MAKE_FUNC( Poker, create ) ( void           ){
+S_PokerDeck_t* RH_RESULT BLK_FUNC( Poker, create ) ( void             ){
     __poker_create();
     
     int8_t             cnt = 54;
@@ -165,13 +165,15 @@ S_PokerDeck_t* RH_RESULT MAKE_FUNC( Poker, create ) ( void           ){
     return ptr;
 }
 
-void                     MAKE_FUNC( Poker, option ) ( E_PokerOpt_t opt ){
+void                     BLK_FUNC( Poker, option ) ( E_PokerOpt_t opt ){
     cache.opt = opt;
 }
 
-S_PokerDeck_t*           MAKE_FUNC( Poker, wash   ) ( S_PokerDeck_t* );//
 
-void                     MAKE_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck, int (*print)(const char*,...) ){
+
+S_PokerDeck_t*           BLK_FUNC( Poker, wash   ) (       S_PokerDeck_t* );//
+
+void                     BLK_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck, int (*print)(const char*,...) ){
     for( int8_t i=0; i<deck->size; i++ ){
         switch( deck->cards[i].suit ){
             case MAKE_ENUM( kBLK_POKER_SPADE ):
@@ -195,7 +197,7 @@ void                     MAKE_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck,
     }
 }
 
-void                     MAKE_FUNC( Poker, delete ) ( S_PokerDeck_t* deck ){
+void                     BLK_FUNC( Poker, delete ) (       S_PokerDeck_t* deck ){
 #ifdef RH_DEBUG
     BLK_POKER_ASSERT( deck );
     BLK_POKER_ASSERT( deck->cards );

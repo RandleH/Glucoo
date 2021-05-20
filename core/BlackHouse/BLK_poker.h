@@ -66,13 +66,13 @@ struct S_PokerDeck_t{
 };
 typedef struct S_PokerDeck_t S_PokerDeck_t;
 
-S_PokerDeck_t* RH_RESULT MAKE_FUNC( Poker, create ) ( void           );
-void                     MAKE_FUNC( Poker, option ) ( E_PokerOpt_t   );
+S_PokerDeck_t* RH_RESULT BLK_FUNC( Poker, create ) ( void           );
+void                     BLK_FUNC( Poker, option ) ( E_PokerOpt_t   );
 
 
-S_PokerDeck_t*           MAKE_FUNC( Poker, wash   ) (       S_PokerDeck_t* deck );//
-void                     MAKE_FUNC( Poker, delete ) (       S_PokerDeck_t* deck );
-void                     MAKE_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck , int (*print)(const char*,...) );
+S_PokerDeck_t*           BLK_FUNC( Poker, wash   ) (       S_PokerDeck_t* deck );//
+void                     BLK_FUNC( Poker, delete ) (       S_PokerDeck_t* deck );
+void                     BLK_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck , int (*print)(const char*,...) );
 
 
 #endif

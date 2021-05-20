@@ -45,8 +45,8 @@ void (*GUI_API_DelayMs)                       (unsigned long ms)                
 #define M_SCREEN_CNT    1
 
 
-typedef __Stack_t    __LINK_AreaRefreash;
-typedef __LinkLoop_t __LINK_WindowCFG;
+typedef BLK_SRCT(Stack)    __LINK_AreaRefreash;
+typedef BLK_SRCT(LinkLoop) __LINK_WindowCFG;
 
 
 /*===============================================================================================================
@@ -129,7 +129,7 @@ void RH_PREMAIN GUI_Init        ( void ){
     Screen.autoDisplay = false;
 
     Screen.allocated_byte = 0;
-    Screen.areaNeedRefreashHead = __Stack_createBase( NULL );
+    Screen.areaNeedRefreashHead = BLK_FUNC( Stack, createBase )( NULL );
     Screen.areaNeedRefreashCnt      = 0;
     Screen.areaNeedRefreashPixelCnt = 0;
 
@@ -210,7 +210,7 @@ void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
  * 此函数将会根据缓存情况进行屏幕刷新.
  *
  * Screen.areaNeedRefreashHead 是用于记载屏幕待刷新区域的链表表头, 表头本身不存储数据, 有效数据从下一节点开始.
-   该链表表头于 GUI_Init 中被初始化. 该链表为栈链表, 类型为 <__Stack_t>.
+   该链表表头于 GUI_Init 中被初始化. 该链表为栈链表, 类型为 <BLK_SRCT(Stack)>.
    GUI_RefreashScreenArea并且完成后将会释放其中的缓存图像数据及结构体自身.
  * 如果配置为内置显存, 那么将会判断屏幕总体待刷新像素点是否超过了屏幕像素总和, 如果超过了, 则释放所有链表节点,并刷新
    全屏幕,没有超过则将链表节点中数据即 <__Area_t> 结构体指针传入给 GUI_RefreashScreenArea, 由于内置显存, 因此
@@ -223,13 +223,13 @@ void GUI_RefreashScreen         ( void ){
     __Area_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         GUI_RefreashScreenArea( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
-        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
-            p = __Stack_pop( Screen.areaNeedRefreashHead );
+        while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
+            p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
             RH_FREE(p);
         }
     }else{
-        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
-            p = __Stack_pop( Screen.areaNeedRefreashHead );
+        while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
+            p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
             GUI_RefreashScreenArea( (int)(p->xs)             ,\
                                     (int)(p->ys)             ,\
                                     (int)(p->xs+p->width-1)  ,\
@@ -245,8 +245,8 @@ void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
-        while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
-            p = __Stack_pop( Screen.areaNeedRefreashHead );
+        while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
+            p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
             RH_FREE(p);
         }
         return;
@@ -258,7 +258,7 @@ void GUI_AddScreenArea          ( int xs, int ys, int xe, int ye ){
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
     Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
-    __Stack_push( Screen.areaNeedRefreashHead, (void*)pArea );
+    BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
 #endif
 }
 
@@ -275,8 +275,8 @@ void GUI_RefreashEntireScreen   ( void ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __Area_t *p = NULL;
     (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (__Pixel_t*)Screen.GRAM[M_SCREEN_MAIN][0] );
-    while( !__Stack_empty( Screen.areaNeedRefreashHead ) ){
-        p = __Stack_pop( Screen.areaNeedRefreashHead );
+    while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
+        p = BLK_FUNC( Stack, pop   )( Screen.areaNeedRefreashHead );
         RH_FREE(p);
     }
 #endif
@@ -296,7 +296,7 @@ void GUI_auto_display           ( bool      cmd      ){
 #ifdef RH_DEBUG
         RH_ASSERT( Screen.areaNeedRefreashCnt      == 0 );
         RH_ASSERT( Screen.areaNeedRefreashPixelCnt == 0 );
-        RH_ASSERT( __Stack_empty( Screen.areaNeedRefreashHead ) );
+        RH_ASSERT( BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) );
 #endif
     }
     Screen.autoDisplay = cmd;
@@ -315,5 +315,5 @@ inline bool GUI_is_InternalGRAM ( void ){
 }
 
 inline bool GUI_is_CacheIdle    ( void ){
-    return __Stack_empty( Screen.areaNeedRefreashHead );
+    return BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead );
 }

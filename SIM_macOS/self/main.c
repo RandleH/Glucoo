@@ -36,9 +36,16 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
     
-    __Poker_option( MAKE_ENUM( kBLK_POKER_NO_JOKER ) );
+    BLK_Poker_option( MAKE_ENUM( kBLK_POKER_ALL ) );
     
-    S_PokerDeck_t *deck = __Poker_create();
+    S_PokerDeck_t *deck = NULL;
+    
+    deck = BLK_FUNC( Poker, create )();
+    BLK_FUNC( Poker, delete )(deck);
+    deck = BLK_FUNC( Poker, create )();
+    BLK_FUNC( Poker, delete )(deck);
+    deck = BLK_FUNC( Poker, create )();
+    
     
     for( int8_t i=0; i<deck->size; i++ ){
         switch( deck->cards[i].suit ){
@@ -62,7 +69,7 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-#if 0
+#if 1
     const char* pStrs[] = {
         "Jd" , // Jade
         "Gs" , // Ginseng

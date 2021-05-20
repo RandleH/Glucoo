@@ -9,52 +9,52 @@ extern "C" {
  > Data Structure Reference
 ======================================================================*/
     
-__LinkDB_t*    __LINK_DB_createHead          ( void* object ){
-    __LinkDB_t *ptr = (__LinkDB_t*)RH_DATA_MALLOC(sizeof(__LinkDB_t));
+BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, createHead )         ( void* object ){
+    BLK_SRCT( LinkDB ) *ptr = (BLK_SRCT( LinkDB )*)RH_DATA_MALLOC(sizeof(BLK_SRCT( LinkDB )));
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
 #endif
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pNext  ,NULL);
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pPrev  ,NULL);
+    __SET_STRUCT_MB(BLK_SRCT( LinkDB ),BLK_SRCT( LinkDB )*,ptr,pNext  ,NULL);
+    __SET_STRUCT_MB(BLK_SRCT( LinkDB ),BLK_SRCT( LinkDB )*,ptr,pPrev  ,NULL);
     ptr->object = object;
     
     return ptr;
 }
     
-__LinkDB_t*    __LINK_DB_addTail             ( const __LinkDB_t *pHead , void* object ){
+BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, addTail    )         ( const BLK_SRCT( LinkDB ) *pHead , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
     
-    __LinkDB_t* pNewNode  = (__LinkDB_t*)RH_DATA_MALLOC( sizeof(__LinkDB_t) );
+    BLK_SRCT( LinkDB )* pNewNode  = (BLK_SRCT( LinkDB )*)RH_DATA_MALLOC( sizeof(BLK_SRCT( LinkDB )) );
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
     pNewNode->object = object;
     
-    const __LinkDB_t* pIter = pHead;
+    const BLK_SRCT( LinkDB )* pIter = pHead;
     while( pIter->pNext != NULL ){
         pIter = pIter->pNext;
     }
     
     // Things to do for the new Node.
-    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pNewNode    ,pPrev,pIter    );
-    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pNewNode    ,pNext,NULL     );
+    __SET_STRUCT_MB(BLK_SRCT( LinkDB ),BLK_SRCT( LinkDB )*,pNewNode    ,pPrev,pIter    );
+    __SET_STRUCT_MB(BLK_SRCT( LinkDB ),BLK_SRCT( LinkDB )*,pNewNode    ,pNext,NULL     );
     
     // Things to do for the neighbour.
-    __SET_STRUCT_MB(__LinkDB_t,__LinkDB_t*,pIter       ,pNext,pNewNode );
+    __SET_STRUCT_MB(BLK_SRCT( LinkDB ),BLK_SRCT( LinkDB )*,pIter       ,pNext,pNewNode );
     
     return pNewNode;
 }
     
-__LinkDB_t*    __LINK_DB_insert              ( const __LinkDB_t *pHead , void* Tobject, void* object ){
+BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, insert     )         ( const BLK_SRCT( LinkDB ) *pHead , void* Tobject, void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
     
-    __LinkDB_t* pNewNode  = (__LinkDB_t*)RH_DATA_MALLOC( sizeof(__LinkDB_t) );
+    BLK_SRCT( LinkDB )* pNewNode  = (BLK_SRCT( LinkDB )*)RH_DATA_MALLOC( sizeof(BLK_SRCT( LinkDB )) );
 
-    const __LinkDB_t* pTmp  = pHead;
+    const BLK_SRCT( LinkDB )* pTmp  = pHead;
     do{
         if (pTmp->object ==  Tobject ) {
             goto FOUND_TOBJ;
@@ -67,24 +67,24 @@ __LinkDB_t*    __LINK_DB_insert              ( const __LinkDB_t *pHead , void* T
 FOUND_TOBJ:
 
     // Things to do for the new Node.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pPrev,pTmp        );
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pNext,pTmp->pNext );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pPrev,pTmp        );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pNext,pTmp->pNext );
     pNewNode->object = object;
     
     // Things to do for the neighbour.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp        ,pNext,pNewNode    );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pTmp        ,pNext,pNewNode    );
     if( pTmp->pNext )
-        __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp->pNext ,pPrev,pNewNode    );
+        __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pTmp->pNext ,pPrev,pNewNode    );
     
     return pNewNode;
 }
     
-void           __LINK_DB_removeAll           (       __LinkDB_t *pHead ){
+void                    BLK_FUNC( LinkDB, removeAll  )         (       BLK_SRCT( LinkDB ) *pHead ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
-    const __LinkDB_t* pTmp1  = pHead;
-    const __LinkDB_t* pTmp2  = pHead;
+    const BLK_SRCT( LinkDB )* pTmp1  = pHead;
+    const BLK_SRCT( LinkDB )* pTmp2  = pHead;
     do{
         pTmp2 = pTmp1->pNext;
         RH_DATA_FREE( (void*)(pTmp1) );
@@ -93,24 +93,24 @@ void           __LINK_DB_removeAll           (       __LinkDB_t *pHead ){
 }
     
       
-__LinkLoop_t*  __LINK_Loop_createHead        ( void* object ){
-    __LinkLoop_t *ptr = (__LinkLoop_t*)RH_DATA_MALLOC(sizeof(__LinkLoop_t));
+BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, createHead       ) ( void* object ){
+    BLK_SRCT(LinkLoop) *ptr = (BLK_SRCT(LinkLoop)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkLoop)));
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
 #endif
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pNext  ,ptr);
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,ptr,pPrev  ,ptr);
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,ptr,pNext  ,ptr);
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,ptr,pPrev  ,ptr);
     ptr->object = object;
 
     return ptr;
 }
       
-__LinkLoop_t * __LINK_Loop_add               ( const __LinkLoop_t *pHead , void* object ){
+BLK_SRCT(LinkLoop) * BLK_FUNC( LinkLoop, add              ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
 
-    __LinkLoop_t* pNewNode  = (__LinkLoop_t*)RH_DATA_MALLOC( sizeof(__LinkLoop_t) );
+    BLK_SRCT(LinkLoop)* pNewNode  = (BLK_SRCT(LinkLoop)*)RH_DATA_MALLOC( sizeof(BLK_SRCT(LinkLoop)) );
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
@@ -118,24 +118,24 @@ __LinkLoop_t * __LINK_Loop_add               ( const __LinkLoop_t *pHead , void*
     pNewNode->object = object;
 
     // Things to do for the new Node.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pPrev,pHead->pPrev   );
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pNext,pHead          );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pPrev,pHead->pPrev   );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pNext,pHead          );
 
     // Things to do for the neighbour.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pHead->pPrev,pNext,pNewNode           );
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pHead       ,pPrev,pNewNode           );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pHead->pPrev,pNext,pNewNode           );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pHead       ,pPrev,pNewNode           );
     
     return pNewNode;
 }
     
-__LinkLoop_t*  __LINK_Loop_insert            ( const __LinkLoop_t *pHead , void* Tobject, void* object ){
+BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, insert           ) ( const BLK_SRCT(LinkLoop) *pHead , void* Tobject, void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
     
-    __LinkLoop_t* pNewNode  = (__LinkLoop_t*)RH_DATA_MALLOC( sizeof(__LinkLoop_t) );
+    BLK_SRCT(LinkLoop)* pNewNode  = (BLK_SRCT(LinkLoop)*)RH_DATA_MALLOC( sizeof(BLK_SRCT(LinkLoop)) );
 
-    const __LinkLoop_t* pTmp  = pHead;
+    const BLK_SRCT(LinkLoop)* pTmp  = pHead;
     do{
         if (pTmp->object ==  Tobject ) {
             goto FOUND_TOBJ;
@@ -148,27 +148,27 @@ __LinkLoop_t*  __LINK_Loop_insert            ( const __LinkLoop_t *pHead , void*
 FOUND_TOBJ:
 
     // Things to do for the new Node.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pPrev,pTmp        );
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pNewNode    ,pNext,pTmp->pNext );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pPrev,pTmp        );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pNewNode    ,pNext,pTmp->pNext );
     pNewNode->object = object;
     
     // Things to do for the neighbour.
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp        ,pNext,pNewNode    );
-    __SET_STRUCT_MB(__LinkLoop_t,__LinkLoop_t*,pTmp->pNext ,pPrev,pNewNode    );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pTmp        ,pNext,pNewNode    );
+    __SET_STRUCT_MB(BLK_SRCT(LinkLoop),BLK_SRCT(LinkLoop)*,pTmp->pNext ,pPrev,pNewNode    );
     
     return pNewNode;
 }
     
-__LinkLoop_t*  __LINK_Loop_find              ( const __LinkLoop_t *pHead , void* object ){
+BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, find             ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
     
-    const __LinkLoop_t* pTmp  = pHead;
+    const BLK_SRCT(LinkLoop)* pTmp  = pHead;
     
     do{
         if (pTmp->object ==  object ) {
-            return (__LinkLoop_t*)pTmp;
+            return (BLK_SRCT(LinkLoop)*)pTmp;
         }
         pTmp = pTmp->pNext;
     }while( pTmp != pHead );
@@ -176,13 +176,12 @@ __LinkLoop_t*  __LINK_Loop_find              ( const __LinkLoop_t *pHead , void*
     return NULL;
 }
     
-void           __LINK_Loop_remove            (       __LinkLoop_t *pHead , void* object ){
-
+void           BLK_FUNC( LinkLoop, remove           ) (       BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
 
-    const __LinkLoop_t* pTmp      = pHead;
+    const BLK_SRCT(LinkLoop)* pTmp      = pHead;
     
     do{
         if (pTmp->object ==  object ) {
@@ -191,20 +190,20 @@ void           __LINK_Loop_remove            (       __LinkLoop_t *pHead , void*
                     pHead = NULL;
                     RH_DATA_FREE((void*)pTmp);
                 }else{
-                    pHead = (__LinkLoop_t*)( pHead->pNext );
-                    __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp->pPrev, pNext, pTmp->pNext);
-                    __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp->pNext, pPrev, pTmp->pPrev);
+                    pHead = (BLK_SRCT(LinkLoop)*)( pHead->pNext );
+                    __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp->pPrev, pNext, pTmp->pNext);
+                    __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp->pNext, pPrev, pTmp->pPrev);
                     RH_DATA_FREE((void*)pTmp);
                 }
             }else{
                 // Connect the neighbour and isolate the <pTarget>.
-                __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp->pPrev, pNext, pTmp->pNext);
-                __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp->pNext, pPrev, pTmp->pPrev);
+                __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp->pPrev, pNext, pTmp->pNext);
+                __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp->pNext, pPrev, pTmp->pPrev);
                 // Same Effect: pTarget->pPrev->pNext = pTarget->pNext; // But to cope with <const>.
                 // Same Effect: pTarget->pNext->pPrev = pTarget->pPrev; // But to cope with <const>.
                 
-                __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp, pNext, NULL);
-                __SET_STRUCT_MB(__LinkLoop_t, __LinkLoop_t*, pTmp, pPrev, NULL);
+                __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp, pNext, NULL);
+                __SET_STRUCT_MB(BLK_SRCT(LinkLoop), BLK_SRCT(LinkLoop)*, pTmp, pPrev, NULL);
                 // Same Effect: pTarget->pNext = NULL; // But to cope with <const>.
                 // Same Effect: pTarget->pPrev = NULL; // But to cope with <const>.
                 RH_DATA_FREE((void*)pTmp);
@@ -217,12 +216,11 @@ void           __LINK_Loop_remove            (       __LinkLoop_t *pHead , void*
     
 }
     
-void           __LINK_Loop_removeAll         (       __LinkLoop_t *pHead ){
-
+void           BLK_FUNC( LinkLoop, removeAll        ) (       BLK_SRCT(LinkLoop) *pHead ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
-    const __LinkLoop_t* pTmp  = pHead;
+    const BLK_SRCT(LinkLoop)* pTmp  = pHead;
     do{
         pTmp = pTmp->pNext;
         RH_DATA_FREE( (void*)(pTmp->pPrev) );
@@ -230,12 +228,11 @@ void           __LINK_Loop_removeAll         (       __LinkLoop_t *pHead ){
     
 }
 
-void           __LINK_Loop_printAllNodesAdr  ( const __LinkLoop_t *pHead , int(*PRINTF_FUNC)(const char*,...)){
-  
+void           BLK_FUNC( LinkLoop, printAllNodesAdr ) ( const BLK_SRCT(LinkLoop) *pHead , int(*PRINTF_FUNC)(const char*,...)){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
-    const __LinkLoop_t* pTmp      = pHead;
+    const BLK_SRCT(LinkLoop)* pTmp      = pHead;
     size_t cnt = 0;
     do{
         (*PRINTF_FUNC)("NODE[%d]: %p\n",cnt,pTmp);
@@ -246,168 +243,168 @@ void           __LINK_Loop_printAllNodesAdr  ( const __LinkLoop_t *pHead , int(*
 }
     
 
-__LinkBiTree_t* __LINK_BiTree_createHead     ( void* object ){
-    __LinkBiTree_t* pNewHead = (__LinkBiTree_t*)RH_DATA_MALLOC(sizeof(__LinkBiTree_t));
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, createHead    ) ( void* object ){
+    BLK_SRCT(LinkBiTree)* pNewHead = (BLK_SRCT(LinkBiTree)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNewHead );
 #endif
-    __SET_STRUCT_MB(__LinkBiTree_t, __LinkBiTree_t*,pNewHead,pLeft  ,NULL);
-    __SET_STRUCT_MB(__LinkBiTree_t, __LinkBiTree_t*,pNewHead,pRight ,NULL);
-    __SET_STRUCT_MB(__LinkBiTree_t, __LinkBiTree_t*,pNewHead,pPrev  ,NULL);
+    __SET_STRUCT_MB(BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*,pNewHead,pLeft  ,NULL);
+    __SET_STRUCT_MB(BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*,pNewHead,pRight ,NULL);
+    __SET_STRUCT_MB(BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*,pNewHead,pPrev  ,NULL);
     pNewHead->object = object;
 
     return pNewHead;
 }
     
-__LinkBiTree_t* __LINK_BiTree_add_l2r        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
     RH_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
     RH_ASSERT( pTarget );
 #endif
-    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)RH_DATA_MALLOC(sizeof(__LinkBiTree_t));
+    BLK_SRCT(LinkBiTree)* pNewNode = (BLK_SRCT(LinkBiTree)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
     pNewNode->object = object;
 
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pRight, pTarget->pLeft );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pRight, pTarget->pLeft );
     
     if( pTarget->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pLeft, pPrev , pNewNode );
+        __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget->pLeft, pPrev , pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget  , pLeft , pNewNode );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget  , pLeft , pNewNode );
     
     return pNewNode;
 }
     
-__LinkBiTree_t* __LINK_BiTree_add_l2l        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
     RH_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
     RH_ASSERT( pTarget );
 #endif
-    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)RH_DATA_MALLOC(sizeof(__LinkBiTree_t));
+    BLK_SRCT(LinkBiTree)* pNewNode = (BLK_SRCT(LinkBiTree)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
     pNewNode->object = object;
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pLeft , pTarget->pLeft );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pLeft , pTarget->pLeft );
     
     if( pTarget->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pLeft, pPrev , pNewNode );
+        __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget->pLeft, pPrev , pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pLeft, pNewNode );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget, pLeft, pNewNode );
     
     return pNewNode;
 }
     
-__LinkBiTree_t* __LINK_BiTree_add_r2l        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
     RH_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
     RH_ASSERT( pTarget );
 #endif
-    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)RH_DATA_MALLOC(sizeof(__LinkBiTree_t));
+    BLK_SRCT(LinkBiTree)* pNewNode = (BLK_SRCT(LinkBiTree)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
     pNewNode->object = object;
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pPrev , pTarget        );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode , pLeft , pTarget->pLeft );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pPrev , pTarget        );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode , pLeft , pTarget->pLeft );
     
     if( pTarget->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pRight, pPrev , pNewNode );
+        __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget->pRight, pPrev , pNewNode );
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pRight, pNewNode );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget, pRight, pNewNode );
     
     return pNewNode;
 }
     
-__LinkBiTree_t* __LINK_BiTree_add_r2r        ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object ){
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
     RH_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
     RH_ASSERT( pTarget );
 #endif
-    __LinkBiTree_t* pNewNode = (__LinkBiTree_t*)RH_DATA_MALLOC(sizeof(__LinkBiTree_t));
+    BLK_SRCT(LinkBiTree)* pNewNode = (BLK_SRCT(LinkBiTree)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNewNode );
 #endif
     pNewNode->object = object;
     
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode, pPrev , pTarget         );
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pNewNode, pRight, pTarget->pRight );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode, pPrev , pTarget         );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pNewNode, pRight, pTarget->pRight );
 
     if( pTarget->pLeft!=NULL )
-        __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget->pRight, pPrev , pNewNode );
+        __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget->pRight, pPrev , pNewNode );
 
-    __SET_STRUCT_MB( __LinkBiTree_t, __LinkBiTree_t*, pTarget, pRight, pNewNode );
+    __SET_STRUCT_MB( BLK_SRCT(LinkBiTree), BLK_SRCT(LinkBiTree)*, pTarget, pRight, pNewNode );
 
     return pNewNode;
 }
     
-__LinkBiTree_t* __LINK_BiTree_find           ( const __LinkBiTree_t *pHead , void* object ){
+BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, find          ) ( const BLK_SRCT(LinkBiTree) *pHead , void* object ){
     
 #ifdef RH_DEBUG
     RH_ASSERT( pHead );
 #endif
     
-    __LinkBiTree_t* pTarget = NULL;
+    BLK_SRCT(LinkBiTree)* pTarget = NULL;
     
     if( pHead->object == object ){
-        return (__LinkBiTree_t*)pHead;
+        return (BLK_SRCT(LinkBiTree)*)pHead;
     }else{
-        pTarget = __LINK_BiTree_find( pHead->pLeft , object );
+        pTarget = BLK_FUNC( LinkBiTree, find )( pHead->pLeft , object );
     }
     
     if( !pTarget ){
-        pTarget = __LINK_BiTree_find( pHead->pLeft , object );
+        pTarget = BLK_FUNC( LinkBiTree, find )( pHead->pLeft , object );
     }
     
     return pTarget;
 }
     
     
-__Stack_t*      __Stack_createBase           ( void* object ){
-    __Stack_t *ptr = (__Stack_t*)RH_DATA_MALLOC(sizeof(__Stack_t));
+BLK_SRCT(Stack)*      BLK_FUNC( Stack, createBase         ) ( void* object ){
+    BLK_SRCT(Stack) *ptr = (BLK_SRCT(Stack)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(Stack)));
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
 #endif
-    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pPrev , ptr   );
-    __SET_STRUCT_MB( __Stack_t, __Stack_t*, ptr, pNext , ptr   );
-    __SET_STRUCT_MB( __Stack_t, void*     , ptr, object, object);
+    __SET_STRUCT_MB( BLK_SRCT(Stack), BLK_SRCT(Stack)*, ptr, pPrev , ptr   );
+    __SET_STRUCT_MB( BLK_SRCT(Stack), BLK_SRCT(Stack)*, ptr, pNext , ptr   );
+    __SET_STRUCT_MB( BLK_SRCT(Stack), void*     , ptr, object, object);
 
     return ptr;
 }
     
-__Stack_t*      __Stack_push                 ( const __Stack_t *pBase , void* object ){
+BLK_SRCT(Stack)*      BLK_FUNC( Stack, push               ) ( const BLK_SRCT(Stack) *pBase , void* object ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
 #endif
     
-    __Stack_t* pNew = (__Stack_t*)RH_DATA_MALLOC(sizeof(__Stack_t));
+    BLK_SRCT(Stack)* pNew = (BLK_SRCT(Stack)*)RH_DATA_MALLOC(sizeof(BLK_SRCT(Stack)));
 #ifdef RH_DEBUG
     RH_ASSERT( pNew );
 #endif
     
-    __SET_STRUCT_MB(__Stack_t, void*     , pNew            , object, object       );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pPrev , pBase->pPrev );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pNew            , pNext , pBase        );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), void*     , pNew            , object, object       );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pNew            , pPrev , pBase->pPrev );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pNew            , pNext , pBase        );
     
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase->pPrev    , pNext , pNew         );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase           , pPrev , pNew         );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pBase->pPrev    , pNext , pNew         );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pBase           , pPrev , pNew         );
     
     return pNew;
 }
     
-void*           __Stack_pop                  ( const __Stack_t *pBase ){
+void*                 BLK_FUNC( Stack, pop                ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
@@ -415,25 +412,25 @@ void*           __Stack_pop                  ( const __Stack_t *pBase ){
     
     __exitReturn(pBase->pNext==pBase->pPrev && pBase->pNext==pBase , (void*)pBase->object );
     
-    void* dummy_ptr = (__Stack_t*)(pBase->pPrev);
+    void* dummy_ptr = (BLK_SRCT(Stack)*)(pBase->pPrev);
     
     void* object = (void*)(pBase->pPrev->object);
     
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase->pPrev->pPrev , pNext, pBase               );
-    __SET_STRUCT_MB(__Stack_t, __Stack_t*, pBase               , pPrev, pBase->pPrev->pPrev );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pBase->pPrev->pPrev , pNext, pBase               );
+    __SET_STRUCT_MB(BLK_SRCT(Stack), BLK_SRCT(Stack)*, pBase               , pPrev, pBase->pPrev->pPrev );
     
     RH_DATA_FREE(dummy_ptr);
     
     return object;
 }
     
-size_t          __Stack_size                 ( const __Stack_t *pBase ){
+size_t                BLK_FUNC( Stack, size               ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
 #endif
     size_t cnt = 0;
-    const __Stack_t *p = pBase;
+    const BLK_SRCT(Stack) *p = pBase;
     while(p->pNext != pBase){
         cnt++;
         p = p->pNext;
@@ -442,7 +439,7 @@ size_t          __Stack_size                 ( const __Stack_t *pBase ){
     return cnt;
 }
     
-void*           __Stack_top                  ( const __Stack_t *pBase ){
+void*                 BLK_FUNC( Stack, top                ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
@@ -450,7 +447,7 @@ void*           __Stack_top                  ( const __Stack_t *pBase ){
     return (void*)(pBase->pPrev->object);
 }
     
-bool            __Stack_empty                ( const __Stack_t *pBase ){
+bool                  BLK_FUNC( Stack, empty              ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
@@ -458,20 +455,20 @@ bool            __Stack_empty                ( const __Stack_t *pBase ){
     return (pBase->pNext==pBase->pPrev && pBase->pNext==pBase);
 }
     
-void*           __Stack_deleteBase           (       __Stack_t *pBase ){
+void*                 BLK_FUNC( Stack, deleteBase         ) (       BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     RH_ASSERT( pBase );
 #endif
-    __Stack_t *p = pBase;
+    BLK_SRCT(Stack) *p = pBase;
     void* object = (void*)pBase->object;
     if(p->pNext==pBase){
         RH_DATA_FREE((void*)(p));
     }else{
         while(p->pNext!=pBase){
-            p = (__Stack_t*)(p->pNext);
+            p = (BLK_SRCT(Stack)*)(p->pNext);
             RH_DATA_FREE((void*)(p->pPrev));
-            __SET_STRUCT_MB( __Stack_t, __Stack_t*, p, pPrev , NULL );
+            __SET_STRUCT_MB( BLK_SRCT(Stack), BLK_SRCT(Stack)*, p, pPrev , NULL );
         }
     }
 

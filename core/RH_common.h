@@ -34,19 +34,8 @@
  
 #define RH_DEBUG
  
-#define MAKE_ENUM(name)  RH_ENUM_ ## name
-typedef enum{
-    MAKE_ENUM( kStatus_Success   )    ,
-    MAKE_ENUM( kStatus_Busy      )    ,
-    MAKE_ENUM( kStatus_BadAccess )    ,
-    MAKE_ENUM( kStatus_Denied    )    ,
-    MAKE_ENUM( kStatus_Exist     )    ,
-    MAKE_ENUM( kStatus_NoSpace   )    ,
-    MAKE_ENUM( kStatus_ErrorID   )    ,
-    MAKE_ENUM( kStatus_NotFound  )    ,
-    MAKE_ENUM( kStatus_Warning   )    ,
-    MAKE_ENUM( kStatus_Empty     )
-}E_Status_t;
+
+
 
  
 struct __Region_t{
@@ -76,6 +65,20 @@ typedef struct __Range_t __Range_t;
 #ifndef __restrict__
 #define __restrict__ __restrict
 #endif
+ 
+#define MAKE_ENUM(name)  RH_ENUM_ ## name
+ typedef enum{
+     MAKE_ENUM( kStatus_Success   )    ,
+     MAKE_ENUM( kStatus_Busy      )    ,
+     MAKE_ENUM( kStatus_BadAccess )    ,
+     MAKE_ENUM( kStatus_Denied    )    ,
+     MAKE_ENUM( kStatus_Exist     )    ,
+     MAKE_ENUM( kStatus_NoSpace   )    ,
+     MAKE_ENUM( kStatus_ErrorID   )    ,
+     MAKE_ENUM( kStatus_NotFound  )    ,
+     MAKE_ENUM( kStatus_Warning   )    ,
+     MAKE_ENUM( kStatus_Empty     )
+ }E_Status_t;
  
 #define MAKE_FUNC( class , method )          __##class##_##method  // Function like this: __XXXX_xxxxx();
 #define CALL_FUNC                            MAKE_FUNC             // exactly the same but has semantic difference.
@@ -237,7 +240,7 @@ typedef volatile uint64_t       vu64;
 #endif
  
 
-#define __RECORD_TIME(func, print_func)({ clock_t cs = clock();func;clock_t ce = clock();print_func("RECORD_TIME:%ld\n",ce-cs); })
+#define RH_RECORD_TIME(func, print_func)({ clock_t cs = clock();func;clock_t ce = clock();print_func("RECORD_TIME:%ld\n",ce-cs); })
 #define __LOOP( cnt, things )({size_t _ = cnt;while(_--){things;}})
  
  
@@ -270,7 +273,22 @@ typedef volatile uint64_t       vu64;
       
 #define __INC_SAT( val )                     ( ( ((val)+1) > (val) ) ? ((val)+1) : (val) )
  
-#define __SET_STRUCT_MB( s_type, var_type, s_ptr, s_mem, val )   *( (var_type*) ( ((unsigned char*)(s_ptr))+(offsetof(s_type, s_mem)) ) ) = (var_type)(val)
+/*=========================================================================================================
+ * Force to set a member in struct
+ > s_type --- type name of your struct
+ > m_type --- type name of your member in this struct. You should NOT add "const" or any other declartion.
+ > s_ptr  --- pointer of this struct
+ > s_mem  --- member of this struct
+ > val    --- this value you want to set for this member
+ =========================================================================================================*/
+#define __SET_STRUCT_MB( s_type, m_type, s_ptr, s_mem, val )   *( (m_type*) ( ((unsigned char*)(s_ptr))+(offsetof(s_type, s_mem)) ) ) = (m_type)(val)
+ 
+/*=========================================================================================================
+ * Common utility for standard IO
+ > BYTE  --- 8   Bit
+ > WORD  --- 16  Bit
+ > DWORD --- 32  Bit
+ =========================================================================================================*/
 
 #define __IN_BYTE   ( port )                 ( *((volatile uint8_t*  )(port)) )
 #define __IN_WORD   ( port )                 ( *((volatile uint16_t* )(port)) )
@@ -287,7 +305,33 @@ typedef volatile uint64_t       vu64;
 #define __OUT_8BIT  ( port, val )            __OUT_BYTE  ( port, val )
 #define __OUT_16BIT ( port, val )            __OUT_WORD  ( port, val )
 #define __OUT_32BIT ( port, val )            __OUT_DWORD ( port, val )
+ 
+ 
+/*=========================================================================================================
+ * Common terminology for each project
+ > RH  --- General macro for all
+ > GLU --- Glucoo
+ > BLK --- Black House
+ > SMP --- Smart Pi
+ =========================================================================================================*/
 
+#define BLK_ENUM_MEMBER( name )              kBLK##name
+#define GLU_ENUM_MEMBER( name )              kGLU##name
+#define SMP_ENUM_MEMBER( name )              kSMP##name
+
+#define BLK_FUNC( class, method )            BLK_##class##_##method
+#define GLU_FUNC( class, method )            GLU_##class##_##method
+#define SMP_FUNC( class, method )            SMP_##class##_##method
+ 
+#define BLK_ENUM( enum )                     E_BLK##enum##_t
+#define GLU_ENUM( enum )                     E_GLU##enum##_t
+#define SMP_ENUM( enum )                     E_SMP##enum##_t
+ 
+#define BLK_SRCT( class )                    S_BLK##class##_t
+#define GLU_SRCT( class )                    S_GLU##class##_t
+#define SMP_SRCT( class )                    S_SMP##class##_t
+ 
+ 
  
 #ifdef __cplusplus
  }

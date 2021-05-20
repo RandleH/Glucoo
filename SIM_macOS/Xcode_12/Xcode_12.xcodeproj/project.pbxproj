@@ -97,7 +97,7 @@
 		E3A277A42648EF6E00D29934 /* BLK_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_data.c; sourceTree = "<group>"; };
 		E3A277A52648EF6E00D29934 /* BLK_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_time.c; sourceTree = "<group>"; };
 		E3A277A62648EF6E00D29934 /* BLK_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_math.c; sourceTree = "<group>"; };
-		E3A277A72648EF6E00D29934 /* BLK_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_data.h; sourceTree = "<group>"; };
+		E3A277A72648EF6E00D29934 /* BLK_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_data.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A277A92648EF6E00D29934 /* BLK_dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_dsp.c; sourceTree = "<group>"; };
 		E3A277AA2648EF6E00D29934 /* BLK_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_math.h; sourceTree = "<group>"; };
 		E3A277AB2648EF6E00D29934 /* BLK_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_time.h; sourceTree = "<group>"; };

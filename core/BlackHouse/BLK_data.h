@@ -20,62 +20,62 @@ extern "C" {
 /*=====================================================================
 > Data Structure Reference
 ======================================================================*/
-struct __LinkDB_t{
+struct BLK_SRCT( LinkDB ){
     void*        object;
-    const struct __LinkDB_t* const pNext; // Can NOT be modified by user.
-    const struct __LinkDB_t* const pPrev; // Can NOT be modified by user.
+    const struct BLK_SRCT( LinkDB )* const pNext; // Can NOT be modified by user.
+    const struct BLK_SRCT( LinkDB )* const pPrev; // Can NOT be modified by user.
 };
-typedef struct __LinkDB_t __LinkDB_t;
+typedef struct BLK_SRCT( LinkDB ) BLK_SRCT( LinkDB );
 
-__LinkDB_t* RH_RESULT MAKE_FUNC( LINK_DB , createHead       ) ( void* object );
-__LinkDB_t*           MAKE_FUNC( LINK_DB , addTail          ) ( const __LinkDB_t *pHead , void* object );
-__LinkDB_t*           MAKE_FUNC( LINK_DB , insert           ) ( const __LinkDB_t *pHead , void* Tobject, void* object );
-void                  MAKE_FUNC( LINK_DB , removeAll        ) (       __LinkDB_t *pHead );
+BLK_SRCT( LinkDB )* RH_RESULT   BLK_FUNC( LinkDB   , createHead        ) ( void* object );
+BLK_SRCT( LinkDB )*             BLK_FUNC( LinkDB   , addTail           ) ( const BLK_SRCT( LinkDB ) *pHead , void* object );
+BLK_SRCT( LinkDB )*             BLK_FUNC( LinkDB   , insert            ) ( const BLK_SRCT( LinkDB ) *pHead , void* Tobject, void* object );
+void                            BLK_FUNC( LinkDB   , removeAll         ) (       BLK_SRCT( LinkDB ) *pHead );
 
-struct __LinkLoop_t{
+struct BLK_SRCT(LinkLoop){
     void*        object;
-    const struct __LinkLoop_t* const pNext; // Can NOT be modified by user.
-    const struct __LinkLoop_t* const pPrev; // Can NOT be modified by user.
+    const struct BLK_SRCT(LinkLoop)* const pNext; // Can NOT be modified by user.
+    const struct BLK_SRCT(LinkLoop)* const pPrev; // Can NOT be modified by user.
 };
-typedef struct __LinkLoop_t __LinkLoop_t;
+typedef struct BLK_SRCT(LinkLoop) BLK_SRCT(LinkLoop);
 
-__LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , createHead        ) ( void* object );
-__LinkLoop_t*           MAKE_FUNC( LINK_Loop , add               ) ( const __LinkLoop_t *pHead , void* object );
-__LinkLoop_t* RH_RESULT MAKE_FUNC( LINK_Loop , find              ) ( const __LinkLoop_t *pHead , void* object );
-void                    MAKE_FUNC( LINK_Loop , remove            ) (       __LinkLoop_t *pHead , void* object );
-__LinkLoop_t*           MAKE_FUNC( LINK_Loop , insert            ) ( const __LinkLoop_t *pHead , void* Tobject, void* object );
-void                    MAKE_FUNC( LINK_Loop , removeAll         ) (       __LinkLoop_t *pHead );
-void                    MAKE_FUNC( LINK_Loop , printAllNodesAdr  ) ( const __LinkLoop_t *pHead , int(*PRINTF_FUNC)(const char*,...));
+BLK_SRCT(LinkLoop)* RH_RESULT BLK_FUNC( LinkLoop , createHead        ) ( void* object );
+BLK_SRCT(LinkLoop)*           BLK_FUNC( LinkLoop , add               ) ( const BLK_SRCT(LinkLoop) *pHead , void* object );
+BLK_SRCT(LinkLoop)* RH_RESULT BLK_FUNC( LinkLoop , find              ) ( const BLK_SRCT(LinkLoop) *pHead , void* object );
+void                          BLK_FUNC( LinkLoop , remove            ) (       BLK_SRCT(LinkLoop) *pHead , void* object );
+BLK_SRCT(LinkLoop)*           BLK_FUNC( LinkLoop , insert            ) ( const BLK_SRCT(LinkLoop) *pHead , void* Tobject, void* object );
+void                          BLK_FUNC( LinkLoop , removeAll         ) (       BLK_SRCT(LinkLoop) *pHead );
+void                          BLK_FUNC( LinkLoop , printAllNodesAdr  ) ( const BLK_SRCT(LinkLoop) *pHead , int(*PRINTF_FUNC)(const char*,...));
 
-struct __LinkBiTree_t{
+struct BLK_SRCT(LinkBiTree){
     void*        object;
-    const struct __LinkBiTree_t* const pLeft;  // Can NOT be modified by user.
-    const struct __LinkBiTree_t* const pRight; // Can NOT be modified by user.
-    const struct __LinkBiTree_t* const pPrev;  // Can NOT be modified by user.
+    const struct BLK_SRCT(LinkBiTree)* const pLeft;  // Can NOT be modified by user.
+    const struct BLK_SRCT(LinkBiTree)* const pRight; // Can NOT be modified by user.
+    const struct BLK_SRCT(LinkBiTree)* const pPrev;  // Can NOT be modified by user.
 };
-typedef struct __LinkBiTree_t __LinkBiTree_t;
+typedef struct BLK_SRCT(LinkBiTree) BLK_SRCT(LinkBiTree);
 
-__LinkBiTree_t* RH_RESULT MAKE_FUNC( LINK_BiTree , createHead    ) ( void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2r       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_l2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2l       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
-__LinkBiTree_t*           MAKE_FUNC( LINK_BiTree , add_r2r       ) ( const __LinkBiTree_t *pHead , __LinkBiTree_t *pTarget , void* object );
-__LinkBiTree_t* RH_RESULT MAKE_FUNC( LINK_BiTree , find          ) ( const __LinkBiTree_t *pHead , void* object );
+BLK_SRCT(LinkBiTree)* RH_RESULT BLK_FUNC( LinkBiTree , createHead    ) ( void* object );
+BLK_SRCT(LinkBiTree)*           BLK_FUNC( LinkBiTree , add_l2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object );
+BLK_SRCT(LinkBiTree)*           BLK_FUNC( LinkBiTree , add_l2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object );
+BLK_SRCT(LinkBiTree)*           BLK_FUNC( LinkBiTree , add_r2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object );
+BLK_SRCT(LinkBiTree)*           BLK_FUNC( LinkBiTree , add_r2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object );
+BLK_SRCT(LinkBiTree)* RH_RESULT BLK_FUNC( LinkBiTree , find          ) ( const BLK_SRCT(LinkBiTree) *pHead , void* object );
 
-struct __Stack_t{
-    const void*             const object; // Can NOT be modified by user.
-    const struct __Stack_t* const pNext;  // Can NOT be modified by user.
-    const struct __Stack_t* const pPrev;  // Can NOT be modified by user.
+struct BLK_SRCT(Stack){
+    const void*             const object;       // Can NOT be modified by user.
+    const struct BLK_SRCT(Stack)* const pNext;  // Can NOT be modified by user.
+    const struct BLK_SRCT(Stack)* const pPrev;  // Can NOT be modified by user.
 };
-typedef struct __Stack_t __Stack_t;
+typedef struct BLK_SRCT(Stack) BLK_SRCT(Stack);
 
-__Stack_t* RH_RESULT MAKE_FUNC( Stack , createBase ) ( void* object );
-__Stack_t*           MAKE_FUNC( Stack , push       ) ( const __Stack_t *pBase , void *object );
-void*      RH_RESULT MAKE_FUNC( Stack , pop        ) ( const __Stack_t *pBase );
-size_t     RH_RESULT MAKE_FUNC( Stack , size       ) ( const __Stack_t *pBase );
-void*      RH_RESULT MAKE_FUNC( Stack , top        ) ( const __Stack_t *pBase );
-bool       RH_RESULT MAKE_FUNC( Stack , empty      ) ( const __Stack_t *pBase );
-void*                MAKE_FUNC( Stack , deleteBase ) (       __Stack_t *pBase );
+BLK_SRCT(Stack)* RH_RESULT BLK_FUNC( Stack , createBase ) ( void* object );
+BLK_SRCT(Stack)*           BLK_FUNC( Stack , push       ) ( const BLK_SRCT(Stack) *pBase , void *object );
+void*            RH_RESULT BLK_FUNC( Stack , pop        ) ( const BLK_SRCT(Stack) *pBase );
+size_t           RH_RESULT BLK_FUNC( Stack , size       ) ( const BLK_SRCT(Stack) *pBase );
+void*            RH_RESULT BLK_FUNC( Stack , top        ) ( const BLK_SRCT(Stack) *pBase );
+bool             RH_RESULT BLK_FUNC( Stack , empty      ) ( const BLK_SRCT(Stack) *pBase );
+void*                      BLK_FUNC( Stack , deleteBase ) (       BLK_SRCT(Stack) *pBase );
 
 
 

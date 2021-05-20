@@ -568,7 +568,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     WordInfo_t WordInfo = {.str = strtok(pSentence," "), .pixsW = 0};
     __Font_getStrSize( &WordInfo.pixsW, NULL, WordInfo.str );
     
-    __LinkDB_t* pTextHead = __LINK_DB_createHead( &WordInfo );
+    BLK_SRCT(LinkDB)* pTextHead = BLK_FUNC( LinkDB, createHead )( &WordInfo );
 
     char* p = NULL;
     while( (p = strtok(NULL," ")) != NULL ){
@@ -576,15 +576,15 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
         pWordInfo->str   = p;
         pWordInfo->pixsW = 0;
         __Font_getStrSize( &pWordInfo->pixsW, NULL, pWordInfo->str );
-        __LINK_DB_addTail( pTextHead, pWordInfo );
+        BLK_FUNC( LinkDB, addTail )( pTextHead, pWordInfo );
     }
     
 
-    const __LinkDB_t* pIter1 = pTextHead;
-    const __LinkDB_t* pIter2 = pTextHead;
+    const BLK_SRCT(LinkDB)* pIter1 = pTextHead;
+    const BLK_SRCT(LinkDB)* pIter2 = pTextHead;
 
 /* 此处可以测试,句子信息是否提取准确 */
-//    const __LinkDB_t* pIter  = pTextHead;
+//    const BLK_SRCT(LinkDB)* pIter  = pTextHead;
 //    pIter  = pTextHead;
 //    do{
 //        printf("%s\t\tlen=%ld\n", ((WordInfo_t*)pIter->object)->str,((WordInfo_t*)pIter->object)->pixsW);
@@ -623,7 +623,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
                 wi->str   = NULL;    // 这是一个间隔空白字符,
                 wi->pixsW = spW + spAvg + ((spRemain==0)?(0):((spRemain--)!=0));
                 
-                pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
+                pIter2 = BLK_FUNC( LinkDB, insert )( pTextHead, pIter2->object , wi )->pNext;
             }
 
 
@@ -637,7 +637,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
             WordInfo_t* wi = alloca(sizeof(WordInfo_t));
             wi->str   = "\n";    // 这是一个回车字符,当读取到此需要换行
             wi->pixsW = 0;
-            pIter2 = __LINK_DB_insert( pTextHead, pIter2->object , wi )->pNext;
+            pIter2 = BLK_FUNC( LinkDB, insert )( pTextHead, pIter2->object , wi )->pNext;
             rowCnt++;
 #ifdef RH_DEBUG
             RH_ASSERT( pIter1==pIter2 );
@@ -675,7 +675,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     RH_ASSERT( FCFG.info.output );
 #endif
     // 逐单词输出
-    const __LinkDB_t* pIter3 = pTextHead;
+    const BLK_SRCT(LinkDB)* pIter3 = pTextHead;
     size_t x=0, y=0;
     do{
         char* str = ((WordInfo_t*)(pIter3->object))->str;
@@ -709,7 +709,7 @@ __GUI_Font_t*  __Font_exportText_Justify( const char* str, size_t width ){
     stbi_write_png("C:/Users/asus/Desktop/output.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
     stbi_write_png("/Users/randle_h/Desktop/o.png", (int)FCFG.info.width, (int)FCFG.info.height, 1, FCFG.info.output, (int)FCFG.info.width);
 #endif
-    __LINK_DB_removeAll(pTextHead);
+    BLK_FUNC( LinkDB, removeAll )(pTextHead);
     return &FCFG.info;
 }
 
