@@ -36,40 +36,14 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
     
-    BLK_Poker_option( MAKE_ENUM( kBLK_POKER_ALL ) );
+    BLK_Poker_option( M_BLK_POKER_OPT_NO_JOKER );
     
     S_PokerDeck_t *deck = NULL;
     
     deck = BLK_FUNC( Poker, create )();
-    BLK_FUNC( Poker, delete )(deck);
-    deck = BLK_FUNC( Poker, create )();
-    BLK_FUNC( Poker, delete )(deck);
-    deck = BLK_FUNC( Poker, create )();
+    BLK_FUNC( Poker, print)( deck, printf );
     
-    
-    for( int8_t i=0; i<deck->size; i++ ){
-        switch( deck->cards[i].suit ){
-            case MAKE_ENUM( kBLK_POKER_SPADE ):
-                printf("♠ %d\n", deck->cards[i].num-1);
-                break; // '♥','♠','♦','♣'
-            case MAKE_ENUM( kBLK_POKER_HEART ):
-                printf("♥ %d\n", deck->cards[i].num-1);
-                break;
-            case MAKE_ENUM( kBLK_POKER_DIAMOND ):
-                printf("♦ %d\n", deck->cards[i].num-1);
-                break;
-            case MAKE_ENUM( kBLK_POKER_CLUB ):
-                printf("♣ %d\n", deck->cards[i].num-1);
-                break;
-            case MAKE_ENUM( kBLK_POKER_JOKER ):
-                printf("J \n");
-                break;
-            default:
-                assert(0);
-        }
-    }
-    
-#if 1
+#if 0
     const char* pStrs[] = {
         "Jd" , // Jade
         "Gs" , // Ginseng

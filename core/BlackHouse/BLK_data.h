@@ -8,14 +8,14 @@
 extern "C" {
 #endif
 
-#define RH_DATA_CALLOC(x,s)           calloc(x,s)
-#define RH_DATA_MALLOC(x)             malloc(x)
-#define RH_DATA_FREE(x)               free(x)
+#define BLK_DATA_CALLOC(x,s)           calloc(x,s)
+#define BLK_DATA_MALLOC(x)             malloc(x)
+#define BLK_DATA_FREE(x)               free(x)
+#define BLK_DATA_ASSERT(expr)          assert(expr)
 
-
-#define RH_DATA_HASH_CALLOC(x,s)      calloc(x,s)
-#define RH_DATA_HASH_MALLOC(x)        malloc(x)
-#define RH_DATA_HASH_FREE(x)          free(x)
+#define BLK_DATA_HASH_CALLOC(x,s)      calloc(x,s)
+#define BLK_DATA_HASH_MALLOC(x)        malloc(x)
+#define BLK_DATA_HASH_FREE(x)          free(x)
 
 /*=====================================================================
 > Data Structure Reference
@@ -78,35 +78,24 @@ bool             RH_RESULT BLK_FUNC( Stack , empty      ) ( const BLK_SRCT(Stack
 void*                      BLK_FUNC( Stack , deleteBase ) (       BLK_SRCT(Stack) *pBase );
 
 
-
-struct __Queue_t{
-    const void*             const object;
-    const struct __Queue_t* const pNext ;
-};
-typedef struct __Queue_t __Queue_t;
-
-E_Status_t MAKE_FUNC( Queue , createHead ) ( void* object );
-
-
-
-struct __HashList_t{
+struct BLK_SRCT(HashList){
     const size_t                     key;
     const void*                const object;
-    const struct __HashList_t* const pNext ;
+    const struct BLK_SRCT(HashList)* const pNext ;
 };
-typedef struct __HashList_t __HashList_t;
+typedef struct BLK_SRCT(HashList) BLK_SRCT(HashList);
 
-struct __HashMap_t{
-    const __HashList_t*     const pList;
+struct BLK_SRCT(HashMap){
+    const BLK_SRCT(HashList)*     const pList;
 };
-typedef struct __HashMap_t __HashMap_t;
+typedef struct BLK_SRCT(HashMap) BLK_SRCT(HashMap);
 
-__HashMap_t* RH_RESULT MAKE_FUNC( Hash , createMap ) ( void );
-void*                  MAKE_FUNC( Hash , find      ) ( const __HashMap_t *pHead, size_t key );
-void                   MAKE_FUNC( Hash , pair      ) ( const __HashMap_t *pHead, size_t key , void* object );
-void*                  MAKE_FUNC( Hash , get       ) ( const __HashMap_t *pHead, size_t key );
-void*                  MAKE_FUNC( Hash , remove    ) ( const __HashMap_t *pHead, size_t key );
-void                   MAKE_FUNC( Hash , removeAll ) (       __HashMap_t *pHead );
+BLK_SRCT(HashMap)* RH_RESULT BLK_FUNC( Hash , createMap ) ( void );
+void*                        BLK_FUNC( Hash , find      ) ( const BLK_SRCT(HashMap) *pHead, size_t key );
+void                         BLK_FUNC( Hash , pair      ) ( const BLK_SRCT(HashMap) *pHead, size_t key , void* object );
+void*                        BLK_FUNC( Hash , get       ) ( const BLK_SRCT(HashMap) *pHead, size_t key );
+void*                        BLK_FUNC( Hash , remove    ) ( const BLK_SRCT(HashMap) *pHead, size_t key );
+void                         BLK_FUNC( Hash , removeAll ) (       BLK_SRCT(HashMap) *pHead );
  
 #ifdef __cplusplus
 }

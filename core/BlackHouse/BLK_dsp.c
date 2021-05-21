@@ -8,7 +8,7 @@ extern "C" {
  > DSP Reference
 ============================================================================================================================*/
 
-void __rDFT_Float(const float* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
+void BLK_FUNC( DSP, DFT_r     ) (const float* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
     float complex* X  = dst_c;
     const float*   _x = src;
     if( (dst_m == NULL && dst_c == NULL) || src == NULL)
@@ -43,7 +43,7 @@ void __rDFT_Float(const float* src,float_t* dst_m,float complex* dst_c,size_t df
     
 }
 
-void __cFFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,size_t fftLen){
+void BLK_FUNC( DSP, FFT_c     ) (const float complex* src,float_t* dst_m,float complex* dst_c,size_t fftLen){
 
     float complex* _x = dst_c;
     
@@ -90,7 +90,7 @@ void __cFFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,s
     
 }
 
-void __cDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
+void BLK_FUNC( DSP, DFT_c     ) (const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
     float complex*        X = dst_c;
     const float complex* _x = src;
     if( (dst_m == NULL && dst_c == NULL) || src == NULL)
@@ -119,13 +119,13 @@ void __cDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,s
         RH_FREE(X);
 }
 
-void __rIDFT_Float(const float* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
+void BLK_FUNC( DSP, IDFT_r    ) (const float* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
     
 }
          
-void __cIFFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){}
+void BLK_FUNC( DSP, IFFT_c    ) (const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){}
 
-void __cIDFT_Float(const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
+void BLK_FUNC( DSP, IDFT_c    ) (const float complex* src,float_t* dst_m,float complex* dst_c,size_t dftLen){
     float complex*       _x   = dst_c;
     const float complex* X    = src;
     if( (dst_m == NULL&& dst_c == NULL) || src == NULL )

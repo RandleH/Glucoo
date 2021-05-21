@@ -331,7 +331,20 @@ typedef volatile uint64_t       vu64;
 #define GLU_SRCT( class )                    S_GLU##class##_t
 #define SMP_SRCT( class )                    S_SMP##class##_t
  
+#define BLK_UION( union )                    U_BLK##union##_t
+#define GLU_UION( union )                    U_GLU##union##_t
+#define SMP_UION( union )                    U_SMP##union##_t
  
+#if 0
+#error "Read the following tips and remove this error first."
+
+/*
+ * Be careful with the memory allocate function in each file.
+ *
+ *
+ */
+ 
+#endif
  
 #ifdef __cplusplus
  }
