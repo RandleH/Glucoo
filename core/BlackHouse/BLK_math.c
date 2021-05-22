@@ -8,15 +8,15 @@ extern "C" {
 /*===========================================================================================================================
  > Algebra Reference
 ============================================================================================================================*/
-long BLK_sign(long x){
+long BLK_FUNC( Math, sign )(long x){
     return (x>=0)?(1):(-1);
 }
       
-long BLK_step(long x){
+long BLK_FUNC( Math, step )(long x){
     return (long)( x >= 0 );
 }
 
-long BLK_sqrt(long x){
+long BLK_FUNC( Math, sqrt )(long x){
     if(x <= 0) return 0;
     long l   = 1;
     long r   = x;
@@ -136,7 +136,7 @@ double BLK_cordic_atan(long y,long x){
     return (angle_sum/256.0);
 }
       
-double __sigmold(double x){
+double BLK_FUNC( Math, sigmold )(double x){
     return (double)(1.0/(1+exp(-x)));
 }
 

@@ -97,21 +97,21 @@ extern void* RH_CFG_GRAM_POINTER;
 #endif
 
 #ifndef RH_CALLOC
-  #define RH_CALLOC(x,size)                   __RH_Debug_print_memory_info( __RH_Debug_calloc(x,size,__FILE__,__LINE__,calloc), NULL )
+  #define RH_CALLOC(x,size)                   calloc(x,size)//BLK_FUNC( Memory, debug_print )( BLK_FUNC( Memory, debug_calloc )(x,size,__FILE__,__LINE__,calloc), NULL )
 #else
   #error " 'RH_CALLOC' has been defined. "
 #endif
 
 #ifndef RH_MALLOC
-#include "BLK_lib.h"
-  #define RH_MALLOC(x)                        __RH_Debug_print_memory_info( __RH_Debug_malloc(x, __FILE__, __LINE__, malloc), NULL )
+//#include "BLK_lib.h"
+  #define RH_MALLOC(x)                        malloc(x)//BLK_FUNC( Memory, debug_print )( BLK_FUNC( Memory, debug_malloc )(x, __FILE__, __LINE__, malloc), NULL )
 
 #else
   #error " 'RH_MALLOC' has been defined. "
 #endif
 
 #ifndef RH_FREE
-  #define RH_FREE(x)                          __RH_Debug_free(x,free)
+  #define RH_FREE(x)                          free(x)//BLK_FUNC( Memory, debug_free )(x,free)
 #else
   #error " 'RH_FREE' has been defined. "
 #endif

@@ -69,7 +69,7 @@
 		E35B3B6D261D5BDA0031A366 /* stb_include.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_include.h; sourceTree = "<group>"; };
 		E35B3B6E261D5BDA0031A366 /* stb_ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_ds.h; sourceTree = "<group>"; };
 		E35B3B95261D5C990031A366 /* GLU_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLU_api.c; sourceTree = "<group>"; };
-		E35B3B96261D5C990031A366 /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_config.h; sourceTree = "<group>"; };
+		E35B3B96261D5C990031A366 /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_config.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E35B3B97261D5C990031A366 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dummy.c; sourceTree = "<group>"; };
 		E35B3B98261D5C990031A366 /* GLU_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLU_api.h; sourceTree = "<group>"; };
 		E35B3BA8261D8F450031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../self/main.c; sourceTree = "<group>"; wrapsLines = 0; };

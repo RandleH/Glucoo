@@ -16,10 +16,10 @@ struct __Kernel_t{
 };
 typedef struct __Kernel_t       __Kernel_t;
 
-long         BLK_sign            (long   x);
-long         BLK_step            (long   x);
-long         BLK_sqrt            (long   x);
-double       BLK_sigmold         (double x);
+long         BLK_FUNC( Math, sign    )            (long   x);
+long         BLK_FUNC( Math, step    )            (long   x);
+long         BLK_FUNC( Math, sqrt    )            (long   x);
+double       BLK_FUNC( Math, sigmold )            (double x);
 
 double       BLK_cordic_tan      (long   dec);
 double       BLK_cordic_atan     (long   y,long x     );

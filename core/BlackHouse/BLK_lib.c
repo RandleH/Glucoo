@@ -10,62 +10,63 @@ extern "C" {
 #define M_SWAP_16BIT(x)   ((M_SWAP_8BIT((x)&0x00ff)<<8)|(M_SWAP_8BIT(((x)&0xff00)>>8)))
 #define M_SWAP_32BIT(x)   ((M_SWAP_16BIT((x)&0x0000ffff)<<16)|(M_SWAP_16BIT(((x)&0xffff0000)>>16)))
      
-inline uint8_t    __swap_8BIT    (uint8_t  x){
+inline uint8_t    BLK_FUNC( Bit, swap8  )   (uint8_t  x){
     return (uint8_t)M_SWAP_8BIT((x&0xff));
 }
      
-inline uint16_t   __swap_16BIT   (uint16_t x){
+inline uint16_t   BLK_FUNC( Bit, swap16 )   (uint16_t x){
     return (uint16_t)M_SWAP_16BIT((x&0xffff));
 }
      
-inline uint32_t   __swap_32BIT   (uint32_t x){
+inline uint32_t   BLK_FUNC( Bit, swap32 )   (uint32_t x){
     return (uint32_t)M_SWAP_32BIT((x&0xffffffff));
 }
      
-inline uint32_t   __swap_nBIT    (uint32_t x,size_t n){
+inline uint32_t   BLK_FUNC( Bit, swapN  )   (uint32_t x,size_t n){
     return (uint32_t)( M_SWAP_32BIT(x)>>(32-n) );
 }
 
-inline uint32_t   __swap_DATA    (uint32_t x){
+inline uint32_t   BLK_FUNC( Bit, swap   )   (uint32_t x){
     int dummy = 32;
     while((--dummy)&&((1<<dummy)&(x&0xffffffff))==0);
     
     return (uint32_t)( M_SWAP_32BIT(x)>>(32-(dummy+1)) );
 }
      
-inline size_t     __sizeof_BINs  (uint32_t x){
+inline size_t     BLK_FUNC( Bit, BINs )  (uint32_t x){
     size_t cnt = 1;
     while(x>>=1){cnt++;}
     return cnt;
 }
      
-inline size_t     __sizeof_OCTs  (uint32_t x){
+inline size_t     BLK_FUNC( Bit, OCTs )  (uint32_t x){
     size_t cnt = 1;
     while(x>>=3){cnt++;}
     return cnt;
 }
 
-inline size_t     __sizeof_DECs  (uint32_t x){
+inline size_t     BLK_FUNC( Bit, DECs )  (uint32_t x){
     size_t cnt = 1;
     while(x/=10){cnt++;}
     return cnt;
 }
 
-inline size_t     __sizeof_HEXs  (uint32_t x){
+inline size_t     BLK_FUNC( Bit, HEXs )  (uint32_t x){
     size_t cnt = 1;
     while(x>>=4){cnt++;}
     return cnt;
 }
       
-inline uint32_t   __Gray2Bin     (uint32_t x){
+inline uint32_t   BLK_FUNC( Bit, gray2bin )     (uint32_t x){
+    RH_ASSERT(0);
     return (uint32_t)((x>>1)^x);
 }
       
-inline uint32_t   __Bin2Gray     (uint32_t x){
+inline uint32_t   BLK_FUNC( Bit, bin2gray )     (uint32_t x){
     return (uint32_t)((x>>1)^x);
 }
     
-const char*       __ftoa_BIN     (float    x){
+const char*       BLK_FUNC( Bin, ftoa )     (float    x){
     static char pTmp[(sizeof(float)<<3)+1] = {0};
     char* pTmp_iter = pTmp;
     
@@ -85,7 +86,7 @@ const char*       __ftoa_BIN     (float    x){
     return pTmp;
 }
     
-const char*       __btoa_BIN     (uint8_t  x){
+const char*       BLK_FUNC( Bin, itoa )     (uint8_t  x){
     static char pTmp[(sizeof(uint8_t)<<3)+1] = {0};
     
     memset( pTmp , '\0' ,  (sizeof(uint8_t)<<3)+1 );
@@ -117,7 +118,7 @@ const char*       __btoa_BIN     (uint8_t  x){
     return pTmp;
 }
 
-const char*       __ldtoa_BIN    (uint32_t x){
+const char*       BLK_FUNC( Bin, ltoa )    (uint32_t x){
     static char pTmp[(sizeof(uint32_t)<<3)+1] = {0};
     char* pTmp_iter = pTmp;
     
@@ -153,7 +154,7 @@ const char*       __ldtoa_BIN    (uint32_t x){
 //    return 0;
 //}
     
-int __insertsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
+int BLK_FUNC( Sort, insert ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
     __exitReturn(nel==0||nel==1, 0);
     
     uint8_t* ptr_iter = ((uint8_t*)base);
@@ -175,7 +176,7 @@ int __insertsort(void *base, size_t nel, size_t width, int (*compar)(const void 
     return 0;
 }
     
-int __shellsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
+int BLK_FUNC( Sort, shell  ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
     size_t inc = nel-1; // 希尔增量
     
     inc |= inc>>1;
@@ -205,6 +206,11 @@ int __shellsort(void *base, size_t nel, size_t width, int (*compar)(const void *
         }
     }
     
+    return 0;
+}
+    
+int BLK_FUNC( Sort, quick  ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
+    qsort( base, nel, width, compar );
     return 0;
 }
 
@@ -298,7 +304,8 @@ struct __MallocNode_t{
     
 size_t RH_Global_alloced_byte  = 0;
 size_t RH_Global_free_byte     = RH_ALLOC_CHUNK_SIZE;
-void* __RH_Global_malloc(size_t size){
+    
+void* BLK_FUNC( Memory, malloc ) (size_t size){
     size_t size_need       = size;
     if( RH_Global_alloced_byte + size_need > RH_ALLOC_CHUNK_SIZE )
         return NULL;
@@ -362,9 +369,9 @@ void* __RH_Global_malloc(size_t size){
     return ptr;
 }
 
-void* __RH_Global_calloc(size_t count, size_t size){
+void* BLK_FUNC( Memory, calloc ) (size_t count, size_t size){
     size_t  byt = count*size;
-    void*   ptr = __RH_Global_malloc(byt);
+    void*   ptr = BLK_FUNC( Memory, malloc )(byt);
 #ifdef RH_DEBUG
     RH_ASSERT( ptr );
 #else
@@ -374,7 +381,7 @@ void* __RH_Global_calloc(size_t count, size_t size){
     return memset( ptr, 0, byt );
 }
 
-void __RH_Global_free(void* ptr){
+void  BLK_FUNC( Memory, free   ) (void* ptr){
     unsigned long index = (unsigned long)((unsigned char*)ptr - __VERTUAL_HEAP);
     struct __MallocNode_t* pNode     = pHeapMemoryHeadNode;
     struct __MallocNode_t* pForeward = NULL;
@@ -416,7 +423,7 @@ struct __RH_DebugMemoryInfo_t{
     void*       ptr;
 };
     
-void* __RH_Debug_malloc( size_t size, char* FILE, int LINE, void* (*__malloc_func)(size_t size) ){
+void* BLK_FUNC( Memory, debug_malloc   )( size_t size, char* FILE, int LINE, void* (*__malloc_func)(size_t size) ){
     if( !pHEAD_HASHMAP_size_2_ptr )
         pHEAD_HASHMAP_size_2_ptr = BLK_FUNC(Hash, createMap)();
 //    size_t* pSize = malloc(sizeof(size_t));
@@ -440,7 +447,7 @@ void* __RH_Debug_malloc( size_t size, char* FILE, int LINE, void* (*__malloc_fun
     return ptr;
 }
 
-void* __RH_Debug_calloc( size_t count, size_t size, char* FILE, int LINE, void* (*__calloc_func)( size_t, size_t ) ){
+void* BLK_FUNC( Memory, debug_calloc   )( size_t count, size_t size, char* FILE, int LINE, void* (*__calloc_func)( size_t, size_t ) ){
     
     if( !pHEAD_HASHMAP_size_2_ptr )
         pHEAD_HASHMAP_size_2_ptr = BLK_FUNC(Hash, createMap)();
@@ -463,7 +470,7 @@ void* __RH_Debug_calloc( size_t count, size_t size, char* FILE, int LINE, void* 
     return ptr;
 }
 
-void __RH_Debug_free(void* ptr, void (*__free_func)(void*)){
+void  BLK_FUNC( Memory, debug_free     )( void* ptr, void (*__free_func)(void*)){
     struct __RH_DebugMemoryInfo_t* pInfo = (struct __RH_DebugMemoryInfo_t*)BLK_FUNC(Hash, get)(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
     RH_Debug_alloced_byte -= pInfo->byte;
          
@@ -471,7 +478,7 @@ void __RH_Debug_free(void* ptr, void (*__free_func)(void*)){
 
 }
     
-void* __RH_Debug_print_memory_info(void* ptr, int (*__print_func)(const char * restrict format, ...)){
+void* BLK_FUNC( Memory, debug_print    )( void* ptr, int (*__print_func)(const char * restrict format, ...)){
     __exitReturn( __print_func==NULL, ptr);
     
     struct __RH_DebugMemoryInfo_t* pInfo = (struct __RH_DebugMemoryInfo_t*)BLK_FUNC(Hash, get)(pHEAD_HASHMAP_size_2_ptr, (size_t)ptr);
@@ -488,7 +495,7 @@ void* __RH_Debug_print_memory_info(void* ptr, int (*__print_func)(const char * r
     return ptr;
 }
     
-void __RH_Debug_del_memory_info(void){
+void  BLK_FUNC( Memory, debug_delCache )( void ){
     BLK_FUNC(Hash, removeAll)(pHEAD_HASHMAP_size_2_ptr);
     pHEAD_HASHMAP_size_2_ptr = NULL;
     RH_Debug_alloced_byte    = 0;

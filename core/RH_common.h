@@ -24,7 +24,7 @@
 #include <memory.h>
 #endif
 //#include <malloc.h>
-#include "RH_config.h"
+//#include "RH_config.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -318,6 +318,10 @@ typedef volatile uint64_t       vu64;
 #define BLK_ENUM_MEMBER( name )              kBLK##name
 #define GLU_ENUM_MEMBER( name )              kGLU##name
 #define SMP_ENUM_MEMBER( name )              kSMP##name
+ 
+#define BLK_GVAR( name )                     G_BLK##name
+#define GLU_GVAR( name )                     G_GLU##name
+#define SMP_GVAR( name )                     G_SMP##name
 
 #define BLK_FUNC( class, method )            BLK_##class##_##method
 #define GLU_FUNC( class, method )            GLU_##class##_##method
@@ -334,6 +338,8 @@ typedef volatile uint64_t       vu64;
 #define BLK_UION( union )                    U_BLK##union##_t
 #define GLU_UION( union )                    U_GLU##union##_t
 #define SMP_UION( union )                    U_SMP##union##_t
+ 
+
  
 #if 0
 #error "Read the following tips and remove this error first."

@@ -3,7 +3,7 @@
 #define _BLK_DATA_H
 
 #include "RH_common.h"
-
+#include "RH_config.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

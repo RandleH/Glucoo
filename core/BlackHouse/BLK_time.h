@@ -2,7 +2,7 @@
 #define _BLK_TIME_H
 
 #include "RH_common.h"
-
+#include "RH_config.h"
 
 #ifdef __cpluplus
 extern "C"{
