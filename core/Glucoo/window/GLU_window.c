@@ -37,26 +37,20 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #endif
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
-//    __GraphInfo_t info_MainScreen = {
-//        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
-//        .height  = GUI_Y_WIDTH                    ,
-//        .width   = GUI_X_WIDTH                    ,
-//    };
-    
     // Window Bar
-    __Graph_set_penColor(color_bar.data);
-    __Graph_set_penSize(bar_rad);
-    __Graph_rect_round   (xs   , ys         , xe  , ys+bar_size+bar_rad, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor )( color_bar.data);
+    BLK_FUNC( Graph, set_penSize  )( bar_rad);
+    BLK_FUNC( Graph, rect_round   )(xs   , ys         , xe  , ys+bar_size+bar_rad, &info_MainScreen, kApplyPixel_fill);
     
-    __Graph_line_raw     (xs   , ye         , xe  , ye                 , &info_MainScreen, kApplyPixel_fill);
-    __Graph_line_raw     (xs   , ye-1       , xe  , ye-1               , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , &info_MainScreen, kApplyPixel_fill);
     
     for(int i=0; i<bar_edge; i++){
-        __Graph_line_raw     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
-        __Graph_line_raw     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
     }
     
     // Title
@@ -98,8 +92,8 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     }
     
     // Context
-    __Graph_set_penColor(color_blank.data);
-    __Graph_rect_fill    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor )(color_blank.data);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
     
     
     if( config->text != NULL ){
@@ -163,16 +157,16 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
   #error "[RH_graphic]: Unknown color type."
 #endif
     // Button
-    __Graph_set_penColor(color_button_cl.data);
-    __Graph_circle_fill  (xs+bar_size_2, __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor )(color_button_cl.data);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size_2, __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
 
-    __Graph_set_penColor(color_button_zm.data);
-    __Graph_circle_fill  (xs+bar_size+bar_size_4, __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor )(color_button_zm.data);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size+bar_size_4, __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
 
-    __Graph_set_penColor(color_button_mi.data);
-    __Graph_circle_fill  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor )(color_button_mi.data);
+    BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
     
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
 
 }
@@ -208,22 +202,22 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
 //        .width   = GUI_X_WIDTH                    ,
 //    };
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
-    __Graph_set_penColor (color_bar.data);
-    __Graph_rect_fill    ( xs, ys, xe, ys+bar_size, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, set_penColor ) (color_bar.data);
+    BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, &info_MainScreen, kApplyPixel_fill );
     
         
     for(int i=0; i<bar_edge; i++){
-        __Graph_line_raw     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
-        __Graph_line_raw     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
-        __Graph_line_raw     (xs   , ye-i       , xe  , ye-i, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xs   , ye-i       , xe  , ye-i, &info_MainScreen, kApplyPixel_fill);
     }
     
     // Context
-    __Graph_set_penColor (color_blank.data);
-    __Graph_rect_fill    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor ) (color_blank.data);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
     
     if( config->text != NULL ){
         uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
@@ -278,41 +272,41 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     const int button_cl_xe = xe           , button_zm_xe = button_cl_xe-button_w, button_mi_xe = button_zm_xe-button_w;
     const int button_cl_ye = ys+button_h-1, button_zm_ye = button_cl_ye         , button_mi_ye = button_cl_ye;
     
-    __Graph_set_penColor(color_bar.data);
-    __Graph_rect_fill   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, set_penColor )(color_bar.data);
+    BLK_FUNC( Graph, rect_fill )   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, &info_MainScreen, kApplyPixel_fill );
     {
         int xs = __mid(button_cl_xs,button_cl_xe)-(button_h>>3);
         int ys = __mid(button_cl_ys,button_cl_ye)-(button_h>>3);
         int xe = __mid(button_cl_xs,button_cl_xe)+(button_h>>3);
         int ye = __mid(button_cl_ys,button_cl_ye)+(button_h>>3);
-        __Graph_set_penColor(M_COLOR_WHITE);
-        __Graph_line_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
-        __Graph_line_raw( xs, ye, xe, ys, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )( xs, ye, xe, ys, &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Graph_set_penColor(color_bar.data);
-    __Graph_rect_fill   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, set_penColor )(color_bar.data);
+    BLK_FUNC( Graph, rect_fill )   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, &info_MainScreen, kApplyPixel_fill );
     {
         int xs = __mid(button_zm_xs,button_zm_xe)-(button_h>>3);
         int ys = __mid(button_zm_ys,button_zm_ye)-(button_h>>3);
         int xe = __mid(button_zm_xs,button_zm_xe)+(button_h>>3);
         int ye = __mid(button_zm_ys,button_zm_ye)+(button_h>>3);
-        __Graph_set_penColor(M_COLOR_WHITE);
-        __Graph_rect_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
+        BLK_FUNC( Graph, rect_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Graph_set_penColor(color_bar.data);
-    __Graph_rect_fill   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, set_penColor )(color_bar.data);
+    BLK_FUNC( Graph, rect_fill )   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, &info_MainScreen, kApplyPixel_fill );
     {
         int xs = __mid(button_mi_xs,button_mi_xe)-(button_h>>3);
         int ys = __mid(button_mi_ys,button_mi_ye);
         int xe = __mid(button_mi_xs,button_mi_xe)+(button_h>>3);
         int ye = ys;
-        __Graph_set_penColor(M_COLOR_WHITE);
-        __Graph_line_raw( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
 }
 

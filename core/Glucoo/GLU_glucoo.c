@@ -135,7 +135,7 @@ void RH_PREMAIN GUI_Init        ( void ){
 
     Screen.windowCFG = NULL;
 
-    __Graph_init();
+    BLK_FUNC( Graph, init )();
     __Font_init();
 }
 
@@ -283,11 +283,11 @@ void GUI_RefreashEntireScreen   ( void ){
 }
 
 void GUI_set_penSize            ( size_t    penSize  ){
-    __Graph_set_penSize(penSize);
+    BLK_FUNC( Graph, set_penSize ) ( penSize );
 }
 
 void GUI_set_penColor           ( __Pixel_t penColor ){
-    __Graph_set_penColor(penColor);
+    BLK_FUNC( Graph, set_penColor )(penColor);
 }
 
 void GUI_auto_display           ( bool      cmd      ){

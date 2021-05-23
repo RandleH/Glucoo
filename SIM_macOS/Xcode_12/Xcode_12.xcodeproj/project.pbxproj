@@ -102,7 +102,7 @@
 		E3A277AA2648EF6E00D29934 /* BLK_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_math.h; sourceTree = "<group>"; };
 		E3A277AB2648EF6E00D29934 /* BLK_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_time.h; sourceTree = "<group>"; };
 		E3A277AC2648EF6E00D29934 /* BLK_graphic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_graphic.c; sourceTree = "<group>"; };
-		E3A277AD2648EF6E00D29934 /* BLK_graphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_graphic.h; sourceTree = "<group>"; };
+		E3A277AD2648EF6E00D29934 /* BLK_graphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_graphic.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A277B72648F00600D29934 /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_common.h; sourceTree = "<group>"; };
 		E3A277B82648F00600D29934 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; };
 		E3B206392654B29F00F94242 /* BLK_poker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_poker.h; sourceTree = "<group>"; };

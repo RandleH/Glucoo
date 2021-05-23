@@ -19,18 +19,18 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
                config->widget == kGUI_ObjStyle_fnum  );
 #endif
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
     if( !pHistory ){
-        __Graph_set_penColor( config->bk_color );
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, set_penColor )( config->bk_color );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            config->area.ys+1, \
                            config->area.xs+(int)config->area.width -1-1, \
                            config->area.ys+(int)config->area.height-1-1, \
                            &info_MainScreen, kApplyPixel_fill);
         if( config->showFrame ){
-            __Graph_set_penColor( config->bk_color );
-            __Graph_rect_raw( config->area.xs, \
+            BLK_FUNC( Graph, set_penColor )( config->bk_color );
+            BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
@@ -43,15 +43,15 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
         RH_ASSERT( pHistory->area.xs+pHistory->area.width  <= config->area.xs+config->area.width  );
         RH_ASSERT( pHistory->area.ys+pHistory->area.height <= config->area.ys+config->area.height );
     #endif
-        __Graph_set_penColor( config->bk_color );
-        __Graph_rect_fill( pHistory->area.xs, \
+        BLK_FUNC( Graph, set_penColor )( config->bk_color );
+        BLK_FUNC( Graph, rect_fill )( pHistory->area.xs, \
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)pHistory->area.width -1, \
                            pHistory->area.ys+(int)pHistory->area.height-1, \
                            &info_MainScreen, kApplyPixel_fill);
         if( pHistory->showFrame && !config->showFrame ){
-            __Graph_set_penColor( config->bk_color );
-            __Graph_rect_raw( config->area.xs, \
+            BLK_FUNC( Graph, set_penColor )( config->bk_color );
+            BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
@@ -59,7 +59,7 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
         }
     }
     
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
@@ -81,7 +81,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     }
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
     __Font_setSize(config->text_size);
@@ -152,8 +152,8 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     
 
     if( config->showFrame ){
-        __Graph_set_penColor( config->obj_color );
-        __Graph_rect_raw( config->area.xs, \
+        BLK_FUNC( Graph, set_penColor )( config->obj_color );
+        BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
@@ -162,7 +162,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     }
     pHistory->showFrame = config->showFrame;
     
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
 }
@@ -185,7 +185,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     __gui_remove_object_num(config);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
     struct{
         __Area_t area;
@@ -273,8 +273,8 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     }
 
     if( config->showFrame ){
-        __Graph_set_penColor( M_COLOR_WHITE );
-        __Graph_rect_raw( config->area.xs, \
+        BLK_FUNC( Graph, set_penColor )( M_COLOR_WHITE );
+        BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
@@ -284,7 +284,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     pHistory->showFrame = config->showFrame;
 
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_num       ( const __GUI_Object_t* config ){
     __gui_insert_object_num( config );
@@ -314,7 +314,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
     char __str[GUI_X_WIDTH>>2] = {'\0'};
     __Font_setSize(config->text_size);
@@ -399,8 +399,8 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     
     
     if( config->showFrame ){
-        __Graph_set_penColor( M_COLOR_WHITE );
-        __Graph_rect_raw( config->area.xs, \
+        BLK_FUNC( Graph, set_penColor )( M_COLOR_WHITE );
+        BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
@@ -410,7 +410,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     pHistory->showFrame = config->showFrame;
 
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_fnum      ( const __GUI_Object_t* config ){
     __gui_insert_object_fnum( config );
@@ -429,7 +429,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
     }*pHistory = (void*)config->history;
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
     bool needRemove = !pHistory;
     if( pHistory ){
@@ -438,18 +438,18 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
     }
     
     if( needRemove ){
-        __Graph_set_penColor(config->bk_color);
+        BLK_FUNC( Graph, set_penColor )(config->bk_color);
         __Area_t area = config->area;
         area.width  -=4;
         area.height -=4;
         area.xs     +=2;
         area.ys     +=2;
-        __Graph_sausage_fill( area.xs, \
+        BLK_FUNC( Graph, sausage_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
                               &info_MainScreen, kApplyPixel_fill);
-        __Graph_rect_raw( config->area.xs, \
+        BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
@@ -457,7 +457,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
     }
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
@@ -480,7 +480,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     __gui_remove_object_switch(config);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
     __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
@@ -494,7 +494,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-    __Graph_set_penColor( color_switch_on.data );
+    BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
     
     __Area_t area = config->area;
     area.width  -=4;
@@ -503,22 +503,22 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     area.ys     +=2;
     
     if( ((struct __GUI_ObjDataScr_switch*)config->dataScr)->cmd ){
-        __Graph_set_penColor( color_switch_on.data );
-        __Graph_sausage_fill( area.xs, \
+        BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
+        BLK_FUNC( Graph, sausage_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
                               &info_MainScreen, kApplyPixel_fill);
         
         // 绘制滑杆柄
-        __Graph_set_penColor( color_switch.data );
-        __Graph_circle_fill ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
+        BLK_FUNC( Graph, set_penColor )( color_switch.data );
+        BLK_FUNC( Graph, circle_fill ) ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
         
-        __Graph_set_penColor( color_switch_on.data );
-        __Graph_circle_raw  ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
+        BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
+        BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
@@ -527,33 +527,33 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     }else{
         // 二值颜色与彩色画法稍有不同
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        __Graph_set_penColor( color_switch_on.data );
-        __Graph_sausage_raw ( area.xs, \
+        BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
+        BLK_FUNC( Graph, sausage_raw ) ( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
                               &info_MainScreen, kApplyPixel_fill);
         
-        __Graph_circle_raw  ( area.xs+(int)(area.height>>1), \
+        BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
 #else
-        __Graph_set_penColor( color_switch_off.data );
-        __Graph_sausage_fill( area.xs, \
+        BLK_FUNC( Graph, set_penColor )( color_switch_off.data );
+        BLK_FUNC( Graph, sausage_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
                               &info_MainScreen, kApplyPixel_fill);
         
-        __Graph_set_penColor( color_switch.data );
-        __Graph_circle_fill ( area.xs+(int)(area.height>>1), \
+        BLK_FUNC( Graph, set_penColor )( color_switch.data );
+        BLK_FUNC( Graph, circle_fill ) ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
         
-        __Graph_set_penColor( color_switch_off.data );
-        __Graph_circle_raw  ( area.xs+(int)(area.height>>1), \
+        BLK_FUNC( Graph, set_penColor )( color_switch_off.data );
+        BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
@@ -565,7 +565,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_switch    ( const __GUI_Object_t* config ){
     __gui_insert_object_switch(config);
@@ -588,7 +588,7 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
     val = __limit(val, min, max);
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -598,15 +598,15 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
   #error "[RH_graphic]: Unknown color type."
 #endif
     if( !pHistory ){
-        __Graph_set_penColor( color_bar_off.data );
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
                            &info_MainScreen, kApplyPixel_fill);
     }else if(pHistory->bar_pos > bar_pos){
-        __Graph_set_penColor( color_bar_off.data );
-        __Graph_rect_fill( bar_pos, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
+        BLK_FUNC( Graph, rect_fill )( bar_pos, \
                            config->area.ys+1, \
                            pHistory->bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
@@ -614,7 +614,7 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
     }
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
@@ -639,7 +639,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
     }
 
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -655,16 +655,16 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
     
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     
-    __Graph_set_penColor( color_bar_on.data );
-    __Graph_rect_raw( config->area.xs, \
+    BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
+    BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                       config->area.ys, \
                       config->area.xs+(int)(config->area.width )-1, \
                       config->area.ys+(int)(config->area.height)-1, \
                       &info_MainScreen, kApplyPixel_fill);
     
     if( pHistory->bar_pos < bar_pos ){
-        __Graph_set_penColor( color_bar_on.data );
-        __Graph_rect_fill( pHistory->bar_pos, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
+        BLK_FUNC( Graph, rect_fill )( pHistory->bar_pos, \
                            config->area.ys+1, \
                            bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
@@ -674,7 +674,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
     pHistory->bar_pos = bar_pos;
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_bar_h     ( const __GUI_Object_t* config ){
     __gui_insert_object_bar_h(config);
@@ -696,7 +696,7 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -706,15 +706,15 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
   #error "[RH_graphic]: Unknown color type."
 #endif
     if( !pHistory ){
-        __Graph_set_penColor( color_bar_off.data );
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
                            &info_MainScreen, kApplyPixel_fill);
     }else if(pHistory->bar_pos < bar_pos){
-        __Graph_set_penColor( color_bar_off.data );
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            pHistory->bar_pos, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            bar_pos, \
@@ -722,7 +722,7 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
     }
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
@@ -753,7 +753,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -762,16 +762,16 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-    __Graph_set_penColor( color_bar_on.data );
-    __Graph_rect_raw( config->area.xs, \
+    BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
+    BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                       config->area.ys, \
                       config->area.xs+(int)(config->area.width )-1, \
                       config->area.ys+(int)(config->area.height)-1, \
                       &info_MainScreen, kApplyPixel_fill);
     
     if( pHistory->bar_pos > bar_pos ){
-        __Graph_set_penColor( color_bar_on.data );
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            bar_pos, \
                            config->area.xs+(int)(config->area.width)-1, \
                            pHistory->bar_pos, \
@@ -781,7 +781,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
     pHistory->bar_pos = bar_pos;
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     
 }
 static void __gui_adjust_object_bar_v     ( const __GUI_Object_t* config ){
@@ -794,25 +794,25 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
         __Area_t area;
     }*pHistory = (void*)config->history;
     __Font_backup_config();
-    __Graph_backup_config();
-    __Graph_set_penColor( config->bk_color );
+    BLK_FUNC( Graph, backupCache )();
+    BLK_FUNC( Graph, set_penColor )( config->bk_color );
     if( !pHistory ){
         
-        __Graph_rect_fill( config->area.xs, \
+        BLK_FUNC( Graph, rect_fill )( config->area.xs, \
                            config->area.ys, \
                            config->area.xs+(int)(config->area.width )-1, \
                            config->area.ys+(int)(config->area.height)-1, \
                            &info_MainScreen, kApplyPixel_fill);
     }else{
         
-        __Graph_rect_fill( pHistory->area.xs, \
+        BLK_FUNC( Graph, rect_fill )( pHistory->area.xs, \
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)(pHistory->area.width )-1, \
                            pHistory->area.ys+(int)(pHistory->area.height)-1, \
                            &info_MainScreen, kApplyPixel_fill);
     }
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     struct{
@@ -824,38 +824,38 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     __gui_remove_object_joystick(config);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
-    __Graph_set_penColor( config->obj_color );
+    BLK_FUNC( Graph, set_penColor )( config->obj_color );
     
     
     int D = (int)__min( config->area.height , config->area.width );
     bool eps = ((D&0x01)==0);
     int X = (int)( config->area.xs + (D>>1) - eps );
     int Y = (int)( config->area.ys + (D>>1) - eps  );
-//    __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+//    BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      if(  !pHistory  ){
-         __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+         BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
      }else{
          
          switch( pHistory->cord ){
              
              case 1:
-                 __Graph_circle_qrt1_raw( X    , Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt1_raw )( X    , Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 2:
-                 __Graph_circle_qrt2_raw( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt2_raw )( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 3:
-                 __Graph_circle_qrt3_raw( X+eps, Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt3_raw )( X+eps, Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 4:
-                 __Graph_circle_qrt4_raw( X    , Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt4_raw )( X    , Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
                  break;
              case 0:
              case 5:
              case 6:
-                 __Graph_circle_raw( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
                  break;
          }
      }
@@ -902,7 +902,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
                 break;
         }
     }
-    __Graph_circle_fill( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, circle_fill )( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -918,7 +918,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     pHistory->area.height = pd;
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     
 }
 static void __gui_adjust_object_joystick  ( const __GUI_Object_t* config ){
@@ -940,7 +940,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
     
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color  = {.data = (config->bk_color==0x00)?0x00:0xff};
@@ -950,10 +950,10 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
-    __Graph_set_penColor( color.data );
+    BLK_FUNC( Graph, set_penColor )( color.data );
     
     if( !cache ){
-        __Graph_rect_fill( config->area.xs+1, \
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
@@ -965,7 +965,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
         int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
         
         if( cache->bar_pos - config->text_size < bar_pos ){
-            __Graph_rect_fill( config->area.xs+1, \
+            BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                                cache->bar_pos - config->text_size, \
                                config->area.xs+(int)(config->area.width )-1-1, \
                                bar_pos, \
@@ -975,7 +975,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
     }
     
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     // 记录历史改动区域
@@ -1006,7 +1006,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
     
     __Font_backup_config();
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     
     // 确认画笔颜色
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1019,8 +1019,8 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
 #endif
     // 当且仅当进度条所占区域大于原先所占区域(坐标值相反)
     if( cache->bar_pos >= bar_pos ){
-        __Graph_set_penColor( color.data );
-        __Graph_rect_fill( config->area.xs+cache->margin, \
+        BLK_FUNC( Graph, set_penColor )( color.data );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs+cache->margin, \
                            bar_pos, \
                            config->area.xs+(int)(config->area.width)-1-cache->margin, \
                            cache->bar_pos, \
@@ -1103,7 +1103,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
 #endif
 
     __Font_restore_config();
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     
 }
 static void __gui_adjust_object_trunk     ( const __GUI_Object_t* config ){
@@ -1284,16 +1284,16 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
 #endif
     __GUI_Object_t* p = (__GUI_Object_t*)(ID);
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     if( cmd ){
-        __Graph_set_penColor( p->obj_color );
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, set_penColor )( p->obj_color );
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }else{
-        __Graph_set_penColor( p->bk_color );
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, set_penColor )( p->bk_color );
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
     p->showFrame = cmd;
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( p->area.xs, \
                                                  p->area.ys, \
                                                  p->area.xs+(int)(p->area.width )-1, \
@@ -1354,11 +1354,11 @@ E_Status_t        GUI_object_delete    ( ID_t ID ){
     RH_FREE( (void*)config->dataScr );
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, NULL);
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
-    __Graph_set_penColor(config->bk_color);
+    BLK_FUNC( Graph, set_penColor )(config->bk_color);
     
-    __Graph_rect_fill( config->area.xs, \
+    BLK_FUNC( Graph, rect_fill )( config->area.xs, \
                        config->area.ys, \
                        config->area.xs+(int)(config->area.width )-1, \
                        config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
@@ -1374,7 +1374,7 @@ E_Status_t        GUI_object_delete    ( ID_t ID ){
                                                  config->area.ys+(int)(config->area.height)-1);
     
     RH_FREE( config );
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
     return MAKE_ENUM( kStatus_Success );

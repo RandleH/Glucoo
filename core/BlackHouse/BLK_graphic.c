@@ -259,7 +259,7 @@ static  __GraphPixel_t __ApplyPixel_eor      (int x,int y,__GraphPixel_t color ,
 
 
      
-E_Status_t __Graph_init                (void){
+E_Status_t BLK_FUNC( Graph, init )           (void){
     GCFG.blur_br_100 = 100;
     GCFG.blur_size   = 44100;
     GCFG.penColor    = M_COLOR_WHITE;
@@ -272,13 +272,13 @@ E_Status_t __Graph_init                (void){
     return MAKE_ENUM( kStatus_Success );
 }
  
-void __Graph_set_penSize         (size_t         penSize      ){
+void       BLK_FUNC( Graph, set_penSize   )  (size_t         penSize      ){
     if(penSize >0xff){
         penSize = 0xff;
     }
     GCFG.penSize = penSize;
 }
-void __Graph_set_penColor        (__GraphPixel_t penColor     ){
+void       BLK_FUNC( Graph, set_penColor  )  (__GraphPixel_t penColor     ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     if( penColor == 0 )
         GCFG.penColor = 0x00;
@@ -289,33 +289,33 @@ void __Graph_set_penColor        (__GraphPixel_t penColor     ){
 #endif
     
 }
-void __Graph_set_blurSize        (size_t         size_0_65535 ){
+void       BLK_FUNC( Graph, set_blurColor )  (size_t         size_0_65535 ){
     GCFG.blur_size = __limit((unsigned int)(size_0_65535), 0U, 65535U);
 }
-void __Graph_set_blurBrightness  (size_t         br_100       ){
+void       BLK_FUNC( Graph, set_blurBr    )  (size_t         br_100       ){
     GCFG.blur_br_100 = __limit((unsigned int)(br_100), 0, 200);
 }
 
-__GraphPixel_t __Graph_get_penColor       (void){
+__GraphPixel_t BLK_FUNC( Graph, get_penColor ) (void){
     return GCFG.penColor;
 }
-size_t         __Graph_get_penSize        (void){
+size_t         BLK_FUNC( Graph, get_penSize  ) (void){
     return GCFG.penSize;
 }
-size_t         __Graph_get_blurSize       (void){
+size_t         BLK_FUNC( Graph, get_blurSize ) (void){
     return GCFG.blur_size;
 }
-size_t         __Graph_get_blurBrightness (void){
+size_t         BLK_FUNC( Graph, get_blurBr   ) (void){
     return GCFG.blur_br_100;
 }
 
 static bool backupGCFG = false;
-void           __Graph_backup_config      (void){
+void           BLK_FUNC( Graph, backupCache  ) (void){
     memcpy(&GCFG_copy, &GCFG, sizeof(struct __GraphConfig_t));
     backupGCFG = true;
 }
     
-void           __Graph_restore_config     (void){
+void           BLK_FUNC( Graph, restoreCache )     (void){
     if( backupGCFG ){
         memcpy(&GCFG, &GCFG_copy, sizeof(struct __GraphConfig_t));
         backupGCFG = false;
@@ -326,7 +326,7 @@ void           __Graph_restore_config     (void){
 /*===========================================
  > 插入一个空心圆,线宽为1
 ============================================*/
-E_Status_t __Graph_circle_raw     (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_raw )     (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int r    = d>>1;
     int p    = 3-2*r;
     bool eps = (d%2==0);
@@ -380,7 +380,7 @@ E_Status_t __Graph_circle_raw     (int x ,int y ,int d ,        __GraphInfo_t* p
 /*====================================
  > 插入一个填充圆
 =====================================*/
-E_Status_t __Graph_circle_fill    (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_fill )    (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int r = d>>1;
     int p = 3-(r<<1);
     int x_tmp = 0,y_tmp = r;
@@ -440,7 +440,7 @@ E_Status_t __Graph_circle_fill    (int x ,int y ,int d ,        __GraphInfo_t* p
 /*====================================
  > 插入一个空心圆,线宽随设定
 =====================================*/
-E_Status_t __Graph_circle_edged   (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_edged )   (int x ,int y ,int d ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int r = d>>1;
     int r_ex  = r;
     int r_in  = (int)(r-GCFG.penSize);
@@ -509,7 +509,7 @@ E_Status_t __Graph_circle_edged   (int x ,int y ,int d ,        __GraphInfo_t* p
 /*====================================
  > 插入一个填充1/4圆
 =====================================*/
-E_Status_t __Graph_circle_qrt1_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt1_raw )    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -550,7 +550,7 @@ E_Status_t __Graph_circle_qrt1_raw    (int x ,int y ,int r ,        __GraphInfo_
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt2_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt2_raw )    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -591,7 +591,7 @@ E_Status_t __Graph_circle_qrt2_raw    (int x ,int y ,int r ,        __GraphInfo_
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt3_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt3_raw )    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -632,7 +632,7 @@ E_Status_t __Graph_circle_qrt3_raw    (int x ,int y ,int r ,        __GraphInfo_
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt4_raw    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt4_raw )    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -680,7 +680,7 @@ E_Status_t __Graph_circle_qrt4_raw    (int x ,int y ,int r ,        __GraphInfo_
 /*====================================
  > 插入一个填充1/4圆
 =====================================*/
-E_Status_t __Graph_circle_qrt1_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt1_fill )   (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -728,7 +728,7 @@ E_Status_t __Graph_circle_qrt1_fill    (int x ,int y ,int r ,        __GraphInfo
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt2_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt2_fill )   (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -776,7 +776,7 @@ E_Status_t __Graph_circle_qrt2_fill    (int x ,int y ,int r ,        __GraphInfo
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt3_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt3_fill )   (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -824,7 +824,7 @@ E_Status_t __Graph_circle_qrt3_fill    (int x ,int y ,int r ,        __GraphInfo
     }
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t __Graph_circle_qrt4_fill    (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, circle_qrt4_fill )   (int x ,int y ,int r ,        __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -880,7 +880,7 @@ E_Status_t __Graph_circle_qrt4_fill    (int x ,int y ,int r ,        __GraphInfo
 /*====================================
  > 插入一个空心长方形,线宽为1
 =====================================*/
-E_Status_t __Graph_rect_raw       (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, rect_raw     ) (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     if( method == kApplyPixel_blur ){
         while(1);
     }
@@ -902,7 +902,7 @@ E_Status_t __Graph_rect_raw       (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 /*====================================
  > 插入一个实心长方形
 =====================================*/
-E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, rect_fill    ) (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     
     
     switch(method){
@@ -1013,7 +1013,7 @@ E_Status_t __Graph_rect_fill      (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 /*====================================
  > 插入一个空心长发形,线宽随设定
 =====================================*/
-E_Status_t __Graph_rect_edged     (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, rect_edged   ) (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int loop = 0;
     if(method == kApplyPixel_blur){
         GCFG.blur_area.xs                            = __limit( (signed)(xs) , 0 , (int)(pInfo->width ));
@@ -1064,7 +1064,7 @@ E_Status_t __Graph_rect_edged     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 /*====================================
  > 插入圆角长方形
 =====================================*/
-E_Status_t __Graph_rect_round     (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, rect_round   ) (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int r = __limit((signed)GCFG.penSize, 0, (__min((xe-xs), (ye-ys)))/2 );
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
@@ -1085,14 +1085,14 @@ E_Status_t __Graph_rect_round     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 #endif
     }
     
-    __Graph_rect_fill(xs+r+1, ys    , xe-r-1, ye    , pInfo, method);
-    __Graph_rect_fill(xs    , ys+r+1, xs+r  , ye-r-1, pInfo, method);
-    __Graph_rect_fill(xe-r  , ys+r+1, xe    , ye-r-1, pInfo, method);
+    BLK_FUNC( Graph, rect_fill )(xs+r+1, ys    , xe-r-1, ye    , pInfo, method);
+    BLK_FUNC( Graph, rect_fill )(xs    , ys+r+1, xs+r  , ye-r-1, pInfo, method);
+    BLK_FUNC( Graph, rect_fill )(xe-r  , ys+r+1, xe    , ye-r-1, pInfo, method);
 
-    __Graph_circle_qrt1_fill(xe-r, ys+r, r, pInfo, method);
-    __Graph_circle_qrt2_fill(xs+r, ys+r, r, pInfo, method);
-    __Graph_circle_qrt3_fill(xs+r, ye-r, r, pInfo, method);
-    __Graph_circle_qrt4_fill(xe-r, ye-r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt1_fill )(xe-r, ys+r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt2_fill )(xs+r, ys+r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt3_fill )(xs+r, ye-r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt4_fill )(xe-r, ye-r, r, pInfo, method);
     
     if( blurCmd ){
         RH_FREE(GCFG.blur_tmp.pBuffer);
@@ -1106,7 +1106,7 @@ E_Status_t __Graph_rect_round     (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 /*====================================
  > 插入直线，线宽为1
 =====================================*/
-E_Status_t __Graph_line_raw       (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, line_raw     ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int x_min = (int)(__min(x1,x2));
     int x_max = (int)(__max(x1,x2));
     int y_min = (int)(__min(y1,y2));
@@ -1154,13 +1154,13 @@ E_Status_t __Graph_line_raw       (int x1,int y1,int x2,int y2, __GraphInfo_t* p
 /*====================================
  > 插入直线，线宽随设定
 =====================================*/
-E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, line_edged   ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     
     bool blurCmd = ( method==kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
         while(1);
     }
-    __Graph_line_raw(x1,y1,x2,y2,pInfo,method);
+    BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pInfo,method);
     int dir_line = __Dir_Line(x1, y1, x2, y2);
     
     if( GCFG.penSize > 1 ){
@@ -1171,9 +1171,9 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
                 int xe = __max(x1, x2);
                 int ys = __min(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
                 int ye = __max(y1, y2) + (int)(GCFG.penSize>>1);
-                __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
-                __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
-                __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
             }
                 break;
             case 1:
@@ -1228,7 +1228,7 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
                     }
                 }
                   
-                __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, pInfo, method);
+                BLK_FUNC( Graph, quad_fill )(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, pInfo, method);
                 
             }
                 break;
@@ -1238,9 +1238,9 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
                 int xe = __max(x1, x2) + (int)(GCFG.penSize>>1);
                 int ys = __min(y1, y2);
                 int ye = __max(y1, y2);
-                __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
-                __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
-                __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
             }
                 break;
         }
@@ -1255,9 +1255,9 @@ E_Status_t __Graph_line_edged     (int x1,int y1,int x2,int y2, __GraphInfo_t* p
 /*====================================
  > 插入香肠线，线宽随设定
 =====================================*/
-E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, line_sausage ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
 //    GCFG.penColor = 0x00;
-    __Graph_line_raw(x1,y1,x2,y2,pInfo,method);
+    BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pInfo,method);
     int dir_line = __Dir_Line(x1, y1, x2, y2);
     
     if( GCFG.penSize > 1 ){
@@ -1268,9 +1268,9 @@ E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* p
                     int xe = __max(x1, x2);
                     int ys = __min(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
                     int ye = __max(y1, y2) + (int)(GCFG.penSize>>1);
-                    __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
-                    __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
-                    __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+                    BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
+                    BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
+                    BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
                 }
                 break;
             case 1:
@@ -1354,7 +1354,7 @@ E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* p
 //                ( *applyPixelMethod [method] )(x2+px1, y2+py1,GCFG.penColor,pInfo );
 //                ( *applyPixelMethod [method] )(x2+px2, y2+py2,GCFG.penColor,pInfo );
                 
-                __Graph_quad_fill(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, pInfo, method);
+                BLK_FUNC( Graph, quad_fill )(x1+px1, y1+py1, x1+px2, y1+py2, x2+px1, y2+py1, x2+px2, y2+py2, pInfo, method);
                 
             }
             break;
@@ -1364,9 +1364,9 @@ E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* p
                 int xe = __max(x1, x2) + (int)(GCFG.penSize>>1);
                 int ys = __min(y1, y2);
                 int ye = __max(y1, y2);
-                __Graph_circle_fill(x1, y1, (int)GCFG.penSize, pInfo, method);
-                __Graph_circle_fill(x2, y2, (int)GCFG.penSize, pInfo, method);
-                __Graph_rect_fill(xs, ys, xe, ye, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
+                BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
             }
             break;
         }
@@ -1378,14 +1378,14 @@ E_Status_t __Graph_line_sausage   (int x1,int y1,int x2,int y2, __GraphInfo_t* p
 /*====================================
  > 插入直线，线宽随设定
 =====================================*/
-E_Status_t __Graph_line_fill      (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
-    return CALL_FUNC( Graph , line_edged   )(x1,y1,x2,y2,pInfo,method);
+E_Status_t BLK_FUNC( Graph, line_fill    ) (int x1,int y1,int x2,int y2, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+    return BLK_FUNC( Graph, line_edged  ) (x1,y1,x2,y2,pInfo,method);
 }
     
 /*====================================
  > 画任意四边形,线宽为1
 =====================================*/
-E_Status_t __Graph_quad_raw       (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, quad_raw )       (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
     struct IntArray_t tmp;
@@ -1425,13 +1425,13 @@ E_Status_t __Graph_quad_raw       (int x1,int y1,int x2,int y2,int x3,int y3,int
         x33 = x4; y33 = y4;
         x44 = x3; y44 = y3;
     }
-    __Graph_line_raw( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,pInfo,method);
         
-    __Graph_line_raw( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,pInfo,method);
 
-    __Graph_line_raw( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,pInfo,method);
         
-    __Graph_line_raw( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,pInfo,method);
     
     return MAKE_ENUM( kStatus_Success );
 }
@@ -1439,7 +1439,7 @@ E_Status_t __Graph_quad_raw       (int x1,int y1,int x2,int y2,int x3,int y3,int
 /*====================================
  > 填充任意四边形
 =====================================*/
-E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, quad_fill )      (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
     struct IntArray_t tmp;
@@ -1490,13 +1490,13 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
     __GraphInfo_t pTmpInfo = {    .pBuffer = (void*)pBuffer    ,\
                                   .height  = area_height       ,\
                                   .width   = area_width        };
-    __Graph_line_raw( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&pTmpInfo,kApplyPixel_mark);
         
-    __Graph_line_raw( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&pTmpInfo,kApplyPixel_mark);
 
-    __Graph_line_raw( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&pTmpInfo,kApplyPixel_mark);
         
-    __Graph_line_raw( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&pTmpInfo,kApplyPixel_mark);
     
     // 从顶点开始，向下左右画点并搜寻,直到找到边线为止,随后填充
     for(int j = 0;j < area_height;j++){
@@ -1555,7 +1555,7 @@ E_Status_t __Graph_quad_fill      (int x1,int y1,int x2,int y2,int x3,int y3,int
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t __Graph_sausage_raw    (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, sausage_raw )    (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int d = ye-ys+1;
     int r = d>>1;
     if( method == kApplyPixel_blur ){
@@ -1599,7 +1599,7 @@ E_Status_t __Graph_sausage_raw    (int xs,int ys,int xe,int ye, __GraphInfo_t* p
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t __Graph_sausage_fill   (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
+E_Status_t BLK_FUNC( Graph, sausage_fill )   (int xs,int ys,int xe,int ye, __GraphInfo_t* pInfo, E_ApplyPixel_t method){
     int d = ye-ys+1;
     int r = d>>1;
     if( method == kApplyPixel_blur ){

@@ -102,14 +102,14 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
         
         if( i == pHistory->cur ){  // 该行被选中, 颜色选反色
             text_color.data = REVERSE_COLOR( config->text_color );
-            __Graph_set_penColor( config->sl_color );
+            BLK_FUNC( Graph, set_penColor )( config->sl_color );
         }else{                     // 该行未被选中
             text_color.data = config->text_color;
-            __Graph_set_penColor( config->bk_color );
+            BLK_FUNC( Graph, set_penColor )( config->bk_color );
         }
         
         // 绘制背景色
-        __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -180,14 +180,14 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                 
                 if( i == 0 ){        // 首行颜色选反色
                     text_color.data = REVERSE_COLOR( config->text_color );
-                    __Graph_set_penColor( config->sl_color );
+                    BLK_FUNC( Graph, set_penColor )( config->sl_color );
                 }else{                     // 该行未被选中
                     text_color.data = config->text_color;
-                    __Graph_set_penColor( config->bk_color );
+                    BLK_FUNC( Graph, set_penColor )( config->bk_color );
                 }
                 
                 // 绘制背景色
-                __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -227,13 +227,13 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         char* p = NULL;
         // 配置画笔颜色
         text_color.data = config->text_color;
-        __Graph_set_penColor( config->bk_color );
+        BLK_FUNC( Graph, set_penColor )( config->bk_color );
         
         // 重新配置坐标起始位置
         ys   += (pHistory->cur+1)*pHistory->bSize;
         y_fs += (pHistory->cur+1)*pHistory->bSize;
         // 绘制背景色
-        __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
@@ -265,14 +265,14 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         p = NULL;
         // 配置画笔颜色
         text_color.data = REVERSE_COLOR( config->text_color );
-        __Graph_set_penColor( config->sl_color );
+        BLK_FUNC( Graph, set_penColor )( config->sl_color );
         
         // 重新配置坐标起始位置
         ys   -= pHistory->bSize;
         y_fs -= pHistory->bSize;
         
         // 绘制背景色
-        __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -344,14 +344,14 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 if( i == pHistory->nItemPer-1 ){        // 首行颜色选反色
                     text_color.data = REVERSE_COLOR( config->text_color );
-                    __Graph_set_penColor( config->sl_color );
+                    BLK_FUNC( Graph, set_penColor )( config->sl_color );
                 }else{                     // 该行未被选中
                     text_color.data = config->text_color;
-                    __Graph_set_penColor( config->bk_color );
+                    BLK_FUNC( Graph, set_penColor )( config->bk_color );
                 }
                 
                 // 绘制背景色
-                __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -391,13 +391,13 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             char* p = NULL;
             // 配置画笔颜色
             text_color.data = config->text_color;
-            __Graph_set_penColor( config->bk_color );
+            BLK_FUNC( Graph, set_penColor )( config->bk_color );
             
             // 重新配置坐标起始位置
             ys   += (pHistory->cur-1)*pHistory->bSize;
             y_fs += (pHistory->cur-1)*pHistory->bSize;
             // 绘制背景色
-            __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
@@ -429,14 +429,14 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             p = NULL;
             // 配置画笔颜色
             text_color.data = REVERSE_COLOR( config->text_color );
-            __Graph_set_penColor( config->sl_color );
+            BLK_FUNC( Graph, set_penColor )( config->sl_color );
             
             // 重新配置坐标起始位置
             ys   += pHistory->bSize;
             y_fs += pHistory->bSize;
             
             // 绘制背景色
-            __Graph_rect_fill(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
             
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -502,7 +502,7 @@ E_Status_t GUI_menu_insert             ( ID_t ID ){
         int8_t nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     __Font_setStyle( config->font );
     
@@ -527,7 +527,7 @@ E_Status_t GUI_menu_insert             ( ID_t ID ){
     
     // 绘制菜单栏
     __gui_insert_menu_bar( config );
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
@@ -549,14 +549,14 @@ E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
 #endif
     __GUI_Menu_t* p = (__GUI_Menu_t*)(ID);
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
     if( cmd ){
-        __Graph_rect_raw(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
 
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     return MAKE_ENUM( kStatus_Success );
 }
@@ -567,7 +567,7 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
     if( config->history == NULL )
         return 0;
     
-    __Graph_backup_config();
+    BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
     switch(cmd){
@@ -583,7 +583,7 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
             __gui_scroll_menu_down( config );
             break;
     }
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
     GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
@@ -606,18 +606,10 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
     RH_FREE( config->menuList );
     __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, NULL);
     
-    // 确认画布信息
-//    __GraphInfo_t info_MainScreen = {
-//        .width   = GUI_X_WIDTH ,
-//        .height  = GUI_Y_WIDTH ,
-//        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]
-//    };
+    BLK_FUNC( Graph, backupCache  )();
+    BLK_FUNC( Graph, set_penColor )(config->bk_color);
     
-    __Graph_backup_config();
-    
-    __Graph_set_penColor(config->bk_color);
-    
-    __Graph_rect_fill( config->area.xs, \
+    BLK_FUNC( Graph, rect_fill )( config->area.xs, \
                        config->area.ys, \
                        config->area.xs+(int)(config->area.width )-1, \
                        config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
@@ -633,7 +625,7 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
                                                  config->area.ys+(int)(config->area.height)-1);
     
     RH_FREE( config );
-    __Graph_restore_config();
+    BLK_FUNC( Graph, restoreCache )();
 
     return MAKE_ENUM( kStatus_Success );
 }
