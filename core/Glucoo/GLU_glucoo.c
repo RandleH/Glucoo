@@ -166,7 +166,7 @@ void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
         __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(p_width)*sizeof(__Pixel_t));
         
        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
-                           __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                           BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                              sizeof(__Pixel_t)             ,\
                                              GUI_X_WIDTH                   ,\
                                              xs, ps, xe, pe                ) );
@@ -176,7 +176,7 @@ void GUI_RefreashScreenArea     ( int xs, int ys, int xe, int ye ){
         const int y_width = ye-ys+1;
         __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(y_width)*sizeof(__Pixel_t));
         (*GUI_API_DrawArea)( xs , ys , xe , ye ,
-                            __memgrab_Area(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
+                            BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
                                               sizeof(__Pixel_t)             ,\
                                               GUI_X_WIDTH                   ,\
                                               xs, ys, xe, ye                ) );

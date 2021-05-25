@@ -47,16 +47,12 @@ int BLK_FUNC( Sort, quick  ) (void *base, size_t nel, size_t width, int (*compar
 
 extern size_t BLK_GVAR( memoryAllocated );
 extern size_t BLK_GVAR( memoryFree      );
-extern size_t RH_Global_alloced_byte;
-extern size_t RH_Global_free_byte;
 void* BLK_FUNC( Memory, malloc ) ( size_t size  );
 void* BLK_FUNC( Memory, calloc ) ( size_t count  , size_t size);
 void  BLK_FUNC( Memory, free   ) ( void* ptr    );
 
 extern size_t BLK_GVAR( debug_memoryAllocated );
 extern size_t BLK_GVAR( debug_memoryFree      );
-extern size_t RH_Debug_alloced_byte;
-extern size_t RH_Debug_free_byte;
 void* BLK_FUNC( Memory, debug_malloc   ) ( size_t size               , char* FILE, int LINE, void* (*__malloc_func)( size_t         ) );
 void* BLK_FUNC( Memory, debug_calloc   ) ( size_t count , size_t size, char* FILE, int LINE, void* (*__calloc_func)( size_t, size_t ) );
 void  BLK_FUNC( Memory, debug_free     ) ( void*  ptr                , void  (*__free_func  )(void*  )          );
@@ -64,13 +60,13 @@ void* BLK_FUNC( Memory, debug_print    ) ( void*  ptr                , int   (*_
 void  BLK_FUNC( Memory, debug_delCache ) ( void );
 
 
-void* __memsetWORD  (void* __b, uint16_t value, size_t num);
-void* __memsetDWORD (void* __b, uint32_t value, size_t num);
-void* __memexch     (void* __a, void* __b, size_t size );
+void* BLK_FUNC( Memory, setWord  ) (void* __b, uint16_t value, size_t num);
+void* BLK_FUNC( Memory, setDWord ) (void* __b, uint32_t value, size_t num);
+void* BLK_FUNC( Memory, exchange ) (void* __a, void* __b, size_t size );
 
-void* __memset_Area (void*                __b,int                      value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
-void* __memcpy_Area (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
-void* __memgrab_Area(void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
+void* BLK_FUNC( Memory, setArea ) (void*                __b,int                      value,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
+void* BLK_FUNC( Memory, cpyArea ) (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
+void* BLK_FUNC( Memory, grbArea ) (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 
 #include "RH_config.h"
 

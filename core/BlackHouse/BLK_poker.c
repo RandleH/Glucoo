@@ -4,9 +4,9 @@
 
 static struct S_PokerDeck_t cache;
 
-//static void __poker_print_cache( void ){
-//    BLK_FUNC( Poker, print )( &cache , printf );
-//}
+inline void __poker_print_cache( void ){
+    BLK_FUNC( Poker, print )( &cache , printf );
+}
 
 static void __poker_create( void ){
 #ifdef RH_DEBUG
@@ -117,15 +117,17 @@ static void __poker_remove_sp( int8_t* idx_list, size_t size ){
 //    __poker_print_cache();
 }
 
-//static void __poker_remove_se( int8_t idx_s, int8_t idx_e ){
-//#ifdef RH_DEBUG
-//    BLK_POKER_ASSERT( idx_e < cache.size && idx_s <= idx_e && idx_s >= 0 );
-//#endif
-//    if( idx_e < cache.size-1 ){
-//        memmove( &cache.cards[idx_s], &cache.cards[idx_e+1], (cache.size-1-idx_e)*sizeof(cache.cards[0]));
-//    }
-//    cache.size -= idx_e-idx_s+1;
-//}
+#if 0
+static void __poker_remove_se( int8_t idx_s, int8_t idx_e ){
+#ifdef RH_DEBUG
+    BLK_POKER_ASSERT( idx_e < cache.size && idx_s <= idx_e && idx_s >= 0 );
+#endif
+    if( idx_e < cache.size-1 ){
+        memmove( &cache.cards[idx_s], &cache.cards[idx_e+1], (cache.size-1-idx_e)*sizeof(cache.cards[0]));
+    }
+    cache.size -= idx_e-idx_s+1;
+}
+#endif
 
 static void __poker_delete( void ){
     BLK_POKER_FREE( cache.cards );

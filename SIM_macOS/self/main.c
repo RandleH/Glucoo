@@ -36,12 +36,45 @@ int main(int argc, const char * argv[]) {
     GUI_set_penSize(5);
     GUI_set_penColor(M_COLOR_WHITE);
     
-    BLK_Poker_option( M_BLK_POKER_OPT_NO_JOKER );
+//    BLK_Poker_option( M_BLK_POKER_OPT_NO_JOKER );
+//    
+//    S_PokerDeck_t *deck = NULL;
+//    
+//    deck = BLK_FUNC( Poker, create )();
+//    BLK_FUNC( Poker, print)( deck, printf );
     
-    S_PokerDeck_t *deck = NULL;
+    __GUI_Menu_t cfg = {0};
     
-    deck = BLK_FUNC( Poker, create )();
-    BLK_FUNC( Poker, print)( deck, printf );
+    cfg.area.height = 200;
+    cfg.area.width  = 320;
+    cfg.area.xs     = 0;
+    cfg.area.ys     = 0;
+    
+    cfg.bk_color       = M_COLOR_BLACK;
+    cfg.bk_color_title = M_COLOR_BLACK;
+    cfg.color_title    = M_COLOR_RED;
+    cfg.font           = kGUI_FontStyle_ArialRounded_Bold;
+    
+    __GUI_MenuParam_t menuList[5] = {0};
+    menuList[0].text = "Param 0";
+    menuList[1].text = "Param 1";
+    menuList[2].text = "Param 2";
+    menuList[3].text = "Param 3";
+    menuList[4].text = "Param 4";
+    cfg.menuList     = menuList;
+    
+    cfg.nItem = 5;
+    cfg.size  = 8;
+    cfg.sl_color = M_COLOR_WHITE;
+    cfg.text_color = M_COLOR_WHITE;
+    cfg.title    = "Bad";
+    
+    ID_t ID_Menu = GUI_menu_create(&cfg);
+    GUI_menu_insert(ID_Menu);
+    GUI_menu_scroll(ID_Menu, 1);
+    GUI_menu_scroll(ID_Menu, 1);
+    GUI_menu_scroll(ID_Menu, -1);
+    GUI_RefreashEntireScreen();
     
 #if 0
     const char* pStrs[] = {

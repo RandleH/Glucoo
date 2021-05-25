@@ -483,7 +483,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     __PixelUnit_t color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
-    __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+//    __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
     __PixelUnit_t color_switch     = {.data = 0x00};
     //...//
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
