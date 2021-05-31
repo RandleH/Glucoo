@@ -546,7 +546,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     }
 }
 
-ID_t       GUI_menu_create             ( const __GUI_Menu_t* config ){
+ID_t       GLU_FUNC( Menu, create )    ( const __GUI_Menu_t* config ){
     __GUI_Menu_t* m_config = (__GUI_Menu_t*)RH_MALLOC( sizeof(__GUI_Menu_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -562,7 +562,7 @@ ID_t       GUI_menu_create             ( const __GUI_Menu_t* config ){
     return (ID_t)m_config;
 }
 
-E_Status_t GUI_menu_insert             ( ID_t ID ){
+E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
@@ -604,12 +604,12 @@ E_Status_t GUI_menu_insert             ( ID_t ID ){
     BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
@@ -617,7 +617,7 @@ E_Status_t GUI_menu_insert             ( ID_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
+E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -635,7 +635,7 @@ E_Status_t GUI_menu_frame              ( ID_t ID, bool  cmd    ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-int        GUI_menu_scroll             ( ID_t ID, int cmd ){
+int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     if( config->history == NULL )
@@ -660,12 +660,12 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
     BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();
     
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
@@ -673,7 +673,7 @@ int        GUI_menu_scroll             ( ID_t ID, int cmd ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t GUI_menu_delete             ( ID_t ID ){
+E_Status_t GLU_FUNC( Menu, delete )    ( ID_t ID ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     RH_FREE( (void*)config->history );
@@ -688,12 +688,12 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
                        config->area.xs+(int)(config->area.width )-1, \
                        config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
@@ -703,3 +703,5 @@ E_Status_t GUI_menu_delete             ( ID_t ID ){
 
     return MAKE_ENUM( kStatus_Success );
 }
+
+

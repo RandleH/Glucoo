@@ -1120,7 +1120,7 @@ static inline void __gui_check_object  ( const __GUI_Object_t* config ){
 }
 #endif
 
-ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
+ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config ){
     __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -1198,7 +1198,7 @@ ID_t RH_RESULT    GUI_object_create    ( const __GUI_Object_t* config ){
     return (ID_t)m_config;
 }
 
-E_Status_t        GUI_object_template  ( __GUI_Object_t* config, E_GUI_ObjWidget_t widget ){
+E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_ObjWidget_t widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1277,8 +1277,7 @@ E_Status_t        GUI_object_template  ( __GUI_Object_t* config, E_GUI_ObjWidget
     return MAKE_ENUM( kStatus_Success );
 }
 
-
-E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
+E_Status_t        GLU_FUNC( Object, frame    )  ( ID_t ID  , bool  cmd   ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -1294,19 +1293,19 @@ E_Status_t        GUI_object_frame     ( ID_t ID  , bool  cmd   ){
     }
     p->showFrame = cmd;
     BLK_FUNC( Graph, restoreCache )();
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( p->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( p->area.xs, \
                                                  p->area.ys, \
                                                  p->area.xs+(int)(p->area.width )-1, \
                                                  p->area.ys+(int)(p->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( p->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( p->area.xs, \
                                                  p->area.ys, \
                                                  p->area.xs+(int)(p->area.width )-1, \
                                                  p->area.ys+(int)(p->area.height)-1);
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GUI_object_insert    ( ID_t ID ){
+E_Status_t        GLU_FUNC( Object, insert   )  ( ID_t ID ){
     __GUI_Object_t* config = (__GUI_Object_t*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1314,19 +1313,19 @@ E_Status_t        GUI_object_insert    ( ID_t ID ){
 #endif
     
     (*config->insert_func)( config );
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GUI_object_adjust    ( ID_t ID  , void*  dataScr, size_t dataSize ){
+E_Status_t        GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize ){
     __GUI_Object_t* config = (__GUI_Object_t*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1335,12 +1334,12 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , void*  dataScr, size_t dataS
 #endif
     memcpy(config->dataScr, dataScr, dataSize);
     (*config->adjust_func)(config);
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);
@@ -1348,7 +1347,7 @@ E_Status_t        GUI_object_adjust    ( ID_t ID  , void*  dataScr, size_t dataS
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GUI_object_delete    ( ID_t ID ){
+E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     __GUI_Object_t* config = (__GUI_Object_t*)( ID );
     RH_FREE( (void*)config->history );
     RH_FREE( (void*)config->dataScr );
@@ -1363,12 +1362,12 @@ E_Status_t        GUI_object_delete    ( ID_t ID ){
                        config->area.xs+(int)(config->area.width )-1, \
                        config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     
-    GUI_is_AutoDisplay() ? GUI_RefreashScreenArea( config->area.xs, \
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1) \
                        :
-                         GUI_AddScreenArea     ( config->area.xs, \
+                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
                                                  config->area.ys, \
                                                  config->area.xs+(int)(config->area.width )-1, \
                                                  config->area.ys+(int)(config->area.height)-1);

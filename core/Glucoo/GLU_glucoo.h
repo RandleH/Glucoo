@@ -38,78 +38,76 @@ extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
 ===============================================================================================================*/
-void RH_PREMAIN GUI_Init        ( void );
+void RH_PREMAIN GLU_FUNC( GUI, init )        ( void );
 
-void GUI_set_penSize            ( size_t    penSize  );
-void GUI_set_penColor           ( __Pixel_t penColor );
-void GUI_auto_display           ( bool      cmd      );
+void GLU_FUNC( GUI, setPenSize  )            ( size_t    penSize  );
+void GLU_FUNC( GUI, setPenColor )            ( __Pixel_t penColor );
+void GLU_FUNC( GUI, autoDisplay )            ( bool      cmd      );
 
 
-void GUI_RefreashScreenArea     ( int xs,int ys,int xe,int ye );
-void GUI_AddScreenArea          ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, refreashScreenArea   )   ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, addScreenArea        )   ( int xs,int ys,int xe,int ye );
 
-void GUI_RefreashScreen         ( void );
-void GUI_RefreashEntireScreen   ( void );
+void GLU_FUNC( GUI, refreashScreen       )   ( void );
+void GLU_FUNC( GUI, refreashEntireScreen )   ( void );
 
-bool GUI_is_AutoDisplay         ( void );
-bool GUI_is_InternalGRAM        ( void );
-bool GUI_is_CacheIdle           ( void );
+bool GLU_FUNC( GUI, isAutoDisplay        )   ( void );
+bool GLU_FUNC( GUI, isInternalGRAM       )   ( void );
+bool GLU_FUNC( GUI, isCacheEmpty         )   ( void );
 
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_draw.c ]
 ===============================================================================================================*/
-void GUI_rect_raw               ( int xs,int ys,int xe,int ye );
-void GUI_rect_edged             ( int xs,int ys,int xe,int ye );
-void GUI_rect_fill              ( int xs,int ys,int xe,int ye );
-void GUI_rect_round             ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, rect_raw         )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, rect_edged       )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, rect_fill        )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, rect_round       )       ( int xs,int ys,int xe,int ye );
 
-void GUI_circle_raw             ( int x ,int y ,int d );
-void GUI_circle_edged           ( int x ,int y ,int d );
-void GUI_circle_fill            ( int x ,int y ,int d );
-void GUI_circle_qrt1_fill       ( int x ,int y ,int r );
-void GUI_circle_qrt2_fill       ( int x ,int y ,int r );
-void GUI_circle_qrt3_fill       ( int x ,int y ,int r );
-void GUI_circle_qrt4_fill       ( int x ,int y ,int r );
-void GUI_circle_qrt1_raw        ( int x ,int y ,int r );
-void GUI_circle_qrt2_raw        ( int x ,int y ,int r );
-void GUI_circle_qrt3_raw        ( int x ,int y ,int r );
-void GUI_circle_qrt4_raw        ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_raw       )       ( int x ,int y ,int d );
+void GLU_FUNC( GUI, circle_edged     )       ( int x ,int y ,int d );
+void GLU_FUNC( GUI, circle_fill      )       ( int x ,int y ,int d );
+void GLU_FUNC( GUI, circle_qrt1_fill )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt2_fill )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt3_fill )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt4_fill )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt1_raw  )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt2_raw  )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt3_raw  )       ( int x ,int y ,int r );
+void GLU_FUNC( GUI, circle_qrt4_raw  )       ( int x ,int y ,int r );
 
-void GUI_sausage_raw            ( int xs, int ys, int xe, int ye );
-
-void GUI_line_raw               ( int x1, int y1, int x2, int y2 );
+void GLU_FUNC( GUI, sausage_raw      )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
-
 #include "./object/GLU_object.h"
-ID_t            RH_RESULT GUI_object_create    ( const __GUI_Object_t* config );
-E_Status_t                GUI_object_template  (       __GUI_Object_t* config  , E_GUI_ObjWidget_t widget );
-E_Status_t                GUI_object_adjust    ( ID_t ID  , void*  dataScr, size_t dataSize );
-E_Status_t                GUI_object_frame     ( ID_t ID  , bool   cmd   );
-E_Status_t                GUI_object_insert    ( ID_t ID );
-E_Status_t                GUI_object_delete    ( ID_t ID );//
+ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config );
+E_Status_t                GLU_FUNC( Object, template )  (       __GUI_Object_t* config  , E_GUI_ObjWidget_t widget );
+E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
+E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );
+E_Status_t                GLU_FUNC( Object, insert   )  ( ID_t ID );
+E_Status_t                GLU_FUNC( Object, delete   )  ( ID_t ID );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]
 ===============================================================================================================*/
 #include "./window/GLU_window.h"
-ID_t            RH_RESULT GUI_window_create    ( const __GUI_Window_t* config );
-__GUI_Window_t*           GUI_window_quickSet  (       __GUI_Window_t* config );
-E_Status_t                GUI_window_insert    ( ID_t ID );
-E_Status_t                GUI_window_delete    ( ID_t ID );
+ID_t            RH_RESULT GLU_FUNC( Window, create   )  ( const __GUI_Window_t* config );
+__GUI_Window_t*           GLU_FUNC( Window, template )  (       __GUI_Window_t* config );
+E_Status_t                GLU_FUNC( Window, insert   )  ( ID_t ID );
+E_Status_t                GLU_FUNC( Window, delete   )  ( ID_t ID );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_menu.c ]
 ===============================================================================================================*/
 #include "./menu/GLU_menu.h"
-ID_t            RH_RESULT GUI_menu_create      ( const __GUI_Menu_t* config );
-E_Status_t                GUI_menu_insert      ( ID_t ID );
-E_Status_t                GUI_menu_frame       ( ID_t ID , bool cmd );
-int                       GUI_menu_scroll      ( ID_t ID , int  cmd );
-E_Status_t                GUI_menu_delete      ( ID_t ID );
+ID_t            RH_RESULT GLU_FUNC( Menu, create     )  ( const __GUI_Menu_t* config );
+E_Status_t                GLU_FUNC( Menu, insert     )  ( ID_t ID );
+E_Status_t                GLU_FUNC( Menu, frame      )  ( ID_t ID , bool cmd );
+int                       GLU_FUNC( Menu, scroll     )  ( ID_t ID , int  cmd );
+E_Status_t                GLU_FUNC( Menu, delete     )  ( ID_t ID );
 
 #ifdef __cplusplus
 }

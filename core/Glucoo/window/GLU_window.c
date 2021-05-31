@@ -324,7 +324,7 @@ static inline void __gui_check_window  ( const __GUI_Window_t* config ){
 }
 #endif
 
-ID_t GUI_window_create                 ( const __GUI_Window_t* config ){
+ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config ){
     __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
 
     __Font_backup_config();
@@ -376,7 +376,7 @@ ID_t GUI_window_create                 ( const __GUI_Window_t* config ){
     return (ID_t)m_config;
 }
 
-__GUI_Window_t* GUI_window_quickSet    (       __GUI_Window_t* config ){
+__GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 #else
@@ -405,23 +405,23 @@ __GUI_Window_t* GUI_window_quickSet    (       __GUI_Window_t* config ){
     return config;
 }
 
-E_Status_t GUI_window_insert           ( ID_t ID ){
+E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
     (*((__GUI_Window_t*)ID)->insert_func)( (__GUI_Window_t*)ID );
-    if( GUI_is_AutoDisplay() ){
+    if( GLU_FUNC( GUI, isAutoDisplay )() ){
         
     }else{
-        GUI_AddScreenArea(      ((__GUI_Window_t*)ID)->area.xs ,\
-                                ((__GUI_Window_t*)ID)->area.ys ,\
-                          (int)(((__GUI_Window_t*)ID)->area.xs +       ((__GUI_Window_t*)ID)->area.width -1),\
-                          (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
+        GLU_FUNC( GUI, addScreenArea )(      ((__GUI_Window_t*)ID)->area.xs ,\
+                                             ((__GUI_Window_t*)ID)->area.ys ,\
+                                       (int)(((__GUI_Window_t*)ID)->area.xs +  ((__GUI_Window_t*)ID)->area.width -1),\
+                                       (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
     }
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t GUI_window_delete           ( ID_t ID ){
+E_Status_t      GLU_FUNC( Window, delete   )    ( ID_t ID ){
     RH_FREE((void*)ID);
     //...//
     return MAKE_ENUM( kStatus_Success );

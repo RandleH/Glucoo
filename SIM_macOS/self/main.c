@@ -32,16 +32,10 @@ int main(int argc, const char * argv[]) {
 //    printf("%f\n",hypotf(64,128));
     Simul_API_Init();
     
-    GUI_Init();
-    GUI_set_penSize(5);
-    GUI_set_penColor(M_COLOR_WHITE);
+    GLU_FUNC( GUI, init        )();
+    GLU_FUNC( GUI, setPenSize  )(5);
+    GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
     
-//    BLK_Poker_option( M_BLK_POKER_OPT_NO_JOKER );
-//    
-//    S_PokerDeck_t *deck = NULL;
-//    
-//    deck = BLK_FUNC( Poker, create )();
-//    BLK_FUNC( Poker, print)( deck, printf );
     
     __GUI_Menu_t cfg = {0};
     
@@ -69,12 +63,13 @@ int main(int argc, const char * argv[]) {
     cfg.text_color = M_COLOR_WHITE;
     cfg.title    = "Bad";
     
-    ID_t ID_Menu = GUI_menu_create(&cfg);
-    GUI_menu_insert(ID_Menu);
-    GUI_menu_scroll(ID_Menu, 1);
-    GUI_menu_scroll(ID_Menu, 1);
-    GUI_menu_scroll(ID_Menu, -1);
-    GUI_RefreashEntireScreen();
+    ID_t ID_Menu = GLU_FUNC( Menu, create )(&cfg);
+    GLU_FUNC( Menu, insert )(ID_Menu);
+    GLU_FUNC( Menu, scroll )(ID_Menu,  1 );
+    GLU_FUNC( Menu, scroll )(ID_Menu,  1 );
+    GLU_FUNC( Menu, scroll )(ID_Menu, -1 );
+    
+    GLU_FUNC( GUI, refreashEntireScreen )();
     
 #if 0
     const char* pStrs[] = {
@@ -96,11 +91,11 @@ int main(int argc, const char * argv[]) {
     cfg.area.ys    = 3;
     cfg.area.width = 14;
     
-    ID_BoatStatus[0] = GUI_object_create( &cfg );
+    ID_BoatStatus[0] = GLU_FUNC( GUI, object_create )( &cfg );
     cfg.area.xs += cfg.area.width+2;
-    ID_BoatStatus[1] = GUI_object_create( &cfg );
+    ID_BoatStatus[1] = GLU_FUNC( GUI, object_create )( &cfg );
     cfg.area.xs += cfg.area.width+2;
-    ID_BoatStatus[2] = GUI_object_create( &cfg );
+    ID_BoatStatus[2] = GLU_FUNC( GUI, object_create )( &cfg );
     
     GUI_object_insert( ID_BoatStatus[0] );
     GUI_object_insert( ID_BoatStatus[1] );
@@ -113,19 +108,19 @@ int main(int argc, const char * argv[]) {
         .max   = 14,
         .value = 5//...//
     };
-    GUI_object_adjust( ID_BoatStatus[0], &data, sizeof(data));
+    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[0], &data, sizeof(data));
     
     data.value = 4; //...//
-    GUI_object_adjust( ID_BoatStatus[1], &data, sizeof(data));
+    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[1], &data, sizeof(data));
 
     data.value = 5;//...//
-    GUI_object_adjust( ID_BoatStatus[2], &data, sizeof(data));
+    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[2], &data, sizeof(data));
 
     
     data.value = 5;
-    GUI_object_adjust( ID_BoatStatus[1], &data, sizeof(data));
+    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[1], &data, sizeof(data));
     
-    GUI_RefreashScreen();
+    GLU_FUNC( GUI, refreashScreen )();
 #endif
 
     return 0;
