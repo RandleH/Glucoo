@@ -116,6 +116,28 @@ extern void* RH_CFG_GRAM_POINTER;
   #error " 'RH_FREE' has been defined. "
 #endif
 
+#define BLK_POKER_CALLOC(x,s)          calloc(x,s)
+#define BLK_POKER_MALLOC(x)            malloc(x)
+#define BLK_POKER_FREE(x)              free(x)
+#define BLK_POKER_ASSERT(expr)         assert(expr)
+
+#define BLK_DATA_CALLOC(x,s)           calloc(x,s)
+#define BLK_DATA_MALLOC(x)             malloc(x)
+#define BLK_DATA_FREE(x)               free(x)
+#define BLK_DATA_ASSERT(expr)          assert(expr)
+#define BLK_DATA_HASH_CALLOC(x,s)      calloc(x,s)
+#define BLK_DATA_HASH_MALLOC(x)        malloc(x)
+#define BLK_DATA_HASH_FREE(x)          free(x)
+
+#define BLK_DSP_CALLOC(x,s)            calloc(x,s)
+#define BLK_DSP_MALLOC(x)              malloc(x)
+#define BLK_DSP_FREE(x)                free(x)
+#define BLK_DSP_ASSERT(expr)           assert(expr)
+
+#define BLK_GRAPH_CALLOC(x,s)          calloc(x,s)
+#define BLK_GRAPH_MALLOC(x)            malloc(x)
+#define BLK_GRAPH_FREE(x)              free(x)
+#define BLK_GRAPH_ASSERT(expr)         assert(expr)
 
 
 

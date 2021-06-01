@@ -10,12 +10,11 @@ typedef struct __GUI_MenuParam_t __GUI_MenuParam_t;
 
 struct __GUI_Menu_t{
     const char*           title;                /* 菜单标题名字 */
-    __Pixel_t             color_title;          /* 菜单标题栏字体颜色 */
-    __Pixel_t             bk_color_title;       /* 菜单标题栏背景色 */
-    
-    __Pixel_t             bk_color;             /* 菜单背景色 */
-    __Pixel_t             text_color;           /* 菜单栏字体颜色 */
-    __Pixel_t             sl_color;             /* 菜单栏选中色 */
+    GLU_TYPE(Pixel)       color_title;          /* 菜单标题栏字体颜色 */
+    GLU_TYPE(Pixel)       bk_color_title;       /* 菜单标题栏背景色 */
+    GLU_TYPE(Pixel)       bk_color;             /* 菜单背景色 */
+    GLU_TYPE(Pixel)       text_color;           /* 菜单栏字体颜色 */
+    GLU_TYPE(Pixel)       sl_color;             /* 菜单栏选中色 */
     
     E_GUI_FontStyle_t     font;                 /* 菜单字体 */
     

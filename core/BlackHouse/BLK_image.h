@@ -11,8 +11,8 @@ extern "C" {
 /*===========================================================================================================================
  > Image Processing Reference
 ============================================================================================================================*/
-typedef uint8_t __PixelBIN_t;
-union __UNION_PixelBIN_t{
+typedef uint8_t BLK_TYPE(PixelBin);
+union BLK_UION(PixelBin){
     struct{
         uint8_t BIT0 : 1;
         uint8_t BIT1 : 1;
@@ -25,14 +25,15 @@ union __UNION_PixelBIN_t{
     };
     uint8_t data;
 };
-typedef union __UNION_PixelBIN_t __UNION_PixelBIN_t;
+typedef union BLK_UION(PixelBin) BLK_UION(PixelBin);
 
-struct __PixelRGB565_t{
+typedef uint16_t BLK_TYPE(Pixel565);
+struct BLK_SRCT(Pixel565){
     uint16_t B : 5;
     uint16_t G : 6;
     uint16_t R : 5;
 };
-union __UNION_PixelRGB565_t{
+union BLK_UION(Pixel565){
     struct{
         uint16_t B : 5;
         uint16_t G : 6;
@@ -40,15 +41,16 @@ union __UNION_PixelRGB565_t{
     };
     uint16_t data;
 };
-typedef struct  __PixelRGB565_t         __PixelRGB565_t;
-typedef union   __UNION_PixelRGB565_t   __UNION_PixelRGB565_t;
+typedef struct  BLK_SRCT(Pixel565)   BLK_SRCT(Pixel565);
+typedef union   BLK_UION(Pixel565)   BLK_UION(Pixel565);
 
- struct __PixelRGB888_t{
+typedef uint32_t BLK_TYPE(Pixel888);
+ struct BLK_SRCT(Pixel888){
      uint8_t B ;
      uint8_t G ;
      uint8_t R ;
  };
-union __UNION_PixelRGB888_t{
+union BLK_UION(Pixel888){
     struct{
         uint8_t B : 8;
         uint8_t G : 8;
@@ -56,76 +58,72 @@ union __UNION_PixelRGB888_t{
     };
     uint32_t data;
 };
-typedef struct  __PixelRGB888_t         __PixelRGB888_t;
-typedef union   __UNION_PixelRGB888_t   __UNION_PixelRGB888_t;
+typedef struct  BLK_SRCT(Pixel888)   BLK_SRCT(Pixel888);
+typedef union   BLK_UION(Pixel888)   BLK_UION(Pixel888);
 
-struct __ImageBIN_t{
-    __UNION_PixelBIN_t*    pBuffer;
+struct BLK_SRCT(ImgBin){
+    BLK_UION(PixelBin)*    pBuffer;
     size_t      width;
     size_t      height;
 };
-typedef struct __ImageBIN_t  __ImageBIN_t;
+typedef struct BLK_SRCT(ImgBin)  BLK_SRCT(ImgBin);
 
-struct __ImageRGB565_t{
-    __UNION_PixelRGB565_t* pBuffer;
+struct BLK_SRCT(Img565){
+    BLK_UION(Pixel565)*    pBuffer;
     size_t      width;
     size_t      height;
 };
-typedef struct __ImageRGB565_t  __ImageRGB565_t;
+typedef struct BLK_SRCT(Img565)  BLK_SRCT(Img565);
  
 
-struct __ImageRGB888_t{
-    __UNION_PixelRGB888_t* pBuffer;
+struct BLK_SRCT(Img888){
+    BLK_UION(Pixel888)* pBuffer;
     size_t      width;
     size_t      height;
 };
-typedef struct __ImageRGB888_t  __ImageRGB888_t;
+typedef struct BLK_SRCT(Img888)  BLK_SRCT(Img888);
 
-__ImageBIN_t*    MAKE_FUNC( ImgBIN    , create       ) (size_t width,size_t height);
-__ImageBIN_t*    MAKE_FUNC( ImgBIN    , load_bmp     ) (const char* __restrict__ path);
-__ImageBIN_t*    MAKE_FUNC( ImgBIN    , out_bmp      ) (const char* __restrict__ path,__ImageBIN_t* p);
-
-__ImageBIN_t*    MAKE_FUNC( ImgBIN    , copy         ) (const __ImageBIN_t* src,__ImageBIN_t* dst);
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, create       ) (size_t width,size_t height);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, create       ) (size_t width,size_t height);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, create       ) (size_t width,size_t height);
 
 
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp     ) (const char* __restrict__ path);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp     ) (const char* __restrict__ path);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp     ) (const char* __restrict__ path);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png     ) (const char* __restrict__ path);//
 
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(ImgBin)* p);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(Img565)* p);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(Img888)* p);
 
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , create       ) (size_t width,size_t height);//
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , load_bmp     ) (const char* __restrict__ path);//
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , out_bmp      ) (const char* __restrict__ path,__ImageRGB565_t* p);//
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, copy         ) (const BLK_SRCT(ImgBin)* src,BLK_SRCT(ImgBin)* dst);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, copy         ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, copy         ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst);
 
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , copy         ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst);//
-__ImageRGB565_t* MAKE_FUNC( ImgRGB565 , conv2D       ) (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D       ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const __Kernel_t* k,uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D       ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const __Kernel_t* k,uint16_t br_100);
 
-
-
-
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , create       ) (size_t width,size_t height);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_bmp     ) (const char* __restrict__ path);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , load_png     ) (const char* __restrict__ path);//
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , out_bmp      ) (const char* __restrict__ path,__ImageRGB888_t* p);
-
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , copy         ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst);
-void             MAKE_FUNC( ImgRGB888 , free         ) (      __ImageRGB888_t* ptr);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , free_buffer  ) (      __ImageRGB888_t* ptr);
+void              BLK_FUNC( Img888, free         ) (      BLK_SRCT(Img888)* ptr);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer  ) (      BLK_SRCT(Img888)* ptr);
  
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_gray  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_cold  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100);//
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_warm  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100);//
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , filter_OTUS  ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_gray  ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_cold  ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_warm  ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS  ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100);
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , trans_mirror ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint8_t HV);
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_gussian ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_average ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , blur_fast    ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast    ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);//
 
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , insert_NstNeighbor ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,size_t height,size_t width);
 
-__ImageRGB888_t* MAKE_FUNC( ImgRGB888 , conv2D       ) (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100);
 
-void             MAKE_FUNC( ImgRGB888 , data_OTUS    ) (const __ImageRGB888_t* src,uint32_t* threshold);
+
+void              BLK_FUNC( Img888, data_OTUS    ) (const BLK_SRCT(Img888)* src,uint32_t* threshold);
 
 
 #ifdef __cplusplus

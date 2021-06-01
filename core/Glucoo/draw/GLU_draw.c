@@ -5,7 +5,7 @@
 
 #define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
-extern __GraphInfo_t info_MainScreen; //...//
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 #define canvas info_MainScreen
 

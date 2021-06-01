@@ -67,7 +67,6 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( Menu, insert )(ID_Menu);
     GLU_FUNC( Menu, scroll )(ID_Menu,  1 );
     GLU_FUNC( Menu, scroll )(ID_Menu,  1 );
-    GLU_FUNC( Menu, scroll )(ID_Menu, -1 );
     
     GLU_FUNC( GUI, refreashEntireScreen )();
     

@@ -57,8 +57,8 @@ struct __GUI_Object_t{
     /*===================================================================================
      * Color --- Every objects has its background color.
      ===================================================================================*/
-    __Pixel_t            obj_color;
-    __Pixel_t            bk_color;
+    GLU_TYPE(Pixel)      obj_color;
+    GLU_TYPE(Pixel)      bk_color;
     
     /*===================================================================================
      * Old Data Source(Deprecated)

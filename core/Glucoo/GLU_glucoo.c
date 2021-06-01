@@ -20,15 +20,15 @@
  * [ GUI_API_AssertParam ] 断言输出
  * [ GUI_API_DelayMs     ] (未使用)
 ===============================================================================================================*/
-void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
+void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
 // THIS MAY COST SOME TIME.
 }
-void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const __Pixel_t* pixData) = GUI_DrawArea;
+void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData) = GUI_DrawArea;
 
-void RH_WEAK GUI_DummyDrawPixel (int x,int y,const __Pixel_t pixData){
+void RH_WEAK GUI_DummyDrawPixel (int x,int y,const GLU_TYPE(Pixel) pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
 }
-void (*GUI_API_DrawPixel)                     (int x ,int y ,const __Pixel_t pixData)          = GUI_DummyDrawPixel;
+void (*GUI_API_DrawPixel)                     (int x ,int y ,const GLU_TYPE(Pixel) pixData)          = GUI_DummyDrawPixel;
 
 void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
@@ -60,11 +60,11 @@ typedef BLK_SRCT(LinkLoop) __LINK_WindowCFG;
 #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
 
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
+        static GLU_UION(Pixel) GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH>>3 ][ GUI_X_WIDTH ];
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+        static GLU_UION(Pixel) GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        static __PixelUnit_t GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
+        static GLU_UION(Pixel) GRAM[M_SCREEN_CNT][ GUI_Y_WIDTH ][ GUI_X_WIDTH ];
     #endif
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )
     
@@ -83,11 +83,11 @@ typedef BLK_SRCT(LinkLoop) __LINK_WindowCFG;
 #pragma pack(1)
 static struct{
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH>>3][GUI_X_WIDTH];
+    GLU_UION(Pixel)    (*GRAM)[GUI_Y_WIDTH>>3][GUI_X_WIDTH];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
+    GLU_UION(Pixel)    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __PixelUnit_t    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
+    GLU_UION(Pixel)    (*GRAM)[GUI_Y_WIDTH   ][GUI_X_WIDTH];
 #endif
     size_t           allocated_byte;
 
@@ -101,7 +101,7 @@ static struct{
 
 }Screen;
 
-__GraphInfo_t info_MainScreen = { //...//
+BLK_TYPE(Canvas) info_MainScreen = { //...//
     .height = GUI_Y_WIDTH ,
     .width  = GUI_X_WIDTH ,
 };
@@ -114,16 +114,16 @@ void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
 
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
-    Screen.GRAM = (__PixelUnit_t (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
+    Screen.GRAM = (GLU_UION(Pixel) (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
 #endif
     
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(__Pixel_t) );
+        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
     #endif
 
     Screen.autoDisplay = false;
@@ -163,21 +163,21 @@ void GLU_FUNC( GUI, refreashScreenArea )     ( int xs, int ys, int xe, int ye ){
         const int ps      = ys>>3;
         const int pe      = ye>>3;
         const int p_width = (pe-ps+1);
-        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(p_width)*sizeof(__Pixel_t));
+        GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(p_width)*sizeof(GLU_TYPE(Pixel)));
         
        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                            BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
-                                             sizeof(__Pixel_t)             ,\
+                                             sizeof(GLU_TYPE(Pixel))             ,\
                                              GUI_X_WIDTH                   ,\
                                              xs, ps, xe, pe                ) );
 
 #else
         const int x_width = xe-xs+1;
         const int y_width = ye-ys+1;
-        __Pixel_t* p = (__Pixel_t*)RH_MALLOC((x_width)*(y_width)*sizeof(__Pixel_t));
+        GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(y_width)*sizeof(GLU_TYPE(Pixel)));
         (*GUI_API_DrawArea)( xs , ys , xe , ye ,
                             BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
-                                              sizeof(__Pixel_t)             ,\
+                                              sizeof(GLU_TYPE(Pixel))             ,\
                                               GUI_X_WIDTH                   ,\
                                               xs, ys, xe, ye                ) );
 #endif
@@ -275,7 +275,7 @@ void GLU_FUNC( GUI, addScreenArea )          ( int xs, int ys, int xe, int ye ){
 void GLU_FUNC( GUI, refreashEntireScreen )  ( void ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __Area_t *p = NULL;
-    (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (__Pixel_t*)Screen.GRAM[M_SCREEN_MAIN][0] );
+    (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (GLU_TYPE(Pixel)*)Screen.GRAM[M_SCREEN_MAIN][0] );
     while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
         p = BLK_FUNC( Stack, pop   )( Screen.areaNeedRefreashHead );
         RH_FREE(p);
@@ -287,7 +287,7 @@ void GLU_FUNC( GUI, setPenSize  )           ( size_t    penSize  ){
     BLK_FUNC( Graph, set_penSize ) ( penSize );
 }
 
-void GLU_FUNC( GUI, setPenColor )           ( __Pixel_t penColor ){
+void GLU_FUNC( GUI, setPenColor )           ( GLU_TYPE(Pixel) penColor ){
     BLK_FUNC( Graph, set_penColor )(penColor);
 }
 

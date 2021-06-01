@@ -338,8 +338,10 @@ typedef volatile uint64_t       vu64;
 #define BLK_UION( union )                    U_BLK##union##_t
 #define GLU_UION( union )                    U_GLU##union##_t
 #define SMP_UION( union )                    U_SMP##union##_t
- 
 
+#define BLK_TYPE( type )                     T_BLK##type##_t
+#define GLU_TYPE( type )                     T_GLU##type##_t
+#define SMP_TYPE( type )                     T_SMP##type##_t
  
 #if 0
 #error "Read the following tips and remove this error first."

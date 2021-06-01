@@ -2,7 +2,7 @@
 #include "BLK_poker.h"
 
 
-static struct S_PokerDeck_t cache;
+static struct BLK_SRCT(PokerDeck) cache;
 
 inline void __poker_print_cache( void ){
     BLK_FUNC( Poker, print )( &cache , printf );
@@ -23,18 +23,18 @@ static void __poker_create( void ){
     {
         register int8_t cnt = 0;
         
-        for( int8_t i=BLK_ENUM( kBLK_POKER_A ); i<=BLK_ENUM( kBLK_POKER_K ); i++ ){
+        for( int8_t i=BLK_ENUM_MEMBER( kBLK_POKER_A ); i<=BLK_ENUM_MEMBER( kBLK_POKER_K ); i++ ){
             cache.cards[cnt].num  = i;
-            cache.cards[cnt].suit = BLK_ENUM( kBLK_POKER_SPADE   );
+            cache.cards[cnt].suit = BLK_ENUM_MEMBER( kBLK_POKER_SPADE   );
             cnt++;
         }
 #ifdef RH_DEBUG
     BLK_POKER_ASSERT( cnt == 13 );
 #endif
 
-        for( int8_t i=BLK_ENUM( kBLK_POKER_A ); i<=BLK_ENUM( kBLK_POKER_K ); i++ ){
+        for( int8_t i=BLK_ENUM_MEMBER( kBLK_POKER_A ); i<=BLK_ENUM_MEMBER( kBLK_POKER_K ); i++ ){
             cache.cards[cnt].num  = i;
-            cache.cards[cnt].suit = BLK_ENUM( kBLK_POKER_HEART   );
+            cache.cards[cnt].suit = BLK_ENUM_MEMBER( kBLK_POKER_HEART   );
             cnt++;
         }
         
@@ -42,9 +42,9 @@ static void __poker_create( void ){
     BLK_POKER_ASSERT( cnt == 26 );
 #endif
 
-        for( int8_t i=BLK_ENUM( kBLK_POKER_A ); i<=BLK_ENUM( kBLK_POKER_K ); i++ ){
+        for( int8_t i=BLK_ENUM_MEMBER( kBLK_POKER_A ); i<=BLK_ENUM_MEMBER( kBLK_POKER_K ); i++ ){
             cache.cards[cnt].num  = i;
-            cache.cards[cnt].suit = BLK_ENUM( kBLK_POKER_CLUB    );
+            cache.cards[cnt].suit = BLK_ENUM_MEMBER( kBLK_POKER_CLUB    );
             cnt++;
         }
         
@@ -52,9 +52,9 @@ static void __poker_create( void ){
     BLK_POKER_ASSERT( cnt == 39 );
 #endif
 
-        for( int8_t i=BLK_ENUM( kBLK_POKER_A ); i<=BLK_ENUM( kBLK_POKER_K ); i++ ){
+        for( int8_t i=BLK_ENUM_MEMBER( kBLK_POKER_A ); i<=BLK_ENUM_MEMBER( kBLK_POKER_K ); i++ ){
             cache.cards[cnt].num  = i;
-            cache.cards[cnt].suit = BLK_ENUM( kBLK_POKER_DIAMOND );
+            cache.cards[cnt].suit = BLK_ENUM_MEMBER( kBLK_POKER_DIAMOND );
             cnt++;
         }
         
@@ -62,11 +62,11 @@ static void __poker_create( void ){
     BLK_POKER_ASSERT( cnt == 52 );
 #endif
         
-        cache.cards[ cnt   ].num  = BLK_ENUM( kBLK_POKER_JRED   );
-        cache.cards[ cnt++ ].suit = BLK_ENUM( kBLK_POKER_JOKER  );
+        cache.cards[ cnt   ].num  = BLK_ENUM_MEMBER( kBLK_POKER_JRED   );
+        cache.cards[ cnt++ ].suit = BLK_ENUM_MEMBER( kBLK_POKER_JOKER  );
         
-        cache.cards[ cnt   ].num  = BLK_ENUM( kBLK_POKER_JBLK   );
-        cache.cards[ cnt++ ].suit = BLK_ENUM( kBLK_POKER_JOKER  );
+        cache.cards[ cnt   ].num  = BLK_ENUM_MEMBER( kBLK_POKER_JBLK   );
+        cache.cards[ cnt++ ].suit = BLK_ENUM_MEMBER( kBLK_POKER_JOKER  );
         
 #ifdef RH_DEBUG
     BLK_POKER_ASSERT( cnt == 54 );
@@ -137,11 +137,11 @@ static void __poker_delete( void ){
 
 
 
-S_PokerDeck_t* RH_RESULT BLK_FUNC( Poker, create ) ( void             ){
+BLK_SRCT(PokerDeck)* RH_RESULT BLK_FUNC( Poker, create ) ( void             ){
     __poker_create();
     
     int8_t             cnt    = 54;   // Number of cards that is valid.
-    S_PokerDeck_t*     ptr    = NULL; // Result
+    BLK_SRCT(PokerDeck)*     ptr    = NULL; // Result
     int8_t             rm     = 0;    // Number of cards need to be removed.
     int8_t*            rm_idx = alloca( cnt );
     
@@ -360,33 +360,33 @@ S_PokerDeck_t* RH_RESULT BLK_FUNC( Poker, create ) ( void             ){
     return ptr;
 }
 
-void                     BLK_FUNC( Poker, option ) ( E_PokerOpt_t opt ){
+void                     BLK_FUNC( Poker, option ) ( uint8_t opt ){
     cache.opt = opt;
 }
 
 
 
-S_PokerDeck_t*           BLK_FUNC( Poker, wash   ) (       S_PokerDeck_t* deck){
+BLK_SRCT(PokerDeck)*           BLK_FUNC( Poker, wash   ) (       BLK_SRCT(PokerDeck)* deck){
     
     return 0;
 }
 
-void                     BLK_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck, int (*print)(const char*,...) ){
+void                     BLK_FUNC( Poker, print  ) ( const BLK_SRCT(PokerDeck)* deck, int (*print)(const char*,...) ){
     for( int8_t i=0; i<deck->size; i++ ){
         switch( deck->cards[i].suit ){
-            case BLK_ENUM( kBLK_POKER_SPADE ):
+            case BLK_ENUM_MEMBER( kBLK_POKER_SPADE ):
                 (*print)("♠ %d\n", deck->cards[i].num-1);
                 break; // '♥','♠','♦','♣'
-            case BLK_ENUM( kBLK_POKER_HEART ):
+            case BLK_ENUM_MEMBER( kBLK_POKER_HEART ):
                 (*print)("♥ %d\n", deck->cards[i].num-1);
                 break;
-            case BLK_ENUM( kBLK_POKER_DIAMOND ):
+            case BLK_ENUM_MEMBER( kBLK_POKER_DIAMOND ):
                 (*print)("♦ %d\n", deck->cards[i].num-1);
                 break;
-            case BLK_ENUM( kBLK_POKER_CLUB ):
+            case BLK_ENUM_MEMBER( kBLK_POKER_CLUB ):
                 (*print)("♣ %d\n", deck->cards[i].num-1);
                 break;
-            case BLK_ENUM( kBLK_POKER_JOKER ):
+            case BLK_ENUM_MEMBER( kBLK_POKER_JOKER ):
                 (*print)("J \n");
                 break;
             default:
@@ -395,7 +395,7 @@ void                     BLK_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck, 
     }
 }
 
-void                     BLK_FUNC( Poker, delete ) (       S_PokerDeck_t* deck ){
+void                     BLK_FUNC( Poker, delete ) (       BLK_SRCT(PokerDeck)* deck ){
 #ifdef RH_DEBUG
     BLK_POKER_ASSERT( deck );
     BLK_POKER_ASSERT( deck->cards );

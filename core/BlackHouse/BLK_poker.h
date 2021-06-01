@@ -1,17 +1,10 @@
 #ifndef _BLK_POKER_H
 #define _BLK_POKER_H
 
+#include "RH_config.h"
 #include "RH_common.h"
 
 
-
-#define BLK_POKER_MALLOC(x)         malloc(x)
-#define BLK_POKER_CALLOC(x,s)       calloc(x,s)
-#define BLK_POKER_FREE(x)           free(x)
-#define BLK_POKER_ASSERT(expr)      assert(expr)
-
-
-typedef uint8_t E_PokerOpt_t;
 #define M_BLK_POKER_OPT_ALL              (    0U )
 #define M_BLK_POKER_OPT_NO_JOKER         ( 1<<0U )
 #define M_BLK_POKER_OPT_NO_A             ( 1<<1U )
@@ -22,56 +15,55 @@ typedef uint8_t E_PokerOpt_t;
 #define M_BLK_POKER_OPT_NO_DIAMOND       ( 1<<6U )
 #define M_BLK_POKER_OPT_BAD              ( 1<<7U )
 
-enum E_PokerNum_t{
-    BLK_ENUM( kBLK_POKER_JRED  ),
-    BLK_ENUM( kBLK_POKER_JBLK  ),
-    BLK_ENUM( kBLK_POKER_A     ),
-    BLK_ENUM( kBLK_POKER_2     ),
-    BLK_ENUM( kBLK_POKER_3     ),
-    BLK_ENUM( kBLK_POKER_4     ),
-    BLK_ENUM( kBLK_POKER_5     ),
-    BLK_ENUM( kBLK_POKER_6     ),
-    BLK_ENUM( kBLK_POKER_7     ),
-    BLK_ENUM( kBLK_POKER_8     ),
-    BLK_ENUM( kBLK_POKER_9     ),
-    BLK_ENUM( kBLK_POKER_10    ),
-    BLK_ENUM( kBLK_POKER_J     ),
-    BLK_ENUM( kBLK_POKER_Q     ),
-    BLK_ENUM( kBLK_POKER_K     ),
+enum BLK_ENUM(PokerVal){
+    BLK_ENUM_MEMBER( kBLK_POKER_JRED  ),
+    BLK_ENUM_MEMBER( kBLK_POKER_JBLK  ),
+    BLK_ENUM_MEMBER( kBLK_POKER_A     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_2     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_3     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_4     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_5     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_6     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_7     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_8     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_9     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_10    ),
+    BLK_ENUM_MEMBER( kBLK_POKER_J     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_Q     ),
+    BLK_ENUM_MEMBER( kBLK_POKER_K     ),
 };
-typedef enum E_PokerNum_t E_PokerNum_t;
+typedef enum BLK_ENUM(PokerVal) BLK_ENUM(PokerVal);
 
-enum E_PokerSuit_t{
-    BLK_ENUM( kBLK_POKER_SPADE   ),
-    BLK_ENUM( kBLK_POKER_HEART   ),
-    BLK_ENUM( kBLK_POKER_CLUB    ),
-    BLK_ENUM( kBLK_POKER_DIAMOND ),
-    BLK_ENUM( kBLK_POKER_JOKER   ),
+enum BLK_ENUM(PokerSuit){
+    BLK_ENUM_MEMBER( kBLK_POKER_SPADE   ),
+    BLK_ENUM_MEMBER( kBLK_POKER_HEART   ),
+    BLK_ENUM_MEMBER( kBLK_POKER_CLUB    ),
+    BLK_ENUM_MEMBER( kBLK_POKER_DIAMOND ),
+    BLK_ENUM_MEMBER( kBLK_POKER_JOKER   ),
     
 };
-typedef enum E_PokerSuit_t E_PokerSuit_t;
+typedef enum BLK_ENUM(PokerSuit) BLK_ENUM(PokerSuit);
 
 
-struct S_PokerCard_t{
-    E_PokerNum_t   num;
-    E_PokerSuit_t  suit;
+struct BLK_SRCT(PokerCard){
+    BLK_ENUM(PokerVal)   num;
+    BLK_ENUM(PokerSuit)  suit;
 };
-typedef struct S_PokerCard_t S_PokerCard_t;
+typedef struct BLK_SRCT(PokerCard) BLK_SRCT(PokerCard);
 
-struct S_PokerDeck_t{
-    E_PokerOpt_t   opt;
-    S_PokerCard_t* cards;
-    int8_t         size;
+struct BLK_SRCT(PokerDeck){
+    uint8_t              opt;      // Use macro: M_BLK_POKER_OPT_xxxx
+    BLK_SRCT(PokerCard)* cards;
+    int8_t               size;
 };
-typedef struct S_PokerDeck_t S_PokerDeck_t;
+typedef struct BLK_SRCT(PokerDeck) BLK_SRCT(PokerDeck);
 
-S_PokerDeck_t* RH_RESULT BLK_FUNC( Poker, create ) ( void           );
-void                     BLK_FUNC( Poker, option ) ( E_PokerOpt_t   );
+BLK_SRCT(PokerDeck)* RH_RESULT BLK_FUNC( Poker, create ) ( void      );
+void                           BLK_FUNC( Poker, option ) ( uint8_t   );
 
-
-S_PokerDeck_t*           BLK_FUNC( Poker, wash   ) (       S_PokerDeck_t* deck );//
-void                     BLK_FUNC( Poker, delete ) (       S_PokerDeck_t* deck );
-void                     BLK_FUNC( Poker, print  ) ( const S_PokerDeck_t* deck , int (*print)(const char*,...) );
+BLK_SRCT(PokerDeck)*           BLK_FUNC( Poker, wash   ) (       BLK_SRCT(PokerDeck)* deck );//
+void                           BLK_FUNC( Poker, delete ) (       BLK_SRCT(PokerDeck)* deck );
+void                           BLK_FUNC( Poker, print  ) ( const BLK_SRCT(PokerDeck)* deck , int (*print)(const char*,...) );
 
 
 #endif

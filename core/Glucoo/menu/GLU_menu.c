@@ -5,7 +5,7 @@
 
 #define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
-extern __GraphInfo_t info_MainScreen; //...//
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     struct{
@@ -37,7 +37,7 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( (*pIter<128) ^ (color_text.data!=0) ){
+                if( (*pIter<128) ^ (config->color_title!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
                 }else{
                     info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -48,7 +48,7 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         /* 字体图像像素遍历pIter */
         uint8_t       *pIterFont = pF->output;
-        __PixelUnit_t *pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+        GLU_UION(Pixel) *pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
         
         for( int y=0; y<pF->height&&y<config->area.height; y++ ){
             register int x=0;
@@ -91,7 +91,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
-    __PixelUnit_t text_color = {.data = config->text_color};
+    GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     for ( int8_t i=0; i<pHistory->nItemPer&&i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
         int cnt = __Font_getWordNum( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
@@ -130,7 +130,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             /* 字体图像像素遍历pIterFont */
             uint8_t*       pIterFont = pF->output;
-            __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
             for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                 register int x=0;
                 for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -171,7 +171,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
-    __PixelUnit_t text_color = {.data = config->text_color};
+    GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     if( pHistory->cur == 0 ){       //  游标已经到顶, 只能滑动菜单
         if( pHistory->idx > 0 ){    //  菜单未到顶,向上滑动一栏
@@ -214,7 +214,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                     /* 字体图像像素遍历pIterFont */
                     uint8_t*       pIterFont = pF->output;
-                    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+                    GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
                     for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                         register int x=0;
                         for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -272,7 +272,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             /* 字体图像像素遍历pIterFont */
             uint8_t*       pIterFont = pF->output;
-            __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
             for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                 register int x=0;
                 for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -325,7 +325,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             /* 字体图像像素遍历pIterFont */
             uint8_t*       pIterFont = pF->output;
-            __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
             for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                 register int x=0;
                 for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -367,7 +367,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
-    __PixelUnit_t text_color = {.data = config->text_color};
+    GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     if( pHistory->cur+1==pHistory->nItemPer ){ // 游标到达底端, 只能滑动菜单
         if( pHistory->idx < config->nItem-pHistory->nItemPer ){ // 菜单未到底, 向下滑动一栏
@@ -410,7 +410,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                     /* 字体图像像素遍历pIterFont */
                     uint8_t*       pIterFont = pF->output;
-                    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+                    GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
                     for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                         register int x=0;
                         for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -468,7 +468,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                 /* 字体图像像素遍历pIterFont */
                 uint8_t*       pIterFont = pF->output;
-                __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+                GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
                 for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                     register int x=0;
                     for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -521,7 +521,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                 /* 字体图像像素遍历pIterFont */
                 uint8_t*       pIterFont = pF->output;
-                __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+                GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
                 for( int y=0; y<pF->height&&y<config->area.height; y++ ){
                     register int x=0;
                     for( ; x<pF->width; x++, pIterFont++, pIterScr++ ){

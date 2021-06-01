@@ -12,17 +12,17 @@ extern "C"{
 #endif
 
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-typedef __ImageBIN_t           __PixelInfo_t;
-typedef __UNION_PixelBIN_t     __PixelUnit_t;
-typedef uint8_t                __Pixel_t;
+typedef BLK_SRCT(ImgBin)       GLU_SRCT(Canvas);
+typedef BLK_UION(PixelBin)     GLU_UION(Pixel);
+typedef BLK_TYPE(PixelBin)     GLU_TYPE(Pixel);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-typedef __ImageRGB565_t        __PixelInfo_t;
-typedef __UNION_PixelRGB565_t  __PixelUnit_t;
-typedef uint16_t               __Pixel_t;
+typedef BLK_SRCT(Img565)       GLU_SRCT(Canvas);
+typedef BLK_UION(Pixel565)     GLU_UION(Pixel);
+typedef BLK_TYPE(Pixel565)     GLU_TYPE(Pixel);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-typedef __ImageRGB888_t        __PixelInfo_t;
-typedef __UNION_PixelRGB888_t  __PixelUnit_t;
-typedef uint32_t               __Pixel_t;
+typedef BLK_SRCT(Img888)       GLU_SRCT(Canvas);
+typedef BLK_UION(Pixel888)     GLU_UION(Pixel);
+typedef BLK_TYPE(Pixel888)     GLU_TYPE(Pixel);
 #else
   #error "[RH_gui_config]: Unknown color type."
 #endif
@@ -30,8 +30,8 @@ typedef uint32_t               __Pixel_t;
 
 typedef void* ID_t;
 
-extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const __Pixel_t* pixData);
-extern void (*GUI_API_DrawPixel)      (int x ,int y ,const __Pixel_t pixData);
+extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData);
+extern void (*GUI_API_DrawPixel)      (int x ,int y ,const GLU_TYPE(Pixel) pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);
 extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
 
@@ -41,7 +41,7 @@ extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG
 void RH_PREMAIN GLU_FUNC( GUI, init )        ( void );
 
 void GLU_FUNC( GUI, setPenSize  )            ( size_t    penSize  );
-void GLU_FUNC( GUI, setPenColor )            ( __Pixel_t penColor );
+void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Pixel) penColor );
 void GLU_FUNC( GUI, autoDisplay )            ( bool      cmd      );
 
 

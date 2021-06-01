@@ -15,11 +15,11 @@ extern "C"{
 #endif
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-static __ImageBIN_t*    pTmpScreenShot = NULL;
+static BLK_SRCT(ImgBin)*    pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-static __ImageRGB565_t* pTmpScreenShot = NULL;
+static BLK_SRCT(Img565)* pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-static __ImageRGB888_t* pTmpScreenShot = NULL;
+static BLK_SRCT(Img888)* pTmpScreenShot = NULL;
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
@@ -30,15 +30,15 @@ const char* dst_path = "C:/Users/asus/Desktop/screen.bmp";
 const char* dst_path = "/Users/randle_h/desktop/screen.bmp";
 #endif
 
-static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixData){
+static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
 
     if( pTmpScreenShot == NULL ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        pTmpScreenShot = __ImgBIN_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
+        pTmpScreenShot = BLK_FUNC( ImgBin, create )( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        pTmpScreenShot = __ImgRGB565_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
+        pTmpScreenShot = BLK_FUNC( Img565, create )( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        pTmpScreenShot = __ImgRGB888_create( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
+        pTmpScreenShot = BLK_FUNC( Img888, create )( RH_CFG_SCREEN_WIDTH, RH_CFG_SCREEN_HEIGHT );
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
@@ -76,18 +76,18 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const __Pixel_t* pixD
     
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __ImgBIN_out_bmp(dst_path, pTmpScreenShot);
+    BLK_FUNC( ImgBin, out_bmp )(dst_path, pTmpScreenShot);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __ImgRGB565_out_bmp(dst_path,pTmpScreenShot);
+    BLK_FUNC( Img565, out_bmp )(dst_path,pTmpScreenShot);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __ImgRGB888_out_bmp(dst_path,pTmpScreenShot);
+    BLK_FUNC( Img888, out_bmp )(dst_path,pTmpScreenShot);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
     
 }
     
-static void Simul_API_DrawPixel(int x ,int y ,const __Pixel_t pixData){
+static void Simul_API_DrawPixel(int x ,int y ,const GLU_TYPE(Pixel) pixData){
     if( pTmpScreenShot == NULL ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -105,7 +105,7 @@ static void Simul_API_DrawPixel(int x ,int y ,const __Pixel_t pixData){
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __ImgRGB888_out_bmp(dst_path,pTmpScreenShot);
+    BLK_FUNC( Img888, out_bmp )(dst_path,pTmpScreenShot);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif

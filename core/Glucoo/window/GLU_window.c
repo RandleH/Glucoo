@@ -5,7 +5,7 @@
 
 #define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
-extern __GraphInfo_t info_MainScreen; //...//
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #ifdef RH_DEBUG
@@ -26,15 +26,15 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     const int bar_edge   = config->win_edge;
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     
-    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
+    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #else
-    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
+    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #endif
     
     BLK_FUNC( Graph, backupCache )();
@@ -142,17 +142,17 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     
     }
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    const __PixelUnit_t color_button_cl = {.data = 0x00};
-    const __PixelUnit_t color_button_zm = {.data = 0x00};
-    const __PixelUnit_t color_button_mi = {.data = 0x00};
+    const GLU_UION(Pixel) color_button_cl = {.data = 0x00};
+    const GLU_UION(Pixel) color_button_zm = {.data = 0x00};
+    const GLU_UION(Pixel) color_button_mi = {.data = 0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    const __PixelUnit_t color_button_cl = {.data = M_COLOR_BLOODYMEAT };
-    const __PixelUnit_t color_button_zm = {.data = M_COLOR_GOLDEN     };
-    const __PixelUnit_t color_button_mi = {.data = M_COLOR_LAWNGREEN  };
+    const GLU_UION(Pixel) color_button_cl = {.data = M_COLOR_BLOODYMEAT };
+    const GLU_UION(Pixel) color_button_zm = {.data = M_COLOR_GOLDEN     };
+    const GLU_UION(Pixel) color_button_mi = {.data = M_COLOR_LAWNGREEN  };
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    const __PixelUnit_t color_button_cl = {.data = M_COLOR_BLOODYMEAT };
-    const __PixelUnit_t color_button_zm = {.data = M_COLOR_GOLDEN     };
-    const __PixelUnit_t color_button_mi = {.data = M_COLOR_LAWNGREEN  };
+    const GLU_UION(Pixel) color_button_cl = {.data = M_COLOR_BLOODYMEAT };
+    const GLU_UION(Pixel) color_button_zm = {.data = M_COLOR_GOLDEN     };
+    const GLU_UION(Pixel) color_button_mi = {.data = M_COLOR_LAWNGREEN  };
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -186,17 +186,17 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     const int bar_edge   = config->win_edge;
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
+//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    const __PixelUnit_t color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-//    const __PixelUnit_t color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const __PixelUnit_t color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const __PixelUnit_t color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
+//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
 #endif
-//    __GraphInfo_t info_MainScreen = {
+//    BLK_TYPE(Canvas) info_MainScreen = {
 //        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
 //        .height  = GUI_Y_WIDTH                    ,
 //        .width   = GUI_X_WIDTH                    ,

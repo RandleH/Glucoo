@@ -5,7 +5,8 @@
 
 #define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
-extern __GraphInfo_t info_MainScreen; //...//
+
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
     struct{
@@ -112,7 +113,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
             default:
                 RH_ASSERT(0);
         }
-        __PixelUnit_t color_text = {.data = config->obj_color};
+        GLU_UION(Pixel) color_text = {.data = config->obj_color};
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         /* 字体图像像素遍历pIter */
@@ -237,7 +238,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
             default:
                 RH_ASSERT(0);
         }
-        __PixelUnit_t color_text = {.data = config->obj_color};
+        GLU_UION(Pixel) color_text = {.data = config->obj_color};
     
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         uint8_t* pIter = pF->output;
@@ -355,12 +356,12 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
         default:
             RH_ASSERT(0);
     }
-    __PixelUnit_t color_text = {.data = config->obj_color};
+    GLU_UION(Pixel) color_text = {.data = config->obj_color};
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     uint8_t*       pIterFont = pF->output;
     
-    __PixelUnit_t* pIterScr  = info_MainScreen.pBuffer + (y_fs>>3)*(info_MainScreen.width)+x_fs;
+    GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs>>3)*(info_MainScreen.width)+x_fs;
     
     for( int y=0; y<pF->height && y<config->area.height; y++ ){
         for( int x=0; x<pF->width; x++, pIterFont++, pIterScr++ ){
@@ -482,14 +483,14 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     __Font_backup_config();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
-//    __PixelUnit_t color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
-    __PixelUnit_t color_switch     = {.data = 0x00};
+    GLU_UION(Pixel) color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+//    GLU_UION(Pixel) color_switch_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+    GLU_UION(Pixel) color_switch     = {.data = 0x00};
     //...//
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_switch_on  = {.data = config->obj_color };
-    __PixelUnit_t color_switch_off = {.data = M_COLOR_COAL      };
-    __PixelUnit_t color_switch     = {.data = M_COLOR_WHITESMOKE     };
+    GLU_UION(Pixel) color_switch_on  = {.data = config->obj_color };
+    GLU_UION(Pixel) color_switch_off = {.data = M_COLOR_COAL      };
+    GLU_UION(Pixel) color_switch     = {.data = M_COLOR_WHITESMOKE     };
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -590,9 +591,9 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
     __Font_backup_config();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+    GLU_UION(Pixel) color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_bar_off = {.data = config->bk_color};
+    GLU_UION(Pixel) color_bar_off = {.data = config->bk_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -641,9 +642,9 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
     __Font_backup_config();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+    GLU_UION(Pixel) color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_bar_on  = {.data = config->obj_color};
+    GLU_UION(Pixel) color_bar_on  = {.data = config->obj_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -698,9 +699,9 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
     __Font_backup_config();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
+    GLU_UION(Pixel) color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_bar_off = {.data = config->bk_color};
+    GLU_UION(Pixel) color_bar_off = {.data = config->bk_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -755,9 +756,9 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
     __Font_backup_config();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
+    GLU_UION(Pixel) color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color_bar_on  = {.data = config->obj_color};
+    GLU_UION(Pixel) color_bar_on  = {.data = config->obj_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -943,9 +944,9 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color  = {.data = (config->bk_color==0x00)?0x00:0xff};
+    GLU_UION(Pixel) color  = {.data = (config->bk_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color  = {.data = config->bk_color};
+    GLU_UION(Pixel) color  = {.data = config->bk_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -1010,9 +1011,9 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     
     // 确认画笔颜色
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    __PixelUnit_t color  = {.data = (config->obj_color==0x00)?0x00:0xff};
+    GLU_UION(Pixel) color  = {.data = (config->obj_color==0x00)?0x00:0xff};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    __PixelUnit_t color  = {.data = config->obj_color};
+    GLU_UION(Pixel) color  = {.data = config->obj_color};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
 #else
   #error "[RH_graphic]: Unknown color type."
@@ -1071,7 +1072,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         default:
             RH_ASSERT(0);
     }
-    __PixelUnit_t color_text = {.data = config->obj_color};
+    GLU_UION(Pixel) color_text = {.data = config->obj_color};
 
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     uint8_t* pIter = pF->output;

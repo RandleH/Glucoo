@@ -92,12 +92,12 @@ typedef struct tagBITMAPINFOHEADER {
 /// Time stamp information
 #define PNG_tIME                PNG_CHUNK('t','I','M','E')
 
-__ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp )    (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
     BITMAPINFOHEADER infoHead;
 
-    __ImageBIN_t* pIMG = RH_MALLOC(sizeof(__ImageBIN_t));
+    BLK_SRCT(ImgBin)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(ImgBin)));
     pIMG->height  = 0;
     pIMG->width   = 0;
     pIMG->pBuffer = NULL;
@@ -175,8 +175,8 @@ __ImageBIN_t*    __ImgBIN_load_bmp         (const char* __restrict__ path){
     return pIMG;
 }
     
-__ImageBIN_t*    __ImgBIN_create           (size_t width,size_t height){
-    __ImageBIN_t* pIMG = RH_MALLOC(sizeof(__ImageBIN_t));
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, create   )    (size_t width,size_t height){
+    BLK_SRCT(ImgBin)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(ImgBin)));
     __exitReturn( !pIMG, NULL );
     pIMG->height          = height;
     pIMG->width           = width;
@@ -188,18 +188,18 @@ __ImageBIN_t*    __ImgBIN_create           (size_t width,size_t height){
     }
     return pIMG;
 }
-    
-__ImageBIN_t*    __ImgBIN_copy             (const __ImageBIN_t* src,__ImageBIN_t* dst){
+
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, copy     )    (const BLK_SRCT(ImgBin)* src,BLK_SRCT(ImgBin)* dst){
     __exitReturn( src==NULL         ||dst==NULL          , dst );
     __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
     
-    memcpy(dst->pBuffer, src->pBuffer, (__RND8(src->height)>>3)*(src->width)*sizeof(__UNION_PixelBIN_t));
+    memcpy(dst->pBuffer, src->pBuffer, (__RND8(src->height)>>3)*(src->width)*sizeof(BLK_TYPE(PixelBin)));
     dst->height = src->height;
     dst->width  = src->width;
     return dst;
 }
     
-__ImageBIN_t*    __ImgBIN_out_bmp          (const char* __restrict__ path,__ImageBIN_t* p){
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path,BLK_SRCT(ImgBin)* p){
     __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
@@ -209,7 +209,7 @@ __ImageBIN_t*    __ImgBIN_out_bmp          (const char* __restrict__ path,__Imag
     
     BITMAPFILEHEADER fileHead = {
         .bfType      = 0x4d42  ,
-        .bfSize      = 458     , //(uint32_t)((__RND8(p->height)>>3)*(p->width)*sizeof(__UNION_PixelBIN_t) + 54) ,
+        .bfSize      = 458     , //(uint32_t)((__RND8(p->height)>>3)*(p->width)*sizeof(BLK_TYPE(PixelBin)) + 54) ,
         .bfReserved1 = 0       ,
         .bfReserved2 = 0       ,
         .bfOffBits   = 62      ,
@@ -262,12 +262,12 @@ __ImageBIN_t*    __ImgBIN_out_bmp          (const char* __restrict__ path,__Imag
     return p;
 }
 
-__ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
+BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp )    (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
     BITMAPINFOHEADER infoHead;
 
-    __ImageRGB565_t* pIMG = RH_MALLOC(sizeof(__ImageRGB565_t));
+    BLK_SRCT(Img565)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img565)));
     pIMG->height  = 0;
     pIMG->width   = 0;
     pIMG->pBuffer = NULL;
@@ -290,14 +290,14 @@ __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
 
     fseek(bmp, fileHead.bfOffBits, SEEK_SET);
 
-    pIMG->pBuffer = (__UNION_PixelRGB565_t*)RH_MALLOC(infoHead.biWidth * infoHead.biHeight * sizeof(__UNION_PixelRGB565_t));
+    pIMG->pBuffer = (BLK_UION(Pixel565)*)RH_MALLOC(infoHead.biWidth * infoHead.biHeight * sizeof(BLK_UION(Pixel565)));
     
     for (int row = 0; row < infoHead.biHeight; row++) {
         for (int col = 0; col < infoHead.biWidth; col++) {
-            fread(&(pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data), sizeof(__PixelRGB565_t), 1, bmp);
+            fread(&(pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data), sizeof(BLK_SRCT(Pixel565)), 1, bmp);
             // printf("%d ",pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data);
         }
-        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB565_t))%4)%4;
+        int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel565)))%4)%4;
         uint8_t dummyByte;
         while(eps--){
             fread(&dummyByte,sizeof(char) ,1 , bmp);
@@ -312,8 +312,8 @@ __ImageRGB565_t* __ImgRGB565_load_bmp      (const char* __restrict__ path){
     return pIMG;
 }
 
-__ImageRGB565_t* __ImgRGB565_create        (size_t width,size_t height){
-    __ImageRGB565_t* pIMG = RH_MALLOC(sizeof(__ImageRGB565_t));
+BLK_SRCT(Img565)* BLK_FUNC( Img565, create   )    (size_t width,size_t height){
+    BLK_SRCT(Img565)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img565)));
     __exitReturn( !pIMG, NULL );
     pIMG->height          = height;
     pIMG->width           = width;
@@ -325,28 +325,28 @@ __ImageRGB565_t* __ImgRGB565_create        (size_t width,size_t height){
     return pIMG;
 }
 
-__ImageRGB565_t* __ImgRGB565_copy          (const __ImageRGB565_t* src,__ImageRGB565_t* dst){
+BLK_SRCT(Img565)* BLK_FUNC( Img565, copy     )    (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst){
     __exitReturn( src==NULL         ||dst==NULL          , dst );
     __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
 
-    memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(__UNION_PixelRGB565_t));
+    memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(BLK_UION(Pixel565)));
     dst->height = src->height;
     dst->width  = src->width;
     return dst;
 }
 
-__ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__ImageRGB565_t* p){
+BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp  )    (const char* __restrict__ path,BLK_SRCT(Img565)* p){
     __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
     __exitReturn(bmp == NULL, NULL);
 
-    int eps = (4-(p->width*sizeof(__PixelRGB565_t))%4)%4;
+    int eps = (4-(p->width*sizeof(BLK_SRCT(Pixel565)))%4)%4;
     BITMAPFILEHEADER fileHead = {
         .bfOffBits      = 40 + 14   ,
         .bfReserved1    = 0         ,
         .bfReserved2    = 0         ,
-        .bfSize         = (uint32_t)(p->height * p->width * sizeof(__PixelRGB565_t) + 54),
+        .bfSize         = (uint32_t)(p->height * p->width * sizeof(BLK_SRCT(Pixel565)) + 54),
         .bfType         = 0x4D42    ,
     };
     BITMAPINFOHEADER infoHead = {
@@ -356,7 +356,7 @@ __ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__Imag
         .biPlanes        = 1         ,
         .biBitCount      = 5+6+5     ,
         .biCompression   = 0         ,
-        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(__PixelRGB565_t) + eps*(p->height)) ,
+        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(BLK_SRCT(Pixel565)) + eps*(p->height)) ,
         .biClrUsed       = 0         ,
         .biClrImportant  = 0         ,
         .biXPelsPerMeter = 0         ,
@@ -370,9 +370,9 @@ __ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__Imag
     fseek(bmp,54L,SEEK_SET);
     for (int row = 0; row < p->height; row++) {
         for (int col = 0; col < p->width; col++) {
-            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(__PixelRGB565_t) ,1 ,bmp );
+            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel565)) ,1 ,bmp );
         }
-        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB565_t))%4)%4;
+        int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel565)))%4)%4;
         uint8_t dummyByte = 0x00;
         while(eps--){
             fwrite(&dummyByte,sizeof(char) ,1 , bmp);
@@ -383,12 +383,75 @@ __ImageRGB565_t* __ImgRGB565_out_bmp       (const char* __restrict__ path,__Imag
     return p;
 }
     
-__ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
+BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D   )    (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const __Kernel_t* k,uint16_t br_100){
+        if( src == NULL || src->pBuffer == NULL || k == NULL){
+            return dst;
+        }
+            
+        if(dst == NULL){
+            dst = (BLK_SRCT(Img565)*)RH_MALLOC(sizeof(BLK_SRCT(Img565)));
+            if(dst == NULL) // Not enough space :-(
+                return dst;
+            dst->pBuffer = (BLK_UION(Pixel565)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel565)));
+            if(dst->pBuffer == NULL) // Not enough space :-(
+                return dst;
+        }
+        
+        if(dst->pBuffer == NULL){
+            dst->pBuffer = (BLK_UION(Pixel565)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel565)));
+            if(dst->pBuffer == NULL) // Not enough space :-(
+                return dst;
+        }
+        
+        if(dst == NULL){
+            dst = (BLK_SRCT(Img565)*)RH_MALLOC(sizeof(BLK_SRCT(Img565)));
+            if(dst == NULL) // Not enough space :-(
+                return dst;
+            dst->pBuffer = (BLK_UION(Pixel565)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel565)));
+        }
+
+        for(int j=0;j<src->height;j++){
+            for(int i=0;i<src->width;i++){
+                int div = k->sum;
+                
+                // Here comes the convolution part.
+                unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0; // Preparation for RGB data.
+                for(int n=0;n<k->order;n++){
+                    for(int m=0;m<k->order;m++){
+                        size_t offset_y  = j-(k->order>>1)+n;
+                        size_t offset_x  = i-(k->order>>1)+m;
+                        int selectKernel = *( k->pBuffer + n       * k->order + m       );
+                        if( offset_x>=src->width || offset_y>=src->height ){
+                            div -= selectKernel;
+                        }else{
+                            uint8_t select_R  = (src->pBuffer + offset_y*src->width + offset_x)->R;
+                            uint8_t select_G  = (src->pBuffer + offset_y*src->width + offset_x)->G;
+                            uint8_t select_B  = (src->pBuffer + offset_y*src->width + offset_x)->B;
+                            
+                            tmp_R += ( (select_R) * (selectKernel) );
+                            tmp_G += ( (select_G) * (selectKernel) );
+                            tmp_B += ( (select_B) * (selectKernel) );
+                        }
+                    }
+                }
+                size_t offset = (j*src->width)+i;
+                if(offset < dst->width*dst->height){
+                    (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R*br_100/(div*100));
+                    (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G*br_100/(div*100));
+                    (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B*br_100/(div*100));
+                }
+            }
+        }
+        
+        return dst;
+    }
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp )    (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
     BITMAPINFOHEADER infoHead;
 
-    __ImageRGB888_t* pIMG = RH_MALLOC(sizeof(__ImageRGB888_t));
+    BLK_SRCT(Img888)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img888)));
     pIMG->height  = 0;
     pIMG->width   = 0;
     pIMG->pBuffer = NULL;
@@ -409,13 +472,13 @@ __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
 
     fseek(bmp, fileHead.bfOffBits, SEEK_SET);
 
-    pIMG->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(infoHead.biWidth * infoHead.biHeight * sizeof(__UNION_PixelRGB888_t));
+    pIMG->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(infoHead.biWidth * infoHead.biHeight * sizeof(BLK_UION(Pixel888)));
     
     for (int row = 0; row < infoHead.biHeight; row++) {
         for (int col = 0; col < infoHead.biWidth; col++) {
-            fread(&(pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data), sizeof(__PixelRGB888_t), 1, bmp);
+            fread(&(pIMG->pBuffer[(infoHead.biHeight - row - 1)*infoHead.biWidth + col].data), sizeof(BLK_SRCT(Pixel888)), 1, bmp);
         }
-        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB888_t))%4)%4;
+        int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel888)))%4)%4;
         uint8_t dummyByte;
         while(eps--){
             fread(&dummyByte,sizeof(char) ,1 , bmp);
@@ -430,7 +493,7 @@ __ImageRGB888_t* __ImgRGB888_load_bmp      (const char* __restrict__ path){
 }
 
 #if 0
-__ImageRGB888_t* __ImgRGB888_load_png      (const char* __restrict__ path){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png )    (const char* __restrict__ path){
 #pragma pack(1)
 struct {
 //    uint32_t chunk_data_lenth;
@@ -451,7 +514,7 @@ struct {
     
     FILE*   png;
     
-    __ImageRGB888_t* pIMG = RH_MALLOC(sizeof(__ImageRGB888_t));
+    BLK_SRCT(Img888)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img888)));
 #ifdef RH_DEBUG
     RH_ASSERT( pIMG );
 #endif
@@ -568,18 +631,18 @@ struct {
 }
 #endif
 
-__ImageRGB888_t* __ImgRGB888_copy          (const __ImageRGB888_t* src,__ImageRGB888_t* dst){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, copy     )    (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst){
     __exitReturn( src==NULL         ||dst==NULL          , dst );
     __exitReturn( src->pBuffer==NULL||dst->pBuffer==NULL , dst );
 
-    memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(__UNION_PixelRGB888_t));
+    memcpy(dst->pBuffer, src->pBuffer, (src->height)*(src->width)*sizeof(BLK_UION(Pixel888)));
     dst->height = src->height;
     dst->width  = src->width;
     return dst;
 }
 
-__ImageRGB888_t* __ImgRGB888_create        (size_t width,size_t height){
-    __ImageRGB888_t* pIMG = RH_MALLOC(sizeof(__ImageRGB888_t));
+BLK_SRCT(Img888)* BLK_FUNC( Img888, create   )    (size_t width,size_t height){
+    BLK_SRCT(Img888)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img888)));
     if(pIMG == NULL)
         return NULL;
     pIMG->height          = height;
@@ -593,18 +656,18 @@ __ImageRGB888_t* __ImgRGB888_create        (size_t width,size_t height){
     return pIMG;
 }
 
-__ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__ImageRGB888_t* p){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp     )  (const char* __restrict__ path,BLK_SRCT(Img888)* p){
     __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
     __exitReturn(bmp == NULL, NULL);
 
-    int eps = (4-(p->width*sizeof(__PixelRGB888_t))%4)%4;
+    int eps = (4-(p->width*sizeof(BLK_SRCT(Pixel888)))%4)%4;
     BITMAPFILEHEADER fileHead = {
         .bfOffBits      = 40 + 14   ,
         .bfReserved1    = 0         ,
         .bfReserved2    = 0         ,
-        .bfSize         = (uint32_t)(p->height * p->width * sizeof(__PixelRGB888_t) + 54),
+        .bfSize         = (uint32_t)(p->height * p->width * sizeof(BLK_SRCT(Pixel888)) + 54),
         .bfType         = 0x4D42    ,
     };
     BITMAPINFOHEADER infoHead = {
@@ -614,7 +677,7 @@ __ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__Imag
         .biPlanes        = 1         ,
         .biBitCount      = 8+8+8     ,
         .biCompression   = 0         ,
-        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(__PixelRGB888_t) + eps*(p->height)) ,
+        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(BLK_SRCT(Pixel888)) + eps*(p->height)) ,
         .biClrUsed       = 0         ,
         .biClrImportant  = 0         ,
         .biXPelsPerMeter = 0         ,
@@ -630,9 +693,9 @@ __ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__Imag
     fseek(bmp,54L,SEEK_SET);
     for (int row = 0; row < p->height; row++) {
         for (int col = 0; col < p->width; col++) {
-            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(__PixelRGB888_t) ,1 ,bmp );
+            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel888)) ,1 ,bmp );
         }
-        int eps = (4-(infoHead.biWidth*sizeof(__PixelRGB888_t))%4)%4;
+        int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel888)))%4)%4;
         uint8_t dummyByte = 0x00;
         while(eps--){
             fwrite(&dummyByte,sizeof(char) ,1 , bmp);
@@ -643,7 +706,7 @@ __ImageRGB888_t* __ImgRGB888_out_bmp       (const char* __restrict__ path,__Imag
     return p;
 }
 
-__ImageRGB888_t* __ImgRGB888_free_buffer   (__ImageRGB888_t*      ptr){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer )  (BLK_SRCT(Img888)*      ptr){
     RH_FREE(ptr->pBuffer);
     ptr->height  = 0;
     ptr->width   = 0;
@@ -651,11 +714,11 @@ __ImageRGB888_t* __ImgRGB888_free_buffer   (__ImageRGB888_t*      ptr){
     return ptr;
 }
 
-void             __ImgRGB888_free          (__ImageRGB888_t*      ptr){
-    RH_FREE(__ImgRGB888_free_buffer(ptr));
+void              BLK_FUNC( Img888, free        )  (BLK_SRCT(Img888)*      ptr){
+    RH_FREE(BLK_FUNC( Img888, free_buffer )(ptr));
 }
 
-__ImageRGB888_t* __ImgRGB888_filter_gray   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_gray )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
     
     if(src != NULL && dst != NULL){
         if(src->pBuffer != NULL && dst->pBuffer != NULL){
@@ -670,22 +733,24 @@ __ImageRGB888_t* __ImgRGB888_filter_gray   (const __ImageRGB888_t* src,__ImageRG
     return dst;
 }
 
-__ImageRGB888_t* __ImgRGB888_filter_cold   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_cold )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
     return dst;
 }
 
-__ImageRGB888_t* __ImgRGB888_filter_warm   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_warm )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
     
     return dst;
 }
 
-__ImageRGB888_t* __ImgRGB888_filter_OTUS   (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint32_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
     uint32_t threshold = 0;
     __exitReturn( src==NULL         , NULL);
     __exitReturn( src->pBuffer==NULL, NULL);
     __exitReturn( dst==NULL         , NULL);
     __exitReturn( dst->pBuffer==NULL, NULL);
-    __ImgRGB888_data_OTUS(src, &threshold);
+    
+    BLK_FUNC( Img888, data_OTUS )(src, &threshold);
+    
     __exitReturn(threshold == (uint32_t)(-1), NULL);
     
     for(int y=0;y<src->height;y++){
@@ -702,24 +767,23 @@ __ImageRGB888_t* __ImgRGB888_filter_OTUS   (const __ImageRGB888_t* src,__ImageRG
     
 //    printf("otus threshold = %d\n", threshold);
     
-    
     return NULL;
 }
      
-__ImageRGB888_t* __ImgRGB888_trans_mirror  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,uint8_t HV){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint8_t HV){
     if( src == NULL || src->pBuffer == NULL ){
         return NULL;
     }
     if(dst == NULL){
-        dst = (__ImageRGB888_t*)RH_MALLOC(sizeof(__ImageRGB888_t));
+        dst = (BLK_SRCT(Img888)*)RH_MALLOC(sizeof(BLK_SRCT(Img888)));
         if(dst == NULL) // Not enough space :-(
             return dst;
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel888)));
         if(dst->pBuffer == NULL) // Not enough space :-(
             return dst;
     }
     if(dst->pBuffer == NULL){
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel888)));
         if(dst->pBuffer == NULL) // Not enough space :-(
             return dst;
     }
@@ -728,8 +792,8 @@ __ImageRGB888_t* __ImgRGB888_trans_mirror  (const __ImageRGB888_t* src,__ImageRG
         case 0:
             for(size_t y=0;y<src->height;y++){
                 for(size_t x=0;x<((src->width+1)>>1);x++){
-                    __UNION_PixelRGB888_t tmp_fore = src->pBuffer[y*src->width + x];
-                    __UNION_PixelRGB888_t tmp_back = src->pBuffer[y*src->width + src->width - 1 - x];
+                    BLK_UION(Pixel888) tmp_fore = src->pBuffer[y*src->width + x];
+                    BLK_UION(Pixel888) tmp_back = src->pBuffer[y*src->width + src->width - 1 - x];
                     dst->pBuffer[y*src->width+x]                    = tmp_back;
                     dst->pBuffer[y*src->width + src->width - 1 - x] = tmp_fore;
                 }
@@ -738,7 +802,7 @@ __ImageRGB888_t* __ImgRGB888_trans_mirror  (const __ImageRGB888_t* src,__ImageRG
             break;
         case 1:
             for(size_t y=0;y<src->height;y++){
-                memmove(&dst->pBuffer[(src->height-1-y)*dst->width], &src->pBuffer[y*src->width], src->width*sizeof(__UNION_PixelRGB888_t));
+                memmove(&dst->pBuffer[(src->height-1-y)*dst->width], &src->pBuffer[y*src->width], src->width*sizeof(BLK_UION(Pixel888)));
             }
             break;
         default:
@@ -749,7 +813,7 @@ __ImageRGB888_t* __ImgRGB888_trans_mirror  (const __ImageRGB888_t* src,__ImageRG
     return NULL;
 }
 
-__ImageRGB888_t* __ImgRGB888_blur_gussian  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
     static __Kernel_t gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
@@ -772,7 +836,7 @@ __ImageRGB888_t* __ImgRGB888_blur_gussian  (const __ImageRGB888_t* src,__ImageRG
         __gussianKernel(sigma,order,&gus_kernel);
     }
 
-    __ImageRGB888_t* pImg = __ImgRGB888_conv2D(src, dst,&gus_kernel,br_100);
+    BLK_SRCT(Img888)* pImg = BLK_FUNC( Img888, conv2D )(src, dst,&gus_kernel,br_100);
     
     radSize_old      = radSize;
 
@@ -780,14 +844,14 @@ __ImageRGB888_t* __ImgRGB888_blur_gussian  (const __ImageRGB888_t* src,__ImageRG
 
 }
     
-__ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
     __exitReturn(src == NULL || dst == NULL , NULL);
     
-    __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
-    __UNION_PixelRGB888_t* pDstData = dst->pBuffer;
+    BLK_UION(Pixel888)* pSrcData = src->pBuffer;
+    BLK_UION(Pixel888)* pDstData = dst->pBuffer;
     if(pSrcData == dst->pBuffer){
         RH_ASSERT(0);
-        pDstData = RH_MALLOC(src->height*src->width*sizeof(__UNION_PixelRGB888_t));
+        pDstData = RH_MALLOC(src->height*src->width*sizeof(BLK_UION(Pixel888)));
     }
     
     size_t order = __limit(((radSize*60)>>16), 3, 101);
@@ -1005,13 +1069,13 @@ __ImageRGB888_t* __ImgRGB888_blur_average  (const __ImageRGB888_t* src,__ImageRG
 }
     if(src->pBuffer == dst->pBuffer){
         RH_ASSERT(0);
-        memcpy(dst->pBuffer,pDstData,src->height*src->width*sizeof(__UNION_PixelRGB888_t));
+        memcpy(dst->pBuffer,pDstData,src->height*src->width*sizeof(BLK_UION(Pixel888)));
         RH_FREE(pDstData);
     }
     return dst;
 }
 
-__ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRGB888_t* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
     __exitReturn( !src || !dst || !src->pBuffer || !dst->pBuffer, NULL );
     
     const int xs = area->xs;
@@ -1019,18 +1083,18 @@ __ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRG
     const int xe = (int)(area->xs + area->width  -1);
 //    const int ye = (int)(area->ys + area->height -1);
     
-    const __UNION_PixelRGB888_t* pSrcData = src->pBuffer;
-    __UNION_PixelRGB888_t*       pDstData = dst->pBuffer;
+    const BLK_UION(Pixel888)* pSrcData = src->pBuffer;
+    BLK_UION(Pixel888)*       pDstData = dst->pBuffer;
 
-    __UNION_PixelRGB888_t*       pTmpData = dst->pBuffer;//RH_MALLOC( area->width*area->height*sizeof(__UNION_PixelRGB888_t) );
+    BLK_UION(Pixel888)*       pTmpData = dst->pBuffer;//RH_MALLOC( area->width*area->height*sizeof(BLK_UION(Pixel888)) );
     
     
 
     long accumulate_R=0, accumulate_G=0, accumulate_B=0;
     // Horizontal Processing
     for( int y=0; y<area->height; y++ ){
-        __UNION_PixelRGB888_t pix_s = pSrcData[ (y+ys)*src->width + xs ];
-        __UNION_PixelRGB888_t pix_e = pSrcData[ (y+ys)*src->width + xe ];
+        BLK_UION(Pixel888) pix_s = pSrcData[ (y+ys)*src->width + xs ];
+        BLK_UION(Pixel888) pix_e = pSrcData[ (y+ys)*src->width + xe ];
         
         accumulate_B = (radSize+1)*pix_s.B;
         accumulate_G = (radSize+1)*pix_s.G;
@@ -1087,8 +1151,8 @@ __ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRG
     
     // Trunk Processing
     for( int x=0; x<area->width; x++ ){
-        __UNION_PixelRGB888_t pix_s = pSrcData[                                x ];
-        __UNION_PixelRGB888_t pix_e = pSrcData[ (area->height-1)*area->width + x ];
+        BLK_UION(Pixel888) pix_s = pSrcData[                                x ];
+        BLK_UION(Pixel888) pix_e = pSrcData[ (area->height-1)*area->width + x ];
 
         accumulate_B = (radSize+1)*pix_s.B;
         accumulate_G = (radSize+1)*pix_s.G;
@@ -1141,20 +1205,20 @@ __ImageRGB888_t* __ImgRGB888_blur_fast     (const __ImageRGB888_t* src,__ImageRG
 
 
 
-__ImageRGB888_t* __ImgRGB888_insert_NstNeighbor  (const __ImageRGB888_t* src,__ImageRGB888_t* dst,size_t height,size_t width){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,size_t height,size_t width){
     if(src == NULL || src->pBuffer == NULL || dst == NULL) // Bad address
         return NULL;
     if(height < src->height || width < src->width) // Image of "dst" should be larger than image of "src" in both dimension.
         return NULL;
     if(dst->pBuffer == NULL){
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(width*height*sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(width*height*sizeof(BLK_UION(Pixel888)));
         if(dst->pBuffer == NULL){
             return NULL;  // There is no space to malloc.
         }
     }
     dst->height = height;
     dst->width  = width;
-    memset(dst->pBuffer, 0, width*height*sizeof(__UNION_PixelRGB888_t));
+    memset(dst->pBuffer, 0, width*height*sizeof(BLK_UION(Pixel888)));
     
     size_t eps_x = 0; // Record errors no bigger than width.
     size_t eps_y = 0; // Record errors no bigger than height.
@@ -1188,31 +1252,31 @@ __ImageRGB888_t* __ImgRGB888_insert_NstNeighbor  (const __ImageRGB888_t* src,__I
 }
 
 
-__ImageRGB888_t* __ImgRGB888_conv2D        (const __ImageRGB888_t* src,__ImageRGB888_t* dst,const __Kernel_t* k,uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D      )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const __Kernel_t* k,uint16_t br_100){
     if( src == NULL || src->pBuffer == NULL || k == NULL ){
         return dst;
     }
     
     if(dst == NULL){
-        dst = (__ImageRGB888_t*)RH_MALLOC(sizeof(__ImageRGB888_t));
+        dst = (BLK_SRCT(Img888)*)RH_MALLOC(sizeof(BLK_SRCT(Img888)));
         if(dst == NULL) // Not enough space :-(
             return dst;
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel888)));
         if(dst->pBuffer == NULL) // Not enough space :-(
             return dst;
     }
     
     if(dst->pBuffer == NULL){
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel888)));
         if(dst->pBuffer == NULL) // Not enough space :-(
             return dst;
     }
     
     if(dst == NULL){
-        dst = (__ImageRGB888_t*)RH_MALLOC(sizeof(__ImageRGB888_t));
+        dst = (BLK_SRCT(Img888)*)RH_MALLOC(sizeof(BLK_SRCT(Img888)));
         if(dst == NULL) // Not enough space :-(
             return dst;
-        dst->pBuffer = (__UNION_PixelRGB888_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB888_t));
+        dst->pBuffer = (BLK_UION(Pixel888)*)RH_MALLOC(src->width * src->height * sizeof(BLK_UION(Pixel888)));
     }
 
     for(int j=0;j<src->height;j++){
@@ -1262,7 +1326,7 @@ __ImageRGB888_t* __ImgRGB888_conv2D        (const __ImageRGB888_t* src,__ImageRG
     return dst;
 }
    
-void             __ImgRGB888_data_OTUS     (const __ImageRGB888_t* src,uint32_t* threshold){
+void              BLK_FUNC( Img888, data_OTUS   )  (const BLK_SRCT(Img888)* src,uint32_t* threshold){
     *threshold = (uint32_t)(-1);
     __exit( src          == NULL );
     __exit( src->pBuffer == NULL );
@@ -1327,68 +1391,7 @@ void             __ImgRGB888_data_OTUS     (const __ImageRGB888_t* src,uint32_t*
     }
 }
 
-__ImageRGB565_t* __ImgRGB565_conv2D        (const __ImageRGB565_t* src,__ImageRGB565_t* dst,const __Kernel_t* k,uint16_t br_100){
-        if( src == NULL || src->pBuffer == NULL || k == NULL){
-            return dst;
-        }
-            
-        if(dst == NULL){
-            dst = (__ImageRGB565_t*)RH_MALLOC(sizeof(__ImageRGB565_t));
-            if(dst == NULL) // Not enough space :-(
-                return dst;
-            dst->pBuffer = (__UNION_PixelRGB565_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB565_t));
-            if(dst->pBuffer == NULL) // Not enough space :-(
-                return dst;
-        }
-        
-        if(dst->pBuffer == NULL){
-            dst->pBuffer = (__UNION_PixelRGB565_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB565_t));
-            if(dst->pBuffer == NULL) // Not enough space :-(
-                return dst;
-        }
-        
-        if(dst == NULL){
-            dst = (__ImageRGB565_t*)RH_MALLOC(sizeof(__ImageRGB565_t));
-            if(dst == NULL) // Not enough space :-(
-                return dst;
-            dst->pBuffer = (__UNION_PixelRGB565_t*)RH_MALLOC(src->width * src->height * sizeof(__UNION_PixelRGB565_t));
-        }
 
-        for(int j=0;j<src->height;j++){
-            for(int i=0;i<src->width;i++){
-                int div = k->sum;
-                
-                // Here comes the convolution part.
-                unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0; // Preparation for RGB data.
-                for(int n=0;n<k->order;n++){
-                    for(int m=0;m<k->order;m++){
-                        size_t offset_y  = j-(k->order>>1)+n;
-                        size_t offset_x  = i-(k->order>>1)+m;
-                        int selectKernel = *( k->pBuffer + n       * k->order + m       );
-                        if( offset_x>=src->width || offset_y>=src->height ){
-                            div -= selectKernel;
-                        }else{
-                            uint8_t select_R  = (src->pBuffer + offset_y*src->width + offset_x)->R;
-                            uint8_t select_G  = (src->pBuffer + offset_y*src->width + offset_x)->G;
-                            uint8_t select_B  = (src->pBuffer + offset_y*src->width + offset_x)->B;
-                            
-                            tmp_R += ( (select_R) * (selectKernel) );
-                            tmp_G += ( (select_G) * (selectKernel) );
-                            tmp_B += ( (select_B) * (selectKernel) );
-                        }
-                    }
-                }
-                size_t offset = (j*src->width)+i;
-                if(offset < dst->width*dst->height){
-                    (dst->pBuffer+offset)->R = (div==0)?((1<<5)-1):(tmp_R*br_100/(div*100));
-                    (dst->pBuffer+offset)->G = (div==0)?((1<<6)-1):(tmp_G*br_100/(div*100));
-                    (dst->pBuffer+offset)->B = (div==0)?((1<<5)-1):(tmp_B*br_100/(div*100));
-                }
-            }
-        }
-        
-        return dst;
-    }
 
 #ifdef __cplusplus
 }
