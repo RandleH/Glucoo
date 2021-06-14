@@ -858,6 +858,12 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
     if((order & 0x01) == 0) // order should be an odd number.
         order--;
     
+    if( area==NULL ){
+        area = alloca( sizeof(__Area_t) );
+        area->height = src->height;
+        area->width  = src->width;
+        area->xs = area->ys = 0;
+    }
     
 {
     unsigned long sum_R = 0, sum_G = 0, sum_B = 0;

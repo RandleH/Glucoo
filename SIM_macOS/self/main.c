@@ -29,14 +29,15 @@
 
 
 int main(int argc, const char * argv[]) {
-//    printf("%f\n",hypotf(64,128));
+
     Simul_API_Init();
     
     GLU_FUNC( GUI, init        )();
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
+
     
-    
+#if 0
     __GUI_Menu_t cfg = {0};
     
     cfg.area.height = 200;
@@ -69,57 +70,53 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( Menu, scroll )(ID_Menu,  1 );
     
     GLU_FUNC( GUI, refreashEntireScreen )();
-    
-#if 0
-    const char* pStrs[] = {
-        "Jd" , // Jade
-        "Gs" , // Ginseng
-        "Sl" , // Silk
-        "Ng"   // Nutmeg
-    };
-    
-    ID_t ID_BoatStatus[3] = {0};
-    ID_t ID_CargoName[3]  = {0};
-    ID_t ID_DiceRound_txt = 0;
-    ID_t ID_DiceRound_num = 0;
-    __GUI_Object_t cfg = {0};
 
-    GUI_object_template( &cfg, kGUI_ObjStyle_trunk );
+#endif
+    
+#if 1
+    ID_t ID_spinbox = 0;
+    __GUI_Object_t cfg = {0};
+    
+    cfg.widget     = kGUI_ObjStyle_spinbox;
     cfg.obj_color  = M_COLOR_WHITE;
     cfg.area.xs    = 10;
-    cfg.area.ys    = 3;
-    cfg.area.width = 14;
+    cfg.area.ys    = 10;
+    cfg.area.width = 60;
+    cfg.area.height= 40;
+    cfg.text       = "MHz";
+    cfg.text_size  = 8;
+    cfg.obj_color  = M_COLOR_WHITE;
     
-    ID_BoatStatus[0] = GLU_FUNC( GUI, object_create )( &cfg );
-    cfg.area.xs += cfg.area.width+2;
-    ID_BoatStatus[1] = GLU_FUNC( GUI, object_create )( &cfg );
-    cfg.area.xs += cfg.area.width+2;
-    ID_BoatStatus[2] = GLU_FUNC( GUI, object_create )( &cfg );
-    
-    GUI_object_insert( ID_BoatStatus[0] );
-    GUI_object_insert( ID_BoatStatus[1] );
-    GUI_object_insert( ID_BoatStatus[2] );
-    GUI_RefreashEntireScreen();
-    
-
-    __GUI_ObjDataScr_barV data = {
-        .min   = 0,
-        .max   = 14,
-        .value = 5//...//
+    __GUI_ObjDataScr_spinbox data = {
+        .min = 2400 ,
+        .max = 2525 ,
+        .step = 1   ,
+        .cmd  = 0   ,
+        .text_offset = 35,
+        .margin      = 3
     };
-    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[0], &data, sizeof(data));
     
-    data.value = 4; //...//
-    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[1], &data, sizeof(data));
-
-    data.value = 5;//...//
-    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[2], &data, sizeof(data));
-
+    ID_spinbox = GLU_FUNC( Object, create )( &cfg, &data );
     
-    data.value = 5;
-    GLU_FUNC( GUI, object_adjust )( ID_BoatStatus[1], &data, sizeof(data));
+    GLU_FUNC( Object, insert )( ID_spinbox );
+//    GLU_FUNC( Object, frame  )( ID_spinbox, 1);
+    GLU_FUNC( GUI, refreashEntireScreen )();
     
-    GLU_FUNC( GUI, refreashScreen )();
+    data.cmd = 1;
+    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
+    GLU_FUNC( GUI, refreashEntireScreen )();
+    
+    data.cmd = 1;
+    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
+    GLU_FUNC( GUI, refreashEntireScreen )(); // 2402
+    
+    data.cmd = -1;
+    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
+    GLU_FUNC( GUI, refreashEntireScreen )(); // 2401
+    
+    data.cmd = -1;
+    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
+    GLU_FUNC( GUI, refreashEntireScreen )(); // 2400
 #endif
 
     return 0;

@@ -518,7 +518,8 @@ void __Font_getCharSize( size_t *width, size_t *height, char c ){
 
 void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
     __exit( !str );
-    
+    if( width )
+        *width = 0;
     for(int i=0; i<strlen(str); i++){
         int advanceWidth    = 0;
         int leftSideBearing = 0;

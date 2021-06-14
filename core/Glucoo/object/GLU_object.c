@@ -1111,6 +1111,279 @@ static void __gui_adjust_object_trunk     ( const __GUI_Object_t* config ){
     __gui_insert_object_trunk(config);
 }
 
+static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
+    struct{
+        int32_t    value;
+        int8_t     margin;
+        bool       triUP;
+        bool       triDN;
+        int        lineUP;
+        int        lineDN;
+        int        textXS;
+        int        textYS;
+        __Area_t   num;
+    }*cache = (void*)config->history;
+    
+    __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
+    BLK_FUNC( Graph, backupCache )();
+    
+    // 清除数字
+    if( dataScr->cmd != 0 ){
+        BLK_FUNC( Graph, set_penColor )( config->bk_color );
+        BLK_FUNC( Graph, rect_fill )( cache->num.xs       , \
+                                      cache->num.ys       , \
+                                      (int)(cache->num.xs+cache->num.width -1), \
+                                      (int)(cache->num.ys+cache->num.height-1), \
+                                      &info_MainScreen, kApplyPixel_fill );
+    }
+    
+    // 清除三角形
+    {
+        int value = cache->value;
+        
+        if( dataScr->cmd == 1 && value+dataScr->step <= dataScr->max ){
+            value += dataScr->step;
+        }
+        
+        if( dataScr->cmd == -1 && cache->value-dataScr->step >= dataScr->min ){
+            value -= dataScr->step;
+        }
+        
+        // 现在value才是最终输出显示的数字
+        // 判断是否需要清除箭头
+        if( value+dataScr->step > dataScr->max ){
+            // 去除下箭头
+            int len = config->text_size;                                                 // 三角形(上) 底长度(pix)
+            int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
+            int ys  = cache->lineDN + cache->margin ; // 三角形(上下) 底起始位置
+            
+            for( int y=ys; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
+                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                for( int x=0; x<len; x++,pIter++ ){
+                    pIter->data = config->bk_color;
+                }
+            }
+        }
+        
+        if( value-dataScr->step < dataScr->min ){
+            // 去除上箭头
+            int len = config->text_size;                                    // 三角形(上) 底长度(pix)
+            int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);   // 三角形(上) 最左端坐标
+            int ys  = cache->lineUP - cache->margin;                        // 三角形(上下) 底起始位置
+            for( int y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
+                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                for( int x=0; x<len; x++,pIter++ ){
+                    pIter->data = config->bk_color;
+                }
+            }
+        }
+        
+    }
+    
+    
+    BLK_FUNC( Graph, restoreCache )();
+}
+static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
+    BLK_FUNC( Graph, backupCache )();
+    __Font_backup_config();
+    struct{
+        int32_t    value;
+        int8_t     margin;
+        bool       triUP;
+        bool       triDN;
+        int        lineUP;
+        int        lineDN;
+        int        textXS;
+        int        textYS;
+        __Area_t   num;
+    }*cache = (void*)config->history;
+    
+    __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
+    
+    if( !cache ){
+        cache = RH_MALLOC( sizeof(*cache) );
+        cache->margin = 4;
+        cache->value  = dataScr->min;
+        cache->triUP  = false;
+        cache->textXS = config->area.xs+dataScr->text_offset-1;
+        
+        { // 绘制上下两横线
+            int line_y1 = cache->lineUP = (int)(config->area.ys + ((config->area.height-(config->text_size+cache->margin))>>1));
+            int line_y2 = cache->lineDN = (int)(config->area.ys + ((config->area.height+(config->text_size+cache->margin))>>1));
+            BLK_FUNC( Graph, set_penColor )( M_COLOR_WHITE );
+            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y1, (int)(config->area.xs+config->area.width-1), line_y1, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y2, (int)(config->area.xs+config->area.width-1), line_y2, &info_MainScreen, kApplyPixel_fill );
+        }
+        
+        { // 绘制文字
+            if( config->text!=NULL ){
+                char* ptrUnit = alloca( strlen(config->text) );
+                strcpy( ptrUnit, config->text );
+                __Font_setSize( config->text_size );
+                ptrUnit[ __Font_getWordNum( config->area.width - dataScr->text_offset , config->text) ] = '\0';
+                __GUI_Font_t* pF = __Font_exportStr( ptrUnit );
+                
+                size_t width;
+                __Font_getStrSize( &width, NULL, ptrUnit );
+                int x_fs = cache->textXS;
+                int y_fs = cache->textYS = cache->lineUP + (cache->margin>>1);
+                
+                GLU_UION(Pixel) color_text = {.data = config->obj_color};
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+                uint8_t* pIter = pF->output;
+                for( int y=0; y<pF->height && y<config->area.height; y++ ){
+                    for( int x=0; x<pF->width; x++, pIter++ ){
+                        size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                        if( (*pIter<128) ^ (color_text.data!=0) ){
+                            info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                        }else{
+                            info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                        }
+                    
+                    }
+                }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+                for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+                    for( int x=0; x<pF->width; x++ ){
+                        size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
+                        uint8_t pixWeight = pF->output[y*pF->width+x];
+                        info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
+                        info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
+                        info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+                    }
+                }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    RH_ASSERT(0);
+#else
+     
+#endif
+            }
+        }
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, cache);
+    }else{
+        __gui_remove_object_spinbox( config );
+    }
+    
+    if( dataScr->cmd == 1 && cache->value+dataScr->step <= dataScr->max ){
+        cache->value += dataScr->step;
+    }
+    
+    if( dataScr->cmd == -1 && cache->value-dataScr->step >= dataScr->min ){
+        cache->value -= dataScr->step;
+    }
+    
+    if( cache->value+dataScr->step <= dataScr->max )
+        cache->triDN = true;
+    else
+        cache->triDN = false;
+    
+    if( cache->value-dataScr->step >= dataScr->min )
+        cache->triUP = true;
+    else
+        cache->triUP = false;
+    
+    { // 绘制数字
+        __Font_setSize( config->text_size );
+        size_t size   = 1 + BLK_FUNC( Bit, DECs )( cache->value );
+        char* ptrNum  = alloca( size );
+        snprintf( ptrNum, size, "%d", cache->value );
+        ptrNum[size-1] = '\0';
+        
+        __Font_getStrSize( &cache->num.width, &cache->num.height, ptrNum);
+        cache->num.xs     = (int)(cache->textXS - cache->num.width - dataScr->margin);
+        cache->num.ys     = cache->textYS;
+        
+        __GUI_Font_t* pF = __Font_exportStr( ptrNum );
+        
+        GLU_UION(Pixel) color_text = {.data = config->obj_color};
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height && y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                if( (*pIter<128) ^ (color_text.data!=0) ){
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }else{
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }
+            
+            }
+        }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++ ){
+                size_t index = (cache->num.ys+y)*(info_MainScreen.width)+(cache->num.xs+x);
+                uint8_t pixWeight = pF->output[y*pF->width+x];
+                info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
+                info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
+                info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+            }
+        }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    RH_ASSERT(0);
+#else
+     
+#endif
+    }
+    
+    { // 绘制三角箭头提示
+        int len   = config->text_size;                                                 // 三角形(上) 底长度(pix)
+        int xs    = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
+        int ys[2] = { cache->lineUP - cache->margin , cache->lineDN + cache->margin }; // 三角形(上下) 底起始位置
+        
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height && y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                if( (*pIter<128) ^ (color_text.data!=0) ){
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }else{
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                }
+            
+            }
+        }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        
+        if( cache->triUP ){
+            for( int y=ys[0]; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
+                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                for( int x=0; x<len; x++,pIter++ ){
+                    pIter->data = config->obj_color;
+                }
+            }
+        }
+        
+        len = config->text_size;
+        xs  = cache->num.xs + (int)((cache->num.width - len)>>1);
+        if( cache->triDN ){
+            for( int y=ys[1]; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
+                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                for( int x=0; x<len; x++,pIter++ ){
+                    pIter->data = config->obj_color;
+                }
+            }
+        }
+        
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    RH_ASSERT(0);
+#else
+     
+#endif
+        
+    }
+    
+    
+    BLK_FUNC( Graph, restoreCache )();
+    __Font_restore_config();
+    
+}
+static void __gui_adjust_object_spinbox   ( const __GUI_Object_t* config ){
+    __gui_insert_object_spinbox( config );
+}
+
+
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
@@ -1121,7 +1394,7 @@ static inline void __gui_check_object  ( const __GUI_Object_t* config ){
 }
 #endif
 
-ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config ){
+ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, const void* RH_NULLABLE dataScr ){
     __GUI_Object_t* m_config = (__GUI_Object_t*)RH_MALLOC( sizeof(__GUI_Object_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -1149,48 +1422,81 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config )
             m_config->remove_func = __gui_remove_object_fnum;
             m_config->adjust_func = __gui_adjust_object_fnum;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_fnum) );
+//            if( !dataScr ){}
+//            else{}
             break;
         case kGUI_ObjStyle_switch:
             m_config->insert_func = __gui_insert_object_switch;
             m_config->remove_func = __gui_remove_object_switch;
             m_config->adjust_func = __gui_adjust_object_switch;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_switch) );
+//            if( !dataScr ){}
+//            else{}
             break;
         case kGUI_ObjStyle_barH:
             m_config->insert_func = __gui_insert_object_bar_h;
             m_config->remove_func = __gui_remove_object_bar_h;
             m_config->adjust_func = __gui_adjust_object_bar_h;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_barH) );
+//            if( !dataScr ){}
+//            else          {}
             break;
         case kGUI_ObjStyle_barV:
             m_config->insert_func = __gui_insert_object_bar_v;
             m_config->remove_func = __gui_remove_object_bar_v;
             m_config->adjust_func = __gui_adjust_object_bar_v;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(       __GUI_ObjDataScr_barV) );
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            if( !dataScr ){
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_barV ));
+            }
             break;
         case kGUI_ObjStyle_trunk:
             m_config->insert_func = __gui_insert_object_trunk;
             m_config->remove_func = __gui_remove_object_trunk;
             m_config->adjust_func = __gui_adjust_object_trunk;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(       __GUI_ObjDataScr_trunk) );
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
-            ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            m_config->dataScr     = RH_CALLOC( 1U, sizeof( __GUI_ObjDataScr_trunk) );
+            if( !dataScr ){
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
+                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_trunk));
+            }
             break;
         case kGUI_ObjStyle_joystick:
             m_config->insert_func = __gui_insert_object_joystick;
             m_config->remove_func = __gui_remove_object_joystick;
             m_config->adjust_func = __gui_adjust_object_joystick;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_joystick) );
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[0]   = 100;
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[1]   = 100;
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[0]   = 0;
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[1]   = 0;
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[0] = 50;
-            ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[1] = 50;
+            if( !dataScr ){
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[0]   = 100;
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[1]   = 100;
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[0]   = 0;
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->min[1]   = 0;
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[0] = 50;
+                ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->value[1] = 50;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_joystick));
+            }
+            break;
+        case kGUI_ObjStyle_spinbox:
+            m_config->insert_func = __gui_insert_object_spinbox;
+            m_config->remove_func = __gui_remove_object_spinbox;
+            m_config->adjust_func = __gui_adjust_object_spinbox;
+            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_spinbox) );
+            if( !dataScr ){
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->min  = 2400;
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->max  = 2550;
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->step = 1;
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->cmd  = true;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_spinbox));
+            }
+            //...//
             break;
         default:
             RH_ASSERT(0);
