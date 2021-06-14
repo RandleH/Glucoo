@@ -1300,11 +1300,11 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         uint8_t* pIter = pF->output;
         for( int y=0; y<pF->height && y<config->area.height; y++ ){
             for( int x=0; x<pF->width; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
+                size_t index = ((cache->num.ys+y)>>3)*(info_MainScreen.width)+(cache->num.xs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (cache->num.ys+y)%8 );
                 }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (cache->num.ys+y)%8 );
                 }
             
             }
@@ -1343,6 +1343,16 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 }
             
             }
+        }
+        
+        if( cache->triUP ){
+        
+        }
+        
+        len = config->text_size;
+        xs  = cache->num.xs + (int)((cache->num.width - len)>>1);
+        if( cache->triDN ){
+        
         }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
