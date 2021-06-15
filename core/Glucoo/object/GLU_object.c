@@ -1156,13 +1156,27 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             int len = config->text_size;                                                 // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
             int ys  = cache->lineDN + cache->margin ; // 三角形(上下) 底起始位置
-            
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+            for( int y=ys; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
+                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                for( int x=0; x<len; x++,pIter++ ){
+                    if( config->bk_color!=0 ){
+                        pIter->data = __BIT_SET( pIter->data, y%8 );
+                    }else{
+                        pIter->data = __BIT_CLR( pIter->data, y%8 );
+                    }
+                }
+            }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             for( int y=ys; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
                 GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
                 for( int x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
             }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+            RH_ASSERT(0);
+#endif
         }
         
         if( value-dataScr->step < dataScr->min ){
@@ -1170,16 +1184,31 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             int len = config->text_size;                                    // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);   // 三角形(上) 最左端坐标
             int ys  = cache->lineUP - cache->margin;                        // 三角形(上下) 底起始位置
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+            for( int y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
+                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                for( int x=0; x<len; x++, pIter++ ){
+                    if( config->bk_color!=0 ){
+                        pIter->data = __BIT_SET( pIter->data, y%8 );
+                    }else{
+                        pIter->data = __BIT_CLR( pIter->data, y%8 );
+                    }
+                }
+                
+            }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             for( int y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
                 GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
                 for( int x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
             }
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+            RH_ASSERT(0);
+#endif
         }
         
     }
-    
     
     BLK_FUNC( Graph, restoreCache )();
 }
@@ -1306,7 +1335,6 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 }else{
                     info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (cache->num.ys+y)%8 );
                 }
-            
             }
         }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -1332,27 +1360,33 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         int ys[2] = { cache->lineUP - cache->margin , cache->lineDN + cache->margin }; // 三角形(上下) 底起始位置
         
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        uint8_t* pIter = pF->output;
-        for( int y=0; y<pF->height && y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }
-            
-            }
-        }
-        
         if( cache->triUP ){
-        
+            for( int y=ys[0]; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
+                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                for( int x=0; x<len; x++, pIter++ ){
+                    if( config->obj_color!=0 ){
+                        pIter->data = __BIT_SET( pIter->data, y%8 );
+                    }else{
+                        pIter->data = __BIT_CLR( pIter->data, y%8 );
+                    }
+                }
+                
+            }
         }
         
         len = config->text_size;
         xs  = cache->num.xs + (int)((cache->num.width - len)>>1);
         if( cache->triDN ){
-        
+            for( int y=ys[1]; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
+                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                for( int x=0; x<len; x++,pIter++ ){
+                    if( config->obj_color!=0 ){
+                        pIter->data = __BIT_SET( pIter->data, y%8 );
+                    }else{
+                        pIter->data = __BIT_CLR( pIter->data, y%8 );
+                    }
+                }
+            }
         }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
@@ -1377,7 +1411,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         }
         
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    RH_ASSERT(0);
+        RH_ASSERT(0);
 #else
      
 #endif
