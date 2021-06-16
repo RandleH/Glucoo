@@ -1128,7 +1128,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
     
     // 清除数字
-    if( dataScr->cmd != 0 ){
+    if( dataScr->value != cache->value ){
         BLK_FUNC( Graph, set_penColor )( config->bk_color );
         BLK_FUNC( Graph, rect_fill )( cache->num.xs       , \
                                       cache->num.ys       , \
@@ -1139,19 +1139,8 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
     
     // 清除三角形
     {
-        int value = cache->value;
-        
-        if( dataScr->cmd == 1 && value+dataScr->step <= dataScr->max ){
-            value += dataScr->step;
-        }
-        
-        if( dataScr->cmd == -1 && cache->value-dataScr->step >= dataScr->min ){
-            value -= dataScr->step;
-        }
-        
-        // 现在value才是最终输出显示的数字
         // 判断是否需要清除箭头
-        if( value+dataScr->step > dataScr->max ){
+        if( dataScr->value >= dataScr->max ){
             // 去除下箭头
             int len = config->text_size;                                                 // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
@@ -1179,7 +1168,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
 #endif
         }
         
-        if( value-dataScr->step < dataScr->min ){
+        if( dataScr->value <= dataScr->min ){
             // 去除上箭头
             int len = config->text_size;                                    // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);   // 三角形(上) 最左端坐标
@@ -1268,7 +1257,6 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                         }else{
                             info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
                         }
-                    
                     }
                 }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -1293,25 +1281,18 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         __gui_remove_object_spinbox( config );
     }
     
-    if( dataScr->cmd == 1 && cache->value+dataScr->step <= dataScr->max ){
-        cache->value += dataScr->step;
-    }
-    
-    if( dataScr->cmd == -1 && cache->value-dataScr->step >= dataScr->min ){
-        cache->value -= dataScr->step;
-    }
-    
-    if( cache->value+dataScr->step <= dataScr->max )
+    if( dataScr->value < dataScr->max )
         cache->triDN = true;
     else
         cache->triDN = false;
     
-    if( cache->value-dataScr->step >= dataScr->min )
+    if( dataScr->value > dataScr->min )
         cache->triUP = true;
     else
         cache->triUP = false;
     
     { // 绘制数字
+        cache->value = __limit( dataScr->value, dataScr->min, dataScr->max );
         __Font_setSize( config->text_size );
         size_t size   = 1 + BLK_FUNC( Bit, DECs )( cache->value );
         char* ptrNum  = alloca( size );
@@ -1533,10 +1514,8 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, 
             m_config->adjust_func = __gui_adjust_object_spinbox;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_spinbox) );
             if( !dataScr ){
-                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->min  = 2400;
-                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->max  = 2550;
-                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->step = 1;
-                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->cmd  = true;
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->min  = 0;
+                ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->max  = 100;
             }else{
                 memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_spinbox));
             }

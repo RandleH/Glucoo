@@ -133,8 +133,7 @@ typedef struct __GUI_ObjDataScr_joystick __GUI_ObjDataScr_joystick;
 struct __GUI_ObjDataScr_spinbox{
     int32_t     max;           // 数据上限
     int32_t     min;           // 数据下限
-    int32_t     step;          // 数据步进
-    int8_t      cmd;           // 1:增; 0:静止; -1:减;
+    int32_t     value;         // 数据值
     int16_t     text_offset;   // 以xs为起始量的偏移量
     int8_t      margin;        // 文字边缘留白量
 };

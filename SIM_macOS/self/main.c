@@ -90,8 +90,7 @@ int main(int argc, const char * argv[]) {
     __GUI_ObjDataScr_spinbox data = {
         .min = 2400 ,
         .max = 2525 ,
-        .step = 1   ,
-        .cmd  = 0   ,
+        .value = 2400,
         .text_offset = 35,
         .margin      = 3
     };
@@ -102,19 +101,23 @@ int main(int argc, const char * argv[]) {
 //    GLU_FUNC( Object, frame  )( ID_spinbox, 1);
     GLU_FUNC( GUI, refreashEntireScreen )();
     
-    data.cmd = 1;
+    data.value = 2503;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )();
     
-    data.cmd = 1;
+    data.value = 2504;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2402
     
-    data.cmd = -1;
+    data.value = 2505;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2401
     
-    data.cmd = -1;
+    data.value = 2525;
+    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
+    GLU_FUNC( GUI, refreashEntireScreen )(); // 2400
+    
+    data.value = 2300;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2400
 #endif
