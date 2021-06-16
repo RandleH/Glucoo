@@ -1122,6 +1122,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
         int        textXS;
         int        textYS;
         __Area_t   num;
+        bool       active;
     }*cache = (void*)config->history;
     
     __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
@@ -1140,7 +1141,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
     // 清除三角形
     {
         // 判断是否需要清除箭头
-        if( dataScr->value >= dataScr->max ){
+        if( dataScr->value >= dataScr->max || (cache->active&& !dataScr->active) ){
             // 去除下箭头
             int len = config->text_size;                                                 // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
@@ -1168,7 +1169,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
 #endif
         }
         
-        if( dataScr->value <= dataScr->min ){
+        if( dataScr->value <= dataScr->min || (cache->active&& !dataScr->active) ){
             // 去除上箭头
             int len = config->text_size;                                    // 三角形(上) 底长度(pix)
             int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);   // 三角形(上) 最左端坐标
@@ -1214,6 +1215,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         int        textXS;
         int        textYS;
         __Area_t   num;
+        bool       active;
     }*cache = (void*)config->history;
     
     __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
@@ -1224,7 +1226,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         cache->value  = dataScr->min;
         cache->triUP  = false;
         cache->textXS = config->area.xs+dataScr->text_offset-1;
-        
+        cache->active = false;
         { // 绘制上下两横线
             int line_y1 = cache->lineUP = (int)(config->area.ys + ((config->area.height-(config->text_size+cache->margin))>>1));
             int line_y2 = cache->lineDN = (int)(config->area.ys + ((config->area.height+(config->text_size+cache->margin))>>1));
@@ -1335,7 +1337,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
 #endif
     }
     
-    { // 绘制三角箭头提示
+    if( dataScr->active ){ // 绘制三角箭头提示
         int len   = config->text_size;                                                 // 三角形(上) 底长度(pix)
         int xs    = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
         int ys[2] = { cache->lineUP - cache->margin , cache->lineDN + cache->margin }; // 三角形(上下) 底起始位置
@@ -1399,6 +1401,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         
     }
     
+    cache->active = dataScr->active;
     
     BLK_FUNC( Graph, restoreCache )();
     __Font_restore_config();

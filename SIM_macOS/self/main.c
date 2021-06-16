@@ -92,7 +92,8 @@ int main(int argc, const char * argv[]) {
         .max = 2525 ,
         .value = 2400,
         .text_offset = 35,
-        .margin      = 3
+        .margin      = 3 ,
+        .active      = true
     };
     
     ID_spinbox = GLU_FUNC( Object, create )( &cfg, &data );
@@ -105,6 +106,7 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )();
     
+    data.active = false;
     data.value = 2504;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2402
@@ -113,6 +115,7 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2401
     
+    data.active = true;
     data.value = 2525;
     GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
     GLU_FUNC( GUI, refreashEntireScreen )(); // 2400

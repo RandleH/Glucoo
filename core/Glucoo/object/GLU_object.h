@@ -136,6 +136,8 @@ struct __GUI_ObjDataScr_spinbox{
     int32_t     value;         // 数据值
     int16_t     text_offset;   // 以xs为起始量的偏移量
     int8_t      margin;        // 文字边缘留白量
+    
+    bool        active;        // 激活模式
 };
 typedef struct __GUI_ObjDataScr_spinbox __GUI_ObjDataScr_spinbox;
 
