@@ -259,7 +259,8 @@ void GLU_FUNC( GUI, addScreenArea )          ( int xs, int ys, int xe, int ye ){
     pArea->width   = xe-xs+1;
     pArea->height  = ye-ys+1;
     Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
-    BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
+    if( Screen.areaNeedRefreashPixelCnt < GUI_X_WIDTH*GUI_Y_WIDTH )
+        BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
 #endif
 }
 

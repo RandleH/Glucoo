@@ -93,6 +93,7 @@ __GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportChar     ) ( uint16_t     uni
 __GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportStr      ) ( const char*  str     );
 
 void                        MAKE_FUNC( Font, getCharSize    ) ( size_t *width, size_t *height, char c );
+void                        MAKE_FUNC( Font, getStrSize     ) ( size_t *width, size_t *height, const char* str );
 int                         MAKE_FUNC( Font, getWordNum     ) ( const size_t width, const char* str   );
 
 __GUI_Font_t*               MAKE_FUNC( Font, exportText_Justify )( const char* str, size_t width );

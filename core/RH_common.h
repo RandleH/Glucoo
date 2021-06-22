@@ -35,7 +35,9 @@
 #define RH_DEBUG
  
 
-
+#define RH_NULLABLE
+#define RH_NONNULL
+#define RH_ALLOCATED  
 
  
 struct __Region_t{

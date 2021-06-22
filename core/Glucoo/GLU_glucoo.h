@@ -83,7 +83,7 @@ void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
-ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config );
+ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, const void* RH_NULLABLE dataScr );
 E_Status_t                GLU_FUNC( Object, template )  (       __GUI_Object_t* config  , E_GUI_ObjWidget_t widget );
 E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );

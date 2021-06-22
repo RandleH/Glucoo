@@ -12,7 +12,7 @@ extern "C" {
 #define RH_CFG_GRAPHIC_COLOR_BIN              (0U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
-#define RH_CFG_GRAPHIC_COLOR_TYPE             RH_CFG_GRAPHIC_COLOR_RGB565      // < select > < above option >
+#define RH_CFG_GRAPHIC_COLOR_TYPE             RH_CFG_GRAPHIC_COLOR_BIN      // < select > < above option >
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
@@ -26,8 +26,8 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__NewYork_Italic     (0U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Arial_Unicode      (0U)                          // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_SCREEN_HEIGHT                  (400U)                         // < select >
-#define RH_CFG_SCREEN_WIDTH                   (400U)                        // < select >
+#define RH_CFG_SCREEN_HEIGHT                  (64U)                         // < select >
+#define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
 
 #define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >
 #define RH_CFG_GRAM_EXTADDR                   (1U)                          // < option >

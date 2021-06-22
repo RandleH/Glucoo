@@ -17,6 +17,7 @@ typedef enum{
     kGUI_ObjStyle_trunk    ,//
     
     kGUI_ObjStyle_joystick ,
+    kGUI_ObjStyle_spinbox  ,
     NUM_kGUI_ObjWidgets    ,
 }E_GUI_ObjWidget_t;
 
@@ -123,10 +124,21 @@ typedef struct __GUI_ObjDataScr_barH __GUI_ObjDataScr_barV;
 typedef struct __GUI_ObjDataScr_barH __GUI_ObjDataScr_trunk;
 
 struct __GUI_ObjDataScr_joystick{
-    int32_t value[2];
+    int32_t value[2];   // 0:X; 1:Y
     int32_t max  [2];
     int32_t min  [2];
 };
 typedef struct __GUI_ObjDataScr_joystick __GUI_ObjDataScr_joystick;
+
+struct __GUI_ObjDataScr_spinbox{
+    int32_t     max;           // 数据上限
+    int32_t     min;           // 数据下限
+    int32_t     value;         // 数据值
+    int16_t     text_offset;   // 以xs为起始量的偏移量
+    int8_t      margin;        // 文字边缘留白量
+    
+    bool        active;        // 激活模式
+};
+typedef struct __GUI_ObjDataScr_spinbox __GUI_ObjDataScr_spinbox;
 
 #endif
