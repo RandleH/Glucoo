@@ -1144,7 +1144,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
         if( dataScr->value >= dataScr->max || (cache->active&& !dataScr->active) ){
             // 去除下箭头
             int len = config->text_size;                                                 // 三角形(上) 底长度(pix)
-            int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
+            int xs  = (config->area.xs + cache->textXS - len)>>1;                        // 三角形(上) 最左端坐标
             int ys  = cache->lineDN + cache->margin ; // 三角形(上下) 底起始位置
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             for( int y=ys; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
@@ -1172,7 +1172,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
         if( dataScr->value <= dataScr->min || (cache->active&& !dataScr->active) ){
             // 去除上箭头
             int len = config->text_size;                                    // 三角形(上) 底长度(pix)
-            int xs  = cache->num.xs + (int)((cache->num.width - len)>>1);   // 三角形(上) 最左端坐标
+            int xs  = (config->area.xs + cache->textXS - len)>>1;           // 三角形(上) 最左端坐标
             int ys  = cache->lineUP - cache->margin;                        // 三角形(上下) 底起始位置
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             for( int y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
@@ -1225,7 +1225,10 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         cache->margin = 4;
         cache->value  = dataScr->min;
         cache->triUP  = false;
+        cache->lineUP = (int)(config->area.ys + ((config->area.height-(config->text_size+cache->margin))>>1));
+        cache->lineDN = (int)(config->area.ys + ((config->area.height+(config->text_size+cache->margin))>>1));
         cache->textXS = config->area.xs+dataScr->text_offset-1;
+        cache->textYS = cache->lineUP + (cache->margin>>1) + 1;
         cache->active = false;
         { // 绘制上下两横线
             int line_y1 = cache->lineUP = (int)(config->area.ys + ((config->area.height-(config->text_size+cache->margin))>>1));
@@ -1338,8 +1341,8 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
     }
     
     if( dataScr->active ){ // 绘制三角箭头提示
-        int len   = config->text_size;                                                 // 三角形(上) 底长度(pix)
-        int xs    = cache->num.xs + (int)((cache->num.width - len)>>1);                // 三角形(上) 最左端坐标
+        int len   = config->text_size;                                 // 三角形(上) 底长度(pix)
+        int xs    = (config->area.xs + cache->textXS - len)>>1;        // 三角形(上) 最左端坐标
         int ys[2] = { cache->lineUP - cache->margin , cache->lineDN + cache->margin }; // 三角形(上下) 底起始位置
         
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1358,7 +1361,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         }
         
         len = config->text_size;
-        xs  = cache->num.xs + (int)((cache->num.width - len)>>1);
+        xs  = (config->area.xs + cache->textXS - len)>>1;
         if( cache->triDN ){
             for( int y=ys[1]; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
                 GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
