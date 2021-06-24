@@ -155,8 +155,8 @@ void GLU_FUNC( GUI, circle_qrt4_raw  )   ( int x , int y , int r ){
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )(xs, ys, xe, ye) : GLU_FUNC( GUI, addScreenArea )(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, sausage_raw      )   ( int xs, int ys, int xe, int ye ){
-    BLK_FUNC( Graph, sausage_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
+void GLU_FUNC( GUI, capsule_raw      )   ( int xs, int ys, int xe, int ye ){
+    BLK_FUNC( Graph, capsule_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )(xs, ys, xe, ye) : GLU_FUNC( GUI, addScreenArea )(xs, ys, xe, ye);
 }
 

@@ -425,7 +425,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
     
     // 加载历史改动区域
     struct{
-        bool     switchState;
+        bool     cmd;
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
@@ -434,7 +434,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
     
     bool needRemove = !pHistory;
     if( pHistory ){
-        needRemove |= (pHistory->switchState != ((int32_t)(config->val)!=0));
+        needRemove |= (pHistory->cmd ^ ((__GUI_ObjDataScr_switch*)(config->dataScr))->cmd );
         needRemove |= (pHistory->showFrame)^(config->showFrame);
     }
     
@@ -445,7 +445,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
         area.height -=4;
         area.xs     +=2;
         area.ys     +=2;
-        BLK_FUNC( Graph, sausage_fill )( area.xs, \
+        BLK_FUNC( Graph, capsule_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
@@ -467,7 +467,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
 #endif
     // 记录历史改动区域
     struct{
-        bool     switchState;
+        bool     cmd;
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
@@ -505,7 +505,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     
     if( ((struct __GUI_ObjDataScr_switch*)config->dataScr)->cmd ){
         BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
-        BLK_FUNC( Graph, sausage_fill )( area.xs, \
+        BLK_FUNC( Graph, capsule_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
@@ -524,12 +524,12 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
                               (int)area.height                   , \
                               &info_MainScreen, kApplyPixel_fill);
 
-        pHistory->switchState = true;
+        pHistory->cmd = true;
     }else{
         // 二值颜色与彩色画法稍有不同
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
-        BLK_FUNC( Graph, sausage_raw ) ( area.xs, \
+        BLK_FUNC( Graph, capsule_raw ) ( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
@@ -541,7 +541,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
                               &info_MainScreen, kApplyPixel_fill);
 #else
         BLK_FUNC( Graph, set_penColor )( color_switch_off.data );
-        BLK_FUNC( Graph, sausage_fill )( area.xs, \
+        BLK_FUNC( Graph, capsule_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
@@ -560,7 +560,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
                               &info_MainScreen, kApplyPixel_fill);
         
 #endif
-        pHistory->switchState = false;
+        pHistory->cmd = false;
     }
     
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
@@ -1414,11 +1414,155 @@ static void __gui_adjust_object_spinbox   ( const __GUI_Object_t* config ){
     __gui_insert_object_spinbox( config );
 }
 
+static void __gui_remove_object_button    ( const __GUI_Object_t* config ){
+    struct{
+        bool   cmd;
+        bool   active;
+        int8_t margin;
+        int8_t radius;
+    }*cache = config->dataScr;
+    const __GUI_ObjDataScr_button* dataScr = config->dataScr;
+    
+    if( dataScr->cmd!=cache->cmd || dataScr->radius!=cache->radius ){
+        BLK_FUNC( Graph, backupCache )();
+        BLK_FUNC( Graph, set_penColor )( config->bk_color );
+        BLK_FUNC( Graph, rect_fill )( config->area.xs       , \
+                                      config->area.ys       , \
+                                      (int)(config->area.xs+config->area.width -1), \
+                                      (int)(config->area.ys+config->area.height-1), \
+                                      &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, restoreCache )();
+    }
+    
+}
+static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
+    struct{
+        bool   cmd;
+        bool   active;
+        int8_t margin;
+        int8_t radius;
+    }*cache = (void*)config->history;
+    
+    const __GUI_ObjDataScr_button* dataScr = config->dataScr;
+    
+    if( !cache ){
+        cache = RH_CALLOC( 1, sizeof(*cache));
+        __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, cache);
+        cache->margin = 1;
+        cache->cmd    = !dataScr->cmd;
+    }else{
+        __gui_remove_object_button( config );
+    }
+    
+    
+    BLK_FUNC( Graph, backupCache  )();
+
+    // 绘制按钮
+    BLK_FUNC( Graph, set_penColor )( config->obj_color );
+    int roundRadius = (int)__limit( dataScr->radius, 0, (int)__min( (int)(config->area.height>>1), (int)(config->area.width>>1) ));
+    
+    // 绘制实心圆角矩形
+    BLK_FUNC( Graph, set_penSize  )( roundRadius );
+    
+    (dataScr->cmd == true)? BLK_FUNC( Graph, rect_round     )(  config->area.xs+cache->margin, \
+                                                                config->area.ys+cache->margin, \
+                                                                (int)(config->area.xs+config->area.width-cache->margin-1  ), \
+                                                                (int)(config->area.ys+config->area.height-cache->margin-1 ), \
+                                                                &info_MainScreen, kApplyPixel_fill ) :
+                            BLK_FUNC( Graph, rect_round_raw )(  config->area.xs+cache->margin, \
+                                                                config->area.ys+cache->margin, \
+                                                                (int)(config->area.xs+config->area.width-cache->margin-1  ), \
+                                                                (int)(config->area.ys+config->area.height-cache->margin-1 ), \
+                                                                &info_MainScreen, kApplyPixel_fill );
+    
+    
+    
+    // 绘制按钮上的文字
+    if( config->text ){
+        __Font_backup_config();
+        
+        __Font_setSize( config->text_size );
+        char* str = alloca( strlen(config->text)+1 );
+    #ifdef RH_DEBUG
+        RH_ASSERT( str );
+    #endif
+        strcpy(str, config->text);
+        str[ __Font_getWordNum( config->area.width-2*cache->margin, config->text ) ] = '\0';
+        __GUI_Font_t* pF = __Font_exportStr( str );
+        int fs_x = config->area.xs + (((int)config->area.width  - (int)pF->width )>>1);
+        int fs_y = config->area.ys + (((int)config->area.height - (int)pF->height)>>1);
+        
+        GLU_UION(Pixel) color_text = {.data = (dataScr->cmd == true)?config->bk_color:config->obj_color};
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        uint8_t* pIter = pF->output;
+        for( int y=0; y<pF->height && y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++, pIter++ ){
+                size_t index = ((fs_y+y)>>3)*(info_MainScreen.width)+(fs_x+x);
+                if( (*pIter<128) ^ (color_text.data!=0) ){
+                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (fs_y+y)%8 );
+                }else{
+                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (fs_y+y)%8 );
+                }
+            }
+        }
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        
+        uint8_t*         pIterFont = pF->output;
+        GLU_UION(Pixel)* pIterScr  = &info_MainScreen.pBuffer[(fs_y)*(info_MainScreen.width)+(fs_x)];
+        
+        
+        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->width; x++,pIterFont++, pIterScr++ ){
+                size_t index = (fs_y+y)*(info_MainScreen.width)+(fs_x+x);
+                info_MainScreen.pBuffer[ index ].R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
+                info_MainScreen.pBuffer[ index ].G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
+                info_MainScreen.pBuffer[ index ].B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
+            }
+            pIterScr -= pF->width;
+            pIterScr += info_MainScreen.width;
+        }
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+        RH_ASSERT(0);
+    #endif
+        
+        __Font_restore_config();
+    }
+    
+    // 绘制激活态, 即边框
+    if( dataScr->active ){
+        BLK_FUNC( Graph, set_penColor)( config->obj_color );
+        BLK_FUNC( Graph, rect_raw )(  config->area.xs+cache->margin, \
+                                      config->area.ys+cache->margin, \
+                                      (int)(config->area.xs+config->area.width-1  ), \
+                                      (int)(config->area.ys+config->area.height-1 ), \
+                                      &info_MainScreen, kApplyPixel_fill );
+    }
+    
+    cache->radius = dataScr->radius;
+    cache->cmd    = dataScr->cmd;
+    cache->active = dataScr->active;
+    
+    BLK_FUNC( Graph, restoreCache )();
+    
+}
+static void __gui_adjust_object_button    ( const __GUI_Object_t* config ){
+    struct{
+        bool   cmd;
+        bool   active;
+        int8_t margin;
+        int8_t radius;
+    }*cache = (void*)config->history;
+    const __GUI_ObjDataScr_button* dataScr = config->dataScr;
+    
+    if( dataScr->cmd!=cache->cmd || dataScr->active!=cache->active || dataScr->radius!=cache->radius ){
+        __gui_insert_object_button( config );
+    }
+}
+
 
 #ifdef RH_DEBUG
 static inline void __gui_check_object  ( const __GUI_Object_t* config ){
     RH_ASSERT( config );
-    RH_ASSERT( config->min   <= config->max       );
     RH_ASSERT( config->widget <  NUM_kGUI_ObjWidgets );
     RH_ASSERT( config->area.xs + config->area.width  -1  < GUI_X_WIDTH   ); // Can be compromised, no need to abort the program.
     RH_ASSERT( config->area.ys + config->area.height -1  < GUI_Y_WIDTH   ); // Can be compromised, no need to abort the program.
@@ -1461,8 +1605,11 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, 
             m_config->remove_func = __gui_remove_object_switch;
             m_config->adjust_func = __gui_adjust_object_switch;
             m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_switch) );
-//            if( !dataScr ){}
-//            else{}
+            if( !dataScr ){
+                ((__GUI_ObjDataScr_switch*)m_config->dataScr)->cmd   = false;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_switch ));
+            }
             break;
         case kGUI_ObjStyle_barH:
             m_config->insert_func = __gui_insert_object_bar_h;
@@ -1526,6 +1673,18 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, 
                 memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_spinbox));
             }
             //...//
+            break;
+        case kGUI_ObjStyle_button:
+            m_config->insert_func = __gui_insert_object_button;
+            m_config->remove_func = __gui_remove_object_button;
+            m_config->adjust_func = __gui_adjust_object_button;
+            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_button) );
+            if( !dataScr ){
+                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->active = true;
+                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->cmd    = true;
+            }else{
+                memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_spinbox));
+            }
             break;
         default:
             RH_ASSERT(0);
@@ -1604,7 +1763,25 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->text_size   = 8;
             config->text_align  = kGUI_FontAlign_Middle;
             break;
-            
+        case kGUI_ObjStyle_spinbox:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.height = (GUI_Y_WIDTH*3)>>2;
+            config->area.width  = (GUI_X_WIDTH*3)>>2;
+            config->area.xs     = (int)(GUI_X_WIDTH - config->area.width)>>1;
+            config->area.ys     = (int)(GUI_Y_WIDTH - config->area.height)>>1;
+            config->text_size   = 8;
+            config->text_align  = kGUI_FontAlign_Left;
+        case kGUI_ObjStyle_button:
+            config->bk_color    = M_COLOR_BLACK;
+            config->obj_color   = M_COLOR_WHITE;
+            config->area.width  = (GUI_X_WIDTH)>>1;
+            config->area.height = (GUI_Y_WIDTH)>>1;
+            config->area.xs     = (int)(GUI_X_WIDTH-config->area.width)>>1;
+            config->area.ys     = (int)(GUI_Y_WIDTH-config->area.height)>>1;
+            config->text_size   = 8;
+            config->text_align  = kGUI_FontAlign_Middle;
+            break;
         default:
             break;
     }
