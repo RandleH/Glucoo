@@ -68,6 +68,12 @@ E_Status_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int 
 E_Status_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 E_Status_t      BLK_FUNC( Graph , rect_round        ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
+E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
+E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);//
+E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);//
+E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);//
+E_Status_t      BLK_FUNC( Graph , EX_rect_round     ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);//
+E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);//
  
 E_Status_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 E_Status_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
@@ -78,8 +84,8 @@ E_Status_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int 
 E_Status_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
  
-E_Status_t      BLK_FUNC( Graph , sausage_raw       ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
-E_Status_t      BLK_FUNC( Graph , sausage_fill      ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
+E_Status_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
+E_Status_t      BLK_FUNC( Graph , capsule_fill      ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 
 #ifdef __cplusplus
 }

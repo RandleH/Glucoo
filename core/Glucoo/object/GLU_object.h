@@ -18,6 +18,7 @@ typedef enum{
     
     kGUI_ObjStyle_joystick ,
     kGUI_ObjStyle_spinbox  ,
+    kGUI_ObjStyle_button   ,
     NUM_kGUI_ObjWidgets    ,
 }E_GUI_ObjWidget_t;
 
@@ -60,13 +61,6 @@ struct __GUI_Object_t{
      ===================================================================================*/
     GLU_TYPE(Pixel)      obj_color;
     GLU_TYPE(Pixel)      bk_color;
-    
-    /*===================================================================================
-     * Old Data Source(Deprecated)
-     ===================================================================================*/
-    float                min[2];
-    float                val[2];
-    float                max[2];
     
     /*===================================================================================
      * Data Source --- This parameter is speacifiled with widgets. It is a point to the
@@ -137,8 +131,15 @@ struct __GUI_ObjDataScr_spinbox{
     int16_t     text_offset;   // 以xs为起始量的偏移量
     int8_t      margin;        // 文字边缘留白量
     
-    bool        active;        // 激活模式
+    bool        active;        // 激活态
 };
 typedef struct __GUI_ObjDataScr_spinbox __GUI_ObjDataScr_spinbox;
+
+struct __GUI_ObjDataScr_button{
+    bool        cmd;           // 按钮状态
+    int8_t      radius;        // 按钮边缘半径
+    bool        active;        // 激活态
+};
+typedef struct __GUI_ObjDataScr_button __GUI_ObjDataScr_button;
 
 #endif

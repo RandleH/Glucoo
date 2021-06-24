@@ -76,7 +76,7 @@ void GLU_FUNC( GUI, circle_qrt2_raw  )       ( int x ,int y ,int r );
 void GLU_FUNC( GUI, circle_qrt3_raw  )       ( int x ,int y ,int r );
 void GLU_FUNC( GUI, circle_qrt4_raw  )       ( int x ,int y ,int r );
 
-void GLU_FUNC( GUI, sausage_raw      )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
 
 /*===============================================================================================================

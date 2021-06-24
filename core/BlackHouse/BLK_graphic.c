@@ -278,7 +278,7 @@ void       BLK_FUNC( Graph, set_penSize   )  (size_t         penSize      ){
     }
     GCFG.penSize = penSize;
 }
-void       BLK_FUNC( Graph, set_penColor  )  (BLK_TYPE(Pixel) penColor     ){
+void       BLK_FUNC( Graph, set_penColor  )  (BLK_TYPE(Pixel) penColor    ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     if( penColor == 0 )
         GCFG.penColor = 0x00;
@@ -1102,6 +1102,25 @@ E_Status_t BLK_FUNC( Graph, rect_round   ) (int xs,int ys,int xe,int ye, BLK_TYP
     
     return MAKE_ENUM( kStatus_Success );
 }
+
+/*====================================
+ > 插入空心圆角长方形
+=====================================*/
+E_Status_t BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+    int r = __limit((signed)GCFG.penSize, 0, (__min((xe-xs), (ye-ys)))/2 );
+    
+    BLK_FUNC( Graph, line_raw )(xs+r+1, ys    , xe-r-1, ys    , pInfo, method);
+    BLK_FUNC( Graph, line_raw )(xs+r+1, ye    , xe-r-1, ye    , pInfo, method);
+    BLK_FUNC( Graph, line_raw )(xs    , ys+r+1, xs    , ye-r-1, pInfo, method);
+    BLK_FUNC( Graph, line_raw )(xe    , ys+r+1, xe    , ye-r-1, pInfo, method);
+
+    BLK_FUNC( Graph, circle_qrt1_raw )(xe-r, ys+r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt2_raw )(xs+r, ys+r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt3_raw )(xs+r, ye-r, r, pInfo, method);
+    BLK_FUNC( Graph, circle_qrt4_raw )(xe-r, ye-r, r, pInfo, method);
+    
+    return MAKE_ENUM( kStatus_Success );
+}
     
 /*====================================
  > 插入直线，线宽为1
@@ -1555,7 +1574,7 @@ E_Status_t BLK_FUNC( Graph, quad_fill    ) (int x1,int y1,int x2,int y2,int x3,i
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t BLK_FUNC( Graph, sausage_raw  ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+E_Status_t BLK_FUNC( Graph, capsule_raw  ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int d = ye-ys+1;
     int r = d>>1;
     if( method == kApplyPixel_blur ){
@@ -1599,7 +1618,7 @@ E_Status_t BLK_FUNC( Graph, sausage_raw  ) (int xs,int ys,int xe,int ye, BLK_TYP
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t BLK_FUNC( Graph, sausage_fill ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+E_Status_t BLK_FUNC( Graph, capsule_fill ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int d = ye-ys+1;
     int r = d>>1;
     if( method == kApplyPixel_blur ){
