@@ -74,55 +74,53 @@ int main(int argc, const char * argv[]) {
 #endif
     
 #if 1
-    ID_t ID_spinbox = 0;
+    ID_t ID_spinbox[5] = {0};
     __GUI_Object_t cfg = {0};
     
     cfg.widget     = kGUI_ObjStyle_spinbox;
     cfg.obj_color  = M_COLOR_WHITE;
-    cfg.area.xs    = 10;
-    cfg.area.ys    = 10;
-    cfg.area.width = 60;
-    cfg.area.height= 40;
-    cfg.text       = "MHz";
+    cfg.area.width = 23;
+    cfg.area.height= 30;
+    cfg.area.xs    = (int)((RH_CFG_SCREEN_WIDTH - 5*cfg.area.width)>>1);
+    cfg.area.ys    = 20;
+    
+    cfg.text       = NULL;
     cfg.text_size  = 8;
     cfg.obj_color  = M_COLOR_WHITE;
     
     __GUI_ObjDataScr_spinbox data = {
-        .min = 2400 ,
-        .max = 2525 ,
-        .value = 2400,
-        .text_offset = 35,
-        .margin      = 3 ,
+        .min         = 0 ,
+        .max         = 255 ,
+        .value       = 233,
+        .text_offset = cfg.area.width,
+        .margin      = 2 ,
         .active      = true
     };
     
-    ID_spinbox = GLU_FUNC( Object, create )( &cfg, &data );
     
-    GLU_FUNC( Object, insert )( ID_spinbox );
+    
+    
+    ID_spinbox[0] = GLU_FUNC( Object, create )( &cfg, &data );
+    cfg.area.xs += cfg.area.width;
+    data.active = false;
+    ID_spinbox[1] = GLU_FUNC( Object, create )( &cfg, &data );
+    cfg.area.xs += cfg.area.width;
+    ID_spinbox[2] = GLU_FUNC( Object, create )( &cfg, &data );
+    cfg.area.xs += cfg.area.width;
+    ID_spinbox[3] = GLU_FUNC( Object, create )( &cfg, &data );
+    cfg.area.xs += cfg.area.width;
+    ID_spinbox[4] = GLU_FUNC( Object, create )( &cfg, &data );
+    cfg.area.xs += cfg.area.width;
+    
+    GLU_FUNC( Object, insert )( ID_spinbox[0] );
+    GLU_FUNC( Object, insert )( ID_spinbox[1] );
+    GLU_FUNC( Object, insert )( ID_spinbox[2] );
+    GLU_FUNC( Object, insert )( ID_spinbox[3] );
+    GLU_FUNC( Object, insert )( ID_spinbox[4] );
 //    GLU_FUNC( Object, frame  )( ID_spinbox, 1);
     GLU_FUNC( GUI, refreashEntireScreen )();
     
-    data.value = 2503;
-    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
-    GLU_FUNC( GUI, refreashEntireScreen )();
-    
-    data.active = false;
-    data.value = 2504;
-    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
-    GLU_FUNC( GUI, refreashEntireScreen )(); // 2402
-    
-    data.value = 2505;
-    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
-    GLU_FUNC( GUI, refreashEntireScreen )(); // 2401
-    
-    data.active = true;
-    data.value = 2525;
-    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
-    GLU_FUNC( GUI, refreashEntireScreen )(); // 2400
-    
-    data.value = 2300;
-    GLU_FUNC( Object, adjust )( ID_spinbox, &data, sizeof(data) );
-    GLU_FUNC( GUI, refreashEntireScreen )(); // 2400
+
 #endif
 
     return 0;
