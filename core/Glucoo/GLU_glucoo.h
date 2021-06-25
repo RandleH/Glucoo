@@ -62,7 +62,7 @@ bool GLU_FUNC( GUI, isCacheEmpty         )   ( void );
 void GLU_FUNC( GUI, rect_raw         )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, rect_edged       )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, rect_fill        )       ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, rect_round       )       ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, rect_round_fill  )       ( int xs,int ys,int xe,int ye );
 
 void GLU_FUNC( GUI, circle_raw       )       ( int x ,int y ,int d );
 void GLU_FUNC( GUI, circle_edged     )       ( int x ,int y ,int d );

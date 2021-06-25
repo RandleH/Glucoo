@@ -41,9 +41,9 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     __Font_backup_config();
     
     // Window Bar
-    BLK_FUNC( Graph, set_penColor )( color_bar.data);
-    BLK_FUNC( Graph, set_penSize  )( bar_rad);
-    BLK_FUNC( Graph, rect_round   )(xs   , ys         , xe  , ys+bar_size+bar_rad, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, set_penColor   )( color_bar.data);
+    BLK_FUNC( Graph, set_penSize    )( bar_rad);
+    BLK_FUNC( Graph, rect_round_fill)(xs   , ys         , xe  , ys+bar_size+bar_rad, &info_MainScreen, kApplyPixel_fill);
     
     BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , &info_MainScreen, kApplyPixel_fill);
     BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , &info_MainScreen, kApplyPixel_fill);

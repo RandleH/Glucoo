@@ -1464,7 +1464,7 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
     // 绘制实心圆角矩形
     BLK_FUNC( Graph, set_penSize  )( roundRadius );
     
-    (dataScr->cmd == true)? BLK_FUNC( Graph, rect_round     )(  config->area.xs+cache->margin, \
+    (dataScr->cmd == true)? BLK_FUNC( Graph, rect_round_fill)(  config->area.xs+cache->margin, \
                                                                 config->area.ys+cache->margin, \
                                                                 (int)(config->area.xs+config->area.width-cache->margin-1  ), \
                                                                 (int)(config->area.ys+config->area.height-cache->margin-1 ), \
@@ -1474,7 +1474,6 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
                                                                 (int)(config->area.xs+config->area.width-cache->margin-1  ), \
                                                                 (int)(config->area.ys+config->area.height-cache->margin-1 ), \
                                                                 &info_MainScreen, kApplyPixel_fill );
-    
     
     
     // 绘制按钮上的文字

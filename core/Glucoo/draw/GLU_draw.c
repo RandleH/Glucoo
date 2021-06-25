@@ -30,10 +30,10 @@ void GLU_FUNC( GUI, rect_fill        )   ( int xs, int ys, int xe, int ye ){
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )(xs, ys, xe, ye) : GLU_FUNC( GUI, addScreenArea )(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, rect_round       )   ( int xs, int ys, int xe, int ye ){
+void GLU_FUNC( GUI, rect_round_fill  )   ( int xs, int ys, int xe, int ye ){
 #ifdef RH_DEBUG
 #endif
-    BLK_FUNC( Graph, rect_round )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, rect_round_fill )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill );
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )(xs, ys, xe, ye) : GLU_FUNC( GUI, addScreenArea )(xs, ys, xe, ye);
 }
 

@@ -300,11 +300,6 @@ inline long __step_mul(long x){ // [!] Limitation: x should be smaller than 20
     return res;
 }
       
-long __comb(long num,long m){
-    __exitReturn(m>num || m<0 || num<0 , -1);
-    return __pascal_triangle(num, m);
-}
-      
 long __fibonacci(long n){
     __exitReturn(n<0, -1);
     
@@ -320,7 +315,48 @@ long __fibonacci(long n){
     return res;
 }
     
-
+unsigned long BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
+    __exitReturn( r>n , 0 );
+#if 0
+    { // 初级算法
+        unsigned long son = 1, mum = 1;
+        for(unsigned long i=0; i<r;  ){
+            son*=(n-i);
+            mum*=(++i);
+        }
+        return (unsigned long)(son/mum);
+    }
+#else
+    { // 进阶算法
+        uint16_t *temp = alloca(r*sizeof(uint16_t));
+        for( uint16_t i=0; i<r; i++ ){
+            temp[i] = (n-r+i+1);
+        }
+        
+        unsigned long mum=1, son=1;
+        for( int32_t i=(int32_t)(r-1); i>=0; i-- ){
+            int32_t j=(int32_t)(r-1);
+            
+            for( ; j>=0; j-- ){
+                if( temp[j]%(i+1)==0 ){
+                    temp[j]/=(i+1);
+                    break;
+                }
+            }
+            
+            if( j<0 )
+                mum *= i+1;
+            
+        }
+        
+        for( uint16_t i=0; i<r; i++ ){
+            son*=temp[i];
+        }
+        
+        return (unsigned long)(son/mum);
+    }
+#endif
+}
 
 /*===========================================================================================================================
  > Quantity Reference

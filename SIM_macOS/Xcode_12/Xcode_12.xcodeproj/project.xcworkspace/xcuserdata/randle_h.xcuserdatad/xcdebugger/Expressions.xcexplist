@@ -47,6 +47,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "BLK_Math_combinatorial:BLK_math.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "temp[j]">
+            </PersistentString>
+            <PersistentString
+               value = "i+1">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__gui_insert_window_MacOS:RH_gui.c">
          <PersistentStrings>
             <PersistentString

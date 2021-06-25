@@ -1064,7 +1064,7 @@ E_Status_t BLK_FUNC( Graph, rect_edged   ) (int xs,int ys,int xe,int ye, BLK_TYP
 /*====================================
  > 插入圆角长方形
 =====================================*/
-E_Status_t BLK_FUNC( Graph, rect_round   ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+E_Status_t BLK_FUNC( Graph, rect_round_fill   ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int r = __limit((signed)GCFG.penSize, 0, (__min((xe-xs), (ye-ys)))/2 );
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
@@ -1120,6 +1120,50 @@ E_Status_t BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, B
     BLK_FUNC( Graph, circle_qrt4_raw )(xe-r, ye-r, r, pInfo, method);
     
     return MAKE_ENUM( kStatus_Success );
+}
+    
+/*====================================
+ > 插入空心长方形(使用__Area_t参数)
+=====================================*/
+E_Status_t      BLK_FUNC( Graph , EX_rect_raw  ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+    return BLK_FUNC(Graph,rect_raw )( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      pInfo, method );
+}
+    
+/*====================================
+ > 插入实心长方形(使用__Area_t参数)
+=====================================*/
+E_Status_t      BLK_FUNC( Graph , EX_rect_fill ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+    return BLK_FUNC(Graph,rect_fill)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      pInfo, method );
+}
+    
+/*====================================
+ > 插入一个空心长发形,线宽随设定(使用__Area_t参数)
+=====================================*/
+E_Status_t      BLK_FUNC( Graph , EX_rect_edged) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+    return BLK_FUNC(Graph,rect_edged)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                       __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                       pInfo, method );
+}
+    
+/*====================================
+ > 插入圆角长方形(使用__Area_t参数)
+=====================================*/
+E_Status_t      BLK_FUNC( Graph , EX_rect_round) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
+    return BLK_FUNC(Graph,rect_round_fill)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            pInfo, method );
 }
     
 /*====================================

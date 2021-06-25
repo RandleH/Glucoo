@@ -37,8 +37,8 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
 
 
-    
-#if 1
+    printf("%ld\n", BLK_FUNC( Math, combinatorial )( 60, 30 ) );
+#if 0
     
     __GUI_Object_t            a    = {0};
     __GUI_ObjDataScr_button   data = {0};
