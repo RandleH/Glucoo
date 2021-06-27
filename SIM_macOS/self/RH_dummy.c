@@ -350,7 +350,302 @@ GUI_RefreashScreen();
 
 
 
+
+
+
+
+
+void __Font_setStyle(E_GUI_FontStyle_t style){
+    
+#if    ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
+    FCFG.method = &rhtt;
+#else
+    ( FCFG.size < MIN_TTF_FONT_SIZE )? (FCFG.method = &rhtt) : (FCFG.method = &stbtt);
 #endif
+    
+    switch(style){
+        case kGUI_FontStyle_ArialRounded_Bold:
+    #if RH_CFG_FONT_STYLE__CourierNew
+        case kGUI_FontStyle_CourierNew:
+    #endif
+    #if RH_CFG_FONT_STYLE__CourierNew_Italic
+        case kGUI_FontStyle_CourierNew_Italic:
+    #endif
+    #if RH_CFG_FONT_STYLE__CourierNew_Bold
+        case kGUI_FontStyle_CourierNew_Bold:
+    #endif
+    #if RH_CFG_FONT_STYLE__NewYork
+        case kGUI_FontStyle_NewYork:
+    #endif
+    #if RH_CFG_FONT_STYLE__NewYork_Italic
+        case kGUI_FontStyle_NewYork_Italic:
+    #endif
+    #if RH_CFG_FONT_STYLE__Arial_Unicode
+        case kGUI_FontStyle_Arial_Unicode:
+    #endif
+            
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
+            if( FCFG.method==&stbtt )
+                __read_ttf_file( font_ttf_path[style] );
+            if( FCFG.method==&rhtt )
+                FCFG.font_data = (const uint8_t*)font_bit_array[ style ];
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY  )
+            if( FCFG.method==&stbtt )
+                FCFG.font_data = (const uint8_t*)font_ttf_array[ style ];
+            if( FCFG.method==&rhtt )
+                FCFG.font_data = (const uint8_t*)font_bit_array[ style ];
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
+            FCFG.font_data = (const uint8_t*)font_bit_array[ style ];
+#else
+  #error "Unknown font data source."
+#endif
+            (*FCFG.method->_InitFont)(&FCFG.stb_info, FCFG.font_data, 0);
+            break;
+        default:
+            return;
+    }
+    FCFG.style        = style;
+    FCFG.scale        = (*FCFG.method->_ScaleForPixelHeight)( &FCFG.stb_info, FCFG.size );
+    (*FCFG.method->_GetFontVMetrics)( &FCFG.stb_info, &FCFG.info.ascent, &FCFG.info.descent, &FCFG.info.lineGap );
+    FCFG.info.ascent  = roundf(FCFG.info.ascent * FCFG.scale);
+    FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
+}
 
 
+void __Font_setSize(size_t size){
+#if ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
+    FCFG.size   = 8;
+    FCFG.method = &rhtt;
+    __Font_setStyle(FCFG.style);
+#else
+    if      ( size <= MIN_TTF_FONT_SIZE && FCFG.size >  MIN_TTF_FONT_SIZE ){
+        FCFG.size = 8;
+        FCFG.method = &rhtt;
+        __Font_setStyle(FCFG.style);
+    }else if( size >  MIN_TTF_FONT_SIZE && FCFG.size <= MIN_TTF_FONT_SIZE ){
+        FCFG.size = size;
+        FCFG.method = &stbtt;
+        __Font_setStyle(FCFG.style);
+    }else{
+        FCFG.size = size;
+    }
+#endif
+    
+    
 
+    FCFG.scale       = (*FCFG.method->_ScaleForPixelHeight)( &FCFG.stb_info, FCFG.size );
+    (*FCFG.method->_GetFontVMetrics)( &FCFG.stb_info, &FCFG.info.ascent, &FCFG.info.descent, &FCFG.info.lineGap );
+    FCFG.info.ascent  = roundf(FCFG.info.ascent * FCFG.scale);
+    FCFG.info.descent = roundf(FCFG.info.descent * FCFG.scale);
+}
+
+
+size_t __Font_getSize(void){
+    return FCFG.size;
+}
+
+E_GUI_FontStyle_t __Font_getStyle(void){
+    return FCFG.style;
+}
+
+__GUI_Font_t*  __Font_exportStr( const char* str ){
+    
+    if( FCFG.info.img_buf ){
+        RH_FREE(FCFG.info.img_buf);
+        FCFG.info.img_buf = NULL;
+    }
+    
+    size_t len = strlen(str);
+    
+    FCFG.info.img_h = FCFG.size;
+    FCFG.info.img_w  = 0;
+    int* xs  = (int*)RH_CALLOC(len,sizeof(int));
+    int* ys  = (int*)RH_CALLOC(len,sizeof(int));
+    int* c_x = (int*)RH_CALLOC(len,sizeof(int));
+    int* c_y = (int*)RH_CALLOC(len,sizeof(int));
+    int* adv = (int*)RH_MALLOC(len*sizeof(int));
+    int* lfB = (int*)RH_MALLOC(len*sizeof(int));
+    for(int i=0; i<len; i++){
+        
+        int advanceWidth    = 0;
+        int leftSideBearing = 0;
+        (*FCFG.method->_GetCodepointHMetrics)( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
+        
+        
+        int c_x1 = 0, c_y1 = 0, c_x2 = 0, c_y2 = 0;
+        (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, str[i], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        c_x[i] = c_x2-c_x1;
+        c_y[i] = c_y2-c_y1;
+        
+        if( c_x[i]==0 ){
+            (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, 'h', FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+            c_x[i] = c_x2-c_x1;
+        }
+        
+        adv[i] = roundf( advanceWidth*FCFG.scale );
+        lfB[i] = roundf( leftSideBearing*FCFG.scale );
+        FCFG.info.img_w += c_x[i];
+        if(i!=0)
+            xs[i]  = xs[i-1] + c_x[i-1];
+        ys[i]  = FCFG.ascent + c_y1;
+
+    }
+    
+    FCFG.info.img_buf = RH_CALLOC(FCFG.info.img_w*FCFG.info.img_h, sizeof(uint8_t));
+    for(int i=0; i<len; i++){
+        size_t byteOffset = 0;
+        if( i!=0 ){
+            byteOffset = ( lfB[i] + ys[i]*FCFG.info.img_w + xs[i] );
+        }else{
+            byteOffset = ( lfB[i] + ys[i]*FCFG.info.img_w + xs[i] );
+        }
+        (*FCFG.method->_MakeCodepointBitmap)(&FCFG.stb_info, FCFG.info.img_buf+byteOffset, c_x[i], c_y[i], (int)(FCFG.info.img_w), FCFG.scale, FCFG.scale, str[i]);
+    }
+    RH_FREE(xs);
+    RH_FREE(ys);
+    RH_FREE(c_x);
+    RH_FREE(c_y);
+    RH_FREE(adv);
+    RH_FREE(lfB);
+#ifdef STB_OUTPUT_FONT_PNG
+    printf("ascent = %d\n"   , FCFG.ascent);
+    printf("descent = %d\n"  , FCFG.descent);
+    printf("lineGap = %d\n"   , FCFG.lineGap);
+    
+    printf("w = %ld\n", FCFG.info.img_w  );
+    printf("h = %ld\n", FCFG.info.img_h );
+    stbi_write_png("C:/Users/asus/Desktop/img_buf.png", (int)FCFG.info.img_w, (int)FCFG.info.img_h, 1, FCFG.info.img_buf, (int)FCFG.info.img_w);
+    stbi_write_png("/Users/randle_h/Desktop/img_buf.png", (int)FCFG.info.img_w, (int)FCFG.info.img_h, 1, FCFG.info.img_buf, (int)FCFG.info.img_w);
+#endif
+    return &FCFG.info;
+}
+
+int  __Font_getWordNum( const size_t width, const char* str ){
+    int cnt=0, w=0;
+    int c_x1 , c_y1 , c_x2 , c_y2;
+    
+    do{
+        (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, str[cnt++], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        w+=c_x2-c_x1;
+    }while(  cnt<strlen(str) && w<width);
+    
+    
+    if( w>= width )
+        cnt--;
+    
+    return cnt;
+}
+
+E_GUI_FontStyle_t __Font_getStyle(void){
+    return FCFG.style;
+}
+
+
+static E_Status_t __read_ttf_file( const char* path, void** buf ){
+    FILE* fontFile = fopen( path , "rb" );
+#ifdef RH_DEBUG
+    RH_ASSERT( fontFile );
+#endif
+    __exitReturn( !fontFile, MAKE_ENUM( kStatus_BadAccess ) );
+
+    fseek(fontFile, 0, SEEK_END);
+    size_t size = ftell(fontFile);
+    fseek(fontFile, 0, SEEK_SET);
+
+
+    *buf = RH_CALLOC(size, sizeof(uint8_t));
+
+    fread(*buf, size, sizeof(uint8_t), fontFile);
+    fclose(fontFile);
+
+    return MAKE_ENUM(kStatus_Success);
+}
+
+int main(int argc, const char * argv[]) {
+
+    Simul_API_Init();
+
+    GLU_FUNC( GUI, init        )();
+    GLU_FUNC( GUI, setPenSize  )(5);
+    GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
+    
+    
+    GLU_FUNC(Font, set_size)( 25 );
+    
+    // 前期准备工作(与字体和大小有关, 与具体字符无关)
+    int fsize = 47; // 字体大小
+    
+    float scale;                      // 缩放
+    int   ascent, descent,lineGap;    // 上边, 下边, 行间距
+    
+    // 读取ttf文件数据
+    stbtt_fontinfo stb_info;
+    void* fdata = NULL;
+    __read_ttf_file( "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Arial Rounded Bold.ttf", &fdata );
+    stbtt_InitFont(&stb_info, fdata, 0);
+    
+    stbtt_GetFontVMetrics( &stb_info, &ascent, &descent, &lineGap );
+    scale   = stbtt_ScaleForPixelHeight( &stb_info, fsize );
+    ascent  = roundf( ascent  * scale);
+    descent = roundf( descent * scale);
+    
+    uint8_t* img_buf = NULL;
+    
+    const char* str = "STB RandleH.";
+
+#if 0
+    printf( "scale   = %f\n", scale   );
+    printf( "ascent  = %d\n", ascent  );
+    printf( "descent = %d\n", descent );
+    printf( "lineGap = %d\n\n", lineGap );
+#endif
+    
+    // 迭代字符渲染
+    // 采集字符串像素坐标信息
+    size_t size = (strlen(str)+1)*sizeof(int);
+    int* cx  = alloca(size); memset( cx, 0, size); // 记录每个字母起始绘制的横坐标
+    int* cy  = alloca(size); memset( cy, 0, size); // 记录每个字母起始绘制的纵坐标
+    int* cw  = alloca(size); memset( cw, 0, size); // 记录每个字母外框宽度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
+    int* ch  = alloca(size); memset( ch, 0, size); // 记录每个字母外框高度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
+    int  cnt = 0;
+    while( str[cnt]!='\0' ){
+        {// 字符外框大小
+            int c_x1 , c_y1 , c_x2 , c_y2;
+            stbtt_GetCodepointBitmapBox( &stb_info, str[cnt], scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
+            
+            cw[cnt] = c_x2-c_x1;
+            ch[cnt] = c_y2-c_y1;
+            cy[cnt] = ascent + c_y1;
+        }
+        
+        {// 字符横向间隙和宽度
+            int advanceWidth,leftSideBearing;
+            stbtt_GetCodepointHMetrics(&stb_info, str[cnt], &advanceWidth, &leftSideBearing );
+            
+            leftSideBearing = roundf( leftSideBearing*scale );
+            advanceWidth    = roundf( advanceWidth*scale );
+            
+            cx[cnt]   += leftSideBearing;
+            
+            cx[cnt+1]  = cx[cnt] - leftSideBearing + advanceWidth + roundf( stbtt_GetCodepointKernAdvance( &stb_info, str[cnt], str[cnt+1] ) * scale) ;
+        }
+        cnt++;
+    }
+    // 确定绘制出这样的字符串至少需要的图像大小
+    int img_w = cx[cnt];
+    int img_h = ascent-descent+lineGap;
+    img_buf = RH_CALLOC( img_w*img_h, sizeof(uint8_t) );
+    
+    cnt = 0;
+    while( str[cnt]!='\0' ){
+        uint8_t *pIter = img_buf + ( img_w*cy[cnt] ) + cx[cnt];
+        stbtt_MakeCodepointBitmap( &stb_info, pIter, cw[cnt], ch[cnt], (int)img_w, scale, scale, str[cnt] );
+        cnt++;
+    }
+
+    stbi_write_png("/Users/randle_h/Desktop/output.png", img_w, img_h, 1, img_buf, img_w);
+    
+    return 0;
+}
+
+#endif

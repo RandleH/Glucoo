@@ -85,19 +85,19 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
     __Font_backup_config();
     
-    __Font_setSize(config->text_size);
-    int cnt = __Font_getWordNum( config->area.width, config->text );
+    GLU_FUNC( Font, set_size )(config->text_size);
+    int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->text );
 
     char* p = NULL;
     if(cnt>0){
         p = alloca( cnt+sizeof('\0') );
         strncpy(p, config->text, cnt);
         p[cnt] = '\0';
-        __GUI_Font_t* pF = __Font_exportStr(p);
+        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
     #ifdef RH_DEBUG
         RH_ASSERT( pF );
-        RH_ASSERT( pF->output );
-        RH_ASSERT( pF->width < config->area.width );
+        RH_ASSERT( pF->img_buf );
+        RH_ASSERT( pF->img_w < config->area.width );
     #endif
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
         int x_fs = 0;
@@ -108,7 +108,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGUI_FontAlign_Middle:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -117,9 +117,9 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         /* 字体图像像素遍历pIter */
-        uint8_t* pIter = pF->output;
-        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++, pIter++ ){
+        uint8_t* pIter = pF->img_buf;
+        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -130,10 +130,10 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++ ){
+        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++ ){
                 size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-                uint8_t pixWeight = pF->output[y*pF->width+x];
+                uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
                 info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -146,8 +146,8 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     #endif
         
         /* 记录区域长宽到history, 方便下次清除区域 */
-        pHistory->area.height = __min( pF->height, config->area.height );
-        pHistory->area.width  = pF->width;
+        pHistory->area.height = __min( pF->img_h, config->area.height );
+        pHistory->area.width  = pF->img_w;
     }
     
     
@@ -200,13 +200,13 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     
     // 绘制数字
     char __str[GUI_X_WIDTH>>2] = {0};
-    __Font_setSize(config->text_size);
+    GLU_FUNC( Font, set_size )(config->text_size);
     
     // 计算数值共占有多少十进制位
     int wordCnt = snprintf(__str, sizeof(__str), "%d",((struct __GUI_ObjDataScr_num*)config->dataScr)->value);
     
     // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-    int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+    int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
     // 在临界位置截断字符串
     __str[ maxWordCnt ] = '\0';
     
@@ -222,7 +222,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     
     if(__str[0]!='\0'){
 
-        __GUI_Font_t* pF = __Font_exportStr(__str);
+        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(__str);
         
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
         
@@ -233,7 +233,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGUI_FontAlign_Middle:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -241,9 +241,9 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
         GLU_UION(Pixel) color_text = {.data = config->obj_color};
     
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        uint8_t* pIter = pF->output;
-        for( int y=0; y<pF->height && y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++, pIter++ ){
+        uint8_t* pIter = pF->img_buf;
+        for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++, pIter++ ){
                 size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -254,10 +254,10 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
             }
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++ ){
+        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++ ){
                 size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-                uint8_t pixWeight = pF->output[y*pF->width+x];
+                uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
                 info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -269,8 +269,8 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
          
     #endif
         /* 记录区域长宽到history, 方便下次清除区域 */
-        pHistory->area.height = __min( pF->height, config->area.height );
-        pHistory->area.width  = pF->width;
+        pHistory->area.height = __min( pF->img_h, config->area.height );
+        pHistory->area.width  = pF->img_w;
     }
 
     if( config->showFrame ){
@@ -318,11 +318,11 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
     
     char __str[GUI_X_WIDTH>>2] = {'\0'};
-    __Font_setSize(config->text_size);
+    GLU_FUNC( Font, set_size )(config->text_size);
     snprintf(__str, sizeof(__str), "%.3f",((struct __GUI_ObjDataScr_fnum*)config->dataScr)->value);
     
     // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-    int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+    int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
     // 在临界位置截断字符串
     __str[ maxWordCnt ] = '\0';
     
@@ -342,7 +342,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
         memset(__str, '#', maxWordCnt);
     }
     
-    __GUI_Font_t* pF = __Font_exportStr(__str);
+    __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(__str);
     /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
     int x_fs = 0;
     int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
@@ -351,7 +351,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
             x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
             break;
         case kGUI_FontAlign_Middle:
-            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
             RH_ASSERT(0);
@@ -359,12 +359,12 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     GLU_UION(Pixel) color_text = {.data = config->obj_color};
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    uint8_t*       pIterFont = pF->output;
+    uint8_t*       pIterFont = pF->img_buf;
     
     GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs>>3)*(info_MainScreen.width)+x_fs;
     
-    for( int y=0; y<pF->height && y<config->area.height; y++ ){
-        for( int x=0; x<pF->width; x++, pIterFont++, pIterScr++ ){
+    for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+        for( int x=0; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
             if( (*pIterFont<128) ^ (color_text.data!=0) ){
                 pIterScr->data = __BIT_SET( pIterScr->data, (y_fs+y)%8 );
             }else{
@@ -372,17 +372,17 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
             }
         }
         
-        pIterScr -= pF->width;
+        pIterScr -= pF->img_w;
         if( ((y_fs+y+1)>>3) > ((y_fs+y)>>3) ){
             pIterScr += info_MainScreen.width;
         }
     }
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-        for( int x=0; x<pF->width; x++ ){
+    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+        for( int x=0; x<pF->img_w; x++ ){
             size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-            uint8_t pixWeight = pF->output[y*pF->width+x];
+            uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
             info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
             info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
             info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -394,8 +394,8 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
      
 #endif
     /* 记录区域长宽到history, 方便下次清除区域 */
-    pHistory->area.height = __min( pF->height, config->area.height );
-    pHistory->area.width  = pF->width;
+    pHistory->area.height = __min( pF->img_h, config->area.height );
+    pHistory->area.width  = pF->img_w;
         
     
     
@@ -1032,9 +1032,9 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     __GUI_Font_t* pF = NULL;
     {
         char __str[GUI_X_WIDTH>>2] = {0};
-        __Font_setSize(config->text_size);
+        GLU_FUNC( Font, set_size )(config->text_size);
         snprintf(__str, sizeof(__str), "%d",val);
-        __str[ __Font_getWordNum(config->area.width, __str) ] = '\0';
+        __str[ GLU_FUNC( Font, get_wordCnt )(config->area.width, __str) ] = '\0';
         
     #ifdef RH_DEBUG
         RH_ASSERT( __str[0] != '\0' );
@@ -1044,7 +1044,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         int wordCnt = snprintf(__str, sizeof(__str), "%d",val);
         
         // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-        int maxWordCnt = __Font_getWordNum(config->area.width, __str);
+        int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
         // 在临界位置截断字符串
         __str[ maxWordCnt ] = '\0';
         
@@ -1055,7 +1055,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         if( !isEnough){
             memset(__str, '#', maxWordCnt);
         }
-        pF = __Font_exportStr(__str);
+        pF = GLU_FUNC( Font, export_str )(__str);
     }
 #ifdef RH_DEBUG
     RH_ASSERT( pF );
@@ -1067,7 +1067,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
             x_fs = config->area.xs;
             break;
         case kGUI_FontAlign_Middle:
-            x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->width))>>1) , 0, GUI_X_WIDTH-1   );
+            x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
             RH_ASSERT(0);
@@ -1075,9 +1075,9 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     GLU_UION(Pixel) color_text = {.data = config->obj_color};
 
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    uint8_t* pIter = pF->output;
-    for( int y=0; y<pF->height && y<config->area.height; y++ ){
-        for( int x=0; x<pF->width; x++, pIter++ ){
+    uint8_t* pIter = pF->img_buf;
+    for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+        for( int x=0; x<pF->img_w; x++, pIter++ ){
             size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
             if( (*pIter<128) ^ (color_text.data!=0) ){
                 info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -1088,10 +1088,10 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         }
     }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-        for( int x=0; x<pF->width; x++ ){
+    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+        for( int x=0; x<pF->img_w; x++ ){
             size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-            uint8_t pixWeight = pF->output[y*pF->width+x];
+            uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
             info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
             info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
             info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -1242,9 +1242,9 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
             if( config->text!=NULL ){
                 char* ptrUnit = alloca( strlen(config->text) );
                 strcpy( ptrUnit, config->text );
-                __Font_setSize( config->text_size );
-                ptrUnit[ __Font_getWordNum( config->area.width - dataScr->text_offset , config->text) ] = '\0';
-                __GUI_Font_t* pF = __Font_exportStr( ptrUnit );
+                GLU_FUNC( Font, set_size )( config->text_size );
+                ptrUnit[ GLU_FUNC( Font, get_wordCnt )( config->area.width - dataScr->text_offset , config->text) ] = '\0';
+                __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( ptrUnit );
                 
                 size_t width;
                 __Font_getStrSize( &width, NULL, ptrUnit );
@@ -1253,9 +1253,9 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 
                 GLU_UION(Pixel) color_text = {.data = config->obj_color};
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                uint8_t* pIter = pF->output;
-                for( int y=0; y<pF->height && y<config->area.height; y++ ){
-                    for( int x=0; x<pF->width; x++, pIter++ ){
+                uint8_t* pIter = pF->img_buf;
+                for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+                    for( int x=0; x<pF->img_w; x++, pIter++ ){
                         size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
                         if( (*pIter<128) ^ (color_text.data!=0) ){
                             info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
@@ -1265,10 +1265,10 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                     }
                 }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-                    for( int x=0; x<pF->width; x++ ){
+                for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+                    for( int x=0; x<pF->img_w; x++ ){
                         size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-                        uint8_t pixWeight = pF->output[y*pF->width+x];
+                        uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
                         info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
                         info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
                         info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -1298,7 +1298,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
     
     { // 绘制数字
         cache->value = __limit( dataScr->value, dataScr->min, dataScr->max );
-        __Font_setSize( config->text_size );
+        GLU_FUNC( Font, set_size )( config->text_size );
         size_t size   = 1 + BLK_FUNC( Bit, DECs )( cache->value );
         char* ptrNum  = alloca( size );
         snprintf( ptrNum, size, "%d", cache->value );
@@ -1308,13 +1308,13 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         cache->num.xs     = (int)(cache->textXS - cache->num.width - dataScr->margin);
         cache->num.ys     = cache->textYS;
         
-        __GUI_Font_t* pF = __Font_exportStr( ptrNum );
+        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( ptrNum );
         
         GLU_UION(Pixel) color_text = {.data = config->obj_color};
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        uint8_t* pIter = pF->output;
-        for( int y=0; y<pF->height && y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++, pIter++ ){
+        uint8_t* pIter = pF->img_buf;
+        for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++, pIter++ ){
                 size_t index = ((cache->num.ys+y)>>3)*(info_MainScreen.width)+(cache->num.xs+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (cache->num.ys+y)%8 );
@@ -1324,10 +1324,10 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
             }
         }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++ ){
+        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++ ){
                 size_t index = (cache->num.ys+y)*(info_MainScreen.width)+(cache->num.xs+x);
-                uint8_t pixWeight = pF->output[y*pF->width+x];
+                uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
                 info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
                 info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
@@ -1480,22 +1480,22 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
     if( config->text ){
         __Font_backup_config();
         
-        __Font_setSize( config->text_size );
+        GLU_FUNC( Font, set_size )( config->text_size );
         char* str = alloca( strlen(config->text)+1 );
     #ifdef RH_DEBUG
         RH_ASSERT( str );
     #endif
         strcpy(str, config->text);
-        str[ __Font_getWordNum( config->area.width-2*cache->margin, config->text ) ] = '\0';
-        __GUI_Font_t* pF = __Font_exportStr( str );
-        int fs_x = config->area.xs + (((int)config->area.width  - (int)pF->width )>>1);
-        int fs_y = config->area.ys + (((int)config->area.height - (int)pF->height)>>1);
+        str[ GLU_FUNC( Font, get_wordCnt )( config->area.width-2*cache->margin, config->text ) ] = '\0';
+        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( str );
+        int fs_x = config->area.xs + (((int)config->area.width  - (int)pF->img_w )>>1);
+        int fs_y = config->area.ys + (((int)config->area.height - (int)pF->img_h)>>1);
         
         GLU_UION(Pixel) color_text = {.data = (dataScr->cmd == true)?config->bk_color:config->obj_color};
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        uint8_t* pIter = pF->output;
-        for( int y=0; y<pF->height && y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++, pIter++ ){
+        uint8_t* pIter = pF->img_buf;
+        for( int y=0; y<pF->img_h && y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++, pIter++ ){
                 size_t index = ((fs_y+y)>>3)*(info_MainScreen.width)+(fs_x+x);
                 if( (*pIter<128) ^ (color_text.data!=0) ){
                     info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (fs_y+y)%8 );
@@ -1506,18 +1506,18 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        uint8_t*         pIterFont = pF->output;
+        uint8_t*         pIterFont = pF->img_buf;
         GLU_UION(Pixel)* pIterScr  = &info_MainScreen.pBuffer[(fs_y)*(info_MainScreen.width)+(fs_x)];
         
         
-        for( int y=0; y<pF->height&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->width; x++,pIterFont++, pIterScr++ ){
+        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
+            for( int x=0; x<pF->img_w; x++,pIterFont++, pIterScr++ ){
                 size_t index = (fs_y+y)*(info_MainScreen.width)+(fs_x+x);
                 info_MainScreen.pBuffer[ index ].R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
                 info_MainScreen.pBuffer[ index ].G = pIterScr->G + (( (color_text.G - pIterScr->G) * (*pIterFont) )>>8);
                 info_MainScreen.pBuffer[ index ].B = pIterScr->B + (( (color_text.B - pIterScr->B) * (*pIterFont) )>>8);
             }
-            pIterScr -= pF->width;
+            pIterScr -= pF->img_w;
             pIterScr += info_MainScreen.width;
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )

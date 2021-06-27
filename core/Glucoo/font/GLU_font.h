@@ -36,7 +36,11 @@ struct rhtt_fontinfo{
 };
 typedef struct rhtt_fontinfo rhtt_fontinfo;
 
+
+
 typedef enum{
+    kGUI_FontStyle_Unscii            ,
+    
     kGUI_FontStyle_ArialRounded_Bold ,
     
 #if RH_CFG_FONT_STYLE__CourierNew
@@ -68,33 +72,37 @@ typedef enum{
 }E_GUI_FontAlign_t;
 
 struct __GUI_Font_t{
-    uint8_t* output;
-    size_t   height;
-    size_t   width;
+    uint8_t* img_buf;
+    int      img_h;
+    int      img_w;
     size_t   space;
-    int      ascent;
-    int      descent;
-    int      lineGap;
+
 };
 typedef struct __GUI_Font_t __GUI_Font_t;
 
 void             RH_PREMAIN MAKE_FUNC( Font, init           ) (void);
 
-void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
-void                        MAKE_FUNC( Font, setSize        ) ( size_t            size    );
+//void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
+void                         GLU_FUNC( Font, set_style      ) ( E_GUI_FontStyle_t style   );
+//void                        MAKE_FUNC( Font, setSize        ) ( size_t            size    );
+void                         GLU_FUNC( Font, set_size       ) ( uint8_t size   );
 
-size_t                      MAKE_FUNC( Font, getSize        ) ( void );
-E_GUI_FontStyle_t           MAKE_FUNC( Font, getStyle       ) ( void );
+//size_t                      MAKE_FUNC( Font, getSize        ) ( void );
+uint8_t                      GLU_FUNC( Font, get_size       ) ( void );
+//E_GUI_FontStyle_t           MAKE_FUNC( Font, getStyle       ) ( void );
+E_GUI_FontStyle_t            GLU_FUNC( Font, get_style      ) ( void );
 
 void                        MAKE_FUNC( Font, backup_config  ) (void);
 void                        MAKE_FUNC( Font, restore_config ) (void);
 
 __GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportChar     ) ( uint16_t     unicode );
-__GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportStr      ) ( const char*  str     );
+//__GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportStr      ) ( const char*  str     );
+__GUI_Font_t*     RH_RESULT  GLU_FUNC( Font, export_str     ) ( const char* str );
 
 void                        MAKE_FUNC( Font, getCharSize    ) ( size_t *width, size_t *height, char c );
 void                        MAKE_FUNC( Font, getStrSize     ) ( size_t *width, size_t *height, const char* str );
-int                         MAKE_FUNC( Font, getWordNum     ) ( const size_t width, const char* str   );
+//int                         MAKE_FUNC( Font, getWordNum     ) ( const size_t width, const char* str   );
+int                          GLU_FUNC( Font, get_wordCnt    ) ( size_t width, const char* str );
 
 __GUI_Font_t*               MAKE_FUNC( Font, exportText_Justify )( const char* str, size_t width );
 

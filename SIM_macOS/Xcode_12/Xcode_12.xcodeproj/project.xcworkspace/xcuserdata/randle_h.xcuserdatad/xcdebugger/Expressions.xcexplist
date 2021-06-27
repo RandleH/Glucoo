@@ -213,9 +213,15 @@
          contextName = "main:main.c">
          <PersistentStrings>
             <PersistentString
+               value = "cx[12]">
+            </PersistentString>
+            <PersistentString
                value = "RH_Debug_alloced_byte">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "stbtt__rasterize_sorted_edges:stb_truetype.h">
       </ContextState>
       <ContextState
          contextName = "largestRectangleArea:main.c">
@@ -224,6 +230,9 @@
                value = "ans">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__gui_insert_object_text:GLU_object.c">
       </ContextState>
       <ContextState
          contextName = "GUI_RefreashScreen:RH_gui.c">
@@ -270,6 +279,14 @@
          <PersistentStrings>
             <PersistentString
                value = "GRAM">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GLU_Font_get_wordCnt:GLU_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "str[cnt]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

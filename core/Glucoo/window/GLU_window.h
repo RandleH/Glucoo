@@ -34,8 +34,8 @@ struct __GUI_Window_t{
     //...//
     
     const void*  const   text_bitMap;  // DO NOT MODIFY
-    const size_t         text_bitH;    // DO NOT MODIFY
-    const size_t         text_bitW;    // DO NOT MODIFY
+    const int            text_bitH;    // DO NOT MODIFY
+    const int            text_bitW;    // DO NOT MODIFY
     const int            text_rs;      // DO NOT MODIFY
     const int            text_margin;  // DO NOT MODIFY
     
