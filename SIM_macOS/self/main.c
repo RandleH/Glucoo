@@ -39,10 +39,18 @@ int main(int argc, const char * argv[]) {
     
     
     GLU_FUNC(Font, set_size  )( 47 );
-    GLU_FUNC(Font, set_style )( kGUI_FontStyle_Unscii );
-    printf( "%d\n",GLU_FUNC( Font, get_wordCnt )( 272, "STB RandleH." ));
+    GLU_FUNC(Font, set_style )( kGLU_Font_Arial_Unicode );
+    printf( "%d\n",GLU_FUNC( Font, get_str_WordCnt )( 272, "RandleH. YYDS" ));
     
-#if 1
+    
+    size_t width, height;
+    GLU_FUNC( Font, get_str_ImgInfo )( &width, &height, "S" );
+    
+    GLU_FUNC( Font, out_str_Img )( "RandleH. YYDS" );
+    
+
+    
+#if 0
     
     __GUI_Object_t a  = {0};
     ID_t           id = 0;
@@ -51,9 +59,6 @@ int main(int argc, const char * argv[]) {
     
     a.font = kGUI_FontStyle_Unscii;
     a.area.width = 34;
-    
-    
-    
     
     id = GLU_FUNC(Object,create  )( &a, NULL );
     GLU_FUNC(Object, insert)( id );

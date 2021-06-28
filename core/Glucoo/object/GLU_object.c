@@ -65,7 +65,7 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
 static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->font < kGLU_NUM_FontStyle );
     RH_ASSERT( config->text );
     RH_ASSERT( config->widget == kGUI_ObjStyle_text );
 #endif
@@ -83,17 +83,17 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     }
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     
     GLU_FUNC( Font, set_size )(config->text_size);
-    int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->text );
+    int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->text );
 
     char* p = NULL;
     if(cnt>0){
         p = alloca( cnt+sizeof('\0') );
         strncpy(p, config->text, cnt);
         p[cnt] = '\0';
-        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
     #ifdef RH_DEBUG
         RH_ASSERT( pF );
         RH_ASSERT( pF->img_buf );
@@ -104,10 +104,10 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         
         switch ( config->text_align ) {
-            case kGUI_FontAlign_Left:
+            case kGLU_Align_Left:
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
-            case kGUI_FontAlign_Middle:
+            case kGLU_Align_Middle:
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
@@ -164,7 +164,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     pHistory->showFrame = config->showFrame;
     
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     
 }
 static void __gui_adjust_object_text      ( const __GUI_Object_t* config ){
@@ -180,12 +180,12 @@ static void __gui_remove_object_num       ( const __GUI_Object_t* config ){
 static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->font < kGLU_NUM_FontStyle );
     RH_ASSERT( config->widget == kGUI_ObjStyle_num );
 #endif
     __gui_remove_object_num(config);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
     struct{
@@ -206,7 +206,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     int wordCnt = snprintf(__str, sizeof(__str), "%d",((struct __GUI_ObjDataScr_num*)config->dataScr)->value);
     
     // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-    int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
+    int maxWordCnt = GLU_FUNC( Font, get_str_WordCnt )(config->area.width, __str);
     // 在临界位置截断字符串
     __str[ maxWordCnt ] = '\0';
     
@@ -222,17 +222,17 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     
     if(__str[0]!='\0'){
 
-        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(__str);
+        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(__str);
         
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
         
         int x_fs = 0;
         int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
-            case kGUI_FontAlign_Left:
+            case kGLU_Align_Left:
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
-            case kGUI_FontAlign_Middle:
+            case kGLU_Align_Middle:
                 x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
@@ -284,7 +284,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
     }
     pHistory->showFrame = config->showFrame;
 
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_num       ( const __GUI_Object_t* config ){
@@ -297,7 +297,7 @@ static void __gui_remove_object_fnum      ( const __GUI_Object_t* config ){
 static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->font < kGUI_NUM_FontStyle );
+    RH_ASSERT( config->font < kGLU_NUM_FontStyle );
     RH_ASSERT( config->widget == kGUI_ObjStyle_fnum );
 #endif
     __gui_remove_object_fnum(config);
@@ -314,7 +314,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     }
     
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
     char __str[GUI_X_WIDTH>>2] = {'\0'};
@@ -322,7 +322,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     snprintf(__str, sizeof(__str), "%.3f",((struct __GUI_ObjDataScr_fnum*)config->dataScr)->value);
     
     // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-    int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
+    int maxWordCnt = GLU_FUNC( Font, get_str_WordCnt )(config->area.width, __str);
     // 在临界位置截断字符串
     __str[ maxWordCnt ] = '\0';
     
@@ -342,15 +342,15 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
         memset(__str, '#', maxWordCnt);
     }
     
-    __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(__str);
+    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(__str);
     /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
     int x_fs = 0;
     int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
     switch ( config->text_align ) {
-        case kGUI_FontAlign_Left:
+        case kGLU_Align_Left:
             x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
             break;
-        case kGUI_FontAlign_Middle:
+        case kGLU_Align_Middle:
             x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
@@ -410,7 +410,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     }
     pHistory->showFrame = config->showFrame;
 
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_fnum      ( const __GUI_Object_t* config ){
@@ -429,7 +429,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
         bool     showFrame;
     }*pHistory = (void*)config->history;
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
     bool needRemove = !pHistory;
@@ -457,7 +457,7 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
                           &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
@@ -480,7 +480,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     
     __gui_remove_object_switch(config);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_UION(Pixel) color_switch_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
@@ -565,7 +565,7 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory);
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_switch    ( const __GUI_Object_t* config ){
@@ -588,7 +588,7 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
     val = __limit(val, min, max);
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_UION(Pixel) color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
@@ -614,7 +614,7 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
                            &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
@@ -639,7 +639,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
         __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, pHistory );
     }
 
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_UION(Pixel) color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
@@ -674,7 +674,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
 
     pHistory->bar_pos = bar_pos;
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_adjust_object_bar_h     ( const __GUI_Object_t* config ){
@@ -696,7 +696,7 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
     int32_t val = __limit(((struct __GUI_ObjDataScr_barH*)config->dataScr)->value, min, max);
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_UION(Pixel) color_bar_off = {.data = (config->bk_color==0x00)?0x00:0xff};
@@ -722,7 +722,7 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
                            &info_MainScreen, kApplyPixel_fill);
     }
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
@@ -753,7 +753,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
     val = __limit(val, min, max);
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_UION(Pixel) color_bar_on  = {.data = (config->bk_color==0x00)?0xff:0x00};
@@ -781,7 +781,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
 
     pHistory->bar_pos = bar_pos;
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
     
 }
@@ -794,7 +794,7 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
         int      cord; // (x,y)象限信息
         __Area_t area;
     }*pHistory = (void*)config->history;
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     BLK_FUNC( Graph, set_penColor )( config->bk_color );
     if( !pHistory ){
@@ -812,7 +812,7 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
                            pHistory->area.ys+(int)(pHistory->area.height)-1, \
                            &info_MainScreen, kApplyPixel_fill);
     }
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
@@ -824,7 +824,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     
     __gui_remove_object_joystick(config);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
     BLK_FUNC( Graph, set_penColor )( config->obj_color );
@@ -918,7 +918,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     pHistory->area.width  = pd;
     pHistory->area.height = pd;
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
     
 }
@@ -940,7 +940,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
     }*cache = (void*)config->history;
     
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -975,7 +975,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
         //...//
     }
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
 static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
@@ -1006,7 +1006,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     int32_t val = __limit(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
     int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
     
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     
     // 确认画笔颜色
@@ -1029,12 +1029,12 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     }
     cache->bar_pos = bar_pos;
     // 绘制数字
-    __GUI_Font_t* pF = NULL;
+    GLU_SRCT(FontImg)* pF = NULL;
     {
         char __str[GUI_X_WIDTH>>2] = {0};
         GLU_FUNC( Font, set_size )(config->text_size);
         snprintf(__str, sizeof(__str), "%d",val);
-        __str[ GLU_FUNC( Font, get_wordCnt )(config->area.width, __str) ] = '\0';
+        __str[ GLU_FUNC( Font, get_str_WordCnt )(config->area.width, __str) ] = '\0';
         
     #ifdef RH_DEBUG
         RH_ASSERT( __str[0] != '\0' );
@@ -1044,7 +1044,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         int wordCnt = snprintf(__str, sizeof(__str), "%d",val);
         
         // 计算在用户设定的宽度(width)以及字体大小内, 最多可容纳多少个字符
-        int maxWordCnt = GLU_FUNC( Font, get_wordCnt )(config->area.width, __str);
+        int maxWordCnt = GLU_FUNC( Font, get_str_WordCnt )(config->area.width, __str);
         // 在临界位置截断字符串
         __str[ maxWordCnt ] = '\0';
         
@@ -1055,7 +1055,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
         if( !isEnough){
             memset(__str, '#', maxWordCnt);
         }
-        pF = GLU_FUNC( Font, export_str )(__str);
+        pF = GLU_FUNC( Font, out_str_Img )(__str);
     }
 #ifdef RH_DEBUG
     RH_ASSERT( pF );
@@ -1063,10 +1063,10 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     int x_fs = 0;
     int y_fs = bar_pos - config->text_size;
     switch ( config->text_align ) {
-        case kGUI_FontAlign_Left:
+        case kGLU_Align_Left:
             x_fs = config->area.xs;
             break;
-        case kGUI_FontAlign_Middle:
+        case kGLU_Align_Middle:
             x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
@@ -1103,7 +1103,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
      
 #endif
 
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
     
 }
@@ -1204,7 +1204,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
 }
 static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     struct{
         int32_t    value;
         int8_t     margin;
@@ -1243,11 +1243,11 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 char* ptrUnit = alloca( strlen(config->text) );
                 strcpy( ptrUnit, config->text );
                 GLU_FUNC( Font, set_size )( config->text_size );
-                ptrUnit[ GLU_FUNC( Font, get_wordCnt )( config->area.width - dataScr->text_offset , config->text) ] = '\0';
-                __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( ptrUnit );
+                ptrUnit[ GLU_FUNC( Font, get_str_WordCnt )( config->area.width - dataScr->text_offset , config->text) ] = '\0';
+                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( ptrUnit );
                 
                 size_t width;
-                __Font_getStrSize( &width, NULL, ptrUnit );
+                GLU_FUNC( Font, get_str_ImgInfo )( &width, NULL, ptrUnit );
                 int x_fs = cache->textXS;
                 int y_fs = cache->textYS = cache->lineUP + (cache->margin>>1);
                 
@@ -1304,11 +1304,11 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         snprintf( ptrNum, size, "%d", cache->value );
         ptrNum[size-1] = '\0';
         
-        __Font_getStrSize( &cache->num.width, &cache->num.height, ptrNum);
+        GLU_FUNC( Font, get_str_ImgInfo )( &cache->num.width, &cache->num.height, ptrNum);
         cache->num.xs     = (int)(cache->textXS - cache->num.width - dataScr->margin);
         cache->num.ys     = cache->textYS;
         
-        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( ptrNum );
+        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( ptrNum );
         
         GLU_UION(Pixel) color_text = {.data = config->obj_color};
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1407,7 +1407,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
     cache->active = dataScr->active;
     
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     
 }
 static void __gui_adjust_object_spinbox   ( const __GUI_Object_t* config ){
@@ -1478,7 +1478,7 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
     
     // 绘制按钮上的文字
     if( config->text ){
-        __Font_backup_config();
+        GLU_FUNC( Font, backupCache )();
         
         GLU_FUNC( Font, set_size )( config->text_size );
         char* str = alloca( strlen(config->text)+1 );
@@ -1486,8 +1486,8 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
         RH_ASSERT( str );
     #endif
         strcpy(str, config->text);
-        str[ GLU_FUNC( Font, get_wordCnt )( config->area.width-2*cache->margin, config->text ) ] = '\0';
-        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )( str );
+        str[ GLU_FUNC( Font, get_str_WordCnt )( config->area.width-2*cache->margin, config->text ) ] = '\0';
+        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( str );
         int fs_x = config->area.xs + (((int)config->area.width  - (int)pF->img_w )>>1);
         int fs_y = config->area.ys + (((int)config->area.height - (int)pF->img_h)>>1);
         
@@ -1524,7 +1524,7 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
         RH_ASSERT(0);
     #endif
         
-        __Font_restore_config();
+        GLU_FUNC( Font, restoreCache )();
     }
     
     // 绘制激活态, 即边框
@@ -1709,8 +1709,8 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
         case kGUI_ObjStyle_fnum:
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
-            config->font        = kGUI_FontStyle_ArialRounded_Bold;
-            config->text_align  = kGUI_FontAlign_Middle;
+            config->font        = kGLU_Font_ArialRounded_Bold;
+            config->text_align  = kGLU_Align_Middle;
             config->text_size   = __limit((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
             config->text        = pText;
             config->area.width  = __limit((config->text_size*strlen(pText)),0,GUI_X_WIDTH);
@@ -1760,7 +1760,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             config->text_size   = 8;
-            config->text_align  = kGUI_FontAlign_Middle;
+            config->text_align  = kGLU_Align_Middle;
             break;
         case kGUI_ObjStyle_spinbox:
             config->bk_color    = M_COLOR_BLACK;
@@ -1770,7 +1770,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->area.xs     = (int)(GUI_X_WIDTH - config->area.width)>>1;
             config->area.ys     = (int)(GUI_Y_WIDTH - config->area.height)>>1;
             config->text_size   = 8;
-            config->text_align  = kGUI_FontAlign_Left;
+            config->text_align  = kGLU_Align_Left;
         case kGUI_ObjStyle_button:
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
@@ -1779,7 +1779,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->area.xs     = (int)(GUI_X_WIDTH-config->area.width)>>1;
             config->area.ys     = (int)(GUI_Y_WIDTH-config->area.height)>>1;
             config->text_size   = 8;
-            config->text_align  = kGUI_FontAlign_Middle;
+            config->text_align  = kGLU_Align_Middle;
             break;
         default:
             break;
@@ -1866,7 +1866,7 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     __SET_STRUCT_MB(__GUI_Object_t, void*, config, history, NULL);
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, set_penColor )(config->bk_color);
     
     BLK_FUNC( Graph, rect_fill )( config->area.xs, \
@@ -1886,7 +1886,7 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     
     RH_FREE( config );
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     
     return MAKE_ENUM( kStatus_Success );
 }

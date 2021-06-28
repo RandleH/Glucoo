@@ -25,11 +25,11 @@ struct __GUI_Window_t{
     size_t               size;
     
     const char*          title;
-    E_GUI_FontStyle_t    title_font;
+    GLU_ENUM(Font)       title_font;
     
     const char*          text;
-    E_GUI_FontStyle_t    text_font;
-    E_GUI_FontAlign_t    text_align;
+    GLU_ENUM(Font)       text_font;
+    GLU_ENUM(Align)    text_align;
     int                  text_size;
     //...//
     

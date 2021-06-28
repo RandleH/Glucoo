@@ -21,13 +21,13 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     // 配置字体大小
     GLU_FUNC( Font, set_size )( pHistory->tFontH );
     
-    int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->title ); // 计算最多可容纳的字符个数
+    int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->title ); // 计算最多可容纳的字符个数
     char* p = NULL;
     if( cnt>0 ){
         p = alloca( cnt+sizeof('\0') );  // 分配空间
         strncpy(p, config->title, cnt);  // 截取字符串到该空间
         p[cnt] = '\0';                   // 末尾取0
-        __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
         int x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1)     , 0, GUI_X_WIDTH-1 );
         int y_fs = __limit( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
         
@@ -94,7 +94,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     for ( int8_t i=0; i<pHistory->nItemPer&&i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-        int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         
         if( i == pHistory->cur ){  // 该行被选中, 颜色选反色
@@ -112,7 +112,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             /* 字体图像像素遍历pIter */
             uint8_t* pIter = pF->img_buf;
@@ -178,7 +178,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             pHistory->idx--;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == 0 ){        // 首行颜色选反色
@@ -196,7 +196,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
-                    __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+                    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                     /* 字体图像像素遍历pIter */
                     uint8_t* pIter = pF->img_buf;
@@ -239,7 +239,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     }else{                          //  游标未到顶端, 先移动游标
         pHistory->cur--;
         // 绘制之前选中,现在未选中的那条菜单栏
-        int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
+        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         // 配置画笔颜色
         text_color.data = config->text_color;
@@ -254,7 +254,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             /* 字体图像像素遍历pIter */
             uint8_t* pIter = pF->img_buf;
@@ -290,7 +290,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         }
         
         // 绘制之前未选中,现在选中的那条菜单栏
-        cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+        cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
         p = NULL;
         // 配置画笔颜色
         text_color.data = REVERSE_COLOR( config->text_color );
@@ -307,7 +307,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             /* 字体图像像素遍历pIter */
             uint8_t* pIter = pF->img_buf;
@@ -374,7 +374,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             pHistory->idx++;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == pHistory->nItemPer-1 ){        // 首行颜色选反色
@@ -392,7 +392,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
-                    __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+                    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                     /* 字体图像像素遍历pIter */
                     uint8_t* pIter = pF->img_buf;
@@ -435,7 +435,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
         if( pHistory->cur+1 != config->nItem ){// 判断游标是否为菜单底端, 菜单栏数可能小于屏幕所容纳的最大栏目数
             pHistory->cur++;                   // 移动游标
             // 绘制之前选中,现在未选中的那条菜单栏
-            int cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
+            int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
             char* p = NULL;
             // 配置画笔颜色
             text_color.data = config->text_color;
@@ -450,7 +450,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
-                __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 /* 字体图像像素遍历pIter */
                 uint8_t* pIter = pF->img_buf;
@@ -486,7 +486,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             }
             
             // 绘制之前未选中,现在选中的那条菜单栏
-            cnt = GLU_FUNC( Font, get_wordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+            cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
             p = NULL;
             // 配置画笔颜色
             text_color.data = REVERSE_COLOR( config->text_color );
@@ -503,7 +503,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
-                __GUI_Font_t* pF = GLU_FUNC( Font, export_str )(p);
+                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 /* 字体图像像素遍历pIter */
                 uint8_t* pIter = pF->img_buf;
@@ -577,7 +577,7 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     }*pHistory = (void*)config->history;
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     GLU_FUNC( Font, set_style )( config->font );
     
     if( pHistory == NULL ){
@@ -602,7 +602,7 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     // 绘制菜单栏
     __gui_insert_menu_bar( config );
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \
@@ -624,14 +624,14 @@ E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
     __GUI_Menu_t* p = (__GUI_Menu_t*)(ID);
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     
     if( cmd ){
         BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
     }
 
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     return MAKE_ENUM( kStatus_Success );
 }
 
@@ -642,7 +642,7 @@ int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
         return 0;
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     
     switch(cmd){
         default:
@@ -658,7 +658,7 @@ int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
             break;
     }
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \

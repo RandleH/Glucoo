@@ -46,7 +46,7 @@ struct __GUI_Object_t{
      * FontStyle --- This is an optional param. Only available when this widget has text
                      (or number) to show.
      ===================================================================================*/
-    E_GUI_FontStyle_t    font;
+    GLU_ENUM(Font)    font;
     
     /*===================================================================================
      * text --- This is an optional param. Only available when this widget has text to
@@ -54,7 +54,7 @@ struct __GUI_Object_t{
      ===================================================================================*/
     const char*          text;
     int16_t              text_size;
-    E_GUI_FontAlign_t    text_align;
+    GLU_ENUM(Align)    text_align;
     
     /*===================================================================================
      * Color --- Every objects has its background color.

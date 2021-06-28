@@ -19,12 +19,14 @@ extern "C" {
 #define RH_CFG_FONT_DATA_LOCAL_BITMAP         (2U)                          // < option >
 #define RH_CFG_FONT_DATA_TYPE                 RH_CFG_FONT_DATA_EXTERN_TTF   // < select > < above option >
 
-#define RH_CFG_FONT_STYLE__CourierNew         (0U)                          // < select > < 0=disable : 1=enable >
-#define RH_CFG_FONT_STYLE__CourierNew_Italic  (0U)                          // < select > < 0=disable : 1=enable >
-#define RH_CFG_FONT_STYLE__CourierNew_Bold    (0U)                          // < select > < 0=disable : 1=enable >
-#define RH_CFG_FONT_STYLE__NewYork            (0U)                          // < select > < 0=disable : 1=enable >
-#define RH_CFG_FONT_STYLE__NewYork_Italic     (0U)                          // < select > < 0=disable : 1=enable >
-#define RH_CFG_FONT_STYLE__Arial_Unicode      (0U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_OUTPUT_FONT_PNG                (1U)                          // < select > < 0=disable : 1=enable >
+
+#define RH_CFG_FONT_STYLE__CourierNew         (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__CourierNew_Italic  (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__CourierNew_Bold    (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__NewYork            (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__NewYork_Italic     (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__Arial_Unicode      (1U)                          // < select > < 0=disable : 1=enable >
 
 #define RH_CFG_SCREEN_HEIGHT                  (64U)                         // < select >
 #define RH_CFG_SCREEN_WIDTH                   (128U)                        // < select >
@@ -67,9 +69,6 @@ extern void* RH_CFG_GRAM_POINTER;
 #define RH_CFG_MALLOC_SIZE__512MB             ((1U)<<29)                    // < option > 
 #define RH_CFG_MALLOC_SIZE__1GB               ((1U)<<30)                    // < option > 
 #define RH_CFG_MALLOC_SIZE                    RH_CFG_MALLOC_SIZE__NONE      // < select > < above option >
-
-#define RH_CFG_OUTPUT_FONT_PNG                (1U)                          // < select > < 0=disable : 1=enable >
-
 
 #define RH_CFG_HASHTABLE_SIZE__64B            ((1U)<<6)                     // < option >
 #define RH_CFG_HASHTABLE_SIZE__128B           ((1U)<<7)                     // < option >

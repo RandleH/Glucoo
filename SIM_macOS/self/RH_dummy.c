@@ -648,4 +648,21 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+
+void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
+    __exit( !str );
+    if( width )
+        *width = 0;
+    for(int i=0; i<strlen(str); i++){
+        int advanceWidth    = 0;
+        int leftSideBearing = 0;
+        (*FCFG.method->_GetCodepointHMetrics)( &FCFG.stb_info, str[i], &advanceWidth, &leftSideBearing );
+    
+        if( width )
+            *width += roundf( advanceWidth*FCFG.scale );;
+    }
+    if( height )
+        *height = FCFG.size;
+}
+
 #endif
