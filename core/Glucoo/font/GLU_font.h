@@ -13,13 +13,7 @@ extern "C"{
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
-    extern uint8_t Font_TTF_ArialRoundedBold [49296];
-    #if RH_CFG_FONT_STYLE__CourierNew
-    extern uint8_t Font_TTF_CourierNew       [684624];
-    #endif
-    #if RH_CFG_FONT_STYLE__CourierNew_Bold
-    extern uint8_t Font_TTF_CourierNew_Bold  [691796];
-    #endif
+
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
 
 #else

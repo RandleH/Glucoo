@@ -281,40 +281,47 @@ static struct{
  * 字体路径顺序随枚举顺序.
  * 根据宏 RH_CFG_FONT_STYLE__xxxx 进行初始化, 如果未开启该字体宏, 则路径将为NULL
  ==================================================================================================================================*/
+    extern const uint8_t Font_TTF_ArialRoundedBold  [49296];
+    extern const uint8_t Font_TTF_CourierNew        [684624];
+    extern const uint8_t Font_TTF_CourierNew_Bold   [691796];
+    extern const uint8_t Font_TTF_CourierNew_Italic [589900];
+    extern const uint8_t Font_TTF_NewYork           [344120];
+    extern const uint8_t Font_TTF_NewYork_Italic    [361176];
+
     static const uint8_t* font_ttf_array[kGLU_NUM_FontStyle] = {
         
         [kGLU_Font_Unscii] = NULL,
         
         [kGLU_Font_ArialRounded_Bold] =
-               (const uint8_t*)Font_TTF_ArialRoundedBold  ,
+               Font_TTF_ArialRoundedBold  ,
        
         [kGLU_Font_CourierNew] =
            #if RH_CFG_FONT_STYLE__CourierNew
-               (const uint8_t*)Font_TTF_CourierNew        ,
+               Font_TTF_CourierNew        ,
            #else
                NULL,
            #endif
         [kGLU_Font_CourierNew_Italic] =
            #if RH_CFG_FONT_STYLE__CourierNew_Italic
-               
+               Font_TTF_CourierNew_Italic ,
            #else
                NULL,
            #endif
         [kGLU_Font_CourierNew_Bold] =
            #if RH_CFG_FONT_STYLE__CourierNew_Bold
-               (const uint8_t*)Font_TTF_CourierNew_Bold   ,
+               Font_TTF_CourierNew_Bold   ,
            #else
                NULL,
            #endif
         [kGLU_Font_NewYork] =
            #if RH_CFG_FONT_STYLE__NewYork
-               
+               Font_TTF_NewYork           ,
            #else
                NULL,
            #endif
         [kGLU_Font_NewYork_Italic] =
            #if RH_CFG_FONT_STYLE__NewYork_Italic
-               
+               Font_TTF_NewYork_Italic    ,
            #else
                NULL,
            #endif
@@ -793,6 +800,44 @@ GLU_FUNC( Font, restoreCache   ) ( void ){
     }
 }
 
+
+// 仅供开发者使用
+#if 1
+
+size_t
+GLU_FUNC( Font, out_ttf_array )( const char* ttf_path, const char* dst ){
+    FILE* fontFile = fopen( ttf_path , "rb" );
+    
+#ifdef RH_DEBUG
+    assert( fontFile );
+#endif
+    
+    fseek(fontFile, 0, SEEK_END);
+    size_t size = ftell(fontFile);
+    fseek(fontFile, 0, SEEK_SET);
+    
+    uint8_t* array = calloc(size, sizeof(uint8_t));
+
+    fread(array, size, sizeof(uint8_t), fontFile);
+    fclose(fontFile);
+    
+    FILE* fontTxt = fopen(dst, "a");
+    
+    char buf[10] = {0};
+
+    for(int i=0; i<size; i++){
+        if(i%20 == 0 ){
+            fprintf( fontTxt, "\n");
+        }
+        sprintf(buf, "0x%02X, ",array[i]);
+        fprintf( fontTxt, "%s",buf);
+    }
+    fclose(fontTxt);
+    
+    return size;
+}
+
+#endif
 
 
 

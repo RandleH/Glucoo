@@ -27,7 +27,8 @@
 
 #define PROJ_MAX(a,b)                           (((a)>(b))?(a):(b))
 
-
+size_t
+GLU_FUNC( Font, out_ttf_array )( const char* ttf_path, const char* dst );
 
 int main(int argc, const char * argv[]) {
 
@@ -37,18 +38,8 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
     
-    
-    GLU_FUNC(Font, set_size  )( 47 );
-    GLU_FUNC(Font, set_style )( kGLU_Font_Arial_Unicode );
-    printf( "%d\n",GLU_FUNC( Font, get_str_WordCnt )( 272, "RandleH. YYDS" ));
-    
-    
-    size_t width, height;
-    GLU_FUNC( Font, get_str_ImgInfo )( &width, &height, "S" );
-    
-    GLU_FUNC( Font, out_str_Img )( "RandleH. YYDS" );
-    
-
+    printf("%ld\n", GLU_FUNC( Font, out_ttf_array )( "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/NewYorkItalic.ttf"     ,\
+                                                     "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/GLU_font_NewYork_Italic.c" ) );
     
 #if 0
     
