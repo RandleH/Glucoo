@@ -8,20 +8,18 @@
 
 #include <stdio.h>
 #include "GLU_glucoo.h"
-#include "RH_gui_api.h"
+
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
+    GLU_FUNC(GUI,init)();
     
-    GUI_Init();
-    Simul_API_Init();
+    GLU_FUNC(Font,set_style)( kGLU_Font_NewYork_Italic );
+    GLU_FUNC(Font,set_size )(23);
     
-    GUI_auto_display(0);
-    
-    GUI_rect_raw(30,30,50,50);
-    GUI_RefreashScreen();
-    
+    GLU_FUNC(Font,out_str_Img)("Hello world.");
+
     return 0;
 }
 

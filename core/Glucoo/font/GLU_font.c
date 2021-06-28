@@ -287,10 +287,12 @@ static struct{
     extern const uint8_t Font_TTF_CourierNew_Italic [589900];
     extern const uint8_t Font_TTF_NewYork           [344120];
     extern const uint8_t Font_TTF_NewYork_Italic    [361176];
+    extern const uint8_t Font_TTF_Unscii            [293712];
 
     static const uint8_t* font_ttf_array[kGLU_NUM_FontStyle] = {
         
-        [kGLU_Font_Unscii] = NULL,
+        [kGLU_Font_Unscii] =
+               Font_TTF_Unscii            ,
         
         [kGLU_Font_ArialRounded_Bold] =
                Font_TTF_ArialRoundedBold  ,
@@ -327,7 +329,7 @@ static struct{
            #endif
         [kGLU_Font_Arial_Unicode] =
            #if RH_CFG_FONT_STYLE__Arial_Unicode
-               
+               Font_TTF_Unscii            ,
            #else
                NULL,
            #endif
