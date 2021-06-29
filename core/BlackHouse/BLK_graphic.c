@@ -173,7 +173,7 @@ static BLK_TYPE(Pixel) __ApplyPixel_lightness (int x,int y,BLK_TYPE(Pixel) br_10
     temp.B = __limit((signed)(temp.B*br_100/100) , 0 , ((1<<5)-1));
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __UNION_PixelRGB888_t temp = {
+    BLK_UION(Pixel888) temp = {
         .data = *(p+y*width+x)
     };
     temp.R = __limit((signed)(temp.R*br_100/100) , 0 , ((1<<8)-1));
@@ -206,7 +206,7 @@ static BLK_TYPE(Pixel) __ApplyPixel_reverse   (int x,int y,BLK_TYPE(Pixel) br_10
         temp.G = 63 - temp.G;
         temp.R = 31 - temp.R;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    __UNION_PixelRGB888_t temp = {.data = *(p+y*width+x)};
+    BLK_UION(Pixel888) temp = {.data = *(p+y*width+x)};
         temp.B = 0xff - temp.B;
         temp.G = 0xff - temp.G;
         temp.R = 0xff - temp.R;
@@ -344,7 +344,7 @@ E_Status_t BLK_FUNC( Graph, circle_raw      )    (int x ,int y ,int d ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC( Img888, blur_average )(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -398,7 +398,7 @@ E_Status_t BLK_FUNC( Graph, circle_fill     )    (int x ,int y ,int d ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -466,7 +466,7 @@ E_Status_t BLK_FUNC( Graph, circle_edged    )    (int x ,int y ,int d ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -525,7 +525,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt1_raw )    (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -566,7 +566,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt2_raw )    (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -607,7 +607,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt3_raw )    (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -648,7 +648,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt4_raw )    (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -696,7 +696,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt1_fill )   (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -744,7 +744,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt2_fill )   (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -792,7 +792,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt3_fill )   (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -840,7 +840,7 @@ E_Status_t BLK_FUNC( Graph, circle_qrt4_fill )   (int x ,int y ,int r ,        B
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -982,7 +982,7 @@ E_Status_t BLK_FUNC( Graph, rect_fill    ) (int xs,int ys,int xe,int ye, BLK_TYP
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                 while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+                BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -1026,7 +1026,7 @@ E_Status_t BLK_FUNC( Graph, rect_edged   ) (int xs,int ys,int xe,int ye, BLK_TYP
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
@@ -1079,7 +1079,7 @@ E_Status_t BLK_FUNC( Graph, rect_round_fill   ) (int xs,int ys,int xe,int ye, BL
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        __ImgRGB888_blur_average(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
+        BLK_FUNC(Img888,blur_average)(pInfo, &GCFG.blur_tmp, &GCFG.blur_area, GCFG.blur_size, GCFG.blur_br_100);
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif

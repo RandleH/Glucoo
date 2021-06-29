@@ -1396,8 +1396,79 @@ void              BLK_FUNC( Img888, data_OTUS   )  (const BLK_SRCT(Img888)* src,
         }
     }
 }
+    
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgGry, into_ImgBin  )
+(const BLK_SRCT(ImgGry)* src,BLK_SRCT(ImgBin)* dst,int xs, int ys,BLK_TYPE(PixelBin) obj_color){
+    RH_ASSERT(src);
+    RH_ASSERT(dst);
+    RH_ASSERT(xs < dst->width);
+    RH_ASSERT(ys < dst->height);
+    
+    const BLK_UION(PixelGry)*   pIterSrc = src->pBuffer;
+    BLK_UION(PixelBin)*         pIterDst = &dst->pBuffer[((ys)>>3)*(dst->width)+(xs)];
+    
+    for( int y=0; y<src->height && y<dst->height; y++ ){
+        pIterDst = dst->pBuffer + ((ys+y)>>3)*(dst->width) + xs;
+        for( int x=0; x<src->width; x++, pIterSrc++,pIterDst++ ){
+            if( (pIterSrc->data<128) ^ (obj_color!=0) ){
+                pIterDst->data = __BIT_SET( pIterDst->data, (ys+y)%8 );
+            }else{
+                pIterDst->data = __BIT_CLR( pIterDst->data, (ys+y)%8 );
+            }
+        }
+    }
+    
+    return dst;
+}
+    
+BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565 )
+(const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img565)* dst,int xs, int ys,BLK_TYPE(Pixel565) obj_color){
+    RH_ASSERT(src);
+    RH_ASSERT(dst);
+    RH_ASSERT(xs < dst->width);
+    RH_ASSERT(ys < dst->height);
+    
+    const BLK_UION(PixelGry)*      pIterSrc = src->pBuffer;
+    BLK_UION(Pixel565)*            pIterDst = &dst->pBuffer[(ys)*(dst->width)+(xs)];
+    
+    BLK_UION(Pixel565) color = {.data = obj_color};
+    for( int y=0; y<src->height&&y<dst->height; y++ ){
+        for( int x=0; x<src->width; x++,pIterSrc++, pIterDst++ ){
+            size_t index = (ys+y)*(dst->width)+(xs+x);
+            dst->pBuffer[ index ].R = pIterDst->R + (( (color.R - pIterDst->R) * (pIterSrc->data) )>>8);
+            dst->pBuffer[ index ].G = pIterDst->G + (( (color.G - pIterDst->G) * (pIterSrc->data) )>>8);
+            dst->pBuffer[ index ].B = pIterDst->B + (( (color.B - pIterDst->B) * (pIterSrc->data) )>>8);
+        }
+        pIterDst -= src->width;
+        pIterDst += dst->width;
+    }
+    
+    return dst;
+}
 
-
+BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888 )
+(const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color){
+    RH_ASSERT(src);
+    RH_ASSERT(dst);
+    RH_ASSERT(xs < src->width);
+    RH_ASSERT(ys < src->height);
+    
+    const BLK_UION(PixelGry)*      pIterSrc = src->pBuffer;
+    BLK_UION(Pixel888)*            pIterDst = &dst->pBuffer[(ys)*(dst->width)+(xs)];
+    
+    BLK_UION(Pixel888) color = {.data = obj_color};
+    for( int y=0; y<src->height&&y<dst->height; y++ ){
+        for( int x=0; x<src->width; x++,pIterSrc++, pIterDst++ ){
+            pIterDst->R += (( (color.R - pIterDst->R) * (pIterSrc->data) )>>8);
+            pIterDst->G += (( (color.G - pIterDst->G) * (pIterSrc->data) )>>8);
+            pIterDst->B += (( (color.B - pIterDst->B) * (pIterSrc->data) )>>8);
+        }
+        pIterDst -= src->width;
+        pIterDst += dst->width;
+    }
+    
+    return dst;
+}
 
 #ifdef __cplusplus
 }

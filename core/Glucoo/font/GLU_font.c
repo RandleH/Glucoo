@@ -327,12 +327,6 @@ static struct{
            #else
                NULL,
            #endif
-        [kGLU_Font_Arial_Unicode] =
-           #if RH_CFG_FONT_STYLE__Arial_Unicode
-               Font_TTF_Unscii            ,
-           #else
-               NULL,
-           #endif
         
     };
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP  )
@@ -357,13 +351,13 @@ GLU_FUNC( Font, init           ) ( void ){
     FCFG.style     = kGLU_Font_Unscii;
     FCFG.size      = 24;
     
-    GLU_FUNC( Font, set_style )( kGLU_Font_Unscii );
+    GLU_FUNC( Font, set_font )( kGLU_Font_Unscii );
     
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
 }
 
 void
-GLU_FUNC( Font, set_style      ) ( GLU_ENUM(Font) style   ){
+GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     // 确认字体解析库 stbtt为使用STB库, rhtt为使用自研库
     FCFG.method = &stbtt;
@@ -796,7 +790,7 @@ GLU_FUNC( Font, restoreCache   ) ( void ){
             FCFG.img.img_buf=NULL;
         }
         memcpy(&FCFG, &FCFG_copy, sizeof(FCFG));
-        GLU_FUNC( Font, set_style )( FCFG.style );
+        GLU_FUNC( Font, set_font )( FCFG.style );
         GLU_FUNC( Font, set_size  )( FCFG.size  );
         backFCFG = false;
     }

@@ -83,9 +83,9 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     }
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
-    
-    GLU_FUNC( Font, set_size )(config->text_size);
+    GLU_FUNC( Font , backupCache )();
+    GLU_FUNC( Font , set_font   )( config->font     );
+    GLU_FUNC( Font , set_size    )( config->text_size);
     int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->text );
 
     char* p = NULL;
@@ -93,6 +93,8 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         p = alloca( cnt+sizeof('\0') );
         strncpy(p, config->text, cnt);
         p[cnt] = '\0';
+        
+        // 输出字符串灰度字体图像
         GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
     #ifdef RH_DEBUG
         RH_ASSERT( pF );
@@ -113,34 +115,25 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
             default:
                 RH_ASSERT(0);
         }
-        GLU_UION(Pixel) color_text = {.data = config->obj_color};
         
+        // 引用灰度字体图像(类型信息复制转换)
+        BLK_SRCT(ImgGry) img_font = {
+            .height  = pF->img_h,
+            .width   = pF->img_w,
+            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+        };
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        /* 字体图像像素遍历pIter */
-        uint8_t* pIter = pF->img_buf;
-        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->img_w; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( (*pIter<128) ^ (color_text.data!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }
-            
-            }
-        }
+        
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->img_w; x++ ){
-                size_t index = (y_fs+y)*(info_MainScreen.width)+(x_fs+x);
-                uint8_t pixWeight = pF->img_buf[y*pF->img_w+x];
-                info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_text.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
-                info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_text.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
-                info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_text.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
-            }
-        }
+        
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        RH_ASSERT(0);
+        
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        
     #else
          
     #endif

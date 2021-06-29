@@ -56,7 +56,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     // Title
     if( config->title != NULL ){
         GLU_FUNC( Font, set_size )( (int)(config->size>>1) );
-        GLU_FUNC( Font, set_style )( config->title_font );
+        GLU_FUNC( Font, set_font )( config->title_font );
         GLU_SRCT(FontImg)* pFontInfo = GLU_FUNC( Font, out_str_Img )( config->title );
         const int font_xs = __mid(xs,xe)-(int)((pFontInfo->img_w)>>1);
         const int font_ys = ys + bar_size_4;
@@ -355,7 +355,7 @@ ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config )
     }
     
     if( m_config->text != NULL ){
-        GLU_FUNC( Font, set_style )(m_config->text_font);
+        GLU_FUNC( Font, set_font )(m_config->text_font);
         GLU_FUNC( Font, set_size )(m_config->text_size);
         __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
 

@@ -665,4 +665,27 @@ void __Font_getStrSize( size_t *width, size_t *height, const char* str ){
         *height = FCFG.size;
 }
 
+
+
+
+
+BLK_SRCT( Img888 )* IMG = BLK_FUNC( Img888, load_bmp )( "/Users/randle_h/Desktop/lenna.bmp" );
+BLK_SRCT( ImgBin )* IMG1= BLK_FUNC( ImgBin, create   )( 300, 200 );
+
+GLU_FUNC(Font, set_size )(45);
+GLU_FUNC(Font, set_style)(kGLU_Font_NewYork);
+GLU_SRCT(FontImg)* pFImg = GLU_FUNC(Font, out_str_Img)("Hello world.");
+
+BLK_SRCT( ImgGry ) SCR = {
+    .pBuffer = (BLK_UION(PixelGry)*)pFImg->img_buf ,
+    .height  = pFImg->img_h   ,
+    .width   = pFImg->img_w
+};
+
+BLK_FUNC( ImgGry, into_ImgBin )(&SCR, IMG1, 30, 30, 0xff       );
+BLK_FUNC( ImgGry, into_Img888 )(&SCR, IMG , 30, 30, 0x00ff0000 );
+
+BLK_FUNC( Img888, out_bmp )("/Users/randle_h/Desktop/out.bmp", IMG);
+BLK_FUNC( ImgBin, out_bmp )("/Users/randle_h/Desktop/out1.bmp", IMG1);
+
 #endif

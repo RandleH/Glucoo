@@ -578,7 +578,7 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
-    GLU_FUNC( Font, set_style )( config->font );
+    GLU_FUNC( Font, set_font )( config->font );
     
     if( pHistory == NULL ){
         pHistory = RH_MALLOC(sizeof(*pHistory));

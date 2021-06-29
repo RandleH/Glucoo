@@ -1,9 +1,11 @@
-#ifndef _RH_GUI_FONT_H
-#define _RH_GUI_FONT_H
+#ifndef _GLU_FONT_H
+#define _GLU_FONT_H
 
 
 #include "RH_common.h"
 #include "RH_config.h"
+#include "GLU_pixel.h"
+
 
 #ifdef __cpluplus
 extern "C"{
@@ -40,7 +42,6 @@ typedef enum{
     kGLU_Font_CourierNew_Bold   ,
     kGLU_Font_NewYork           ,
     kGLU_Font_NewYork_Italic    ,
-    kGLU_Font_Arial_Unicode     ,
     kGLU_NUM_FontStyle
 }GLU_ENUM(Font);
 
@@ -51,6 +52,15 @@ typedef enum{
     kGLU_Align_Justify
 }GLU_ENUM(Align);
 
+struct GLU_SRCT(Text){
+    GLU_ENUM(Font)  font;
+    uint8_t         size;
+    GLU_TYPE(Pixel) color;
+    GLU_ENUM(Align) align;
+    const char*     str;
+};
+typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
+
 struct GLU_SRCT(FontImg){
     uint8_t* img_buf;
     int      img_h;
@@ -60,7 +70,7 @@ typedef struct GLU_SRCT(FontImg) GLU_SRCT(FontImg);
 
 void                RH_PREMAIN            GLU_FUNC( Font, init           ) ( void );
            
-void                                      GLU_FUNC( Font, set_style      ) ( GLU_ENUM(Font) style   );
+void                                      GLU_FUNC( Font, set_font       ) ( GLU_ENUM(Font) font   );
 void                                      GLU_FUNC( Font, set_size       ) ( uint8_t        size    );
            
 uint8_t                                   GLU_FUNC( Font, get_size       ) ( void );

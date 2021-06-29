@@ -17,7 +17,7 @@
 
 #include "GLU_glucoo.h"
 
-#include "BLK_poker.h"
+#include "BLK_image.h"
 #include "BLK_time.h"
 
 #define DICE_NUM_MAX      6
@@ -38,18 +38,20 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
     
-    printf("%ld\n", GLU_FUNC( Font, out_ttf_array )( "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/NewYorkItalic.ttf"     ,\
-                                                     "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/GLU_font_NewYork_Italic.c" ) );
-    
-#if 0
+#if 1
     
     __GUI_Object_t a  = {0};
     ID_t           id = 0;
     
     GLU_FUNC(Object, template)( &a, kGUI_ObjStyle_text );
-    
-    a.font = kGUI_FontStyle_Unscii;
-    a.area.width = 34;
+//    GLU_FUNC(Font, set_style)(kGLU_Font_Unscii);
+    a.text_size = 23;
+    a.font = kGLU_Font_CourierNew;
+    a.area.xs     = 5;
+    a.area.ys     = 10;
+    a.area.height = 40;
+    a.area.width  = 50;
+    a.obj_color   = M_COLOR_BLUE;
     
     id = GLU_FUNC(Object,create  )( &a, NULL );
     GLU_FUNC(Object, insert)( id );
