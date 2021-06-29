@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "GLU_Font_out_str_Img:GLU_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "FCFG">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "GUI_object_template:RH_gui.c">
       </ContextState>
       <ContextState
@@ -215,13 +223,33 @@
             <PersistentString
                value = "RH_Debug_alloced_byte">
             </PersistentString>
+            <PersistentString
+               value = "cx[12]">
+            </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "stbtt__rasterize_sorted_edges:stb_truetype.h">
       </ContextState>
       <ContextState
          contextName = "largestRectangleArea:main.c">
          <PersistentStrings>
             <PersistentString
                value = "ans">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__gui_insert_object_text:GLU_object.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "config">
+            </PersistentString>
+            <PersistentString
+               value = "y_fs">
+            </PersistentString>
+            <PersistentString
+               value = "pF">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -270,6 +298,14 @@
          <PersistentStrings>
             <PersistentString
                value = "GRAM">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GLU_Font_get_wordCnt:GLU_font.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "str[cnt]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

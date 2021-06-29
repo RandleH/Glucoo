@@ -136,7 +136,7 @@ void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
     Screen.windowCFG = NULL;
 
     BLK_FUNC( Graph, init )();
-    __Font_init();
+    GLU_FUNC( Font , init )();
 }
 
 

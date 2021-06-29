@@ -38,7 +38,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #endif
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     
     // Window Bar
     BLK_FUNC( Graph, set_penColor   )( color_bar.data);
@@ -55,16 +55,16 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
-        __Font_setSize( (int)(config->size>>1) );
-        __Font_setStyle( config->title_font );
-        __GUI_Font_t* pFontInfo = __Font_exportStr( config->title );
-        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->width)>>1);
+        GLU_FUNC( Font, set_size )( (int)(config->size>>1) );
+        GLU_FUNC( Font, set_font )( config->title_font );
+        GLU_SRCT(FontImg)* pFontInfo = GLU_FUNC( Font, out_str_Img )( config->title );
+        const int font_xs = __mid(xs,xe)-(int)((pFontInfo->img_w)>>1);
         const int font_ys = ys + bar_size_4;
         
         
-        for( int y=0; y<pFontInfo->height; y++ ){
-            for( int x=0; x<pFontInfo->width; x++ ){
-                uint8_t pixWeight = pFontInfo->output[ y*pFontInfo->width +x ];
+        for( int y=0; y<pFontInfo->img_h; y++ ){
+            for( int x=0; x<pFontInfo->img_w; x++ ){
+                uint8_t pixWeight = pFontInfo->img_buf[ y*pFontInfo->img_w +x ];
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 if( pixWeight ){
@@ -167,7 +167,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), __mid(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
     
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
 
 }
 static void __gui_insert_window_Win10  (__GUI_Window_t* config){
@@ -203,7 +203,7 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
 //    };
     
     BLK_FUNC( Graph, backupCache )();
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
     
     BLK_FUNC( Graph, set_penColor ) (color_bar.data);
     BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, &info_MainScreen, kApplyPixel_fill );
@@ -307,7 +307,7 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     }
     
     BLK_FUNC( Graph, restoreCache )();
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
 }
 
 static void __gui_remove_window_MacOS  (__GUI_Window_t* config){
@@ -327,7 +327,7 @@ static inline void __gui_check_window  ( const __GUI_Window_t* config ){
 ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config ){
     __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
 
-    __Font_backup_config();
+    GLU_FUNC( Font, backupCache )();
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
@@ -355,24 +355,26 @@ ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config )
     }
     
     if( m_config->text != NULL ){
-        __Font_setStyle(m_config->text_font);
-        __Font_setSize(m_config->text_size);
+        GLU_FUNC( Font, set_font )(m_config->text_font);
+        GLU_FUNC( Font, set_size )(m_config->text_size);
         __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
 
         size_t fontW = m_config->area.width-((m_config->win_edge+m_config->text_margin)<<1);
-        __GUI_Font_t* p =  __Font_exportText_Justify( m_config->text, fontW );
-        __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitMap, RH_MALLOC(p->width*p->height*sizeof(*(p->output))));
+        
+        GLU_SRCT(FontImg)* p = GLU_FUNC( Font, out_txt_Img )( m_config->text, fontW, kGLU_Align_Justify );
+        
+        __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitMap, RH_MALLOC(p->img_w*p->img_h*sizeof(*(p->img_buf))));
 #ifdef RH_DEBUG
         RH_ASSERT( m_config->text_bitMap );
 #endif
-        memcpy((void*)m_config->text_bitMap, p->output, p->width*p->height*sizeof(*(p->output)) );
+        memcpy((void*)m_config->text_bitMap, p->img_buf, p->img_w*p->img_h*sizeof(*(p->img_buf)) );
 
-        __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitH  , p->height);
-        __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitW  , p->width );
+        __SET_STRUCT_MB(__GUI_Window_t, int, m_config, text_bitH  , p->img_h);
+        __SET_STRUCT_MB(__GUI_Window_t, int, m_config, text_bitW  , p->img_w );
         //...//
     }
     
-    __Font_restore_config();
+    GLU_FUNC( Font, restoreCache )();
     return (ID_t)m_config;
 }
 
@@ -391,10 +393,10 @@ __GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config )
     config->appearance   = kGUI_Appearance_Light;
     config->size         = 40;
     config->title        = NULL;
-    config->title_font   = kGUI_FontStyle_ArialRounded_Bold;
+    config->title_font   = kGLU_Font_ArialRounded_Bold;
     config->text         = NULL;
-    config->text_font    = kGUI_FontStyle_ArialRounded_Bold;
-    config->text_align   = kGUI_FontAlign_Justify;
+    config->text_font    = kGLU_Font_ArialRounded_Bold;
+    config->text_align   = kGLU_Align_Justify;
     config->text_size    = 40;
     
     __SET_STRUCT_MB(__GUI_Window_t, int   , config, text_rs    , 0    );

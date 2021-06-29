@@ -1,9 +1,11 @@
-#ifndef _RH_GUI_FONT_H
-#define _RH_GUI_FONT_H
+#ifndef _GLU_FONT_H
+#define _GLU_FONT_H
 
 
 #include "RH_common.h"
 #include "RH_config.h"
+#include "GLU_pixel.h"
+
 
 #ifdef __cpluplus
 extern "C"{
@@ -13,13 +15,7 @@ extern "C"{
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
-    extern uint8_t Font_TTF_ArialRoundedBold [49296];
-    #if RH_CFG_FONT_STYLE__CourierNew
-    extern uint8_t Font_TTF_CourierNew       [684624];
-    #endif
-    #if RH_CFG_FONT_STYLE__CourierNew_Bold
-    extern uint8_t Font_TTF_CourierNew_Bold  [691796];
-    #endif
+
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
 
 #else
@@ -32,71 +28,67 @@ struct rhtt_fontinfo{
     uint8_t   h;
     uint8_t   w;
     char      c;
-    uint8_t   *data; 
+    uint8_t   *data;
 };
 typedef struct rhtt_fontinfo rhtt_fontinfo;
 
-typedef enum{
-    kGUI_FontStyle_ArialRounded_Bold ,
-    
-#if RH_CFG_FONT_STYLE__CourierNew
-    kGUI_FontStyle_CourierNew        ,
-#endif
-#if RH_CFG_FONT_STYLE__CourierNew_Italic
-    kGUI_FontStyle_CourierNew_Italic ,
-#endif
-#if RH_CFG_FONT_STYLE__CourierNew_Bold
-    kGUI_FontStyle_CourierNew_Bold   ,
-#endif
-#if RH_CFG_FONT_STYLE__NewYork
-    kGUI_FontStyle_NewYork           ,
-#endif
-#if RH_CFG_FONT_STYLE__NewYork_Italic
-    kGUI_FontStyle_NewYork_Italic    ,
-#endif
-#if RH_CFG_FONT_STYLE__Arial_Unicode
-    kGUI_FontStyle_Arial_Unicode     ,
-#endif
-    kGUI_NUM_FontStyle
-}E_GUI_FontStyle_t;
+
 
 typedef enum{
-    kGUI_FontAlign_Right   ,
-    kGUI_FontAlign_Left    ,
-    kGUI_FontAlign_Middle  ,
-    kGUI_FontAlign_Justify
-}E_GUI_FontAlign_t;
+    kGLU_Font_Unscii            ,
+    kGLU_Font_ArialRounded_Bold ,
+    kGLU_Font_CourierNew        ,
+    kGLU_Font_CourierNew_Italic ,
+    kGLU_Font_CourierNew_Bold   ,
+    kGLU_Font_NewYork           ,
+    kGLU_Font_NewYork_Italic    ,
+    kGLU_NUM_FontStyle
+}GLU_ENUM(Font);
 
-struct __GUI_Font_t{
-    uint8_t* output;
-    size_t   height;
-    size_t   width;
-    size_t   space;
-    int      ascent;
-    int      descent;
-    int      lineGap;
+typedef enum{
+    kGLU_Align_Right   ,
+    kGLU_Align_Left    ,
+    kGLU_Align_Middle  ,
+    kGLU_Align_Justify
+}GLU_ENUM(Align);
+
+struct GLU_SRCT(Text){
+    GLU_ENUM(Font)  font;
+    uint8_t         size;
+    GLU_TYPE(Pixel) color;
+    GLU_ENUM(Align) align;
+    const char*     str;
 };
-typedef struct __GUI_Font_t __GUI_Font_t;
+typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
 
-void             RH_PREMAIN MAKE_FUNC( Font, init           ) (void);
+struct GLU_SRCT(FontImg){
+    uint8_t* img_buf;
+    int      img_h;
+    int      img_w;
+};
+typedef struct GLU_SRCT(FontImg) GLU_SRCT(FontImg);
 
-void                        MAKE_FUNC( Font, setStyle       ) ( E_GUI_FontStyle_t style   );
-void                        MAKE_FUNC( Font, setSize        ) ( size_t            size    );
+void                RH_PREMAIN            GLU_FUNC( Font, init           ) ( void );
+           
+void                                      GLU_FUNC( Font, set_font       ) ( GLU_ENUM(Font) font   );
+void                                      GLU_FUNC( Font, set_size       ) ( uint8_t        size    );
+           
+uint8_t                                   GLU_FUNC( Font, get_size       ) ( void );
+GLU_ENUM(Font)                            GLU_FUNC( Font, get_style      ) ( void );
+           
+void                                      GLU_FUNC( Font, backupCache    ) ( void );
+void                                      GLU_FUNC( Font, restoreCache   ) ( void );
 
-size_t                      MAKE_FUNC( Font, getSize        ) ( void );
-E_GUI_FontStyle_t           MAKE_FUNC( Font, getStyle       ) ( void );
+GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_chr_Img    ) ( uint16_t    chr );
+GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_str_Img    ) ( const char* str );
+GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align) align );
 
-void                        MAKE_FUNC( Font, backup_config  ) (void);
-void                        MAKE_FUNC( Font, restore_config ) (void);
+void                                      GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, char        c   );
+void                                      GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, const char* str );
+           
+int                                       GLU_FUNC( Font, get_str_WordCnt) ( size_t width, const char* str );
 
-__GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportChar     ) ( uint16_t     unicode );
-__GUI_Font_t*     RH_RESULT MAKE_FUNC( Font, exportStr      ) ( const char*  str     );
 
-void                        MAKE_FUNC( Font, getCharSize    ) ( size_t *width, size_t *height, char c );
-void                        MAKE_FUNC( Font, getStrSize     ) ( size_t *width, size_t *height, const char* str );
-int                         MAKE_FUNC( Font, getWordNum     ) ( const size_t width, const char* str   );
-
-__GUI_Font_t*               MAKE_FUNC( Font, exportText_Justify )( const char* str, size_t width );
 
 #ifdef __cpluplus
 }

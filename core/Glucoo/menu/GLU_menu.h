@@ -16,7 +16,7 @@ struct __GUI_Menu_t{
     GLU_TYPE(Pixel)       text_color;           /* 菜单栏字体颜色 */
     GLU_TYPE(Pixel)       sl_color;             /* 菜单栏选中色 */
     
-    E_GUI_FontStyle_t     font;                 /* 菜单字体 */
+    GLU_ENUM(Font)        font;                 /* 菜单字体 */
     
     __Area_t              area;                 /* 菜单屏幕所占区域 */
     int8_t                nItem;                /* 菜单栏目条数 */

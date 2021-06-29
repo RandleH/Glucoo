@@ -11,7 +11,7 @@ extern "C" {
 /*===========================================================================================================================
  > Image Processing Reference
 ============================================================================================================================*/
-typedef uint8_t BLK_TYPE(PixelBin);
+
 union BLK_UION(PixelBin){
     struct{
         uint8_t BIT0 : 1;
@@ -25,9 +25,38 @@ union BLK_UION(PixelBin){
     };
     uint8_t data;
 };
+typedef uint8_t                  BLK_TYPE(PixelBin);
 typedef union BLK_UION(PixelBin) BLK_UION(PixelBin);
 
-typedef uint16_t BLK_TYPE(Pixel565);
+
+struct BLK_SRCT(PixelGry){
+    uint8_t BIT0 : 1;
+    uint8_t BIT1 : 1;
+    uint8_t BIT2 : 1;
+    uint8_t BIT3 : 1;
+    uint8_t BIT4 : 1;
+    uint8_t BIT5 : 1;
+    uint8_t BIT6 : 1;
+    uint8_t BIT7 : 1;
+};
+union BLK_UION(PixelGry){
+    struct{
+        uint8_t BIT0 : 1;
+        uint8_t BIT1 : 1;
+        uint8_t BIT2 : 1;
+        uint8_t BIT3 : 1;
+        uint8_t BIT4 : 1;
+        uint8_t BIT5 : 1;
+        uint8_t BIT6 : 1;
+        uint8_t BIT7 : 1;
+    };
+    uint8_t data;
+};
+typedef uint8_t                   BLK_TYPE(PixelGry);
+typedef struct BLK_SRCT(PixelGry) BLK_SRCT(PixelGry);
+typedef union  BLK_UION(PixelGry) BLK_UION(PixelGry);
+
+
 struct BLK_SRCT(Pixel565){
     uint16_t B : 5;
     uint16_t G : 6;
@@ -41,11 +70,12 @@ union BLK_UION(Pixel565){
     };
     uint16_t data;
 };
+typedef uint16_t                     BLK_TYPE(Pixel565);
 typedef struct  BLK_SRCT(Pixel565)   BLK_SRCT(Pixel565);
 typedef union   BLK_UION(Pixel565)   BLK_UION(Pixel565);
 
-typedef uint32_t BLK_TYPE(Pixel888);
- struct BLK_SRCT(Pixel888){
+
+struct BLK_SRCT(Pixel888){
      uint8_t B ;
      uint8_t G ;
      uint8_t R ;
@@ -58,6 +88,7 @@ union BLK_UION(Pixel888){
     };
     uint32_t data;
 };
+typedef uint32_t                     BLK_TYPE(Pixel888);
 typedef struct  BLK_SRCT(Pixel888)   BLK_SRCT(Pixel888);
 typedef union   BLK_UION(Pixel888)   BLK_UION(Pixel888);
 
@@ -74,6 +105,13 @@ struct BLK_SRCT(Img565){
     size_t      height;
 };
 typedef struct BLK_SRCT(Img565)  BLK_SRCT(Img565);
+
+struct BLK_SRCT(ImgGry){
+    BLK_UION(PixelGry)*    pBuffer;
+    size_t      width;
+    size_t      height;
+};
+typedef struct BLK_SRCT(ImgGry) BLK_SRCT(ImgGry);
  
 
 struct BLK_SRCT(Img888){
@@ -121,7 +159,9 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast    ) (const BLK_SRCT(Img888)* src,
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,size_t height,size_t width);
 
-
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgGry, into_ImgBin  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(ImgBin)* dst,int xs, int ys,BLK_TYPE(PixelBin) obj_color);
+BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img565)* dst,int xs, int ys,BLK_TYPE(Pixel565) obj_color);
+BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color);
 
 void              BLK_FUNC( Img888, data_OTUS    ) (const BLK_SRCT(Img888)* src,uint32_t* threshold);
 

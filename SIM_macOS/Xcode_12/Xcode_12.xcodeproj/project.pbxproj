@@ -10,6 +10,9 @@
 		E35B3B99261D5C990031A366 /* GLU_api.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B95261D5C990031A366 /* GLU_api.c */; };
 		E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3B97261D5C990031A366 /* RH_dummy.c */; };
 		E35B3BA9261D8F450031A366 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E35B3BA8261D8F450031A366 /* main.c */; };
+		E375772A268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c in Sources */ = {isa = PBXBuildFile; fileRef = E3757729268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c */; };
+		E375772D268A1044000EB4F3 /* GLU_font_NewYork.c in Sources */ = {isa = PBXBuildFile; fileRef = E375772C268A1044000EB4F3 /* GLU_font_NewYork.c */; };
+		E3757730268A1115000EB4F3 /* GLU_font_NewYork_Italic.c in Sources */ = {isa = PBXBuildFile; fileRef = E375772F268A1115000EB4F3 /* GLU_font_NewYork_Italic.c */; };
 		E38C37942647C7500057F552 /* GLU_glucoo.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37922647C7500057F552 /* GLU_glucoo.c */; };
 		E38C379B2647C7BE0057F552 /* GLU_draw.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C379A2647C7BE0057F552 /* GLU_draw.c */; };
 		E38C37A32647CC900057F552 /* GLU_font.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C379E2647CC900057F552 /* GLU_font.c */; };
@@ -27,6 +30,7 @@
 		E3A277B32648EF6E00D29934 /* BLK_math.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277A62648EF6E00D29934 /* BLK_math.c */; };
 		E3A277B42648EF6E00D29934 /* BLK_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277A92648EF6E00D29934 /* BLK_dsp.c */; };
 		E3A277B52648EF6E00D29934 /* BLK_graphic.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277AC2648EF6E00D29934 /* BLK_graphic.c */; };
+		E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */; };
 		E3B2063C2654EFE800F94242 /* BLK_poker.c in Sources */ = {isa = PBXBuildFile; fileRef = E3B2063B2654EFE800F94242 /* BLK_poker.c */; };
 /* End PBXBuildFile section */
 
@@ -45,7 +49,6 @@
 /* Begin PBXFileReference section */
 		E35B3B31261D5B850031A366 /* Xcode_12 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode_12; sourceTree = BUILT_PRODUCTS_DIR; };
 		E35B3B56261D5BDA0031A366 /* stb_c_lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_c_lexer.h; sourceTree = "<group>"; };
-		E35B3B57261D5BDA0031A366 /* temp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = temp; sourceTree = "<group>"; };
 		E35B3B58261D5BDA0031A366 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		E35B3B59261D5BDA0031A366 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_write.h; sourceTree = "<group>"; };
 		E35B3B5A261D5BDA0031A366 /* stb_image_resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_resize.h; sourceTree = "<group>"; };
@@ -73,6 +76,9 @@
 		E35B3B97261D5C990031A366 /* RH_dummy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RH_dummy.c; sourceTree = "<group>"; };
 		E35B3B98261D5C990031A366 /* GLU_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLU_api.h; sourceTree = "<group>"; };
 		E35B3BA8261D8F450031A366 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../self/main.c; sourceTree = "<group>"; wrapsLines = 0; };
+		E3757729268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_CourierNewItalic.c; path = Glucoo/font/GLU_font_CourierNewItalic.c; sourceTree = "<group>"; };
+		E375772C268A1044000EB4F3 /* GLU_font_NewYork.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_NewYork.c; path = Glucoo/font/GLU_font_NewYork.c; sourceTree = "<group>"; };
+		E375772F268A1115000EB4F3 /* GLU_font_NewYork_Italic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_NewYork_Italic.c; path = Glucoo/font/GLU_font_NewYork_Italic.c; sourceTree = "<group>"; };
 		E38C37922647C7500057F552 /* GLU_glucoo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_glucoo.c; path = Glucoo/GLU_glucoo.c; sourceTree = "<group>"; };
 		E38C37932647C7500057F552 /* GLU_glucoo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_glucoo.h; path = Glucoo/GLU_glucoo.h; sourceTree = "<group>"; };
 		E38C379A2647C7BE0057F552 /* GLU_draw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_draw.c; path = Glucoo/draw/GLU_draw.c; sourceTree = "<group>"; };
@@ -105,6 +111,8 @@
 		E3A277AD2648EF6E00D29934 /* BLK_graphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_graphic.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A277B72648F00600D29934 /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_common.h; sourceTree = "<group>"; };
 		E3A277B82648F00600D29934 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; };
+		E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "GLU_font_unscii-8.c"; path = "Glucoo/font/GLU_font_unscii-8.c"; sourceTree = "<group>"; };
+		E3A3C50F268B1DA600EA234D /* GLU_pixel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLU_pixel.h; path = Glucoo/GLU_pixel.h; sourceTree = "<group>"; };
 		E3B206392654B29F00F94242 /* BLK_poker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_poker.h; sourceTree = "<group>"; };
 		E3B2063B2654EFE800F94242 /* BLK_poker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_poker.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -180,7 +188,6 @@
 			isa = PBXGroup;
 			children = (
 				E35B3B56261D5BDA0031A366 /* stb_c_lexer.h */,
-				E35B3B57261D5BDA0031A366 /* temp */,
 				E35B3B58261D5BDA0031A366 /* LICENSE */,
 				E35B3B59261D5BDA0031A366 /* stb_image_write.h */,
 				E35B3B5A261D5BDA0031A366 /* stb_image_resize.h */,
@@ -245,6 +252,7 @@
 			isa = PBXGroup;
 			children = (
 				E38C379A2647C7BE0057F552 /* GLU_draw.c */,
+				E3A3C50F268B1DA600EA234D /* GLU_pixel.h */,
 			);
 			name = draw;
 			sourceTree = "<group>";
@@ -279,6 +287,10 @@
 		E38C379D2647CC4D0057F552 /* font */ = {
 			isa = PBXGroup;
 			children = (
+				E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */,
+				E375772F268A1115000EB4F3 /* GLU_font_NewYork_Italic.c */,
+				E375772C268A1044000EB4F3 /* GLU_font_NewYork.c */,
+				E3757729268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c */,
 				E3A277962648E64200D29934 /* GLU_font_CourierNew.c */,
 				E3A277972648E64200D29934 /* GLU_font_CourierNewBold.c */,
 				E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */,
@@ -346,15 +358,19 @@
 			files = (
 				E3A277B42648EF6E00D29934 /* BLK_dsp.c in Sources */,
 				E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */,
+				E375772A268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c in Sources */,
+				E3757730268A1115000EB4F3 /* GLU_font_NewYork_Italic.c in Sources */,
 				E38C37A32647CC900057F552 /* GLU_font.c in Sources */,
 				E38C37A92647D2DD0057F552 /* GLU_object.c in Sources */,
 				E3A277AF2648EF6E00D29934 /* BLK_lib.c in Sources */,
 				E3A277B02648EF6E00D29934 /* BLK_image.c in Sources */,
 				E3A277AE2648EF6E00D29934 /* BLK_utility.c in Sources */,
+				E375772D268A1044000EB4F3 /* GLU_font_NewYork.c in Sources */,
 				E38C37AB2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c in Sources */,
 				E3A277B22648EF6E00D29934 /* BLK_time.c in Sources */,
 				E38C37AE2647E0C50057F552 /* GLU_window.c in Sources */,
 				E3A277992648E64200D29934 /* GLU_font_CourierNewBold.c in Sources */,
+				E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */,
 				E3A277982648E64200D29934 /* GLU_font_CourierNew.c in Sources */,
 				E3A277B32648EF6E00D29934 /* BLK_math.c in Sources */,
 				E38C37B12647E55D0057F552 /* GLU_menu.c in Sources */,
