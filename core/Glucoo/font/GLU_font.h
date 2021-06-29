@@ -42,6 +42,7 @@ typedef enum{
     kGLU_Font_CourierNew_Bold   ,
     kGLU_Font_NewYork           ,
     kGLU_Font_NewYork_Italic    ,
+    kGLU_Font_Optima            ,
     kGLU_NUM_FontStyle
 }GLU_ENUM(Font);
 

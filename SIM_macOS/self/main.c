@@ -37,6 +37,10 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, init        )();
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
+//
+//    printf("%ld\n",GLU_Font_out_ttf_array("/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Optima.ttc",\
+//                                          "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/GLU_font_Optima.c"));
+    
     
 #if 1
     
@@ -45,13 +49,15 @@ int main(int argc, const char * argv[]) {
     
     GLU_FUNC(Object, template)( &a, kGUI_ObjStyle_text );
 //    GLU_FUNC(Font, set_style)(kGLU_Font_Unscii);
-    a.text_size = 23;
-    a.font = kGLU_Font_CourierNew;
-    a.area.xs     = 5;
-    a.area.ys     = 10;
-    a.area.height = 40;
-    a.area.width  = 50;
-    a.obj_color   = M_COLOR_BLUE;
+    a.text_size = 50;
+    a.font = kGLU_Font_Unscii;
+    a.area.xs     = 0;
+    a.area.ys     = 0;
+    a.area.height = 64;
+    a.area.width  = 400;
+    a.obj_color   = MAKE_COLOR(25, 205, 255);
+    a.text        = "Glucoo";
+    a.showFrame   = 0;
     
     id = GLU_FUNC(Object,create  )( &a, NULL );
     GLU_FUNC(Object, insert)( id );

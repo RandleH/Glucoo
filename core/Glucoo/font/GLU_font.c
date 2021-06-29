@@ -288,6 +288,7 @@ static struct{
     extern const uint8_t Font_TTF_NewYork           [344120];
     extern const uint8_t Font_TTF_NewYork_Italic    [361176];
     extern const uint8_t Font_TTF_Unscii            [293712];
+    extern const uint8_t Font_TTF_Optima            [263984];
 
     static const uint8_t* font_ttf_array[kGLU_NUM_FontStyle] = {
         
@@ -326,6 +327,13 @@ static struct{
                Font_TTF_NewYork_Italic    ,
            #else
                NULL,
+           #endif
+        
+        [kGLU_Font_Optima] =
+           #if RH_CFG_FONT_STYLE__Optima
+                   Font_TTF_Optima        ,
+           #else
+                   NULL,
            #endif
         
     };

@@ -31,6 +31,7 @@
 		E3A277B42648EF6E00D29934 /* BLK_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277A92648EF6E00D29934 /* BLK_dsp.c */; };
 		E3A277B52648EF6E00D29934 /* BLK_graphic.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277AC2648EF6E00D29934 /* BLK_graphic.c */; };
 		E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */; };
+		E3A3C514268B249300EA234D /* GLU_font_Optima.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A3C513268B249300EA234D /* GLU_font_Optima.c */; };
 		E3B2063C2654EFE800F94242 /* BLK_poker.c in Sources */ = {isa = PBXBuildFile; fileRef = E3B2063B2654EFE800F94242 /* BLK_poker.c */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +114,7 @@
 		E3A277B82648F00600D29934 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; };
 		E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "GLU_font_unscii-8.c"; path = "Glucoo/font/GLU_font_unscii-8.c"; sourceTree = "<group>"; };
 		E3A3C50F268B1DA600EA234D /* GLU_pixel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLU_pixel.h; path = Glucoo/GLU_pixel.h; sourceTree = "<group>"; };
+		E3A3C513268B249300EA234D /* GLU_font_Optima.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_Optima.c; path = Glucoo/font/GLU_font_Optima.c; sourceTree = "<group>"; };
 		E3B206392654B29F00F94242 /* BLK_poker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_poker.h; sourceTree = "<group>"; };
 		E3B2063B2654EFE800F94242 /* BLK_poker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_poker.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -287,6 +289,7 @@
 		E38C379D2647CC4D0057F552 /* font */ = {
 			isa = PBXGroup;
 			children = (
+				E3A3C513268B249300EA234D /* GLU_font_Optima.c */,
 				E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */,
 				E375772F268A1115000EB4F3 /* GLU_font_NewYork_Italic.c */,
 				E375772C268A1044000EB4F3 /* GLU_font_NewYork.c */,
@@ -369,6 +372,7 @@
 				E38C37AB2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c in Sources */,
 				E3A277B22648EF6E00D29934 /* BLK_time.c in Sources */,
 				E38C37AE2647E0C50057F552 /* GLU_window.c in Sources */,
+				E3A3C514268B249300EA234D /* GLU_font_Optima.c in Sources */,
 				E3A277992648E64200D29934 /* GLU_font_CourierNewBold.c in Sources */,
 				E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */,
 				E3A277982648E64200D29934 /* GLU_font_CourierNew.c in Sources */,

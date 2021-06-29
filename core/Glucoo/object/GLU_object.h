@@ -54,7 +54,7 @@ struct __GUI_Object_t{
      ===================================================================================*/
     const char*          text;
     int16_t              text_size;
-    GLU_ENUM(Align)    text_align;
+    GLU_ENUM(Align)      text_align;
     
     /*===================================================================================
      * Color --- Every objects has its background color.
