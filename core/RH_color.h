@@ -20,7 +20,7 @@ extern "C" {
 
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565    )
   
-  #define MAKE_COLOR(R_255,G_255,B_255)    (uint16_t)(((R_255>>3)<<11)|((G_255>>2)<<5)|(B_255>>3))
+  #define MAKE_COLOR(R_255,G_255,B_255)    (uint16_t)((((R_255)>>3)<<11)|(((G_255)>>2)<<5)|((B_255)>>3))
   #define COLOR_MASK_RED                   0xF800
   #define COLOR_MASK_GREEN                 0x7E00
   #define COLOR_MASK_BLUE                  0x001F

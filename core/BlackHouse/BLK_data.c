@@ -9,7 +9,8 @@ extern "C" {
  > Data Structure Reference
 ======================================================================*/
     
-BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, createHead )         ( void* object ){
+BLK_SRCT( LinkDB )*
+BLK_FUNC( LinkDB, createHead ) ( void* object ){
     BLK_SRCT( LinkDB ) *ptr = (BLK_SRCT( LinkDB )*)BLK_DATA_MALLOC(sizeof(BLK_SRCT( LinkDB )));
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( ptr );
@@ -21,7 +22,8 @@ BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, createHead )         ( void* object ){
     return ptr;
 }
     
-BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, addTail    )         ( const BLK_SRCT( LinkDB ) *pHead , void* object ){
+BLK_SRCT( LinkDB )*
+BLK_FUNC( LinkDB, addTail    ) ( const BLK_SRCT( LinkDB ) *pHead , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -47,7 +49,8 @@ BLK_SRCT( LinkDB )*    BLK_FUNC( LinkDB, addTail    )         ( const BLK_SRCT( 
     return pNewNode;
 }
     
-BLK_SRCT( LinkDB )*     BLK_FUNC( LinkDB, insert     )         ( const BLK_SRCT( LinkDB ) *pHead , void* Tobject, void* object ){
+BLK_SRCT( LinkDB )*
+BLK_FUNC( LinkDB, insert     ) ( const BLK_SRCT( LinkDB ) *pHead , void* Tobject, void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -79,7 +82,8 @@ FOUND_TOBJ:
     return pNewNode;
 }
     
-void                    BLK_FUNC( LinkDB, removeAll  )         (       BLK_SRCT( LinkDB ) *pHead ){
+void
+BLK_FUNC( LinkDB, removeAll  ) (       BLK_SRCT( LinkDB ) *pHead ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -93,7 +97,8 @@ void                    BLK_FUNC( LinkDB, removeAll  )         (       BLK_SRCT(
 }
     
       
-BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, createHead       ) ( void* object ){
+BLK_SRCT( LinkLoop )*
+BLK_FUNC( LinkLoop, createHead       ) ( void* object ){
     BLK_SRCT(LinkLoop) *ptr = (BLK_SRCT(LinkLoop)*)BLK_DATA_MALLOC(sizeof(BLK_SRCT(LinkLoop)));
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( ptr );
@@ -105,7 +110,8 @@ BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, createHead       ) ( void* object ){
     return ptr;
 }
       
-BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, add              ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
+BLK_SRCT( LinkLoop )*
+BLK_FUNC( LinkLoop, add              ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -128,7 +134,8 @@ BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, add              ) ( const BLK_SRCT(Lin
     return pNewNode;
 }
     
-BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, insert           ) ( const BLK_SRCT(LinkLoop) *pHead , void* Tobject, void* object ){
+BLK_SRCT( LinkLoop )*
+BLK_FUNC( LinkLoop, insert           ) ( const BLK_SRCT(LinkLoop) *pHead , void* Tobject, void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -159,7 +166,8 @@ FOUND_TOBJ:
     return pNewNode;
 }
     
-BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, find             ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
+BLK_SRCT( LinkLoop )*
+BLK_FUNC( LinkLoop, find             ) ( const BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -176,7 +184,8 @@ BLK_SRCT(LinkLoop)*  BLK_FUNC( LinkLoop, find             ) ( const BLK_SRCT(Lin
     return NULL;
 }
     
-void           BLK_FUNC( LinkLoop, remove           ) (       BLK_SRCT(LinkLoop) *pHead , void* object ){
+void
+BLK_FUNC( LinkLoop, remove           ) (       BLK_SRCT(LinkLoop) *pHead , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -216,7 +225,8 @@ void           BLK_FUNC( LinkLoop, remove           ) (       BLK_SRCT(LinkLoop)
     
 }
     
-void           BLK_FUNC( LinkLoop, removeAll        ) (       BLK_SRCT(LinkLoop) *pHead ){
+void
+BLK_FUNC( LinkLoop, removeAll        ) (       BLK_SRCT(LinkLoop) *pHead ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -228,7 +238,8 @@ void           BLK_FUNC( LinkLoop, removeAll        ) (       BLK_SRCT(LinkLoop)
     
 }
 
-void           BLK_FUNC( LinkLoop, printAllNodesAdr ) ( const BLK_SRCT(LinkLoop) *pHead , int(*PRINTF_FUNC)(const char*,...)){
+void
+BLK_FUNC( LinkLoop, printAllNodesAdr ) ( const BLK_SRCT(LinkLoop) *pHead , int(*PRINTF_FUNC)(const char*,...)){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
 #endif
@@ -243,7 +254,8 @@ void           BLK_FUNC( LinkLoop, printAllNodesAdr ) ( const BLK_SRCT(LinkLoop)
 }
     
 
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, createHead    ) ( void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, createHead ) ( void* object ){
     BLK_SRCT(LinkBiTree)* pNewHead = (BLK_SRCT(LinkBiTree)*)BLK_DATA_MALLOC(sizeof(BLK_SRCT(LinkBiTree)));
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pNewHead );
@@ -256,7 +268,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, createHead    ) ( void* object ){
     return pNewHead;
 }
     
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, add_l2r    ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
@@ -280,7 +293,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2r       ) ( const BLK_SRCT(Lin
     return pNewNode;
 }
     
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, add_l2l    ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
     BLK_DATA_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
@@ -303,7 +317,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_l2l       ) ( const BLK_SRCT(Lin
     return pNewNode;
 }
     
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2l       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, add_r2l    ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
     BLK_DATA_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
@@ -326,7 +341,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2l       ) ( const BLK_SRCT(Lin
     return pNewNode;
 }
     
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2r       ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, add_r2r    ) ( const BLK_SRCT(LinkBiTree) *pHead , BLK_SRCT(LinkBiTree) *pTarget , void* object ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
     BLK_DATA_ASSERT( !(pHead->pPrev) );  // Head Node shouldn't have a previous node. So...Not a headnode.
@@ -349,7 +365,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, add_r2r       ) ( const BLK_SRCT(Lin
     return pNewNode;
 }
     
-BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, find          ) ( const BLK_SRCT(LinkBiTree) *pHead , void* object ){
+BLK_SRCT( LinkBiTree )*
+BLK_FUNC( LinkBiTree, find       ) ( const BLK_SRCT(LinkBiTree) *pHead , void* object ){
     
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
@@ -371,7 +388,8 @@ BLK_SRCT(LinkBiTree)* BLK_FUNC( LinkBiTree, find          ) ( const BLK_SRCT(Lin
 }
     
     
-BLK_SRCT(Stack)*      BLK_FUNC( Stack, createBase         ) ( void* object ){
+BLK_SRCT( Stack )*
+BLK_FUNC( Stack, createBase      ) ( void* object ){
     BLK_SRCT(Stack) *ptr = (BLK_SRCT(Stack)*)BLK_DATA_MALLOC(sizeof(BLK_SRCT(Stack)));
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( ptr );
@@ -383,7 +401,8 @@ BLK_SRCT(Stack)*      BLK_FUNC( Stack, createBase         ) ( void* object ){
     return ptr;
 }
     
-BLK_SRCT(Stack)*      BLK_FUNC( Stack, push               ) ( const BLK_SRCT(Stack) *pBase , void* object ){
+BLK_SRCT( Stack )*
+BLK_FUNC( Stack, push            ) ( const BLK_SRCT(Stack) *pBase , void* object ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -404,7 +423,8 @@ BLK_SRCT(Stack)*      BLK_FUNC( Stack, push               ) ( const BLK_SRCT(Sta
     return pNew;
 }
     
-void*                 BLK_FUNC( Stack, pop                ) ( const BLK_SRCT(Stack) *pBase ){
+void*
+BLK_FUNC( Stack, pop             ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -424,7 +444,8 @@ void*                 BLK_FUNC( Stack, pop                ) ( const BLK_SRCT(Sta
     return object;
 }
     
-size_t                BLK_FUNC( Stack, size               ) ( const BLK_SRCT(Stack) *pBase ){
+size_t
+BLK_FUNC( Stack, size            ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -439,7 +460,8 @@ size_t                BLK_FUNC( Stack, size               ) ( const BLK_SRCT(Sta
     return cnt;
 }
     
-void*                 BLK_FUNC( Stack, top                ) ( const BLK_SRCT(Stack) *pBase ){
+void*
+BLK_FUNC( Stack, top             ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -447,7 +469,8 @@ void*                 BLK_FUNC( Stack, top                ) ( const BLK_SRCT(Sta
     return (void*)(pBase->pPrev->object);
 }
     
-bool                  BLK_FUNC( Stack, empty              ) ( const BLK_SRCT(Stack) *pBase ){
+bool
+BLK_FUNC( Stack, empty           ) ( const BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -455,7 +478,8 @@ bool                  BLK_FUNC( Stack, empty              ) ( const BLK_SRCT(Sta
     return (pBase->pNext==pBase->pPrev && pBase->pNext==pBase);
 }
     
-void*                 BLK_FUNC( Stack, deleteBase         ) (       BLK_SRCT(Stack) *pBase ){
+void*
+BLK_FUNC( Stack, deleteBase      ) (       BLK_SRCT(Stack) *pBase ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pBase );
@@ -477,7 +501,7 @@ void*                 BLK_FUNC( Stack, deleteBase         ) (       BLK_SRCT(Sta
     
     
 
-#define RH_HASH_MAP_SIZE                     RH_CFG_HASHTABLE_SIZE
+#define RH_HASH_MAP_SIZE                  RH_CFG_HASHTABLE_SIZE
     
     
     
@@ -485,7 +509,8 @@ static size_t RH_FUNCONST __hashfunc         ( size_t key ){
     return (key&(RH_HASH_MAP_SIZE-1));
 }
     
-BLK_SRCT(HashMap)*  RH_RESULT  BLK_FUNC( Hash, createMap  ) ( void ){
+BLK_SRCT( HashMap )*  RH_RESULT
+BLK_FUNC( Hash, createMap  ) ( void ){
 
     BLK_SRCT(HashMap) *pHashHead = BLK_DATA_HASH_MALLOC( sizeof(BLK_SRCT(HashMap)) );
 #ifdef RH_DEBUG
@@ -503,7 +528,8 @@ BLK_SRCT(HashMap)*  RH_RESULT  BLK_FUNC( Hash, createMap  ) ( void ){
     return pHashHead;
 }
     
-void*                    BLK_FUNC( Hash, find       ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
+void*
+BLK_FUNC( Hash, find       ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT(pHead);
 #endif
@@ -519,7 +545,8 @@ void*                    BLK_FUNC( Hash, find       ) ( const BLK_SRCT(HashMap) 
     return NULL;
 }
     
-void                     BLK_FUNC( Hash, pair       ) ( const BLK_SRCT(HashMap) *pHead, size_t key, void* object ){
+void
+BLK_FUNC( Hash, pair       ) ( const BLK_SRCT(HashMap) *pHead, size_t key, void* object ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
@@ -548,7 +575,8 @@ void                     BLK_FUNC( Hash, pair       ) ( const BLK_SRCT(HashMap) 
     
 }
     
-void*                    BLK_FUNC( Hash, get        ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
+void*
+BLK_FUNC( Hash, get        ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
 
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
@@ -567,7 +595,8 @@ void*                    BLK_FUNC( Hash, get        ) ( const BLK_SRCT(HashMap) 
     return NULL;
 }
     
-void*                    BLK_FUNC( Hash, remove     ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
+void*
+BLK_FUNC( Hash, remove     ) ( const BLK_SRCT(HashMap) *pHead, size_t key ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
     BLK_DATA_ASSERT( pHead->pList );
@@ -588,7 +617,8 @@ void*                    BLK_FUNC( Hash, remove     ) ( const BLK_SRCT(HashMap) 
     return NULL;
 }
     
-void                     BLK_FUNC( Hash, removeAll  ) (       BLK_SRCT(HashMap) *pHead ){
+void
+BLK_FUNC( Hash, removeAll  ) (       BLK_SRCT(HashMap) *pHead ){
 #ifdef RH_DEBUG
     BLK_DATA_ASSERT( pHead );
     BLK_DATA_ASSERT( pHead->pList );

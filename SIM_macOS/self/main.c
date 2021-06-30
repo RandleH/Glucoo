@@ -37,8 +37,6 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, init        )();
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
-//    printf("%ld\n",GLU_Font_out_ttf_array("/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Optima.ttf",\
-//                                          "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/GLU_font_Optima.c"));
     
     
 #if 1
@@ -54,7 +52,7 @@ int main(int argc, const char * argv[]) {
     a.area.ys     = 0;
     a.area.height = 300;
     a.area.width  = 800;
-    a.obj_color   = MAKE_COLOR(25, 205, 255);
+    a.obj_color   = M_COLOR_GOLDEN;
     a.text        = "GUCCI";
     a.showFrame   = 0;
     

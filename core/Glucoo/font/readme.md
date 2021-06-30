@@ -22,6 +22,7 @@ Font 模块可以完成对字体文件的读取, 解析以及图像输出
 
 Glucoo所支持的Align对齐方式有:
 
+
 |  成员 <div style="width: 70pt">     | 类型<div style="width: 80pt">  |解释 <div style="width: 250pt">  |
 | :----------------------- | ----- | ----------------------------------- |
 | kGLU_Align_Right         | enum  | 向右对齐                             |

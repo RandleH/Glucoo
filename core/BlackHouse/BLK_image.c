@@ -1434,10 +1434,10 @@ BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565 )
     BLK_UION(Pixel565) color = {.data = obj_color};
     for( int y=0; y<src->height&&y<dst->height; y++ ){
         for( int x=0; x<src->width; x++,pIterSrc++, pIterDst++ ){
-            size_t index = (ys+y)*(dst->width)+(xs+x);
-            dst->pBuffer[ index ].R = pIterDst->R + (( (color.R - pIterDst->R) * (pIterSrc->data) )>>8);
-            dst->pBuffer[ index ].G = pIterDst->G + (( (color.G - pIterDst->G) * (pIterSrc->data) )>>8);
-            dst->pBuffer[ index ].B = pIterDst->B + (( (color.B - pIterDst->B) * (pIterSrc->data) )>>8);
+//            size_t index = (ys+y)*(dst->width)+(xs+x);
+            pIterDst->R = pIterDst->R + (( (color.R - pIterDst->R) * (pIterSrc->data) )>>8);
+            pIterDst->G = pIterDst->G + (( (color.G - pIterDst->G) * (pIterSrc->data) )>>8);
+            pIterDst->B = pIterDst->B + (( (color.B - pIterDst->B) * (pIterSrc->data) )>>8);
         }
         pIterDst -= src->width;
         pIterDst += dst->width;

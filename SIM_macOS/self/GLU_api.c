@@ -94,7 +94,7 @@ static void Simul_API_DrawPixel(int x ,int y ,const GLU_TYPE(Pixel) pixData){
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        pTmpScreenShot = __ImgRGB888_create(RH_CFG_SCREEN_WIDTH,RH_CFG_SCREEN_HEIGHT);
+        while(1);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif

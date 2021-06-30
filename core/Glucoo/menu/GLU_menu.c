@@ -31,37 +31,27 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
         int x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1)     , 0, GUI_X_WIDTH-1 );
         int y_fs = __limit( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
         
-    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        /* 字体图像像素遍历pIter */
-        uint8_t* pIter = pF->img_buf;
-        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-            for( int x=0; x<pF->img_w; x++, pIter++ ){
-                size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                if( (*pIter<128) ^ (config->color_title!=0) ){
-                    info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }else{
-                    info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                }
-            
-            }
-        }
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        /* 字体图像像素遍历pIter */
-        uint8_t       *pIterFont = pF->img_buf;
-        GLU_UION(Pixel) *pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
+        // 引用灰度字体图像(类型信息复制转换)
+        BLK_SRCT(ImgGry) img_font = {
+            .height  = pF->img_h,
+            .width   = pF->img_w,
+            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+        };
         
-        for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-            register int x=0;
-            for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                if( *pIterFont>128 ){
-                    pIterScr->data = config->color_title;
-                }
-            }
-            pIterScr -= x;
-            pIterScr += info_MainScreen.width;
-        }
+    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+        
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        
+    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+        
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        RH_ASSERT(0);
+        
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        
+    #else
+         
     #endif
         
     }
@@ -113,38 +103,31 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
             strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
             GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            
+            // 引用灰度字体图像(类型信息复制转换)
+            BLK_SRCT(ImgGry) img_font = {
+                .height  = pF->img_h,
+                .width   = pF->img_w,
+                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            };
+            
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-            /* 字体图像像素遍历pIter */
-            uint8_t* pIter = pF->img_buf;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                for( int x=0; x<pF->img_w; x++, pIter++ ){
-                    size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                    if( (*pIter<128) ^ (text_color.data!=0) ){
-                        info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }else{
-                        info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }
-                
-                }
-            }
+            
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-            /* 字体图像像素遍历pIterFont */
-            uint8_t*       pIterFont = pF->img_buf;
-            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                register int x=0;
-                for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                    if( *pIterFont > 128 ){
-                        *pIterScr = text_color;
-                    }
-                }
-                pIterScr -= x;
-                pIterScr += info_MainScreen.width;
-            }
-
+            
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-            RH_ASSERT(0);
+            
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
+        #else
+             
         #endif
+            
+        
         }
     }
 }
@@ -197,38 +180,30 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
                     GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
-                #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                    /* 字体图像像素遍历pIter */
-                    uint8_t* pIter = pF->img_buf;
-                    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                        for( int x=0; x<pF->img_w; x++, pIter++ ){
-                            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                            if( (*pIter<128) ^ (text_color.data!=0) ){
-                                info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                            }else{
-                                info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                            }
+                    
+                    // 引用灰度字体图像(类型信息复制转换)
+                    BLK_SRCT(ImgGry) img_font = {
+                        .height  = pF->img_h,
+                        .width   = pF->img_w,
+                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    };
+                    
+                    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                         
-                        }
-                    }
-                #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                    /* 字体图像像素遍历pIterFont */
-                    uint8_t*       pIterFont = pF->img_buf;
-                    GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-                    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                        register int x=0;
-                        for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                            if( *pIterFont > 128 ){
-                                *pIterScr = text_color;
-                            }
-                        }
-                        pIterScr -= x;
-                        pIterScr += info_MainScreen.width;
-                    }
-                    RH_ASSERT(1);
-                #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                    RH_ASSERT(0);
-                #endif
+                        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        
+                    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+                        
+                        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        
+                    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+                        
+                        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        
+                    #else
+                         
+                    #endif
+            
                 }
             }
             
@@ -255,38 +230,30 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
             GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            
+            // 引用灰度字体图像(类型信息复制转换)
+            BLK_SRCT(ImgGry) img_font = {
+                .height  = pF->img_h,
+                .width   = pF->img_w,
+                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            };
+            
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-            /* 字体图像像素遍历pIter */
-            uint8_t* pIter = pF->img_buf;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                for( int x=0; x<pF->img_w; x++, pIter++ ){
-                    size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                    if( (*pIter<128) ^ (text_color.data!=0) ){
-                        info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }else{
-                        info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }
-                
-                }
-            }
+            
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-            /* 字体图像像素遍历pIterFont */
-            uint8_t*       pIterFont = pF->img_buf;
-            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                register int x=0;
-                for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                    if( *pIterFont > 128 ){
-                        *pIterScr = text_color;
-                    }
-                }
-                pIterScr -= x;
-                pIterScr += info_MainScreen.width;
-            }
-            RH_ASSERT(1);
+            
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-            RH_ASSERT(0);
+            
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
+        #else
+             
         #endif
+        
         }
         
         // 绘制之前未选中,现在选中的那条菜单栏
@@ -308,38 +275,29 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
             GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            // 引用灰度字体图像(类型信息复制转换)
+            BLK_SRCT(ImgGry) img_font = {
+                .height  = pF->img_h,
+                .width   = pF->img_w,
+                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            };
+            
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-            /* 字体图像像素遍历pIter */
-            uint8_t* pIter = pF->img_buf;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                for( int x=0; x<pF->img_w; x++, pIter++ ){
-                    size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                    if( (*pIter<128) ^ (text_color.data!=0) ){
-                        info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }else{
-                        info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                    }
-                
-                }
-            }
+            
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-            /* 字体图像像素遍历pIterFont */
-            uint8_t*       pIterFont = pF->img_buf;
-            GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-            for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                register int x=0;
-                for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                    if( *pIterFont > 128 ){
-                        *pIterScr = text_color;
-                    }
-                }
-                pIterScr -= x;
-                pIterScr += info_MainScreen.width;
-            }
-            RH_ASSERT(1);
+            
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-            RH_ASSERT(0);
+            
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            
+        #else
+             
         #endif
+        
         }
         //...//
     }
@@ -393,38 +351,29 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
                     GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                    // 引用灰度字体图像(类型信息复制转换)
+                    BLK_SRCT(ImgGry) img_font = {
+                        .height  = pF->img_h,
+                        .width   = pF->img_w,
+                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    };
+                    
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                    /* 字体图像像素遍历pIter */
-                    uint8_t* pIter = pF->img_buf;
-                    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                        for( int x=0; x<pF->img_w; x++, pIter++ ){
-                            size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                            if( (*pIter<128) ^ (text_color.data!=0) ){
-                                info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                            }else{
-                                info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                            }
-                        
-                        }
-                    }
+                    
+                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                    /* 字体图像像素遍历pIterFont */
-                    uint8_t*       pIterFont = pF->img_buf;
-                    GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-                    for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                        register int x=0;
-                        for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                            if( *pIterFont > 128 ){
-                                *pIterScr = text_color;
-                            }
-                        }
-                        pIterScr -= x;
-                        pIterScr += info_MainScreen.width;
-                    }
-                    RH_ASSERT(1);
+                    
+                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                    RH_ASSERT(0);
+                    
+                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
+                #else
+                     
                 #endif
+                    
                 }
             }
             
@@ -451,38 +400,30 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
                 GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                
+                // 引用灰度字体图像(类型信息复制转换)
+                BLK_SRCT(ImgGry) img_font = {
+                    .height  = pF->img_h,
+                    .width   = pF->img_w,
+                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                };
+                
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                /* 字体图像像素遍历pIter */
-                uint8_t* pIter = pF->img_buf;
-                for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                    for( int x=0; x<pF->img_w; x++, pIter++ ){
-                        size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                        if( (*pIter<128) ^ (text_color.data!=0) ){
-                            info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                        }else{
-                            info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                        }
-                    
-                    }
-                }
+                
+                BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                /* 字体图像像素遍历pIterFont */
-                uint8_t*       pIterFont = pF->img_buf;
-                GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-                for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                    register int x=0;
-                    for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                        if( *pIterFont > 128 ){
-                            *pIterScr = text_color;
-                        }
-                    }
-                    pIterScr -= x;
-                    pIterScr += info_MainScreen.width;
-                }
-                RH_ASSERT(1);
+                
+                BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                RH_ASSERT(0);
+                
+                BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                
+            #else
+                 
             #endif
+            
             }
             
             // 绘制之前未选中,现在选中的那条菜单栏
@@ -504,38 +445,30 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
                 GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
-            #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                /* 字体图像像素遍历pIter */
-                uint8_t* pIter = pF->img_buf;
-                for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                    for( int x=0; x<pF->img_w; x++, pIter++ ){
-                        size_t index = ((y_fs+y)>>3)*(info_MainScreen.width)+(x_fs+x);
-                        if( (*pIter<128) ^ (text_color.data!=0) ){
-                            info_MainScreen.pBuffer[ index ].data = __BIT_SET( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                        }else{
-                            info_MainScreen.pBuffer[ index ].data = __BIT_CLR( info_MainScreen.pBuffer[ index ].data, (y_fs+y)%8 );
-                        }
+                
+                // 引用灰度字体图像(类型信息复制转换)
+                BLK_SRCT(ImgGry) img_font = {
+                    .height  = pF->img_h,
+                    .width   = pF->img_w,
+                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                };
+                
+                #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                     
-                    }
-                }
-            #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                /* 字体图像像素遍历pIterFont */
-                uint8_t*       pIterFont = pF->img_buf;
-                GLU_UION(Pixel)* pIterScr  = info_MainScreen.pBuffer + (y_fs*info_MainScreen.width) + x_fs;
-                for( int y=0; y<pF->img_h&&y<config->area.height; y++ ){
-                    register int x=0;
-                    for( ; x<pF->img_w; x++, pIterFont++, pIterScr++ ){
-                        if( *pIterFont > 128 ){
-                            *pIterScr = text_color;
-                        }
-                    }
-                    pIterScr -= x;
-                    pIterScr += info_MainScreen.width;
-                }
-                RH_ASSERT(1);
-            #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                RH_ASSERT(0);
-            #endif
+                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
+                #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+                    
+                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
+                #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+                    
+                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    
+                #else
+                     
+                #endif
+                
             }
         //...//
         }else{         // 只能为菜单栏数小于屏幕所容纳的最大栏数
