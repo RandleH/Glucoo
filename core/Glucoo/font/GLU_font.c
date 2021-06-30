@@ -442,7 +442,7 @@ GLU_FUNC( Font, get_size       ) ( void ){
 }
 
 GLU_ENUM(Font)
-GLU_FUNC( Font, get_style      ) ( void ){
+GLU_FUNC( Font, get_font      ) ( void ){
     return FCFG.style;
 }
 

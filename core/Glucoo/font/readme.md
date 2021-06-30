@@ -37,7 +37,7 @@ Glucoo所支持的Align对齐方式有:
 
 Glucoo所支持的Font类型有:
 
-|  枚举成员 <div style="width: 70pt">  | 等宽<div style="width: 40pt">  | 文件大小 <div style="width: 40pt">  |  样式 <div style="width: 160pt"> |
+|  枚举成员 <div style="width: 70pt">  | 等宽<div style="width: 40pt">  | 文件大小 <div style="width: 40pt">  |  样式 <div style="width: 170pt"> |
 | :------------------------------ | :--: | :----------: | --------|
 | kGLU_Font_Unscii                | Yes  | 293712 Byte  | <font face="Unscii_8" size="10" >Glucoo</font>       |
 | kGLU_Font_ArialRounded_Bold     | No   | 49296  Byte  | <font face="Arial" size="10">**Glucoo**</font>       |

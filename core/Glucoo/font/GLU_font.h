@@ -75,7 +75,7 @@ void                                      GLU_FUNC( Font, set_font       ) ( GLU
 void                                      GLU_FUNC( Font, set_size       ) ( uint8_t        size   );
            
 uint8_t                                   GLU_FUNC( Font, get_size       ) ( void );
-GLU_ENUM(Font)                            GLU_FUNC( Font, get_style      ) ( void );
+GLU_ENUM(Font)                            GLU_FUNC( Font, get_font       ) ( void );
            
 void                                      GLU_FUNC( Font, backupCache    ) ( void );
 void                                      GLU_FUNC( Font, restoreCache   ) ( void );

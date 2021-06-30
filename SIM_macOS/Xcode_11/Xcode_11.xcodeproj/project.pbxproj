@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E32D24EE262C2E990017A41A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E32D24ED262C2E990017A41A /* main.c */; };
+		E35FD32E268CA5C300481BDB /* GLU_font_Optima.c in Sources */ = {isa = PBXBuildFile; fileRef = E35FD32D268CA5C300481BDB /* GLU_font_Optima.c */; };
 		E38C37B92647EC1A0057F552 /* GLU_glucoo.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37B82647EC1A0057F552 /* GLU_glucoo.c */; };
 		E38C37BC2647EC2E0057F552 /* GLU_object.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37BA2647EC2E0057F552 /* GLU_object.c */; };
 		E38C37BF2647EC3B0057F552 /* GLU_menu.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37BE2647EC3B0057F552 /* GLU_menu.c */; };
@@ -51,6 +52,8 @@
 		E32D24FA262C2F190017A41A /* RH_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_config.h; path = ../self/RH_config.h; sourceTree = "<group>"; };
 		E32D2520262C2FB60017A41A /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../../core/STB/stb_truetype.h; sourceTree = "<group>"; };
 		E32D2521262C2FB70017A41A /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = ../../core/STB/stb_image_write.h; sourceTree = "<group>"; };
+		E35FD32C268CA5A800481BDB /* GLU_pixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_pixel.h; path = ../../core/Glucoo/GLU_pixel.h; sourceTree = "<group>"; };
+		E35FD32D268CA5C300481BDB /* GLU_font_Optima.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_Optima.c; path = ../../core/Glucoo/font/GLU_font_Optima.c; sourceTree = "<group>"; };
 		E38C37B72647EC1A0057F552 /* GLU_glucoo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_glucoo.h; path = ../../core/Glucoo/GLU_glucoo.h; sourceTree = "<group>"; };
 		E38C37B82647EC1A0057F552 /* GLU_glucoo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_glucoo.c; path = ../../core/Glucoo/GLU_glucoo.c; sourceTree = "<group>"; };
 		E38C37BA2647EC2E0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = ../../core/Glucoo/object/GLU_object.c; sourceTree = "<group>"; };
@@ -186,6 +189,7 @@
 		E38C37B22647EBD40057F552 /* Glucoo */ = {
 			isa = PBXGroup;
 			children = (
+				E35FD32C268CA5A800481BDB /* GLU_pixel.h */,
 				E38C37B82647EC1A0057F552 /* GLU_glucoo.c */,
 				E38C37B72647EC1A0057F552 /* GLU_glucoo.h */,
 				E38C37B62647EBF50057F552 /* object */,
@@ -235,6 +239,7 @@
 		E38C37C62647EC7D0057F552 /* font */ = {
 			isa = PBXGroup;
 			children = (
+				E35FD32D268CA5C300481BDB /* GLU_font_Optima.c */,
 				E3E006F3268A2F7A0023C134 /* GLU_font_unscii-8.c */,
 				E3E006C9268A2BB70023C134 /* GLU_font_ArialRoundedBold.c */,
 				E3E006CD268A2BB70023C134 /* GLU_font_CourierNew.c */,
@@ -306,6 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E38C37C32647EC590057F552 /* GLU_window.c in Sources */,
+				E35FD32E268CA5C300481BDB /* GLU_font_Optima.c in Sources */,
 				E3E006EB268A2C5A0023C134 /* BLK_dsp.c in Sources */,
 				E32D24EE262C2E990017A41A /* main.c in Sources */,
 				E3E006D1268A2BB70023C134 /* GLU_font_ArialRoundedBold.c in Sources */,

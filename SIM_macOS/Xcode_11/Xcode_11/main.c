@@ -15,7 +15,7 @@ int main(int argc, const char * argv[]) {
     printf("Hello, World!\n");
     GLU_FUNC(GUI,init)();
     
-    GLU_FUNC(Font,set_style)( kGLU_Font_NewYork_Italic );
+    GLU_FUNC(Font,set_font)( kGLU_Font_NewYork_Italic );
     GLU_FUNC(Font,set_size )(23);
     
     GLU_FUNC(Font,out_str_Img)("Hello world.");
