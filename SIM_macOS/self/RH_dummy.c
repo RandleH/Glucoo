@@ -830,4 +830,82 @@ __gui_insert_object_fnum{
 #endif
 }
 
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_leopard )( BLK_SRCT(Img888)* dst ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+    
+    int xc[5] = { (int)dst->width/5, \
+                  (int)(dst->width<<1)/5,
+                  (int)(dst->width*3)/5,
+                  (int)(dst->width<<2)/5,
+                  (int)(dst->width)
+    };
+    BLK_UION(Pixel888) color = {.data = M_COLOR_BLACK}; //
+    
+    // 引用画直线算法, 求颜色增量
+    // 颜色的变化随绘制的横坐标有关
+    int delta_x    = (int)( xc[0] );
+    // 纵坐标为颜色深度
+    int delta_y    = (int)( 0xff  );
+    
+    int8_t* delta_c = alloca(sizeof(int8_t)*delta_x); // 颜色增量数组
+    memset( delta_c, 0, sizeof(int8_t)*delta_x);
+    
+    int j = 0;
+    int e = 0;
+    for(int i = 0;i < delta_x;i++){
+        e += delta_y;
+        while( 2*( e + delta_y ) > delta_x ){
+            j++;
+            delta_c[i]++;
+            e -= delta_x;
+        }
+    }
+    
+    for( int x=0; x<=dst->width-1; x++ ){
+        
+        
+        if( x<xc[0] ){
+            if( color.R+delta_c[x]<=0xff )
+                color.R += delta_c[x];
+        }
+        else if (x<xc[1]){
+            if( color.G+delta_c[ x-xc[0] ]<=0xff )
+                color.G += delta_c[ x-xc[0] ];
+        }
+        else if (x<xc[2]){
+            if( color.R-delta_c[ x-xc[1] ]>0 )
+                color.R -= delta_c[ x-xc[1] ];
+            if( color.B+delta_c[ x-xc[1] ]<=0xff )
+                color.B += delta_c[ x-xc[1] ];
+        }
+        else if (x<xc[3]){
+            if( color.G-delta_c[ x-xc[2] ]>0 )
+                color.G -= delta_c[ x-xc[2] ];
+        }
+        else if (x<xc[4]){
+            if( color.B-delta_c[ x-xc[3] ]>0 )
+                color.B -= delta_c[ x-xc[3] ];
+        }
+        
+        int ys = rand()%(dst->height/3), ye = (int)(dst->height<<1)/3 + rand()%(dst->height/3);//
+        
+        float sigma = (ye-ys)/6.0;
+        
+        BLK_UION(Pixel888)* pIterUP = dst->pBuffer + ys*(dst->width) +x;
+        BLK_UION(Pixel888)* pIterDN = dst->pBuffer + ye*(dst->width) +x;
+        for( int y=ys; y<=ye; y++, pIterUP+=dst->width, pIterDN-=dst->width ){
+            int tmp = (y-((ye-ys)>>1)-ys)*(y-((ye-ys)>>1)-ys);
+            pIterUP->R = roundl( color.R* exp( -tmp/(2*sigma*sigma)));
+            pIterUP->G = roundl( color.G* exp( -tmp/(2*sigma*sigma)));
+            pIterUP->B = roundl( color.B* exp( -tmp/(2*sigma*sigma)));
+        }
+    }
+    
+    return dst;
+}
+
 #endif

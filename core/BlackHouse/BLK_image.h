@@ -2,6 +2,7 @@
 #define _BLK_IMAGE_H
 
 #include "RH_common.h"
+#include "RH_color.h"
 #include "BLK_lib.h"
 #include "BLK_math.h"
 #ifdef __cplusplus
@@ -164,6 +165,8 @@ BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565  ) (const BLK_SRCT(ImgGry)* src,
 BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color);
 
 void              BLK_FUNC( Img888, data_OTUS    ) (const BLK_SRCT(Img888)* src,uint32_t* threshold);
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_leopard )( BLK_SRCT(Img888)* dst, BLK_TYPE(Pixel888)* colors, size_t size );
 
 
 #ifdef __cplusplus

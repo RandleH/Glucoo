@@ -1450,8 +1450,8 @@ BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888 )
 (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color){
     RH_ASSERT(src);
     RH_ASSERT(dst);
-    RH_ASSERT(xs < src->width);
-    RH_ASSERT(ys < src->height);
+    RH_ASSERT(xs < dst->width);
+    RH_ASSERT(ys < dst->height);
     
     const BLK_UION(PixelGry)*      pIterSrc = src->pBuffer;
     BLK_UION(Pixel888)*            pIterDst = &dst->pBuffer[(ys)*(dst->width)+(xs)];
@@ -1462,6 +1462,10 @@ BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888 )
             pIterDst->R += (( (color.R - pIterDst->R) * (pIterSrc->data) )>>8);
             pIterDst->G += (( (color.G - pIterDst->G) * (pIterSrc->data) )>>8);
             pIterDst->B += (( (color.B - pIterDst->B) * (pIterSrc->data) )>>8);
+            
+//            pIterDst->R -= (( ((pIterDst->R>>1)) * (pIterSrc->data) )>>8);
+//            pIterDst->G -= (( ((pIterDst->G>>1)) * (pIterSrc->data) )>>8);
+//            pIterDst->B -= (( ((pIterDst->B>>1)) * (pIterSrc->data) )>>8);
         }
         pIterDst -= src->width;
         pIterDst += dst->width;
@@ -1469,6 +1473,67 @@ BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888 )
     
     return dst;
 }
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_leopard )( BLK_SRCT(Img888)* dst, BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+
+    
+    const int sect = (int)((int)dst->width)/(int)(size+1);
+    int* xc = alloca((size+1)*sizeof(int));
+    for( int i=1; i<=(size+1); i++){
+        xc[i-1] = (int)((int)dst->width*i)/(int)(size+1);
+    }
+    
+    for( int x=0; x<=dst->width-1; x++ ){
+        
+        int stage = 0;
+        for( ; stage<(size+1); stage++){
+            if( x < xc[ stage ] )
+                break;
+        }
+        
+        BLK_UION(Pixel888) color_prev, color_next, color;
+        
+        if( stage == 0 ){
+            color_prev.data = M_COLOR_BLACK;
+            color_next.data = colors[ stage ];
+        }else if( stage == size ){
+            color_prev.data = colors[stage-1];
+            color_next.data = M_COLOR_BLACK;
+        }else{
+            color_prev.data = colors[stage-1];
+            color_next.data = colors[stage  ];
+        }
+        if(stage==0){
+            color.R = color_prev.R + (color_next.R-color_prev.R)*(x)/sect;
+            color.G = color_prev.G + (color_next.G-color_prev.G)*(x)/sect;
+            color.B = color_prev.B + (color_next.B-color_prev.B)*(x)/sect;
+        }else{
+            color.R = color_prev.R + (color_next.R-color_prev.R)*(x-xc[stage-1])/sect;
+            color.G = color_prev.G + (color_next.G-color_prev.G)*(x-xc[stage-1])/sect;
+            color.B = color_prev.B + (color_next.B-color_prev.B)*(x-xc[stage-1])/sect;
+        }
+        
+        
+        int ys = rand()%(dst->height/3), ye = (int)(dst->height<<1)/3 + rand()%(dst->height/3);//
+        
+        float sigma = (ye-ys)/6.0;
+        BLK_UION(Pixel888)* pIterUP = dst->pBuffer + ys*(dst->width) +x;
+        BLK_UION(Pixel888)* pIterDN = dst->pBuffer + ye*(dst->width) +x;
+        for( int y=ys; y<=ye; y++, pIterUP+=dst->width, pIterDN-=dst->width ){
+            int tmp = (y-((ye-ys)>>1)-ys)*(y-((ye-ys)>>1)-ys);
+            pIterUP->R = roundl( color.R* exp( -tmp/(2*sigma*sigma)));
+            pIterUP->G = roundl( color.G* exp( -tmp/(2*sigma*sigma)));
+            pIterUP->B = roundl( color.B* exp( -tmp/(2*sigma*sigma)));
+        }
+    }
+    
+    return dst;
+}
+    
 
 #ifdef __cplusplus
 }
