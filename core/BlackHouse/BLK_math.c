@@ -357,6 +357,23 @@ unsigned long BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r 
     }
 #endif
 }
+    
+int  BLK_FUNC( Math, rand          )   (void    ){
+    static uint32_t a = 0x37A4BD2F; /*Seed*/
+
+    /*Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs"*/
+    uint32_t x = a;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    a = x;
+
+    return (int)a;
+}
+    
+int BLK_FUNC( Math, rand_in )( int min, int max ){
+    return ( BLK_FUNC(Math, rand)() % (max - min + 1)) + min;
+}
 
 /*===========================================================================================================================
  > Quantity Reference
