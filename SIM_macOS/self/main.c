@@ -16,6 +16,7 @@
 
 
 #include "GLU_glucoo.h"
+#include "GLU_image.h"
 
 #include "BLK_image.h"
 #include "BLK_time.h"
@@ -27,8 +28,25 @@
 
 #define PROJ_MAX(a,b)                           (((a)>(b))?(a):(b))
 
-size_t
-GLU_FUNC( Font, out_ttf_array )( const char* ttf_path, const char* dst );
+
+void d( int son, int div ){
+    int m = son%div;
+    int k = div - m;
+    int base = son/div;
+    
+    for( bool flag=false; m||k; flag=!flag ){
+        if( flag  && m )  {
+            m--;
+            printf( "%d\n", base+1 );
+        }
+        if( !flag && k )  {
+            k--;
+            printf( "%d\n", base );
+        }
+    }
+    
+}
+
 
 int main(int argc, const char * argv[]) {
 
@@ -37,10 +55,29 @@ int main(int argc, const char * argv[]) {
     GLU_FUNC( GUI, init        )();
     GLU_FUNC( GUI, setPenSize  )(5);
     GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
-
     
-#if 0
-    BLK_SRCT(Img888)* IMG = BLK_FUNC( Img888, create )( 800, 700 );
+    
+    
+
+# if 1
+    
+//    GLU_FUNC( Font, set_size )(200);
+//    GLU_FUNC( Font, set_font )( kGLU_Font_SignPrinter );
+//
+//    size_t w,h;
+//    GLU_Font_get_str_ImgInfo(&w, &h, "Glucoo");
+//
+//    GLU_Font_out_str_Img("Glucoo");
+    
+    GLU_SRCT(Text) text = {
+        .align = kGLU_Align_Middle ,
+        .size  = 200,
+        .str   = "Glucoo" ,
+        .color = M_COLOR_RED,
+        .font  = kGLU_Font_SignPrinter
+    };
+
+    BLK_SRCT(Img888)* IMG = BLK_Img888_create(800, 480);
     
     BLK_TYPE(Pixel888) colors[5] = {
         MAKE_COLOR(255,105,180) ,\
@@ -50,49 +87,16 @@ int main(int argc, const char * argv[]) {
         MAKE_COLOR(250,250,210) ,\
     };
     
-    BLK_FUNC( Img888, draw_img_aurora )( IMG, colors, sizeof(colors)/sizeof(BLK_TYPE(Pixel888)) );
+    BLK_FUNC( Img888, draw_img_ )( IMG, colors, 5 );
     
-    GLU_FUNC( Font, set_font )( kGLU_Font_Optima );
-    GLU_FUNC( Font, set_size )( 200 );
-    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( "Nicole" );
-
-    // 引用灰度字体图像(类型信息复制转换)
-    BLK_SRCT(ImgGry) img_font = {
-        .height  = pF->img_h,
-        .width   = pF->img_w,
-        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
-    };
-
-    BLK_FUNC(ImgGry,into_Img888)(&img_font, IMG, 137, 245, M_COLOR_BLACK );
-    BLK_FUNC( Img888, out_bmp )("/Users/randle_h/Desktop/leopard.bmp", IMG);
-#endif
+    BLK_FUNC(Img888, out_bmp)("/Users/randle_h/Desktop/screen.bmp", IMG);
     
+//    GLU_FUNC( Image, profile )( kGLU_ImageStyle_aurora, colors, 5, &text, 30 );
+//
+//    GLU_FUNC( GUI, refreashEntireScreen )();
     
-#if 0
-    SignPrinter
-    
-    __GUI_Object_t a  = {0};
-    ID_t           id = 0;
-    
-    GLU_FUNC(Object, template)( &a, kGUI_ObjStyle_text );
-
-    a.text_size = 100;
-    a.font = kGLU_Font_Optima;
-    a.area.xs     = 0;
-    a.area.ys     = 0;
-    a.area.height = 300;
-    a.area.width  = 800;
-    a.obj_color   = M_COLOR_GOLDEN;
-    a.text        = "GUCCI";
-    a.showFrame   = 0;
-    
-    id = GLU_FUNC(Object,create  )( &a, NULL );
-    GLU_FUNC(Object, insert)( id );
-    
-    GLU_FUNC( GUI, refreashScreen )();
     
 #endif
-
     return 0;
 }
 

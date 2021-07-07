@@ -359,7 +359,7 @@ unsigned long BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r 
 }
     
 int  BLK_FUNC( Math, rand          )   (void    ){
-    static uint32_t a = 0x37A4BD2F; /*Seed*/
+    static uint32_t a = (uint32_t)M_MATH_SEED; /*Seed*/
 
     /*Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs"*/
     uint32_t x = a;
@@ -372,7 +372,7 @@ int  BLK_FUNC( Math, rand          )   (void    ){
 }
     
 int BLK_FUNC( Math, rand_in )( int min, int max ){
-    return ( BLK_FUNC(Math, rand)() % (max - min + 1)) + min;
+    return ( (unsigned)BLK_FUNC(Math, rand)() % (max - min + 1)) + min;
 }
 
 /*===========================================================================================================================

@@ -160,15 +160,20 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast    ) (const BLK_SRCT(Img888)* src,
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,size_t height,size_t width);
 
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgGry, into_ImgBin  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(ImgBin)* dst,int xs, int ys,BLK_TYPE(PixelBin) obj_color);
-BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img565)* dst,int xs, int ys,BLK_TYPE(Pixel565) obj_color);
-BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color);
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgGry, into_ImgBin  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(ImgBin)* dst,int xs, int ys,BLK_TYPE(PixelBin) obj_color, uint8_t br_100);
+BLK_SRCT(Img565)* BLK_FUNC( ImgGry, into_Img565  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img565)* dst,int xs, int ys,BLK_TYPE(Pixel565) obj_color, uint8_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888  ) (const BLK_SRCT(ImgGry)* src,BLK_SRCT(Img888)* dst,int xs, int ys,BLK_TYPE(Pixel888) obj_color, uint8_t br_100);
+
+
 
 void              BLK_FUNC( Img888, data_OTUS    ) (const BLK_SRCT(Img888)* src,uint32_t* threshold);
 
-BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora )( BLK_SRCT(Img565)* dst, BLK_TYPE(Pixel565)* colors, size_t size );
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )( BLK_SRCT(Img888)* dst, BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, draw_img_aurora )( BLK_SRCT(ImgBin)* dst, const BLK_TYPE(PixelBin)* colors, size_t size );
+BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora )( BLK_SRCT(Img565)* dst, const BLK_TYPE(Pixel565)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
 #ifdef __cplusplus
 }

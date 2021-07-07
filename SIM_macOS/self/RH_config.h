@@ -17,7 +17,7 @@ extern "C" {
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_BITMAP         (2U)                          // < option >
-#define RH_CFG_FONT_DATA_TYPE                 (1U)                          // < select > < above option >
+#define RH_CFG_FONT_DATA_TYPE                 (0U)                          // < select > < above option >
 
 #define RH_CFG_OUTPUT_FONT_PNG                (1U)                          // < select > < 0=disable : 1=enable >
 
@@ -28,8 +28,9 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__NewYork_Italic     (1U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Unscii             (1U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Optima             (1U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_FONT_STYLE__Sign_Printer       (1U)                          // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_SCREEN_HEIGHT                  (480U)                         // < select >
+#define RH_CFG_SCREEN_HEIGHT                  (480U)                        // < select >
 #define RH_CFG_SCREEN_WIDTH                   (800U)                        // < select >
 
 #define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >

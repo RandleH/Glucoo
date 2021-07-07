@@ -908,4 +908,65 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_leopard )( BLK_SRCT(Img888)* dst ){
     return dst;
 }
 
+
+// 给定颜色链 居中画竖直色块
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+    
+    const int xs   = (int)dst->width>>2;
+    const int xe   = (int)dst->width - xs +1;
+    const int xl   = xe - xs + 1;
+    
+    // 获取色条的起始横坐标
+    int* x_rect = alloca( (size+1)*sizeof(int) );
+    memset(x_rect, 0, size*sizeof(int));
+    x_rect[0]    = xs;
+    x_rect[size] = xe;
+    
+    {
+        int m   = (int) xl%size;
+        int k   = (int) size - m;
+        int len = (int) xl/size;
+        
+        for( int *p  = x_rect; m||k; p++ ){
+            if( p == x_rect){
+                *p = xs;
+                k--;
+                continue;
+            }else{
+                *p = *(p-1);
+            }
+            
+            if(k){
+                *p += len;
+                k--;
+            }else{
+                *p += len +1;
+                m--;
+            }
+            
+        }
+    }
+    
+    {
+        int ys = (int)dst->height/5;
+        int ye = (int)dst->height*4/5;
+        const BLK_TYPE(Pixel888)* pIterColor = colors;
+        for(int i=0; i<size; i++,pIterColor++){
+            for(int x = x_rect[i];x <= x_rect[i+1];x++)
+                dst->pBuffer[ ys*dst->width + x].data = *pIterColor;
+            for(int y = ys+1;y <= ye;y++)
+                memmove( (dst->pBuffer + y  * dst->width + x_rect[i]),\
+                         (dst->pBuffer + ys * dst->width + x_rect[i]),\
+                       ( (x_rect[i+1]-x_rect[i]+1)*sizeof(BLK_TYPE(Pixel888))) );
+        }
+    }
+    
+    return dst;
+}
+
 #endif

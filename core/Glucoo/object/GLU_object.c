@@ -103,14 +103,14 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
     #endif
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
         int x_fs = 0;
-        int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+        int y_fs = pHistory->area.ys = RH_LIMIT( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         
         switch ( config->text_align ) {
             case kGLU_Align_Left:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+                x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGLU_Align_Middle:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -124,22 +124,22 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         };
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #else
          
     #endif
         
         /* 记录区域长宽到history, 方便下次清除区域 */
-        pHistory->area.height = __min( pF->img_h, config->area.height );
+        pHistory->area.height = RH_MIN( pF->img_h, config->area.height );
         pHistory->area.width  = pF->img_w;
     }
     
@@ -220,13 +220,13 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
         /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
         
         int x_fs = 0;
-        int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+        int y_fs = pHistory->area.ys = RH_LIMIT( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
         switch ( config->text_align ) {
             case kGLU_Align_Left:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+                x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
                 break;
             case kGLU_Align_Middle:
-                x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
+                x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
                 break;
             default:
                 RH_ASSERT(0);
@@ -241,22 +241,22 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
         
     #else
          
     #endif
     
         /* 记录区域长宽到history, 方便下次清除区域 */
-        pHistory->area.height = __min( pF->img_h, config->area.height );
+        pHistory->area.height = RH_MIN( pF->img_h, config->area.height );
         pHistory->area.width  = pF->img_w;
     }
 
@@ -332,13 +332,13 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(__str);
     /* 计算画图区域的左上角坐标, 即开始坐标 , 并记录到history, 方便下次清除区域 */
     int x_fs = 0;
-    int y_fs = pHistory->area.ys = __limit( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
+    int y_fs = pHistory->area.ys = RH_LIMIT( config->area.ys +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_Y_WIDTH-1 );
     switch ( config->text_align ) {
         case kGLU_Align_Left:
-            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
+            x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.height - config->text_size))>>1) , 0, GUI_X_WIDTH-1 );
             break;
         case kGLU_Align_Middle:
-            x_fs = pHistory->area.xs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
+            x_fs = pHistory->area.xs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
             RH_ASSERT(0);
@@ -353,22 +353,22 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     
-    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     
-    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     
-    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #else
      
 #endif
     
     /* 记录区域长宽到history, 方便下次清除区域 */
-    pHistory->area.height = __min( pF->img_h, config->area.height );
+    pHistory->area.height = RH_MIN( pF->img_h, config->area.height );
     pHistory->area.width  = pF->img_w;
         
     
@@ -563,7 +563,7 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
-    val = __limit(val, min, max);
+    val = RH_LIMIT(val, min, max);
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
@@ -631,7 +631,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
-    val = __limit(val, min, max);
+    val = RH_LIMIT(val, min, max);
     
     int bar_pos = config->area.xs + val*(int)config->area.width/(max-min);
     
@@ -672,7 +672,7 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
     
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
-    int32_t val = __limit(((struct __GUI_ObjDataScr_barH*)config->dataScr)->value, min, max);
+    int32_t val = RH_LIMIT(((struct __GUI_ObjDataScr_barH*)config->dataScr)->value, min, max);
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
     GLU_FUNC( Font, backupCache )();
@@ -730,7 +730,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
-    val = __limit(val, min, max);
+    val = RH_LIMIT(val, min, max);
     int bar_pos = config->area.ys + (int)config->area.height-1 - val*(int)config->area.height/(max-min);
     
     GLU_FUNC( Font, backupCache )();
@@ -811,7 +811,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     BLK_FUNC( Graph, set_penColor )( config->obj_color );
     
     
-    int D = (int)__min( config->area.height , config->area.width );
+    int D = (int)RH_MIN( config->area.height , config->area.width );
     bool eps = ((D&0x01)==0);
     int X = (int)( config->area.xs + (D>>1) - eps );
     int Y = (int)( config->area.ys + (D>>1) - eps  );
@@ -844,8 +844,8 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     
     struct __GUI_ObjDataScr_joystick* pDataSrc = ((struct __GUI_ObjDataScr_joystick*)config->dataScr);
     
-    int32_t val_x = __limit( (int32_t)pDataSrc->value[0], (int32_t)pDataSrc->min[0], (int32_t)pDataSrc->max[0] );
-    int32_t val_y = __limit( (int32_t)pDataSrc->value[1], (int32_t)pDataSrc->min[1], (int32_t)pDataSrc->max[1] );
+    int32_t val_x = RH_LIMIT( (int32_t)pDataSrc->value[0], (int32_t)pDataSrc->min[0], (int32_t)pDataSrc->max[0] );
+    int32_t val_y = RH_LIMIT( (int32_t)pDataSrc->value[1], (int32_t)pDataSrc->min[1], (int32_t)pDataSrc->max[1] );
     
     
     int dis_cir_max = ((3*D)>>3); // 两圆心距最大值
@@ -853,7 +853,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     
     int px = (val_x - (int32_t)pDataSrc->min[0])*(dis_cir_max<<1)/((int32_t)pDataSrc->max[0]-(int32_t)pDataSrc->min[0]) - dis_cir_max;
     int py = (val_y - (int32_t)pDataSrc->min[1])*(dis_cir_max<<1)/((int32_t)pDataSrc->max[1]-(int32_t)pDataSrc->min[1]) - dis_cir_max;
-    int pd = __limit( (D>>3), 1, D );
+    int pd = RH_LIMIT( (D>>3), 1, D );
 
     int cord   = __Point_toCord2D( px, py );// 记录游标圆心坐标的象限
 
@@ -944,7 +944,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
     }else{
         int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
         int32_t max = ((__GUI_ObjDataScr_trunk*)config->dataScr)->max;
-        int32_t val = __limit(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
+        int32_t val = RH_LIMIT(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
         int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
         
         if( cache->bar_pos - config->text_size < bar_pos ){
@@ -985,7 +985,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     
     int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
     int32_t max = ((__GUI_ObjDataScr_trunk*)config->dataScr)->max;
-    int32_t val = __limit(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
+    int32_t val = RH_LIMIT(((__GUI_ObjDataScr_trunk*)config->dataScr)->value, min, max);
     int bar_pos = cache->bar_e - val*(int)(cache->bar_e-cache->bar_s+1)/(max-min);
     
     GLU_FUNC( Font, backupCache )();
@@ -1051,7 +1051,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
             x_fs = config->area.xs;
             break;
         case kGLU_Align_Middle:
-            x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
+            x_fs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1) , 0, GUI_X_WIDTH-1   );
             break;
         default:
             RH_ASSERT(0);
@@ -1066,15 +1066,15 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     
-    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     
-    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     
-    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
     
 #else
      
@@ -1247,15 +1247,15 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 
-                BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+                BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                 
-                BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+                BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                 
-                BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color);
+                BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
                 
             #else
                  
@@ -1279,7 +1279,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         cache->triUP = false;
     
     { // 绘制数字
-        cache->value = __limit( dataScr->value, dataScr->min, dataScr->max );
+        cache->value = RH_LIMIT( dataScr->value, dataScr->min, dataScr->max );
         GLU_FUNC( Font, set_size )( config->text_size );
         size_t size   = 1 + BLK_FUNC( Bit, DECs )( cache->value );
         char* ptrNum  = alloca( size );
@@ -1301,15 +1301,15 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, cache->num.xs, cache->num.ys, config->obj_color, 100);
         
     #else
          
@@ -1454,7 +1454,7 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
 
     // 绘制按钮
     BLK_FUNC( Graph, set_penColor )( config->obj_color );
-    int roundRadius = (int)__limit( dataScr->radius, 0, (int)__min( (int)(config->area.height>>1), (int)(config->area.width>>1) ));
+    int roundRadius = (int)RH_LIMIT( dataScr->radius, 0, (int)RH_MIN( (int)(config->area.height>>1), (int)(config->area.width>>1) ));
     
     // 绘制实心圆角矩形
     BLK_FUNC( Graph, set_penSize  )( roundRadius );
@@ -1495,15 +1495,15 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
         
     #else
          
@@ -1696,10 +1696,10 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->obj_color   = M_COLOR_WHITE;
             config->font        = kGLU_Font_ArialRounded_Bold;
             config->text_align  = kGLU_Align_Middle;
-            config->text_size   = __limit((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
+            config->text_size   = RH_LIMIT((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
             config->text        = pText;
-            config->area.width  = __limit((config->text_size*strlen(pText)),0,GUI_X_WIDTH);
-            config->area.height = __limit((config->text_size + (__limit((signed)(config->text_size>>3), 1, config->text_size )<<2)),0,GUI_Y_WIDTH);
+            config->area.width  = RH_LIMIT((config->text_size*strlen(pText)),0,GUI_X_WIDTH);
+            config->area.height = RH_LIMIT((config->text_size + (RH_LIMIT((signed)(config->text_size>>3), 1, config->text_size )<<2)),0,GUI_Y_WIDTH);
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
@@ -1708,7 +1708,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_GREEN;
             config->area.width  = (int)((hypotf(GUI_X_WIDTH, GUI_Y_WIDTH)+646)/26.3);
-            config->area.height = __limit( (signed)(config->area.width>>1), 4, GUI_Y_WIDTH);
+            config->area.height = RH_LIMIT( (signed)(config->area.width>>1), 4, GUI_Y_WIDTH);
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
@@ -1725,14 +1725,14 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
             config->area.height = (GUI_Y_WIDTH*3)>>3;
-            config->area.width  = __limit( (signed)(config->area.height>>3), 4, GUI_X_WIDTH );
+            config->area.width  = RH_LIMIT( (signed)(config->area.height>>3), 4, GUI_X_WIDTH );
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
         case kGUI_ObjStyle_joystick:
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
-            config->area.width  = config->area.height = __min(GUI_X_WIDTH, GUI_Y_WIDTH)>>1;
+            config->area.width  = config->area.height = RH_MIN(GUI_X_WIDTH, GUI_Y_WIDTH)>>1;
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
@@ -1741,7 +1741,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->bk_color    = M_COLOR_BLACK;
             config->obj_color   = M_COLOR_WHITE;
             config->area.height = (GUI_Y_WIDTH*3)>>2;
-            config->area.width  = __limit( (signed)(config->area.height>>1), 4, GUI_X_WIDTH );
+            config->area.width  = RH_LIMIT( (signed)(config->area.height>>1), 4, GUI_X_WIDTH );
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             config->text_size   = 8;
