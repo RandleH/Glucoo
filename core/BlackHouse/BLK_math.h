@@ -2,6 +2,7 @@
 #define _BLK_MATH_H
 
 #include "RH_common.h"
+#include "RH_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -83,12 +84,38 @@ int        __Vect2D_Dot                (const Vector2D_t* vect1   ,const Vector2
 int        __Vect3D_Dot                (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
 Vector3D_t __Vect3D_Cross              (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
 
+enum BLK_ENUM(CordRegion){
+    kBLK_CordRegion_0_45   ,
+    kBLK_CordRegion_45_90  ,
+    kBLK_CordRegion_90_135 ,
+    kBLK_CordRegion_135_180,
+    kBLK_CordRegion_180_225,
+    kBLK_CordRegion_225_270,
+    kBLK_CordRegion_270_315,
+    kBLK_CordRegion_315_360,
+};
+typedef enum BLK_ENUM(CordRegion) BLK_ENUM(CordRegion);
 
-int        __Dir_Line                  (int xs,int ys,int xe,int ye);
+enum BLK_ENUM(PtPos){
+    kBLK_PtPos_outside = -1 ,
+    kBLK_PtPos_righton =  0 ,
+    kBLK_PtPos_inside  =  1 ,
+};
+typedef enum BLK_ENUM(PtPos) BLK_ENUM(PtPos);
+
+
+int        BLK_FUNC( Math, dir_line )  (int xs,int ys,int xe,int ye);
 int        __Point_toLine              (int xs,int ys,int xe,int ye,               int px,int py);
-int        __Point_toTriangle          (int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
+
 int        __Point_toCircle            (int xc,int yc,int radius,                  int px,int py);
 int        __Point_toCord2D            (int px,int py);
+
+long       BLK_FUNC( Math, area_triangle )(int x1,int y1,int x2,int y2,int x3,int y3);
+
+
+BLK_ENUM(PtPos)   BLK_FUNC( Math, pt_triangle )      (int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
+
+
 
 #ifdef __cplusplus
 }

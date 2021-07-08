@@ -1638,7 +1638,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
     
     // 填充颜色
 #if 1
-    for( int cnt=0; cnt<2; cnt++ ){
+    for( int cnt=0; cnt<7; cnt++ ){
         uint32_t c = rand()%0x00ffffff;
         // xs 的轨迹为圆心至动点直线, xe 的轨迹为圆弧
         int xs = RH_MIN(x0, RH_MIN(cord[cnt].x, cord[cnt+1].x));
@@ -1650,27 +1650,20 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
         
         for(int y=ys; y<=ye; y++){
             int x = xs;
-            
-            while( 0==__Point_toTriangle( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
+
+            while( kBLK_PtPos_outside==BLK_FUNC( Math, pt_triangle )( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
+//                printf( "(%3d,%3d)\t out (%3d,%3d)(%3d,%3d)(%3d,%3d)\n", x,y, x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y  );
                 x++;
             }
-            if(y==960){
-                assert(1);
-            }
-            while( 0<=__Point_toTriangle( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
+//            printf("===============================================\n");
+            while( kBLK_PtPos_inside==BLK_FUNC( Math, pt_triangle )( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
                 dst->pBuffer[ (y)*dst->width+x].data = c;
+//                printf( "(%3d,%3d)\t in  (%3d,%3d)(%3d,%3d)(%3d,%3d)\n", x,y, x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y  );
                 x++;
             }
-            
+
         }
-        
-        
-        
-       
-        
-        
-        
-        
+    
         printf("===========\n");
     }
 #endif
