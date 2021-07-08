@@ -58,39 +58,103 @@ typedef struct tagBITMAPINFOHEADER {
 
     
     
-#define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
 
-// Critical chunks
-#define PNG_IHDR                PNG_CHUNK('I','H','D','R')
-#define PNG_PLTE                PNG_CHUNK('P','L','T','E')
-#define PNG_IDAT                PNG_CHUNK('I','D','A','T')
-#define PNG_IEND                PNG_CHUNK('I','E','N','D')
-
-
-// Ancillary chunks
-/// Transparency information
-#define PNG_tRNS                PNG_CHUNK('t','R','N','S')
-
-/// Colour space information
-#define PNG_cHRM                PNG_CHUNK('c','H','R','M')
-#define PNG_gAMA                PNG_CHUNK('g','A','M','A')
-#define PNG_iCCP                PNG_CHUNK('i','C','C','P')
-#define PNG_sBIT                PNG_CHUNK('s','B','I','T')
-#define PNG_sRGB                PNG_CHUNK('s','R','G','B')
-
-/// Textual information
-#define PNG_tEXt                PNG_CHUNK('t','E','X','t')
-#define PNG_zEXt                PNG_CHUNK('z','E','X','t')
-#define PNG_iEXt                PNG_CHUNK('i','E','X','t')
     
-/// Miscellaneous information
-#define PNG_bKGD                PNG_CHUNK('b','K','G','D')
-#define PNG_hIST                PNG_CHUNK('h','I','S','T')
-#define PNG_pHYs                PNG_CHUNK('p','H','Y','s')
-#define PNG_sPLT                PNG_CHUNK('s','P','L','T')
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png )     (const char* __restrict__ path, const BLK_SRCT(Img888)* img){
+    
+    #define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
 
-/// Time stamp information
-#define PNG_tIME                PNG_CHUNK('t','I','M','E')
+    // Critical chunks
+    #define PNG_IHDR                PNG_CHUNK('I','H','D','R')
+    #define PNG_PLTE                PNG_CHUNK('P','L','T','E')
+    #define PNG_IDAT                PNG_CHUNK('I','D','A','T')
+    #define PNG_IEND                PNG_CHUNK('I','E','N','D')
+
+
+    // Ancillary chunks
+    /// Transparency information
+    #define PNG_tRNS                PNG_CHUNK('t','R','N','S')
+
+    /// Colour space information
+    #define PNG_cHRM                PNG_CHUNK('c','H','R','M')
+    #define PNG_gAMA                PNG_CHUNK('g','A','M','A')
+    #define PNG_iCCP                PNG_CHUNK('i','C','C','P')
+    #define PNG_sBIT                PNG_CHUNK('s','B','I','T')
+    #define PNG_sRGB                PNG_CHUNK('s','R','G','B')
+
+    /// Textual information
+    #define PNG_tEXt                PNG_CHUNK('t','E','X','t')
+    #define PNG_zEXt                PNG_CHUNK('z','E','X','t')
+    #define PNG_iEXt                PNG_CHUNK('i','E','X','t')
+        
+    /// Miscellaneous information
+    #define PNG_bKGD                PNG_CHUNK('b','K','G','D')
+    #define PNG_hIST                PNG_CHUNK('h','I','S','T')
+    #define PNG_pHYs                PNG_CHUNK('p','H','Y','s')
+    #define PNG_sPLT                PNG_CHUNK('s','P','L','T')
+
+    /// Time stamp information
+    #define PNG_tIME                PNG_CHUNK('t','I','M','E')
+
+    uint8_t* pBuffer = RH_MALLOC(img->height*img->width*3);
+    uint8_t* pBufferIter = pBuffer;
+   
+    for(int y=0;y<img->height;y++){
+        for(int x=0;x<img->width;x++){
+            *pBufferIter = img->pBuffer[ y*img->width + x ].R;
+            pBufferIter++;
+            
+            *pBufferIter = img->pBuffer[ y*img->width + x ].G;
+            pBufferIter++;
+            
+            *pBufferIter = img->pBuffer[ y*img->width + x ].B;
+            pBufferIter++;
+            
+        }
+    }
+    
+    FILE *fp = fopen(path, "wb");
+    
+    #define SVPNG_PUT(u) fputc(u, fp)
+    #define SVPNG_U8A(ua, l) for (i = 0; i < l; i++) SVPNG_PUT((ua)[i]);
+    #define SVPNG_U32(u) do { SVPNG_PUT((u) >> 24); SVPNG_PUT(((u) >> 16) & 255); SVPNG_PUT(((u) >> 8) & 255); SVPNG_PUT((u) & 255); } while(0)
+    #define SVPNG_U8C(u) do { SVPNG_PUT(u); c ^= (u); c = (c >> 4) ^ t[c & 15]; c = (c >> 4) ^ t[c & 15]; } while(0)
+    #define SVPNG_U8AC(ua, l) for (i = 0; i < l; i++) SVPNG_U8C((ua)[i])
+    #define SVPNG_U16LC(u) do { SVPNG_U8C((u) & 255); SVPNG_U8C(((u) >> 8) & 255); } while(0)
+    #define SVPNG_U32C(u) do { SVPNG_U8C((u) >> 24); SVPNG_U8C(((u) >> 16) & 255); SVPNG_U8C(((u) >> 8) & 255); SVPNG_U8C((u) & 255); } while(0)
+    #define SVPNG_U8ADLER(u) do { SVPNG_U8C(u); a = (a + (u)) % 65521; b = (b + a) % 65521; } while(0)
+    #define SVPNG_BEGIN(s, l) do { SVPNG_U32(l); c = ~0U; SVPNG_U8AC(s, 4); } while(0)
+    #define SVPNG_END() SVPNG_U32(~c)
+    
+    static const unsigned t[] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+    /* CRC32 Table */    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
+    unsigned a = 1, b = 0, c, p = (uint32_t)img->width * (3) + 1, x, y, i;   /* ADLER-a, ADLER-b, CRC, pitch */
+    SVPNG_U8A("\x89PNG\r\n\32\n", 8);           /* Magic */
+    SVPNG_BEGIN("IHDR", 13);                    /* IHDR chunk { */
+    SVPNG_U32C((uint32_t)img->width); SVPNG_U32C((uint32_t)img->height);               /*   Width & Height (8 bytes) */
+    SVPNG_U8C(8); SVPNG_U8C(2);                 /*   Depth=8, Color=True color with/without alpha (2 bytes) */
+    SVPNG_U8AC("\0\0\0", 3);                    /*   Compression=Deflate, Filter=No, Interlace=No (3 bytes) */
+    SVPNG_END();                                /* } */
+    SVPNG_BEGIN("IDAT", 2 + (uint32_t)img->height * (5 + p) + 4);   /* IDAT chunk { */
+    SVPNG_U8AC("\x78\1", 2);                    /*   Deflate block begin (2 bytes) */
+    
+    uint8_t* pIter = (uint8_t*)pBuffer;
+    for (y = 0; y < img->height; y++) {                   /*   Each horizontal line makes a block for simplicity */
+        SVPNG_U8C(y == img->height - 1);                  /*   1 for the last block, 0 for others (1 byte) */
+        SVPNG_U16LC(p); SVPNG_U16LC(~p);        /*   Size of block in little endian and its 1's complement (4 bytes) */
+        SVPNG_U8ADLER(0);                       /*   No filter prefix (1 byte) */
+        for (x = 0; x < p - 1; x++, pIter++)
+            SVPNG_U8ADLER(*pIter);                /*   Image pixel data */
+    }
+    SVPNG_U32C((b << 16) | a);                  /*   Deflate block end with adler (4 bytes) */
+    SVPNG_END();                                /* } */
+    SVPNG_BEGIN("IEND", 0); SVPNG_END();        /* IEND chunk {} */
+    
+    
+    RH_FREE(pBuffer);
+    
+    return (BLK_SRCT(Img888)*)img;
+}
 
 BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp )    (const char* __restrict__ path){
     FILE* bmp;
@@ -165,12 +229,6 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp )    (const char* __restrict__ path
             }
         }
     }
-//    for( int p=0; p<page; p++ ){
-//        for( int c=0; c<col; c++ ){
-//            printf("%02X ", pIMG->pBuffer[  p*col+c ].data);
-//        }
-//        printf("\n");
-//    }
     
     return pIMG;
 }
@@ -492,144 +550,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp )    (const char* __restrict__ path
     return pIMG;
 }
 
-#if 0
-BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png )    (const char* __restrict__ path){
-#pragma pack(1)
-struct {
-//    uint32_t chunk_data_lenth;
-//    uint32_t chunk_type_code;
-    uint32_t width;                 /* __SWAP_DWORD */
-    uint32_t height;                /* __SWAP_DWORD */
-
-    uint8_t  bit_depth;
-    uint8_t  color_type;
-    uint8_t  compress_method;
-    uint8_t  filter_method;
-    uint8_t  interlace_method;
-    //...//
-    
-//    uint32_t CRC;
-}IHDR;
-    
-    
-    FILE*   png;
-    
-    BLK_SRCT(Img888)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img888)));
-#ifdef RH_DEBUG
-    RH_ASSERT( pIMG );
-#endif
-    pIMG->height  = 0;
-    pIMG->width   = 0;
-    pIMG->pBuffer = NULL;
-    
-    // 打开文件
-    png = fopen(path, "r");
-#ifdef RH_DEBUG
-    RH_ASSERT( png );
-#endif
-    fseek(png,0L,SEEK_END);
-    size_t  f_size = ftell(png);
-    fseek(png,0L,SEEK_SET);
-    
-    // 检查PNG固定签名
-#ifdef RH_DEBUG
-    const uint8_t pngHead[8]     = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-    uint8_t       pngHeadRead[8] = {0};
-    for( int8_t i=0; i<8; i++ ){
-        fread(&pngHeadRead[i], 1, 1, png);
-        RH_ASSERT( pngHeadRead[i] == pngHead[i] );
-    }
-#endif
-    
-    uint32_t chunk_data_lenth = 0x00000000;
-    uint32_t chunk_type_code  = 0x00000000;
-    while( ftello(png) < f_size ){
-        uint8_t temp = 0x00;
-        chunk_data_lenth <<= 8;
-        chunk_data_lenth  |= (uint8_t)(chunk_type_code>>24);
-        fread( &temp, sizeof(temp), 1, png );
-        chunk_type_code  <<= 8;
-        chunk_type_code   |= temp;
-        
-        switch( chunk_type_code ){
-            case PNG_IHDR:  // 解析 <IHDR> Image Header
-                fread( &IHDR, sizeof(IHDR), 1, png );
-#ifdef RH_DEBUG
-                RH_ASSERT( chunk_data_lenth == sizeof(IHDR) );
-                RH_ASSERT( IHDR.bit_depth  == 0x08 ); //
-                RH_ASSERT( IHDR.color_type == 0x06 || IHDR.color_type==0x02 ); // 8/16bit 真彩色
-#endif
-                pIMG->width   = __SWAP_DWORD(IHDR.width);
-                pIMG->height  = __SWAP_DWORD(IHDR.height);
-                break;
-            case PNG_PLTE:  // 解析 <PLTE> Palette
-                //...//
-                break;
-            case PNG_IDAT:  // 解析 <IDAT> Image data
-                //...//
-                break;
-            case PNG_IEND:  // 解析 <IEND> Image trailer
-                //...//
-                break;
-                
-            case PNG_tRNS:
-                 RH_ASSERT(false);
-                break;
-                
-            case PNG_cHRM:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_gAMA:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_iCCP:
-                //...//
-                break;    
-            case PNG_sBIT:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_sRGB:
-                 RH_ASSERT(false);
-                break;    
-
-
-            case PNG_tEXt:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_zEXt:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_iEXt:
-                 RH_ASSERT(false);
-                break;    
-
-            case PNG_bKGD:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_hIST:
-                 RH_ASSERT(false);
-                break;
-            case PNG_pHYs:
-                 RH_ASSERT(false);
-                break;    
-            case PNG_sPLT:
-                 RH_ASSERT(false);
-                break;    
-
-            case PNG_tIME:
-                 RH_ASSERT(false);
-                break;
-
-            default:
-                break;
-        }
-    }
-    
-    fclose(png);
-    
-    return pIMG;
-}
-#endif
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, copy     )    (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst){
     __exitReturn( src==NULL         ||dst==NULL          , dst );
@@ -1681,13 +1601,22 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
     return dst;
 }
 
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
 ( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
     
-    
     const int x0 = (int)dst->width>>1;
     const int y0 = (int)dst->height>>1;
-    const int r0 = RH_MIN((int)dst->width, (int)dst->height) >> 2;
+    const int r0 = RH_MIN((int)dst->width, (int)dst->height)/3;
     
     dst->pBuffer[y0*dst->width+x0].data = M_COLOR_WHITE;
     
@@ -1699,7 +1628,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
     // 获取 以(x0,y0)为中心, 0度 10度...180度的坐标
     for( int a=0,cnt=0; a<=90; a+=10,cnt++ ){
         cord[cnt     ].x = (int)lround(x0+r0*cos(a*M_PI/180));
-        cord[19-cnt-1].x = -cord[cnt].x;
+        cord[19-cnt-1].x = 2*x0-cord[cnt].x;
         cord[cnt     ].y =  cord[19-cnt-1].y = (int)lround(y0+r0*sin(a*M_PI/180));
     }
     
@@ -1708,39 +1637,43 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
     }
     
     // 填充颜色
-    for( int cnt=0; cnt<10; cnt++ ){
-        
-        int y  = y0;
-        // xs 的轨迹为圆心至动点直线, xe 的轨迹为圆弧
-        int xs = x0;
-        int xe = cord[cnt].x;
-        
+#if 1
+    for( int cnt=0; cnt<2; cnt++ ){
         uint32_t c = rand()%0x00ffffff;
-        while( y < cord[cnt+1].y ){
+        // xs 的轨迹为圆心至动点直线, xe 的轨迹为圆弧
+        int xs = RH_MIN(x0, RH_MIN(cord[cnt].x, cord[cnt+1].x));
+        int xe = RH_MAX(x0, RH_MAX(cord[cnt].x, cord[cnt+1].x));
+        int ys = RH_MIN(y0, RH_MIN(cord[cnt].y, cord[cnt+1].y));
+        int ye = RH_MAX(y0, RH_MAX(cord[cnt].y, cord[cnt+1].y));
+        
+         // 填充三个点组成的三角形: (x0,y0) (cord[cnt].x, cord[cnt].y) (cord[cnt+1].x, cord[cnt+1].y)
+        
+        for(int y=ys; y<=ye; y++){
+            int x = xs;
             
-            // 计算xs
-            {
-                while( (y-y0)*(cord[cnt+1].x-x0) > (xs-x0)*(cord[cnt+1].y-y0) )
-                    xs++;
-                
-                while( (xe-cord[cnt+1].x)*(cord[cnt+1].y-cord[cnt].y) > (y-cord[cnt+1].y)*(cord[cnt+1].x-cord[cnt].x) )
-                    xe--;
-                
-                if( xe > xs ){
-                    for(  int x=xs; x<=xe; x++){
-                        dst->pBuffer[(y)*dst->width+x].data = c;
-                    }
-                }
-                
-                printf("%d %d\n",xs,xe);
+            while( 0==__Point_toTriangle( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
+                x++;
+            }
+            if(y==960){
+                assert(1);
+            }
+            while( 0<=__Point_toTriangle( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
+                dst->pBuffer[ (y)*dst->width+x].data = c;
+                x++;
             }
             
-            
-            y++;
         }
+        
+        
+        
+       
+        
+        
+        
         
         printf("===========\n");
     }
+#endif
     
     
     

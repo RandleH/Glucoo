@@ -471,11 +471,48 @@ int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
     else
         return 0;
 }
+    
+
+int __Square_Triangle(int x1,int y1,int x2,int y2,int x3,int y3){
+    
+    // 调整三角形位置
+    
+    int min = RH_MIN(y1, RH_MIN(y2, y3));
+    if( min < 0 ){
+        y1 += min;
+        y2 += min;
+        y3 += min;
+    }
+    
+    int type = ((x1<x2)<<2) | ((x1<x3)<<1) | ((x2<x3)<<0);
+    
+    switch(type){
+        case 0: // x1 >= x2 >= x3
+            return __abs(( (y2+y3)*(x2-x3)+(y1+y2)*(x1-x2)-(y1+y3)*(x1-x3) ))>>1  ;
+        case 1: // x1 >= x3 >= x2
+            return __abs(( (y3+y2)*(x3-x2)+(y1+y3)*(x1-x3)-(y1+y2)*(x1-x2) ))>>1  ;
+        case 2: // impossible
+            assert(0);
+        case 3: // x3 >  x1 >= x2
+            return __abs(( (y1+y2)*(x1-x2)+(y3+y1)*(x3-x1)-(y3+y2)*(x3-x2) ))>>1  ;
+        case 4: // x2 >  x1 >= x3
+            return __abs(( (y1+y3)*(x1-x3)+(y2+y1)*(x2-x1)-(y2+y3)*(x2-x3) ))>>1  ;
+        case 5: // x2 >  x1 >= x3
+            return __abs(( (y1+y3)*(x1-x3)+(y2+y1)*(x2-x1)-(y2+y3)*(x2-x3) ))>>1  ;
+        case 6: // x2 >  x3 >  x1
+            return __abs(( (y3+y1)*(x3-x1)+(y2+y3)*(x2-x3)-(y2+y1)*(x2-x1) ))>>1  ;
+        case 7: // x3 >  x2 >  x1
+            return __abs(( (y2+y1)*(x2-x1)+(y3+y2)*(x3-x2)-(y3+y1)*(x3-x1) ))>>1  ;
+    }
+    
+    return -1;
+}
 
  // -1 = (px,py) is outside the triangle
  //  0 = (px,py) is at the edge of triangle
  //  1 = (px,py) is inside the triangle
 int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
+#if 0
     // Condition:
     // P = A + u*(CA) + v*(BA)
     // u >= 0 && v >= 0 && u+v <= 1
@@ -520,6 +557,26 @@ int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
         return 1;
     else
         return 0;
+#endif
+
+#if 0 // Wrong
+    int signOfTrig = (x2 - x1)*(y3 - y1) - (y2 - y1)*(x3 - x1);
+    int signOfAB   = (x2 - x1)*(py - y1) - (y2 - y1)*(px - x1);
+    int signOfCA   = (x1 - x3)*(py - y3) - (y1 - y3)*(px - x3);
+    int signOfBC   = (x3 - x2)*(py - y3) - (y3 - y2)*(px - x2);
+  
+    bool d1 = (signOfAB<0&&signOfTrig<0) || (signOfAB>0&&signOfTrig>0);
+    bool d2 = (signOfCA<0&&signOfTrig<0) || (signOfCA>0&&signOfTrig>0);
+    bool d3 = (signOfBC<0&&signOfTrig<0) || (signOfBC>0&&signOfTrig>0);
+    
+    return d1 && d2 && d3;
+    
+#endif
+#if 1
+    return ( __Square_Triangle( px,py, x1,y1, x2,y2  ) + \
+             __Square_Triangle( px,py, x2,y2, x3,y3  ) + \
+             __Square_Triangle( px,py, x1,y1, x3,y3  ) <= __Square_Triangle( x1,y1, x2,y2, x3,y3  ) );
+#endif
 }
 
  // -1 = (px,py) is outside the circle
