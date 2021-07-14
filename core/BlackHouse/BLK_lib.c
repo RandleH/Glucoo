@@ -141,18 +141,20 @@ const char*       BLK_FUNC( Bin, ltoa )    (uint32_t x){
 /*===========================================================================================================================
  > Sort Programming Reference
 ============================================================================================================================*/
-    
-//typedef int32_t var;
-//int __compar( const void* p1, const void* p2 ){
-//
-//    printf("%d,%d\n", *(var*)p1, *(var*)p2);
-//    if( *(var*)p2 > *(var*)p1 ){
-//        return 1;
-//    }else if( *(var*)p2 < *(var*)p1 ){
-//        return -1;
-//    }
-//    return 0;
-//}
+
+#if 0    
+typedef int32_t var;
+static int __compar( const void* p1, const void* p2 ){
+
+   printf("%d,%d\n", *(var*)p1, *(var*)p2);
+   if( *(var*)p2 > *(var*)p1 ){
+       return 1;
+   }else if( *(var*)p2 < *(var*)p1 ){
+       return -1;
+   }
+   return 0;
+}
+#endif
     
 int BLK_FUNC( Sort, insert ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *)){
     __exitReturn(nel==0||nel==1, 0);
@@ -213,6 +215,44 @@ int BLK_FUNC( Sort, quick  ) (void *base, size_t nel, size_t width, int (*compar
     qsort( base, nel, width, compar );
     return 0;
 }
+
+/*===========================================================================================================================
+ > Quantity Reference
+============================================================================================================================*/
+void BLK_FUNC( Array, max )(const int* array, size_t size, int* RH_NULLABLE returnVAL, size_t* RH_NULLABLE returnIDX){
+    __exit( !array );
+
+    int    VAL = *array;
+    size_t IDX = 0;
+    while(size--){
+        if(*array > VAL)
+            VAL = *array;
+        array++;
+        IDX++;
+    }
+
+    if( returnVAL ) (*returnVAL) = VAL;
+    if( returnIDX ) (*returnIDX) = IDX;
+
+}
+
+void BLK_FUNC( Array, min )(const int* array, size_t size, int* RH_NULLABLE returnVAL, size_t* RH_NULLABLE returnIDX){
+    __exit( !array );
+
+    int    VAL = *array;
+    size_t IDX = 0;
+    while(size--){
+        if(*array < VAL)
+            VAL = *array;
+        array++;
+        IDX++;
+    }
+
+    if( returnVAL ) (*returnVAL) = VAL;
+    if( returnIDX ) (*returnIDX) = IDX;
+
+}
+
 
 /*===========================================================================================================================
  > Memory Programming Reference

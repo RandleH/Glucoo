@@ -56,106 +56,6 @@ typedef struct tagBITMAPINFOHEADER {
 
 #endif
 
-    
-    
-
-    
-BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png )     (const char* __restrict__ path, const BLK_SRCT(Img888)* img){
-    
-    #define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
-
-    // Critical chunks
-    #define PNG_IHDR                PNG_CHUNK('I','H','D','R')
-    #define PNG_PLTE                PNG_CHUNK('P','L','T','E')
-    #define PNG_IDAT                PNG_CHUNK('I','D','A','T')
-    #define PNG_IEND                PNG_CHUNK('I','E','N','D')
-
-
-    // Ancillary chunks
-    /// Transparency information
-    #define PNG_tRNS                PNG_CHUNK('t','R','N','S')
-
-    /// Colour space information
-    #define PNG_cHRM                PNG_CHUNK('c','H','R','M')
-    #define PNG_gAMA                PNG_CHUNK('g','A','M','A')
-    #define PNG_iCCP                PNG_CHUNK('i','C','C','P')
-    #define PNG_sBIT                PNG_CHUNK('s','B','I','T')
-    #define PNG_sRGB                PNG_CHUNK('s','R','G','B')
-
-    /// Textual information
-    #define PNG_tEXt                PNG_CHUNK('t','E','X','t')
-    #define PNG_zEXt                PNG_CHUNK('z','E','X','t')
-    #define PNG_iEXt                PNG_CHUNK('i','E','X','t')
-        
-    /// Miscellaneous information
-    #define PNG_bKGD                PNG_CHUNK('b','K','G','D')
-    #define PNG_hIST                PNG_CHUNK('h','I','S','T')
-    #define PNG_pHYs                PNG_CHUNK('p','H','Y','s')
-    #define PNG_sPLT                PNG_CHUNK('s','P','L','T')
-
-    /// Time stamp information
-    #define PNG_tIME                PNG_CHUNK('t','I','M','E')
-
-    uint8_t* pBuffer = RH_MALLOC(img->height*img->width*3);
-    uint8_t* pBufferIter = pBuffer;
-   
-    for(int y=0;y<img->height;y++){
-        for(int x=0;x<img->width;x++){
-            *pBufferIter = img->pBuffer[ y*img->width + x ].R;
-            pBufferIter++;
-            
-            *pBufferIter = img->pBuffer[ y*img->width + x ].G;
-            pBufferIter++;
-            
-            *pBufferIter = img->pBuffer[ y*img->width + x ].B;
-            pBufferIter++;
-            
-        }
-    }
-    
-    FILE *fp = fopen(path, "wb");
-    
-    #define SVPNG_PUT(u) fputc(u, fp)
-    #define SVPNG_U8A(ua, l) for (i = 0; i < l; i++) SVPNG_PUT((ua)[i]);
-    #define SVPNG_U32(u) do { SVPNG_PUT((u) >> 24); SVPNG_PUT(((u) >> 16) & 255); SVPNG_PUT(((u) >> 8) & 255); SVPNG_PUT((u) & 255); } while(0)
-    #define SVPNG_U8C(u) do { SVPNG_PUT(u); c ^= (u); c = (c >> 4) ^ t[c & 15]; c = (c >> 4) ^ t[c & 15]; } while(0)
-    #define SVPNG_U8AC(ua, l) for (i = 0; i < l; i++) SVPNG_U8C((ua)[i])
-    #define SVPNG_U16LC(u) do { SVPNG_U8C((u) & 255); SVPNG_U8C(((u) >> 8) & 255); } while(0)
-    #define SVPNG_U32C(u) do { SVPNG_U8C((u) >> 24); SVPNG_U8C(((u) >> 16) & 255); SVPNG_U8C(((u) >> 8) & 255); SVPNG_U8C((u) & 255); } while(0)
-    #define SVPNG_U8ADLER(u) do { SVPNG_U8C(u); a = (a + (u)) % 65521; b = (b + a) % 65521; } while(0)
-    #define SVPNG_BEGIN(s, l) do { SVPNG_U32(l); c = ~0U; SVPNG_U8AC(s, 4); } while(0)
-    #define SVPNG_END() SVPNG_U32(~c)
-    
-    static const unsigned t[] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
-    /* CRC32 Table */    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
-    unsigned a = 1, b = 0, c, p = (uint32_t)img->width * (3) + 1, x, y, i;   /* ADLER-a, ADLER-b, CRC, pitch */
-    SVPNG_U8A("\x89PNG\r\n\32\n", 8);           /* Magic */
-    SVPNG_BEGIN("IHDR", 13);                    /* IHDR chunk { */
-    SVPNG_U32C((uint32_t)img->width); SVPNG_U32C((uint32_t)img->height);               /*   Width & Height (8 bytes) */
-    SVPNG_U8C(8); SVPNG_U8C(2);                 /*   Depth=8, Color=True color with/without alpha (2 bytes) */
-    SVPNG_U8AC("\0\0\0", 3);                    /*   Compression=Deflate, Filter=No, Interlace=No (3 bytes) */
-    SVPNG_END();                                /* } */
-    SVPNG_BEGIN("IDAT", 2 + (uint32_t)img->height * (5 + p) + 4);   /* IDAT chunk { */
-    SVPNG_U8AC("\x78\1", 2);                    /*   Deflate block begin (2 bytes) */
-    
-    uint8_t* pIter = (uint8_t*)pBuffer;
-    for (y = 0; y < img->height; y++) {                   /*   Each horizontal line makes a block for simplicity */
-        SVPNG_U8C(y == img->height - 1);                  /*   1 for the last block, 0 for others (1 byte) */
-        SVPNG_U16LC(p); SVPNG_U16LC(~p);        /*   Size of block in little endian and its 1's complement (4 bytes) */
-        SVPNG_U8ADLER(0);                       /*   No filter prefix (1 byte) */
-        for (x = 0; x < p - 1; x++, pIter++)
-            SVPNG_U8ADLER(*pIter);                /*   Image pixel data */
-    }
-    SVPNG_U32C((b << 16) | a);                  /*   Deflate block end with adler (4 bytes) */
-    SVPNG_END();                                /* } */
-    SVPNG_BEGIN("IEND", 0); SVPNG_END();        /* IEND chunk {} */
-    
-    
-    RH_FREE(pBuffer);
-    
-    return (BLK_SRCT(Img888)*)img;
-}
-
 BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp )    (const char* __restrict__ path){
     FILE* bmp;
     BITMAPFILEHEADER fileHead;
@@ -257,17 +157,17 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, copy     )    (const BLK_SRCT(ImgBin)* src,B
     return dst;
 }
     
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path,BLK_SRCT(ImgBin)* p){
-    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path, const BLK_SRCT(ImgBin)* img){
+    __exitReturn(img == NULL && img->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
     __exitReturn(bmp == NULL, NULL);
     
-    size_t BPL  = __RND4( (p->width>>3)+((p->width&0x07)!=0) ); /* Bytes Per Line */
+    size_t BPL  = __RND4( (img->width>>3)+((img->width&0x07)!=0) ); /* Bytes Per Line */
     
     BITMAPFILEHEADER fileHead = {
         .bfType      = 0x4d42  ,
-        .bfSize      = 458     , //(uint32_t)((__RND8(p->height)>>3)*(p->width)*sizeof(BLK_TYPE(PixelBin)) + 54) ,
+        .bfSize      = 458     , //(uint32_t)((__RND8(img->height)>>3)*(img->width)*sizeof(BLK_TYPE(PixelBin)) + 54) ,
         .bfReserved1 = 0       ,
         .bfReserved2 = 0       ,
         .bfOffBits   = 62      ,
@@ -276,10 +176,10 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path
     BITMAPINFOHEADER infoHead = {
         .biBitCount  = 1              ,
         .biSize      = 40             ,
-        .biWidth     = (int)p->width  ,
-        .biHeight    = (int)p->height ,
+        .biWidth     = (int)img->width  ,
+        .biHeight    = (int)img->height ,
         .biPlanes    = 1              ,
-        .biSizeImage = (DWORD)( BPL*p->height )
+        .biSizeImage = (DWORD)( BPL*img->height )
     };
     
     const uint8_t color_plane[8] = {0x00,0x00,0x00,0x00,0xff,0xff,0xff,0x00};
@@ -290,18 +190,17 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path
     fseek(bmp,54L,SEEK_SET);
     fwrite(color_plane ,1 ,8 , bmp);
     fseek(bmp,fileHead.bfOffBits,SEEK_SET);
-    
 #ifdef RH_DEBUG
     RH_ASSERT( BPL==infoHead.biSizeImage/infoHead.biHeight );
 #endif
     
     uint8_t* pTmp = RH_CALLOC( infoHead.biSizeImage, sizeof(uint8_t) );
     
-    for( int row=0; row<p->height; row++ ){
+    for( int row=0; row<img->height; row++ ){
         for( int col=0; col<BPL; col++ ){
             for(size_t cnt=0; cnt<8; cnt++){
-                if( (col<<3)+cnt < p->width ){
-                    pTmp[ row*BPL + col ] |= (((p->pBuffer[ (row/8)*p->width + (col<<3)+cnt ].data)>>(row%8))&0x01)<<(7-cnt);
+                if( (col<<3)+cnt < img->width ){
+                    pTmp[ row*BPL + col ] |= (((img->pBuffer[ (row/8)*img->width + (col<<3)+cnt ].data)>>(row%8))&0x01)<<(7-cnt);
                 }else{
                     break;
                 }
@@ -309,15 +208,111 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp  )    (const char* __restrict__ path
         }
     }
     
-    for( int row=0; row<(p->height>>1); row++ ){
-        BLK_FUNC( Memory, exchange )(&pTmp[row*BPL], &pTmp[(p->height-row-1)*BPL], BPL);
+    for( int row=0; row<(img->height>>1); row++ ){
+        BLK_FUNC( Memory, exchange )(&pTmp[row*BPL], &pTmp[(img->height-row-1)*BPL], BPL);
     }
     
     fwrite( pTmp, 1, infoHead.biSizeImage*sizeof(uint8_t), bmp );
     
     fclose(bmp);
     RH_FREE(pTmp);
-    return p;
+    return (BLK_SRCT(ImgBin)*)img;
+}
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png  )    (const char* __restrict__ path, const BLK_SRCT(Img888)* img){
+    
+    #define PNG_CHUNK(a,b,c,d)      (uint32_t)((( a )<<24)|(( b )<<16)|(( c )<<8)|( d ))
+
+    // Critical chunks
+    #define PNG_IHDR                PNG_CHUNK('I','H','D','R')
+    #define PNG_PLTE                PNG_CHUNK('P','L','T','E')
+    #define PNG_IDAT                PNG_CHUNK('I','D','A','T')
+    #define PNG_IEND                PNG_CHUNK('I','E','N','D')
+
+
+    // Ancillary chunks
+    /// Transparency information
+    #define PNG_tRNS                PNG_CHUNK('t','R','N','S')
+
+    /// Colour space information
+    #define PNG_cHRM                PNG_CHUNK('c','H','R','M')
+    #define PNG_gAMA                PNG_CHUNK('g','A','M','A')
+    #define PNG_iCCP                PNG_CHUNK('i','C','C','P')
+    #define PNG_sBIT                PNG_CHUNK('s','B','I','T')
+    #define PNG_sRGB                PNG_CHUNK('s','R','G','B')
+
+    /// Textual information
+    #define PNG_tEXt                PNG_CHUNK('t','E','X','t')
+    #define PNG_zEXt                PNG_CHUNK('z','E','X','t')
+    #define PNG_iEXt                PNG_CHUNK('i','E','X','t')
+        
+    /// Miscellaneous information
+    #define PNG_bKGD                PNG_CHUNK('b','K','G','D')
+    #define PNG_hIST                PNG_CHUNK('h','I','S','T')
+    #define PNG_pHYs                PNG_CHUNK('p','H','Y','s')
+    #define PNG_sPLT                PNG_CHUNK('s','P','L','T')
+
+    /// Time stamp information
+    #define PNG_tIME                PNG_CHUNK('t','I','M','E')
+
+    uint8_t* pBuffer = RH_MALLOC(img->height*img->width*3);
+    uint8_t* pBufferIter = pBuffer;
+   
+    for(int y=0;y<img->height;y++){
+        for(int x=0;x<img->width;x++){
+            *pBufferIter = img->pBuffer[ y*img->width + x ].R;
+            pBufferIter++;
+            
+            *pBufferIter = img->pBuffer[ y*img->width + x ].G;
+            pBufferIter++;
+            
+            *pBufferIter = img->pBuffer[ y*img->width + x ].B;
+            pBufferIter++;
+            
+        }
+    }
+    
+    FILE *fp = fopen(path, "wb");
+    
+    #define SVPNG_PUT(u) fputc(u, fp)
+    #define SVPNG_U8A(ua, l) for (i = 0; i < l; i++) SVPNG_PUT((ua)[i]);
+    #define SVPNG_U32(u) do { SVPNG_PUT((u) >> 24); SVPNG_PUT(((u) >> 16) & 255); SVPNG_PUT(((u) >> 8) & 255); SVPNG_PUT((u) & 255); } while(0)
+    #define SVPNG_U8C(u) do { SVPNG_PUT(u); c ^= (u); c = (c >> 4) ^ t[c & 15]; c = (c >> 4) ^ t[c & 15]; } while(0)
+    #define SVPNG_U8AC(ua, l) for (i = 0; i < l; i++) SVPNG_U8C((ua)[i])
+    #define SVPNG_U16LC(u) do { SVPNG_U8C((u) & 255); SVPNG_U8C(((u) >> 8) & 255); } while(0)
+    #define SVPNG_U32C(u) do { SVPNG_U8C((u) >> 24); SVPNG_U8C(((u) >> 16) & 255); SVPNG_U8C(((u) >> 8) & 255); SVPNG_U8C((u) & 255); } while(0)
+    #define SVPNG_U8ADLER(u) do { SVPNG_U8C(u); a = (a + (u)) % 65521; b = (b + a) % 65521; } while(0)
+    #define SVPNG_BEGIN(s, l) do { SVPNG_U32(l); c = ~0U; SVPNG_U8AC(s, 4); } while(0)
+    #define SVPNG_END() SVPNG_U32(~c)
+    
+    static const unsigned t[] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+    /* CRC32 Table */    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
+    unsigned a = 1, b = 0, c, p = (uint32_t)img->width * (3) + 1, x, y, i;   /* ADLER-a, ADLER-b, CRC, pitch */
+    SVPNG_U8A("\x89PNG\r\n\32\n", 8);           /* Magic */
+    SVPNG_BEGIN("IHDR", 13);                    /* IHDR chunk { */
+    SVPNG_U32C((uint32_t)img->width); SVPNG_U32C((uint32_t)img->height);               /*   Width & Height (8 bytes) */
+    SVPNG_U8C(8); SVPNG_U8C(2);                 /*   Depth=8, Color=True color with/without alpha (2 bytes) */
+    SVPNG_U8AC("\0\0\0", 3);                    /*   Compression=Deflate, Filter=No, Interlace=No (3 bytes) */
+    SVPNG_END();                                /* } */
+    SVPNG_BEGIN("IDAT", 2 + (uint32_t)img->height * (5 + p) + 4);   /* IDAT chunk { */
+    SVPNG_U8AC("\x78\1", 2);                    /*   Deflate block begin (2 bytes) */
+    
+    uint8_t* pIter = (uint8_t*)pBuffer;
+    for (y = 0; y < img->height; y++) {                   /*   Each horizontal line makes a block for simplicity */
+        SVPNG_U8C(y == img->height - 1);                  /*   1 for the last block, 0 for others (1 byte) */
+        SVPNG_U16LC(p); SVPNG_U16LC(~p);        /*   Size of block in little endian and its 1's complement (4 bytes) */
+        SVPNG_U8ADLER(0);                       /*   No filter prefix (1 byte) */
+        for (x = 0; x < p - 1; x++, pIter++)
+            SVPNG_U8ADLER(*pIter);                /*   Image pixel data */
+    }
+    SVPNG_U32C((b << 16) | a);                  /*   Deflate block end with adler (4 bytes) */
+    SVPNG_END();                                /* } */
+    SVPNG_BEGIN("IEND", 0); SVPNG_END();        /* IEND chunk {} */
+    
+    
+    RH_FREE(pBuffer);
+    
+    return (BLK_SRCT(Img888)*)img;
 }
 
 BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp )    (const char* __restrict__ path){
@@ -393,28 +388,28 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, copy     )    (const BLK_SRCT(Img565)* src,B
     return dst;
 }
 
-BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp  )    (const char* __restrict__ path,BLK_SRCT(Img565)* p){
-    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp  )    (const char* __restrict__ path, const BLK_SRCT(Img565)* img){
+    __exitReturn(img == NULL && img->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
     __exitReturn(bmp == NULL, NULL);
 
-    int eps = (4-(p->width*sizeof(BLK_SRCT(Pixel565)))%4)%4;
+    int eps = (4-(img->width*sizeof(BLK_SRCT(Pixel565)))%4)%4;
     BITMAPFILEHEADER fileHead = {
         .bfOffBits      = 40 + 14   ,
         .bfReserved1    = 0         ,
         .bfReserved2    = 0         ,
-        .bfSize         = (uint32_t)(p->height * p->width * sizeof(BLK_SRCT(Pixel565)) + 54),
+        .bfSize         = (uint32_t)(img->height * img->width * sizeof(BLK_SRCT(Pixel565)) + 54),
         .bfType         = 0x4D42    ,
     };
     BITMAPINFOHEADER infoHead = {
         .biSize          = 40        ,
-        .biWidth         = (int)(p->width)  ,
-        .biHeight        = (int)(p->height) ,
+        .biWidth         = (int)(img->width)  ,
+        .biHeight        = (int)(img->height) ,
         .biPlanes        = 1         ,
         .biBitCount      = 5+6+5     ,
         .biCompression   = 0         ,
-        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(BLK_SRCT(Pixel565)) + eps*(p->height)) ,
+        .biSizeImage     = (uint32_t)(img->height*img->width*sizeof(BLK_SRCT(Pixel565)) + eps*(img->height)) ,
         .biClrUsed       = 0         ,
         .biClrImportant  = 0         ,
         .biXPelsPerMeter = 0         ,
@@ -426,9 +421,9 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp  )    (const char* __restrict__ path
     fwrite(&fileHead ,1 ,sizeof(BITMAPFILEHEADER) , bmp);
     fwrite(&infoHead ,1 ,sizeof(BITMAPINFOHEADER) , bmp);
     fseek(bmp,54L,SEEK_SET);
-    for (int row = 0; row < p->height; row++) {
-        for (int col = 0; col < p->width; col++) {
-            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel565)) ,1 ,bmp );
+    for (int row = 0; row < img->height; row++) {
+        for (int col = 0; col < img->width; col++) {
+            fwrite( &img->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel565)) ,1 ,bmp );
         }
         int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel565)))%4)%4;
         uint8_t dummyByte = 0x00;
@@ -438,10 +433,10 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp  )    (const char* __restrict__ path
     }
     
     fclose(bmp);
-    return p;
+    return (BLK_SRCT(Img565)*)img;
 }
-    
-BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D   )    (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const __Kernel_t* k,uint16_t br_100){
+  
+BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D   )    (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100){
         if( src == NULL || src->pBuffer == NULL || k == NULL){
             return dst;
         }
@@ -576,28 +571,28 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, create   )    (size_t width,size_t height){
     return pIMG;
 }
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp     )  (const char* __restrict__ path,BLK_SRCT(Img888)* p){
-    __exitReturn(p == NULL && p->pBuffer == NULL , NULL);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp     )  (const char* __restrict__ path, const BLK_SRCT(Img888)* img){
+    __exitReturn(img == NULL && img->pBuffer == NULL , NULL);
     
     FILE* bmp = fopen(path,"wb");
     __exitReturn(bmp == NULL, NULL);
 
-    int eps = (4-(p->width*sizeof(BLK_SRCT(Pixel888)))%4)%4;
+    int eps = (4-(img->width*sizeof(BLK_SRCT(Pixel888)))%4)%4;
     BITMAPFILEHEADER fileHead = {
         .bfOffBits      = 40 + 14   ,
         .bfReserved1    = 0         ,
         .bfReserved2    = 0         ,
-        .bfSize         = (uint32_t)(p->height * p->width * sizeof(BLK_SRCT(Pixel888)) + 54),
+        .bfSize         = (uint32_t)(img->height * img->width * sizeof(BLK_SRCT(Pixel888)) + 54),
         .bfType         = 0x4D42    ,
     };
     BITMAPINFOHEADER infoHead = {
         .biSize          = 40        ,
-        .biWidth         = (int)(p->width)  ,
-        .biHeight        = (int)(p->height) ,
+        .biWidth         = (int)(img->width)  ,
+        .biHeight        = (int)(img->height) ,
         .biPlanes        = 1         ,
         .biBitCount      = 8+8+8     ,
         .biCompression   = 0         ,
-        .biSizeImage     = (uint32_t)(p->height*p->width*sizeof(BLK_SRCT(Pixel888)) + eps*(p->height)) ,
+        .biSizeImage     = (uint32_t)(img->height*img->width*sizeof(BLK_SRCT(Pixel888)) + eps*(img->height)) ,
         .biClrUsed       = 0         ,
         .biClrImportant  = 0         ,
         .biXPelsPerMeter = 0         ,
@@ -611,9 +606,9 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp     )  (const char* __restrict__ pat
     fwrite(&fileHead ,1 ,sizeof(BITMAPFILEHEADER) , bmp);
     fwrite(&infoHead ,1 ,sizeof(BITMAPINFOHEADER) , bmp);
     fseek(bmp,54L,SEEK_SET);
-    for (int row = 0; row < p->height; row++) {
-        for (int col = 0; col < p->width; col++) {
-            fwrite( &p->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel888)) ,1 ,bmp );
+    for (int row = 0; row < img->height; row++) {
+        for (int col = 0; col < img->width; col++) {
+            fwrite( &img->pBuffer[(infoHead.biHeight - row - 1) * infoHead.biWidth + col] ,sizeof(BLK_SRCT(Pixel888)) ,1 ,bmp );
         }
         int eps = (4-(infoHead.biWidth*sizeof(BLK_SRCT(Pixel888)))%4)%4;
         uint8_t dummyByte = 0x00;
@@ -623,7 +618,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp     )  (const char* __restrict__ pat
     }
     
     fclose(bmp);
-    return p;
+    return (BLK_SRCT(Img888)*)img;
 }
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer )  (BLK_SRCT(Img888)*      ptr){
@@ -684,9 +679,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS )  (const BLK_SRCT(Img888)* src,
                 __array1D(dst->pBuffer, dst->width, y, x)->data = 0x00000000;
         }
     }
-    
-//    printf("otus threshold = %d\n", threshold);
-    
     return NULL;
 }
      
@@ -734,7 +726,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror)  (const BLK_SRCT(Img888)* src,
 }
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
-    static __Kernel_t gus_kernel = {
+    static BLK_SRCT(Kernel) gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
         .sum     = 0,
@@ -753,7 +745,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,
             order--;
         if(order>=31) // too big!!!
             order = 31;
-        __gussianKernel(sigma,order,&gus_kernel);
+        BLK_FUNC( Gussian, kernel )(sigma,order,&gus_kernel);
     }
 
     BLK_SRCT(Img888)* pImg = BLK_FUNC( Img888, conv2D )(src, dst,&gus_kernel,br_100);
@@ -785,7 +777,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
         area->xs = area->ys = 0;
     }
     
-{
     unsigned long sum_R = 0, sum_G = 0, sum_B = 0;
     unsigned long div = 0;
     
@@ -824,15 +815,15 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
     
     
     
-// Average Filter Begin
+    // Average Filter Begin
     size_t target = 0;
     for(int j=ys; j <= ye; j++ ){
         
         if((j&0x01) == 0){ // Scan Direction:  [old] -->--> [new]
             for(int i=xs; i <= xe; i++, target++ ){
                 if(i!=xs){
-// No need to do when it reachs the left-edge because it has been done when moving to the next row.
-// Remove leftmost column because it is old.
+                    // No need to do when it reachs the left-edge because it has been done when moving to the next row.
+                    // Remove leftmost column because it is old.
                     if(i-half_order >= xs){                    // [!] no cross the broad [0,src->width-1] [xs,xe]
                         
                         for(int row  = j-half_order+1,                                     \
@@ -851,7 +842,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
                         }
                     }
                     
-// Add rightmost column because it is new.
+                    // Add rightmost column because it is new.
                     if( i+half_order-1 <= xe ){                // [!] no cross the broad [0,src->width-1] [xs,xe]
                         for(int row  = j-half_order+1,                                     \
                                 iter = (int)(src->width*(j-half_order+1) + i+half_order-1);\
@@ -879,8 +870,8 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
                 int k = (int)(xe + xs - i); // reverse i   i in (xs->xe); k in (xe -> xs)
 
                 if( k != xe ){
-// No need to do when it reachs the right-edge because it has been done when moving to the next row.
-// Remove rightmost column because it is old.
+                    // No need to do when it reachs the right-edge because it has been done when moving to the next row.
+                    // Remove rightmost column because it is old.
                     if(k+half_order <= xe ){                                // [!] no cross the broad [0,src->width-1] [xs,xe]
                         for(int row  = j-half_order+1,\
                                 iter = (int)(src->width*(j-half_order+1)+k+half_order);
@@ -898,7 +889,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
                         }
                     }
                     
-// Add leftmost column because it is new.
+                    // Add leftmost column because it is new.
                     if(k-half_order+1 >= xs ){                              // [!] no cross the broad [0,src->width-1] [xs,xe]
                         for(int row  = j-half_order+1,\
                                 iter = (int)(src->width*(j-half_order+1)+k-half_order+1);
@@ -992,7 +983,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
         
     }
 
-}
+
     if(src->pBuffer == dst->pBuffer){
         RH_ASSERT(0);
         memcpy(dst->pBuffer,pDstData,src->height*src->width*sizeof(BLK_UION(Pixel888)));
@@ -1007,7 +998,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,
     const int xs = area->xs;
     const int ys = area->ys;
     const int xe = (int)(area->xs + area->width  -1);
-//    const int ye = (int)(area->ys + area->height -1);
+ // const int ye = (int)(area->ys + area->height -1);
     
     const BLK_UION(Pixel888)* pSrcData = src->pBuffer;
     BLK_UION(Pixel888)*       pDstData = dst->pBuffer;
@@ -1159,7 +1150,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor )  (const BLK_SRCT(Img888
                 if( eps_x >= width ){
                     // This is the position to copy pixels from original image.
                     (dst->pBuffer + (width*gy) + gx)->data = (src->pBuffer + (src->width*fy) + fx)->data;
-//                    printf("%ld,%ld ",fx,fy);
                     eps_x-=width;
                     fx++;
                 }else{
@@ -1167,7 +1157,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor )  (const BLK_SRCT(Img888
                     //...//
                 }
             }
-//            printf("\n");
             eps_y -= height;
             fy++;
         }else
@@ -1178,7 +1167,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor )  (const BLK_SRCT(Img888
 }
 
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D      )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const __Kernel_t* k,uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D      )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100){
     if( src == NULL || src->pBuffer == NULL || k == NULL ){
         return dst;
     }
@@ -1422,14 +1411,10 @@ BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, draw_img_aurora )
     RH_ASSERT( dst->width   );
     
     for( int x=0; x<=dst->width-1; x++ ){
-        
-//        int ys = (unsigned)BLK_FUNC(Math,rand)()%(dst->height/3), ye = (int)(dst->height<<1)/3 + (unsigned)BLK_FUNC(Math,rand)()%(dst->height/3);
-        
-        
-        
+                
     }
     
-    while(1);
+    RH_ASSERT(0);
     return dst;
 }
     
@@ -1481,9 +1466,8 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora )
         
         float _2_sigma_2 = (ye-ys)*(ye-ys)/18.0;
         BLK_UION(Pixel565)* pIterUP = dst->pBuffer + ys*(dst->width) +x;
-        BLK_UION(Pixel565)* pIterDN = dst->pBuffer + ye*(dst->width) +x;
-        
-# if 1
+        BLK_UION(Pixel565)* pIterDN = dst->pBuffer + ye*(dst->width) +x;    
+#if 1
         // 以下代码被性能优化
         for( int y=ys, tmp = ((ye - ys)*(ye - ys)>>2); pIterUP<=pIterDN; y++, pIterUP+=dst->width, pIterDN-=dst->width, tmp += ((y+1)<<1)-(ye+ys) ){
             
@@ -1509,7 +1493,6 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora )
             pIterUP->B = roundl( color.B* exp( -tmp/(2*sigma_2)));
             printf("%d\n",tmp);
         }
-        
 #endif
         
     }
@@ -1567,7 +1550,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
         BLK_UION(Pixel888)* pIterUP = dst->pBuffer + ys*(dst->width) +x;
         BLK_UION(Pixel888)* pIterDN = dst->pBuffer + ye*(dst->width) +x;
         
-# if 1
+#if 1
         // 以下代码被性能优化
         for( int y=ys, tmp = ((ye - ys)*(ye - ys)>>2); pIterUP<=pIterDN; y++, pIterUP+=dst->width, pIterDN-=dst->width, tmp += ((y+1)<<1)-(ye+ys) ){
             
@@ -1593,23 +1576,12 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
             pIterUP->B = roundl( color.B* exp( -tmp/(2*sigma_2)));
             printf("%d\n",tmp);
         }
-        
 #endif
-        
     }
     
     return dst;
 }
 
-    
-    
-    
-    
-    
-
-    
-    
-    
     
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
 ( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
@@ -1638,7 +1610,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
     
     // 填充颜色
 #if 1
-    for( int cnt=0; cnt<7; cnt++ ){
+    for( int cnt=0; cnt<18; cnt++ ){
         uint32_t c = rand()%0x00ffffff;
         // xs 的轨迹为圆心至动点直线, xe 的轨迹为圆弧
         int xs = RH_MIN(x0, RH_MIN(cord[cnt].x, cord[cnt+1].x));
@@ -1652,28 +1624,56 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
             int x = xs;
 
             while( kBLK_PtPos_outside==BLK_FUNC( Math, pt_triangle )( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
-//                printf( "(%3d,%3d)\t out (%3d,%3d)(%3d,%3d)(%3d,%3d)\n", x,y, x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y  );
                 x++;
             }
-//            printf("===============================================\n");
             while( kBLK_PtPos_inside==BLK_FUNC( Math, pt_triangle )( x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y, x, y) && x<=xe ){
                 dst->pBuffer[ (y)*dst->width+x].data = c;
-//                printf( "(%3d,%3d)\t in  (%3d,%3d)(%3d,%3d)(%3d,%3d)\n", x,y, x0, y0, cord[cnt].x, cord[cnt].y, cord[cnt+1].x, cord[cnt+1].y  );
                 x++;
             }
 
         }
-    
-        printf("===========\n");
     }
 #endif
     
+    return dst;
+}
+
+static void applyMandelBrotPix_RGB888(int x,int y,int nIter, void* p){
+    BLK_SRCT(Img888)* dst = (BLK_SRCT(Img888)*)p;
+    if(nIter == -1)
+        nIter = 0;
+
+    nIter = RH_MIN( 0xff, nIter );
+
+    (dst->pBuffer + y*dst->width + x)->R = nIter;
+    (dst->pBuffer + y*dst->width + x)->G = nIter;
+    (dst->pBuffer + y*dst->width + x)->B = nIter;
+    
+}
+
+BLK_SRCT(Img888)*  BLK_FUNC( Img888, draw_img_mandelbrot )(  BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    return dst;
+}
+
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_radar )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+
+    int cx = (int)(dst->width>>1);
+    int cy = (int)(dst->height>>1);
+    
+    int step = RH_LIMIT( (int)RH_MIN(dst->width, dst->height) / size, 5, (int)dst->width);
+    
+    int r = step*2;
     
     
+    
+    // while( r++ < RH_MAX( dst->width, dst->height ) ){
+    //     __img888_draw_circle_fill( cx, cy, r<<1, dst, )
+    // }
     
     return dst;
 }
-    
 
 #ifdef __cplusplus
 }

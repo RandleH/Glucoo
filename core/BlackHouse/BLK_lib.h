@@ -4,7 +4,7 @@
 #define _BLK_LIB_H
 
 #include "RH_common.h"
-
+#include "RH_config.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,6 +40,12 @@ const char* BLK_FUNC( Bin, ftoa )   (float     x); // ftoa_BIN
 int BLK_FUNC( Sort, insert ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
 int BLK_FUNC( Sort, shell  ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
 int BLK_FUNC( Sort, quick  ) (void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
+
+/*===========================================================================================================================
+ > Array Programming Reference
+============================================================================================================================*/
+void BLK_FUNC( Array, max )(const int* array, size_t size, int* RH_NULLABLE returnVAL, size_t* RH_NULLABLE returnIDX);
+void BLK_FUNC( Array, min )(const int* array, size_t size, int* RH_NULLABLE returnVAL, size_t* RH_NULLABLE returnIDX);
 
 /*===========================================================================================================================
  > Memory Programming Reference

@@ -97,6 +97,14 @@ extern void* RH_CFG_GRAM_POINTER;
   #error " 'RH_ASSERT' has been defined. "
 #endif
 
+#ifndef RH_WAIT
+#define RH_WAIT( expr )                       do{ if( expr ){\
+                                                      printf("@%s Ln:%d\nPress <enter> to continue\n",__FILE__,__LINE__);\
+                                                      getchar();\
+                                                  }\
+                                              }while(0)
+#endif
+
 #ifndef RH_CALLOC
   #define RH_CALLOC(x,size)                   calloc(x,size)//BLK_FUNC( Memory, debug_print )( BLK_FUNC( Memory, debug_calloc )(x,size,__FILE__,__LINE__,calloc), NULL )
 #else

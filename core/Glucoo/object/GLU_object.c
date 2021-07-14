@@ -855,7 +855,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     int py = (val_y - (int32_t)pDataSrc->min[1])*(dis_cir_max<<1)/((int32_t)pDataSrc->max[1]-(int32_t)pDataSrc->min[1]) - dis_cir_max;
     int pd = RH_LIMIT( (D>>3), 1, D );
 
-    int cord   = __Point_toCord2D( px, py );// 记录游标圆心坐标的象限
+    BLK_ENUM(PtPos) cord   = BLK_FUNC( Math, pt_cord2D )( px, py );// 记录游标圆心坐标的象限
 
     if( px*px +py*py >= dis_cir_max*dis_cir_max ){
         
@@ -864,24 +864,26 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
         px = __abs(pTmp_x);
         py = __abs(pTmp_y);
         switch( cord ){
-            case 5: // Axis +X
-            case 7: // Axis +Y
-            case 1: // Cord 1
+            case kBLK_PtPos_at_axisXp: // Axis +X
+            case kBLK_PtPos_at_axisYp: // Axis +Y
+            case kBLK_PtPos_at_cord1:  // Cord 1
                 px = px;
                 py = py;
                 break;
-            case 2: // Cord 2
+            case kBLK_PtPos_at_cord2:  // Cord 2
                 px = -px;
                 break;
-            case 6: // Axis -X
-            case 8: // Axis -Y
-            case 3: // Cord 3
+            case kBLK_PtPos_at_axisXm: // Axis -X
+            case kBLK_PtPos_at_axisYm: // Axis -Y
+            case kBLK_PtPos_at_cord3:  // Cord 3
                 px = -px;
                 py = -py;
                 break;
-            case 4: // Cord 4
+            case kBLK_PtPos_at_cord4:  // Cord 4
                 py = -py;
                 break;
+            default: // Impossible
+                RH_ASSERT(0);
         }
     }
     BLK_FUNC( Graph, circle_fill )( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);

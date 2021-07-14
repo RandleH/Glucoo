@@ -87,6 +87,9 @@ E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int 
 E_Status_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 E_Status_t      BLK_FUNC( Graph , capsule_fill      ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method);
 
+
+
+
 #ifdef __cplusplus
 }
 #endif

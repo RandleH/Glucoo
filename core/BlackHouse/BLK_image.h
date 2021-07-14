@@ -132,18 +132,17 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp     ) (const char* __restrict__ pat
 BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp     ) (const char* __restrict__ path);
 BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png     ) (const char* __restrict__ path);//
 
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(ImgBin)* p);
-BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(Img565)* p);//
-BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp      ) (const char* __restrict__ path,BLK_SRCT(Img888)* p);
-
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(ImgBin)* p);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(Img565)* p);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(Img888)* p);
 BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png      ) (const char* __restrict__ path, const BLK_SRCT(Img888)* img);
 
 BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, copy         ) (const BLK_SRCT(ImgBin)* src,BLK_SRCT(ImgBin)* dst);
 BLK_SRCT(Img565)* BLK_FUNC( Img565, copy         ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst);//
 BLK_SRCT(Img888)* BLK_FUNC( Img888, copy         ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst);
 
-BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D       ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const __Kernel_t* k,uint16_t br_100);
-BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D       ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const __Kernel_t* k,uint16_t br_100);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D       ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D       ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100);
 
 void              BLK_FUNC( Img888, free         ) (      BLK_SRCT(Img888)* ptr);
 BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer  ) (      BLK_SRCT(Img888)* ptr);

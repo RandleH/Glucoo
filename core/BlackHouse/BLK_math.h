@@ -10,79 +10,64 @@ extern "C" {
 /*===========================================================================================================================
  > Algebra Reference
 ============================================================================================================================*/
-struct __Kernel_t{
+struct BLK_SRCT(Kernel){
     uint16_t*   pBuffer; //  <- This buffer array should only be created by "__malloc".
     size_t      order;
     int32_t     sum;
 };
-typedef struct __Kernel_t       __Kernel_t;
+typedef struct BLK_SRCT(Kernel)       BLK_SRCT(Kernel);
 
-long            BLK_FUNC( Math, sign          )   ( long   x);
-long            BLK_FUNC( Math, step          )   ( long   x);
-long            BLK_FUNC( Math, sqrt          )   ( long   x);
-double          BLK_FUNC( Math, sigmold       )   ( double x);
+long                  BLK_FUNC( Math, sign          )   ( long   x);
+long                  BLK_FUNC( Math, step          )   ( long   x);
+long                  BLK_FUNC( Math, sqrt          )   ( long   x);
+double                BLK_FUNC( Math, sigmold       )   ( double x);
+      
+int                   BLK_FUNC( Math, rand          )   ( void    );
+int                   BLK_FUNC( Math, rand_in       )   ( int  min, int max );
+      
+unsigned long         BLK_FUNC( Math, combinatorial )   ( unsigned long n, unsigned long r );
+      
+double                BLK_FUNC( Math, tan           )   ( long   dec);
+double                BLK_FUNC( Math, atan          )   ( long   y,long x     );
+      
+long                  BLK_FUNC( Math, factorial     )   ( long   x);
+long                  BLK_FUNC( Math, fibonacci     )   ( long   n);
+      
+double                BLK_FUNC( Gussian, func_1D    )   ( long   x,long __miu  ,double __sigma);
+double                BLK_FUNC( Gussian, func_2D    )   ( long   x,long y      ,double __sigma);
+BLK_SRCT(Kernel)*     BLK_FUNC( Gussian, kernel     )   ( double __sigma,size_t order,BLK_SRCT(Kernel)* pKernel);
 
-int             BLK_FUNC( Math, rand          )   ( void    );
-int             BLK_FUNC( Math, rand_in       )   ( int  min, int max );
+long                  BLK_FUNC( Pascal, triangle    )   ( long row , long col );
 
-unsigned long   BLK_FUNC( Math, combinatorial )   ( unsigned long n, unsigned long r );
-
-double       BLK_cordic_tan      (long   dec);
-double       BLK_cordic_atan     (long   y,long x     );
-
-double       __gussian         (long   x,long __miu  ,double __sigma);
-double       __gussian2D       (long   x,long y      ,double __sigma);
-__Kernel_t*  __gussianKernel   (double __sigma,size_t order,__Kernel_t* pKernel);
- 
-long         __step_mul        (long   x);
-long         __fibonacci       (long   n);
-
-long         __pascal_triangle     ( long row , long col );
-long*        __pascal_triangle_row ( long row , size_t* returnSize );
-
-/*=====================================================================
- > Quantity Reference
-======================================================================*/
-struct IntArray_t{
-    size_t  index;
-    int     value;
-};
-typedef struct IntArray_t IntArray_t;
-IntArray_t __findMax_INT(const int* pValue,size_t num);
-IntArray_t __findMin_INT(const int* pValue,size_t num);
-
-struct UintArray_t{
-    size_t        index;
-    unsigned int  value;
-};
-typedef struct UintArray_t UintArray_t;
+bool                  BLK_FUNC( Mandelbrot, set     )   ( float complex c, size_t nitersLimit );
+void                  BLK_FUNC( Mandelbrot, image   )   ( float complex center, int img_w, int img_h, float scale_x, float scale_y, void* buf, void (*func)(int x,int y,uint32_t nIter, void* buf) );
 
 /*===========================================================================================================================
 > Geometry Reference
 =============================================================================================================================*/
-struct Vector2D_t{
+struct BLK_SRCT(Vector2D){
    int x;
    int y;
 };
-typedef struct Vector2D_t Vector2D_t;
-typedef struct Vector2D_t Point2D_t;
+typedef struct BLK_SRCT(Vector2D) BLK_SRCT(Vector2D);
+typedef struct BLK_SRCT(Vector2D) Point2D_t;
 
-struct Vector3D_t{
+struct BLK_SRCT(Vector3D){
    int x;
    int y;
    int z;
 };
-typedef struct Vector3D_t Vector3D_t;
-typedef struct Vector3D_t Point3D_t;
+typedef struct BLK_SRCT(Vector3D) BLK_SRCT(Vector3D);
+typedef struct BLK_SRCT(Vector3D) Point3D_t;
 
-Point3D_t __findPoint_LineCross        (const Point3D_t  line1[2] ,const Point3D_t  line2[2]);
+
 Point3D_t __findPoint_VectorDistance   (const Point3D_t* A        ,const Point3D_t* B     ,int    dist_AP );
 Point3D_t __findPoint_VectorProportion (const Point3D_t* A        ,const Point3D_t* B     ,double scale   );
 
 
-int        __Vect2D_Dot                (const Vector2D_t* vect1   ,const Vector2D_t* vect2);
-int        __Vect3D_Dot                (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
-Vector3D_t __Vect3D_Cross              (const Vector3D_t* vect1   ,const Vector3D_t* vect2);
+int                BLK_FUNC( Vector2D, dot   ) (const BLK_SRCT(Vector2D)* vect1   ,const BLK_SRCT(Vector2D)* vect2);
+int                BLK_FUNC( Vector3D, dot   ) (const BLK_SRCT(Vector3D)* vect1   ,const BLK_SRCT(Vector3D)* vect2);
+BLK_SRCT(Vector3D) BLK_FUNC( Vector3D, cross ) (const BLK_SRCT(Vector3D)* vect1   ,const BLK_SRCT(Vector3D)* vect2);
 
 enum BLK_ENUM(CordRegion){
     kBLK_CordRegion_0_45   ,
@@ -97,23 +82,45 @@ enum BLK_ENUM(CordRegion){
 typedef enum BLK_ENUM(CordRegion) BLK_ENUM(CordRegion);
 
 enum BLK_ENUM(PtPos){
-    kBLK_PtPos_outside = -1 ,
-    kBLK_PtPos_righton =  0 ,
-    kBLK_PtPos_inside  =  1 ,
+    kBLK_PtPos_outside    = -1 ,
+    kBLK_PtPos_righton    =  0 ,
+    kBLK_PtPos_inside     =  1 ,
+    kBLK_PtPos_above      =  2 ,
+    kBLK_PtPos_beneath    =  3 ,
+    kBLK_PtPos_at_orgin   =  4 ,
+    kBLK_PtPos_at_cord1   =  5 ,
+    kBLK_PtPos_at_cord2   =  6 ,
+    kBLK_PtPos_at_cord3   =  7 ,
+    kBLK_PtPos_at_cord4   =  8 ,
+    kBLK_PtPos_at_axisXp  =  9 ,
+    kBLK_PtPos_at_axisXm  =  10 ,
+    kBLK_PtPos_at_axisYp  =  11 ,
+    kBLK_PtPos_at_axisYm  =  12 ,
 };
 typedef enum BLK_ENUM(PtPos) BLK_ENUM(PtPos);
 
+enum BLK_ENUM(Monotonicity){
+    kBLK_Monotonicity_hor  ,  //  horizontal
+    kBLK_Monotonicity_inc  ,  //  increase
+    kBLK_Monotonicity_dec  ,  //  decrease
+    kBLK_Monotonicity_ver     //  vertical
+};
+typedef enum BLK_ENUM(Monotonicity) BLK_ENUM(Monotonicity);
 
-int        BLK_FUNC( Math, dir_line )  (int xs,int ys,int xe,int ye);
-int        __Point_toLine              (int xs,int ys,int xe,int ye,               int px,int py);
+BLK_ENUM(Monotonicity)  BLK_FUNC( Math, dir_line )  (int x1,int y1,int x2,int y2);
 
-int        __Point_toCircle            (int xc,int yc,int radius,                  int px,int py);
-int        __Point_toCord2D            (int px,int py);
 
-long       BLK_FUNC( Math, area_triangle )(int x1,int y1,int x2,int y2,int x3,int y3);
 
+
+long       BLK_FUNC( Math, area_triangle      )(int x1,int y1,int x2,int y2,int x3,int y3);
+long       BLK_FUNC( Math, area_rectangular   )(int x1,int y1,int x2,int y2);
 
 BLK_ENUM(PtPos)   BLK_FUNC( Math, pt_triangle )      (int x1,int y1,int x2,int y2,int x3,int y3, int px,int py);
+BLK_ENUM(PtPos)   BLK_FUNC( Math, pt_line     )      (int x1,int y1,int x2,int y2,               int px,int py);
+BLK_ENUM(PtPos)   BLK_FUNC( Math, pt_citcle   )      (int xc,int yc,int r,                       int px,int py);
+BLK_ENUM(PtPos)   BLK_FUNC( Math, pt_cord2D   )      (                                           int px,int py);
+
+
 
 
 

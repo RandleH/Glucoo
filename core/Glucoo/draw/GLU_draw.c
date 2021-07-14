@@ -166,7 +166,19 @@ void GLU_FUNC( GUI, line_raw         )   ( int x1, int y1, int x2, int y2 ){
                            GLU_FUNC( GUI, addScreenArea )     (RH_MIN(x1, x2), RH_MIN(y1, y2), RH_MAX(x1, x2), RH_MAX(y1, y2));
 }
 
-
+void GLU_FUNC( GUI, quad_raw         )   ( int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4 ){
+    
+    int xs = RH_LIMIT( RH_MIN(x1, RH_MIN(x2, RH_MIN(x3, x4))), 0, GUI_X_WIDTH );
+    int xe = RH_LIMIT( RH_MAX(x1, RH_MAX(x2, RH_MAX(x3, x4))), 0, GUI_X_WIDTH );
+    int ys = RH_LIMIT( RH_MIN(y1, RH_MIN(y2, RH_MIN(y3, y4))), 0, GUI_Y_WIDTH );
+    int ye = RH_LIMIT( RH_MAX(y1, RH_MAX(y2, RH_MAX(y3, y4))), 0, GUI_Y_WIDTH );
+    
+    BLK_FUNC( Graph, quad_raw )( x1, y1, x2, y2, x3, y3, x4, y4, &canvas, kApplyPixel_fill );
+    GLU_FUNC( GUI, isAutoDisplay )() ? \
+        GLU_FUNC( GUI, refreashScreenArea )(xs,ys,xe,ye)
+        :
+        GLU_FUNC( GUI, addScreenArea      )(xs,ys,xe,ye);
+}
 
 
 
