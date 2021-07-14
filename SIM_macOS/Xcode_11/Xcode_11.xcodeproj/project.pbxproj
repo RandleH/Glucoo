@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		E32D24EE262C2E990017A41A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E32D24ED262C2E990017A41A /* main.c */; };
 		E35FD32E268CA5C300481BDB /* GLU_font_Optima.c in Sources */ = {isa = PBXBuildFile; fileRef = E35FD32D268CA5C300481BDB /* GLU_font_Optima.c */; };
+		E38370F42699FAF6001CBE64 /* GLU_api.c in Sources */ = {isa = PBXBuildFile; fileRef = E38370F32699FAF6001CBE64 /* GLU_api.c */; };
 		E38C37B92647EC1A0057F552 /* GLU_glucoo.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37B82647EC1A0057F552 /* GLU_glucoo.c */; };
 		E38C37BC2647EC2E0057F552 /* GLU_object.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37BA2647EC2E0057F552 /* GLU_object.c */; };
 		E38C37BF2647EC3B0057F552 /* GLU_menu.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37BE2647EC3B0057F552 /* GLU_menu.c */; };
 		E38C37C32647EC590057F552 /* GLU_window.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37C12647EC590057F552 /* GLU_window.c */; };
 		E38C37C52647EC640057F552 /* GLU_draw.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37C42647EC640057F552 /* GLU_draw.c */; };
+		E3B74ADB269AEE7A0089F8EB /* GLU_image.c in Sources */ = {isa = PBXBuildFile; fileRef = E3B74ADA269AEE790089F8EB /* GLU_image.c */; };
 		E3E006CF268A2BB70023C134 /* GLU_font_NewYork_Italic.c in Sources */ = {isa = PBXBuildFile; fileRef = E3E006C7268A2BB60023C134 /* GLU_font_NewYork_Italic.c */; };
 		E3E006D0268A2BB70023C134 /* GLU_font.c in Sources */ = {isa = PBXBuildFile; fileRef = E3E006C8268A2BB60023C134 /* GLU_font.c */; };
 		E3E006D1268A2BB70023C134 /* GLU_font_ArialRoundedBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E3E006C9268A2BB70023C134 /* GLU_font_ArialRoundedBold.c */; };
@@ -54,6 +56,8 @@
 		E32D2521262C2FB70017A41A /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = ../../core/STB/stb_image_write.h; sourceTree = "<group>"; };
 		E35FD32C268CA5A800481BDB /* GLU_pixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_pixel.h; path = ../../core/Glucoo/GLU_pixel.h; sourceTree = "<group>"; };
 		E35FD32D268CA5C300481BDB /* GLU_font_Optima.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_Optima.c; path = ../../core/Glucoo/font/GLU_font_Optima.c; sourceTree = "<group>"; };
+		E38370F22699FAF5001CBE64 /* GLU_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_api.h; path = ../self/GLU_api.h; sourceTree = "<group>"; };
+		E38370F32699FAF6001CBE64 /* GLU_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_api.c; path = ../self/GLU_api.c; sourceTree = "<group>"; };
 		E38C37B72647EC1A0057F552 /* GLU_glucoo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_glucoo.h; path = ../../core/Glucoo/GLU_glucoo.h; sourceTree = "<group>"; };
 		E38C37B82647EC1A0057F552 /* GLU_glucoo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_glucoo.c; path = ../../core/Glucoo/GLU_glucoo.c; sourceTree = "<group>"; };
 		E38C37BA2647EC2E0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = ../../core/Glucoo/object/GLU_object.c; sourceTree = "<group>"; };
@@ -63,6 +67,8 @@
 		E38C37C12647EC590057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = ../../core/Glucoo/window/GLU_window.c; sourceTree = "<group>"; };
 		E38C37C22647EC590057F552 /* GLU_window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_window.h; path = ../../core/Glucoo/window/GLU_window.h; sourceTree = "<group>"; };
 		E38C37C42647EC640057F552 /* GLU_draw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_draw.c; path = ../../core/Glucoo/draw/GLU_draw.c; sourceTree = "<group>"; };
+		E3B74ADA269AEE790089F8EB /* GLU_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_image.c; path = ../../core/Glucoo/image/GLU_image.c; sourceTree = "<group>"; };
+		E3B74ADC269AEEA00089F8EB /* GLU_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_image.h; path = ../../core/Glucoo/image/GLU_image.h; sourceTree = "<group>"; };
 		E3E006C7268A2BB60023C134 /* GLU_font_NewYork_Italic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_NewYork_Italic.c; path = ../../core/Glucoo/font/GLU_font_NewYork_Italic.c; sourceTree = "<group>"; };
 		E3E006C8268A2BB60023C134 /* GLU_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font.c; path = ../../core/Glucoo/font/GLU_font.c; sourceTree = "<group>"; };
 		E3E006C9268A2BB70023C134 /* GLU_font_ArialRoundedBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_ArialRoundedBold.c; path = ../../core/Glucoo/font/GLU_font_ArialRoundedBold.c; sourceTree = "<group>"; };
@@ -134,6 +140,8 @@
 		E32D24F4262C2EC40017A41A /* self */ = {
 			isa = PBXGroup;
 			children = (
+				E38370F32699FAF6001CBE64 /* GLU_api.c */,
+				E38370F22699FAF5001CBE64 /* GLU_api.h */,
 				E32D24FA262C2F190017A41A /* RH_config.h */,
 				E32D24F6262C2F190017A41A /* RH_dummy.c */,
 			);
@@ -189,6 +197,7 @@
 		E38C37B22647EBD40057F552 /* Glucoo */ = {
 			isa = PBXGroup;
 			children = (
+				E3B74AD9269AEE540089F8EB /* image */,
 				E35FD32C268CA5A800481BDB /* GLU_pixel.h */,
 				E38C37B82647EC1A0057F552 /* GLU_glucoo.c */,
 				E38C37B72647EC1A0057F552 /* GLU_glucoo.h */,
@@ -253,6 +262,15 @@
 			name = font;
 			sourceTree = "<group>";
 		};
+		E3B74AD9269AEE540089F8EB /* image */ = {
+			isa = PBXGroup;
+			children = (
+				E3B74ADC269AEEA00089F8EB /* GLU_image.h */,
+				E3B74ADA269AEE790089F8EB /* GLU_image.c */,
+			);
+			name = image;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -279,7 +297,7 @@
 		E32D24E2262C2E990017A41A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1110;
+				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Randle Helmslay";
 				TargetAttributes = {
 					E32D24E9262C2E990017A41A = {
@@ -330,7 +348,9 @@
 				E3E006EC268A2C5A0023C134 /* BLK_data.c in Sources */,
 				E3E006ED268A2C5A0023C134 /* BLK_utility.c in Sources */,
 				E38C37C52647EC640057F552 /* GLU_draw.c in Sources */,
+				E3B74ADB269AEE7A0089F8EB /* GLU_image.c in Sources */,
 				E3E006F0268A2C5A0023C134 /* BLK_lib.c in Sources */,
+				E38370F42699FAF6001CBE64 /* GLU_api.c in Sources */,
 				E38C37BF2647EC3B0057F552 /* GLU_menu.c in Sources */,
 				E3E006F1268A2C5A0023C134 /* BLK_poker.c in Sources */,
 				E3E006EF268A2C5A0023C134 /* BLK_image.c in Sources */,
@@ -452,6 +472,7 @@
 		E32D24F2262C2E990017A41A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MVU89C43SX;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -462,6 +483,7 @@
 		E32D24F3262C2E990017A41A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = MVU89C43SX;
 				ENABLE_HARDENED_RUNTIME = YES;

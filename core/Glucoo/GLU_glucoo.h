@@ -65,6 +65,7 @@ void GLU_FUNC( GUI, circle_qrt4_raw  )       ( int x ,int y ,int r );
 
 void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
+void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4 );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_object.c ]

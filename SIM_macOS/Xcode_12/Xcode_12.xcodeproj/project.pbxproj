@@ -20,6 +20,7 @@
 		E38C37AB2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */; };
 		E38C37AE2647E0C50057F552 /* GLU_window.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37AD2647E0C50057F552 /* GLU_window.c */; };
 		E38C37B12647E55D0057F552 /* GLU_menu.c in Sources */ = {isa = PBXBuildFile; fileRef = E38C37B02647E55D0057F552 /* GLU_menu.c */; };
+		E38EBE9726930A8C003C3E6D /* GLU_image.c in Sources */ = {isa = PBXBuildFile; fileRef = E38EBE9626930A8C003C3E6D /* GLU_image.c */; };
 		E3A277982648E64200D29934 /* GLU_font_CourierNew.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277962648E64200D29934 /* GLU_font_CourierNew.c */; };
 		E3A277992648E64200D29934 /* GLU_font_CourierNewBold.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A277972648E64200D29934 /* GLU_font_CourierNewBold.c */; };
 		E3A277AE2648EF6E00D29934 /* BLK_utility.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A2779D2648EF6E00D29934 /* BLK_utility.c */; };
@@ -92,6 +93,8 @@
 		E38C37AD2647E0C50057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = Glucoo/window/GLU_window.c; sourceTree = "<group>"; };
 		E38C37AF2647E55D0057F552 /* GLU_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_menu.h; path = Glucoo/menu/GLU_menu.h; sourceTree = "<group>"; };
 		E38C37B02647E55D0057F552 /* GLU_menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_menu.c; path = Glucoo/menu/GLU_menu.c; sourceTree = "<group>"; };
+		E38EBE9626930A8C003C3E6D /* GLU_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_image.c; path = Glucoo/image/GLU_image.c; sourceTree = "<group>"; };
+		E38EBE9926930A8E003C3E6D /* GLU_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLU_image.h; sourceTree = "<group>"; };
 		E3A277962648E64200D29934 /* GLU_font_CourierNew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_CourierNew.c; path = Glucoo/font/GLU_font_CourierNew.c; sourceTree = "<group>"; };
 		E3A277972648E64200D29934 /* GLU_font_CourierNewBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_CourierNewBold.c; path = Glucoo/font/GLU_font_CourierNewBold.c; sourceTree = "<group>"; };
 		E3A2779D2648EF6E00D29934 /* BLK_utility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_utility.c; sourceTree = "<group>"; };
@@ -99,7 +102,7 @@
 		E3A2779F2648EF6E00D29934 /* BLK_dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_dsp.h; sourceTree = "<group>"; };
 		E3A277A02648EF6E00D29934 /* BLK_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_image.h; sourceTree = "<group>"; };
 		E3A277A12648EF6E00D29934 /* BLK_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_lib.h; sourceTree = "<group>"; wrapsLines = 0; };
-		E3A277A22648EF6E00D29934 /* BLK_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_image.c; sourceTree = "<group>"; };
+		E3A277A22648EF6E00D29934 /* BLK_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_image.c; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A277A32648EF6E00D29934 /* BLK_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_utility.h; sourceTree = "<group>"; };
 		E3A277A42648EF6E00D29934 /* BLK_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_data.c; sourceTree = "<group>"; };
 		E3A277A52648EF6E00D29934 /* BLK_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_time.c; sourceTree = "<group>"; };
@@ -239,6 +242,7 @@
 		E38C37912647C7410057F552 /* Glucoo */ = {
 			isa = PBXGroup;
 			children = (
+				E38EBE9426930A77003C3E6D /* image */,
 				E38C379D2647CC4D0057F552 /* font */,
 				E38C37992647C7860057F552 /* menu */,
 				E38C37982647C77F0057F552 /* object */,
@@ -246,6 +250,7 @@
 				E38C37962647C7680057F552 /* draw */,
 				E38C37922647C7500057F552 /* GLU_glucoo.c */,
 				E38C37932647C7500057F552 /* GLU_glucoo.h */,
+				E3A3C50F268B1DA600EA234D /* GLU_pixel.h */,
 			);
 			name = Glucoo;
 			sourceTree = "<group>";
@@ -254,7 +259,6 @@
 			isa = PBXGroup;
 			children = (
 				E38C379A2647C7BE0057F552 /* GLU_draw.c */,
-				E3A3C50F268B1DA600EA234D /* GLU_pixel.h */,
 			);
 			name = draw;
 			sourceTree = "<group>";
@@ -301,6 +305,15 @@
 				E38C379F2647CC900057F552 /* GLU_font.h */,
 			);
 			name = font;
+			sourceTree = "<group>";
+		};
+		E38EBE9426930A77003C3E6D /* image */ = {
+			isa = PBXGroup;
+			children = (
+				E38EBE9626930A8C003C3E6D /* GLU_image.c */,
+				E38EBE9926930A8E003C3E6D /* GLU_image.h */,
+			);
+			name = image;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -377,6 +390,7 @@
 				E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */,
 				E3A277982648E64200D29934 /* GLU_font_CourierNew.c in Sources */,
 				E3A277B32648EF6E00D29934 /* BLK_math.c in Sources */,
+				E38EBE9726930A8C003C3E6D /* GLU_image.c in Sources */,
 				E38C37B12647E55D0057F552 /* GLU_menu.c in Sources */,
 				E35B3B99261D5C990031A366 /* GLU_api.c in Sources */,
 				E38C37942647C7500057F552 /* GLU_glucoo.c in Sources */,

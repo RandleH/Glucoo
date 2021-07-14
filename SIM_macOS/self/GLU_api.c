@@ -53,10 +53,10 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
     
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    const int xs = __min(x1, x2);
-    const int xe = __max(x1, x2);
-    const int ps = ((__min(y1, y2))>>3);
-    const int pe = ((__max(y1, y2))>>3);
+    const int xs = RH_MIN(x1, x2);
+    const int xe = RH_MAX(x1, x2);
+    const int ps = ((RH_MIN(y1, y2))>>3);
+    const int pe = ((RH_MAX(y1, y2))>>3);
     for ( int p=ps; p<=pe; p++ ) {
         memcpy(&pTmpScreenShot->pBuffer[ p*RH_CFG_SCREEN_WIDTH + xs ].data, pixData, (xe-xs+1));
         pixData += (xe-xs+1);

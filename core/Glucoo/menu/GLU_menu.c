@@ -28,8 +28,8 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
         strncpy(p, config->title, cnt);  // 截取字符串到该空间
         p[cnt] = '\0';                   // 末尾取0
         GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
-        int x_fs = __limit( config->area.xs +(((int)(config->area.width - pF->img_w))>>1)     , 0, GUI_X_WIDTH-1 );
-        int y_fs = __limit( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+        int x_fs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1)     , 0, GUI_X_WIDTH-1 );
+        int y_fs = RH_LIMIT( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
@@ -40,15 +40,15 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #else
          
@@ -73,12 +73,12 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     GLU_FUNC( Font, set_size )( pHistory->bFontH );
     
     // 菜单内容字体的起始绘制坐标
-    int x_fs = __limit( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
-    int y_fs = __limit( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
     
     // 菜单栏起始绘制坐标,即右上角
-    int xs   = __limit( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
-    int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
+    int xs   = RH_LIMIT( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
+    int ys   = RH_LIMIT( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
     GLU_UION(Pixel) text_color = {.data = config->text_color};
@@ -113,15 +113,15 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             
-            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             
-            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             
-            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #else
              
@@ -146,12 +146,12 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     // 配置字体大小
     GLU_FUNC( Font, set_size )( pHistory->bFontH );
     // 菜单内容字体的起始绘制坐标
-    int x_fs = __limit( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
-    int y_fs = __limit( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
     
     // 菜单栏起始绘制坐标,即右上角
-    int xs   = __limit( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
-    int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
+    int xs   = RH_LIMIT( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
+    int ys   = RH_LIMIT( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
     GLU_UION(Pixel) text_color = {.data = config->text_color};
@@ -190,15 +190,15 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                     
                     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                         
-                        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                         
                     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                         
-                        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                         
                     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                         
-                        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                         
                     #else
                          
@@ -240,15 +240,15 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             
-            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             
-            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             
-            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #else
              
@@ -284,15 +284,15 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             
-            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             
-            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             
-            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+            BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #else
              
@@ -317,12 +317,12 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     // 配置字体大小
     GLU_FUNC( Font, set_size )( pHistory->bFontH );
     // 菜单内容字体的起始绘制坐标
-    int x_fs = __limit( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
-    int y_fs = __limit( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
     
     // 菜单栏起始绘制坐标,即右上角
-    int xs   = __limit( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
-    int ys   = __limit( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
+    int xs   = RH_LIMIT( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
+    int ys   = RH_LIMIT( config->area.ys + pHistory->tSize , 0, GUI_Y_WIDTH-1 );
     
     // 确认画笔颜色
     GLU_UION(Pixel) text_color = {.data = config->text_color};
@@ -360,15 +360,15 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                     
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                     
-                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                     
-                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                     
-                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #else
                      
@@ -410,15 +410,15 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 
-                BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                 
-                BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                 
-                BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #else
                  
@@ -455,15 +455,15 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                     
-                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
                     
-                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                     
-                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data);
+                    BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #else
                      

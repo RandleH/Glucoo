@@ -263,12 +263,13 @@ static struct{
                 #else
                     NULL,
                 #endif
-             [kGLU_Font_Arial_Unicode] =
-                #if RH_CFG_FONT_STYLE__Arial_Unicode
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Arial Unicode.ttf"      ,
+             [kGLU_Font_SignPrinter] =
+                #if RH_CFG_FONT_STYLE__Sign_Printer
+                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Sign Printer.ttf"       ,
                 #else
                     NULL,
                 #endif
+             
         };
     #endif
 
@@ -289,6 +290,7 @@ static struct{
     extern const uint8_t Font_TTF_NewYork_Italic    [361176];
     extern const uint8_t Font_TTF_Unscii            [293712];
     extern const uint8_t Font_TTF_Optima            [263984];
+    extern const uint8_t Font_TTF_SignPrinter       [];
 
     static const uint8_t* font_ttf_array[kGLU_NUM_FontStyle] = {
         
@@ -381,8 +383,9 @@ GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
     // 计算字体数据
     FCFG.scale        = (*FCFG.method->_ScaleForPixelHeight)( &FCFG.stb_info, FCFG.size );
     (*FCFG.method->_GetFontVMetrics)( &FCFG.stb_info, &FCFG.ascent, &FCFG.descent, &FCFG.lineGap );
-    FCFG.ascent  = roundf(FCFG.ascent * FCFG.scale);
+    FCFG.ascent  = roundf(FCFG.ascent  * FCFG.scale);
     FCFG.descent = roundf(FCFG.descent * FCFG.scale);
+    FCFG.lineGap = roundf(FCFG.lineGap * FCFG.scale);
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY  )
     // 确认字体解析库 stbtt为使用STB库, rhtt为使用自研库
     FCFG.method = &stbtt;
@@ -417,8 +420,10 @@ GLU_FUNC( Font, set_size       ) ( uint8_t        size    ){
     FCFG.size   = size;
     FCFG.scale       = (*FCFG.method->_ScaleForPixelHeight)( &FCFG.stb_info, FCFG.size );
     (*FCFG.method->_GetFontVMetrics)( &FCFG.stb_info, &FCFG.ascent, &FCFG.descent, &FCFG.lineGap );
-    FCFG.ascent  = roundf(FCFG.ascent * FCFG.scale);
+    FCFG.ascent  = roundf(FCFG.ascent  * FCFG.scale);
     FCFG.descent = roundf(FCFG.descent * FCFG.scale);
+    FCFG.lineGap = roundf(FCFG.lineGap * FCFG.scale);
+    
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY  )
     FCFG.method = &stbtt;
     FCFG.size   = size;
@@ -489,6 +494,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     int* cw  = alloca(size); memset( cw, 0, size); // 记录每个字母外框宽度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
     int* ch  = alloca(size); memset( ch, 0, size); // 记录每个字母外框高度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
     int  cnt = 0;
+    
     while( str[cnt]!='\0' ){
         {// 字符外框大小
             int c_x1 , c_y1 , c_x2 , c_y2;
@@ -513,7 +519,6 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     }
     
     // 确定绘制出这样的字符串至少需要的图像大小
-    (*FCFG.method->_GetCodepointHMetrics)(&FCFG.stb_info, '\0', NULL, &FCFG.img.img_w ); // 求出空字符的左偏移str[strlen(str)-1]
     FCFG.img.img_w   = roundf( FCFG.img.img_w*FCFG.scale );
     FCFG.img.img_w  += cx[cnt];
     FCFG.img.img_h   = FCFG.ascent-FCFG.descent+FCFG.lineGap;

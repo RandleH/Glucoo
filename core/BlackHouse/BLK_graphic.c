@@ -168,17 +168,17 @@ static BLK_TYPE(Pixel) __ApplyPixel_lightness (int x,int y,BLK_TYPE(Pixel) br_10
     BLK_UION(Pixel565) temp = {
         .data = *(p+y*width+x)
     };
-    temp.R = __limit((signed)(temp.R*br_100/100) , 0 , ((1<<5)-1));
-    temp.G = __limit((signed)(temp.G*br_100/100) , 0 , ((1<<6)-1));
-    temp.B = __limit((signed)(temp.B*br_100/100) , 0 , ((1<<5)-1));
+    temp.R = RH_LIMIT((signed)(temp.R*br_100/100) , 0 , ((1<<5)-1));
+    temp.G = RH_LIMIT((signed)(temp.G*br_100/100) , 0 , ((1<<6)-1));
+    temp.B = RH_LIMIT((signed)(temp.B*br_100/100) , 0 , ((1<<5)-1));
     
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     BLK_UION(Pixel888) temp = {
         .data = *(p+y*width+x)
     };
-    temp.R = __limit((signed)(temp.R*br_100/100) , 0 , ((1<<8)-1));
-    temp.G = __limit((signed)(temp.G*br_100/100) , 0 , ((1<<8)-1));
-    temp.B = __limit((signed)(temp.B*br_100/100) , 0 , ((1<<8)-1));
+    temp.R = RH_LIMIT((signed)(temp.R*br_100/100) , 0 , ((1<<8)-1));
+    temp.G = RH_LIMIT((signed)(temp.G*br_100/100) , 0 , ((1<<8)-1));
+    temp.B = RH_LIMIT((signed)(temp.B*br_100/100) , 0 , ((1<<8)-1));
 #endif
     *(p+y*width+x) = temp.data;
     return 0;
@@ -290,10 +290,10 @@ void       BLK_FUNC( Graph, set_penColor  )  (BLK_TYPE(Pixel) penColor    ){
     
 }
 void       BLK_FUNC( Graph, set_blurColor )  (size_t         size_0_65535 ){
-    GCFG.blur_size = __limit((unsigned int)(size_0_65535), 0U, 65535U);
+    GCFG.blur_size = RH_LIMIT((unsigned int)(size_0_65535), 0U, 65535U);
 }
 void       BLK_FUNC( Graph, set_blurBr    )  (size_t         br_100       ){
-    GCFG.blur_br_100 = __limit((unsigned int)(br_100), 0, 200);
+    GCFG.blur_br_100 = RH_LIMIT((unsigned int)(br_100), 0, 200);
 }
 
 BLK_TYPE(Pixel) BLK_FUNC( Graph, get_penColor ) (void){
@@ -334,10 +334,10 @@ E_Status_t BLK_FUNC( Graph, circle_raw      )    (int x ,int y ,int d ,        B
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -388,10 +388,10 @@ E_Status_t BLK_FUNC( Graph, circle_fill     )    (int x ,int y ,int d ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -456,10 +456,10 @@ E_Status_t BLK_FUNC( Graph, circle_edged    )    (int x ,int y ,int d ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-(d>>1)-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-(d>>1)-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+(d>>1)-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+(d>>1)+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -515,10 +515,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt1_raw )    (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -556,10 +556,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt2_raw )    (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -597,10 +597,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt3_raw )    (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -638,10 +638,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt4_raw )    (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -686,10 +686,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt1_fill )   (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -734,10 +734,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt2_fill )   (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -782,10 +782,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt3_fill )   (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -830,10 +830,10 @@ E_Status_t BLK_FUNC( Graph, circle_qrt4_fill )   (int x ,int y ,int r ,        B
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(y-r-1) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(x-r-1) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(y-r-1) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(x+r-1) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(y+r+1) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -972,10 +972,10 @@ E_Status_t BLK_FUNC( Graph, rect_fill    ) (int xs,int ys,int xe,int ye, BLK_TYP
         {
             bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
             if( blurCmd ){
-                GCFG.blur_area.xs                            = __limit( (signed)(xs) , 0 , (int)(pInfo->width ));
-                GCFG.blur_area.ys                            = __limit( (signed)(ys) , 0 , (int)(pInfo->height));
-                GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-                GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+                GCFG.blur_area.xs                            = RH_LIMIT( (signed)(xs) , 0 , (int)(pInfo->width ));
+                GCFG.blur_area.ys                            = RH_LIMIT( (signed)(ys) , 0 , (int)(pInfo->height));
+                GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+                GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
                 GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 while(1);
@@ -1016,10 +1016,10 @@ E_Status_t BLK_FUNC( Graph, rect_fill    ) (int xs,int ys,int xe,int ye, BLK_TYP
 E_Status_t BLK_FUNC( Graph, rect_edged   ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int loop = 0;
     if(method == kApplyPixel_blur){
-        GCFG.blur_area.xs                            = __limit( (signed)(xs) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(ys) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(xs) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(ys) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -1065,14 +1065,14 @@ E_Status_t BLK_FUNC( Graph, rect_edged   ) (int xs,int ys,int xe,int ye, BLK_TYP
  > 插入圆角长方形
 =====================================*/
 E_Status_t BLK_FUNC( Graph, rect_round_fill   ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    int r = __limit((signed)GCFG.penSize, 0, (__min((xe-xs), (ye-ys)))/2 );
+    int r = RH_LIMIT((signed)GCFG.penSize, 0, (RH_MIN((xe-xs), (ye-ys)))/2 );
     
     bool blurCmd = ( method == kApplyPixel_blur && GCFG.blur_tmp.pBuffer==NULL );
     if( blurCmd ){
-        GCFG.blur_area.xs                            = __limit( (signed)(xs) , 0 , (int)(pInfo->width ));
-        GCFG.blur_area.ys                            = __limit( (signed)(ys) , 0 , (int)(pInfo->height));
-        GCFG.blur_area.width  = GCFG.blur_tmp.width  = __limit( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
-        GCFG.blur_area.height = GCFG.blur_tmp.height = __limit( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
+        GCFG.blur_area.xs                            = RH_LIMIT( (signed)(xs) , 0 , (int)(pInfo->width ));
+        GCFG.blur_area.ys                            = RH_LIMIT( (signed)(ys) , 0 , (int)(pInfo->height));
+        GCFG.blur_area.width  = GCFG.blur_tmp.width  = RH_LIMIT( (signed)(xe) , 0 , (int)(pInfo->width )) - GCFG.blur_area.xs +1;
+        GCFG.blur_area.height = GCFG.blur_tmp.height = RH_LIMIT( (signed)(ye) , 0 , (int)(pInfo->height)) - GCFG.blur_area.ys +1;
         GCFG.blur_tmp.pBuffer = BLK_GRAPH_MALLOC( GCFG.blur_area.width*GCFG.blur_area.height*sizeof(BLK_TYPE(Pixel)) );
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -1107,7 +1107,7 @@ E_Status_t BLK_FUNC( Graph, rect_round_fill   ) (int xs,int ys,int xe,int ye, BL
  > 插入空心圆角长方形
 =====================================*/
 E_Status_t BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    int r = __limit((signed)GCFG.penSize, 0, (__min((xe-xs), (ye-ys)))/2 );
+    int r = RH_LIMIT((signed)GCFG.penSize, 0, (RH_MIN((xe-xs), (ye-ys)))/2 );
     
     BLK_FUNC( Graph, line_raw )(xs+r+1, ys    , xe-r-1, ys    , pInfo, method);
     BLK_FUNC( Graph, line_raw )(xs+r+1, ye    , xe-r-1, ye    , pInfo, method);
@@ -1126,10 +1126,10 @@ E_Status_t BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, B
  > 插入空心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_raw  ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    return BLK_FUNC(Graph,rect_raw )( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pInfo, method );
 }
     
@@ -1137,10 +1137,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_raw  ) (const __Area_t* area,        B
  > 插入实心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_fill ) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    return BLK_FUNC(Graph,rect_fill)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pInfo, method );
 }
     
@@ -1148,10 +1148,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_fill ) (const __Area_t* area,        B
  > 插入一个空心长发形,线宽随设定(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_edged) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    return BLK_FUNC(Graph,rect_edged)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                       __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                       RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                        pInfo, method );
 }
     
@@ -1159,10 +1159,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_edged) (const __Area_t* area,        B
  > 插入圆角长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_round) (const __Area_t* area,        BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    return BLK_FUNC(Graph,rect_round_fill)( __limit( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            __limit( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                            __limit( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            __limit( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             pInfo, method );
 }
     
@@ -1170,10 +1170,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_round) (const __Area_t* area,        B
  > 插入直线，线宽为1
 =====================================*/
 E_Status_t BLK_FUNC( Graph, line_raw     ) (int x1,int y1,int x2,int y2, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
-    int x_min = (int)(__min(x1,x2));
-    int x_max = (int)(__max(x1,x2));
-    int y_min = (int)(__min(y1,y2));
-    int y_max = (int)(__max(y1,y2));
+    int x_min = (int)(RH_MIN(x1,x2));
+    int x_max = (int)(RH_MAX(x1,x2));
+    int y_min = (int)(RH_MIN(y1,y2));
+    int y_max = (int)(RH_MAX(y1,y2));
     int delta_x    = (int)( x_max - x_min );
     int delta_y    = (int)( y_max - y_min );
     
@@ -1224,23 +1224,24 @@ E_Status_t BLK_FUNC( Graph, line_edged   ) (int x1,int y1,int x2,int y2, BLK_TYP
         while(1);
     }
     BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pInfo,method);
-    int dir_line = __Dir_Line(x1, y1, x2, y2);
+    
     
     if( GCFG.penSize > 1 ){
+        BLK_ENUM(Monotonicity) dir_line = BLK_FUNC( Math, dir_line )(x1, y1, x2, y2);
         switch(dir_line){
-            case 0:
+            case kBLK_Monotonicity_hor:
             {
-                int xs = __min(x1, x2);
-                int xe = __max(x1, x2);
-                int ys = __min(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
-                int ye = __max(y1, y2) + (int)(GCFG.penSize>>1);
+                int xs = RH_MIN(x1, x2);
+                int xe = RH_MAX(x1, x2);
+                int ys = RH_MIN(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                int ye = RH_MAX(y1, y2) + (int)(GCFG.penSize>>1);
                 BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
             }
                 break;
-            case 1:
-            case -1:
+            case kBLK_Monotonicity_inc:
+            case kBLK_Monotonicity_dec:
             {
                 int d = (int)(GCFG.penSize);
                 int r = d>>1;
@@ -1295,12 +1296,12 @@ E_Status_t BLK_FUNC( Graph, line_edged   ) (int x1,int y1,int x2,int y2, BLK_TYP
                 
             }
                 break;
-            case 65535:
+            case kBLK_Monotonicity_ver:
             {
-                int xs = __min(x1, x2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
-                int xe = __max(x1, x2) + (int)(GCFG.penSize>>1);
-                int ys = __min(y1, y2);
-                int ye = __max(y1, y2);
+                int xs = RH_MIN(x1, x2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                int xe = RH_MAX(x1, x2) + (int)(GCFG.penSize>>1);
+                int ys = RH_MIN(y1, y2);
+                int ye = RH_MAX(y1, y2);
                 BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
@@ -1321,16 +1322,16 @@ E_Status_t BLK_FUNC( Graph, line_edged   ) (int x1,int y1,int x2,int y2, BLK_TYP
 E_Status_t BLK_FUNC( Graph, line_sausage ) (int x1,int y1,int x2,int y2, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
 //    GCFG.penColor = 0x00;
     BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pInfo,method);
-    int dir_line = __Dir_Line(x1, y1, x2, y2);
+    int dir_line = BLK_FUNC( Math, dir_line )(x1, y1, x2, y2);
     
     if( GCFG.penSize > 1 ){
         switch(dir_line){
             case 0:
                 {
-                    int xs = __min(x1, x2);
-                    int xe = __max(x1, x2);
-                    int ys = __min(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
-                    int ye = __max(y1, y2) + (int)(GCFG.penSize>>1);
+                    int xs = RH_MIN(x1, x2);
+                    int xe = RH_MAX(x1, x2);
+                    int ys = RH_MIN(y1, y2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                    int ye = RH_MAX(y1, y2) + (int)(GCFG.penSize>>1);
                     BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
                     BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
                     BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
@@ -1423,10 +1424,10 @@ E_Status_t BLK_FUNC( Graph, line_sausage ) (int x1,int y1,int x2,int y2, BLK_TYP
             break;
             case 65535:
             {
-                int xs = __min(x1, x2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
-                int xe = __max(x1, x2) + (int)(GCFG.penSize>>1);
-                int ys = __min(y1, y2);
-                int ye = __max(y1, y2);
+                int xs = RH_MIN(x1, x2) - (int)(GCFG.penSize>>1) + (GCFG.penSize%2==0);
+                int xe = RH_MAX(x1, x2) + (int)(GCFG.penSize>>1);
+                int ys = RH_MIN(y1, y2);
+                int ye = RH_MAX(y1, y2);
                 BLK_FUNC( Graph, circle_fill )(x1, y1, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, circle_fill )(x2, y2, (int)GCFG.penSize, pInfo, method);
                 BLK_FUNC( Graph, rect_fill )(xs, ys, xe, ye, pInfo, method);
@@ -1451,35 +1452,26 @@ E_Status_t BLK_FUNC( Graph, line_fill    ) (int x1,int y1,int x2,int y2, BLK_TYP
 E_Status_t BLK_FUNC( Graph, quad_raw     ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
-    struct IntArray_t tmp;
- // 分析四边形正交化后的长与宽
-    tmp = __findMin_INT(tmp_y,4);
-    int top_y = tmp.value;
-    // int top_x = *((&x1)+((tmp.index)<<1));
-
-    tmp = __findMax_INT(tmp_y,4);
-    // int bottom_x = *((&x1)+((tmp.index)<<1));
-
-    tmp = __findMin_INT(tmp_x,4);
-    // int left_y = *((&y1)+((tmp.index)<<1));
-    int left_x = tmp.value;
-
-    tmp = __findMax_INT(tmp_x,4);
-    // int right_y = *((&y1)+((tmp.index)<<1));
-
- // 分析四边形的边框,任意两点组合去除对角线
+    
+    int ys;
+    BLK_FUNC(Array, min)(tmp_y,4,&ys,NULL);
+    
+    int xs;
+    BLK_FUNC(Array, min)(tmp_x,4,&xs,NULL);
+    
+    // 分析四边形的边框,任意两点组合去除对角线
     int x11 = x1;
     int y11 = y1;
     int x22,y22,x33,y33,x44,y44;
     
-    int tmp_P1P2 = __Point_toLine(x1,y1,x2,y2, x3,y3) + __Point_toLine(x1,y1,x2,y2, x4,y4);
-    int tmp_P1P3 = __Point_toLine(x1,y1,x3,y3, x2,y2) + __Point_toLine(x1,y1,x3,y3, x4,y4);
+    int tmp_P1P2 = BLK_FUNC( Math, pt_line     )(x1,y1,x2,y2, x3,y3) + BLK_FUNC( Math, pt_line     )(x1,y1,x2,y2, x4,y4);
+    int tmp_P1P3 = BLK_FUNC( Math, pt_line     )(x1,y1,x3,y3, x2,y2) + BLK_FUNC( Math, pt_line     )(x1,y1,x3,y3, x4,y4);
 
-    if(tmp_P1P2 == 0){
+    if(tmp_P1P2 == kBLK_PtPos_above + kBLK_PtPos_beneath){
         x22 = x3; y22 = y3;
         x33 = x2; y33 = y2;
         x44 = x4; y44 = y4;
-    }else if(tmp_P1P3 == 0){
+    }else if(tmp_P1P3 == kBLK_PtPos_above + kBLK_PtPos_beneath){
         x22 = x2; y22 = y2;
         x33 = x3; y33 = y3;
         x44 = x4; y44 = y4;
@@ -1488,13 +1480,13 @@ E_Status_t BLK_FUNC( Graph, quad_raw     ) (int x1,int y1,int x2,int y2,int x3,i
         x33 = x4; y33 = y4;
         x44 = x3; y44 = y3;
     }
-    BLK_FUNC( Graph, line_raw )( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x11 , y11 , x22 , y22 ,pInfo,method);
         
-    BLK_FUNC( Graph, line_raw )( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x22 , y22 , x33 , y33 ,pInfo,method);
 
-    BLK_FUNC( Graph, line_raw )( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x33 , y33 , x44 , y44 ,pInfo,method);
         
-    BLK_FUNC( Graph, line_raw )( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,pInfo,method);
+    BLK_FUNC( Graph, line_raw )( x44 , y44 , x11 , y11 ,pInfo,method);
     
     return MAKE_ENUM( kStatus_Success );
 }
@@ -1505,39 +1497,34 @@ E_Status_t BLK_FUNC( Graph, quad_raw     ) (int x1,int y1,int x2,int y2,int x3,i
 E_Status_t BLK_FUNC( Graph, quad_fill    ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4, BLK_TYPE(Canvas)* pInfo, BLK_ENUM(DrawMethod) method){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
-    struct IntArray_t tmp;
- // 分析四边形正交化后的长与宽
-    tmp = __findMin_INT(tmp_y,4);
-    int top_y = tmp.value;
-    // int top_x = *((&x1)+((tmp.index)<<1));
+    
+    int ys;
+    BLK_FUNC(Array, min)(tmp_y,4,&ys,NULL);
+    int ye;
+    BLK_FUNC(Array, max)(tmp_y,4,&ye,NULL);
+    
+    
+    int xs;
+    BLK_FUNC(Array, min)(tmp_x,4,&xs,NULL);
+    int xe;
+    BLK_FUNC(Array, max)(tmp_x,4,&xe,NULL);
+    
 
-    tmp = __findMax_INT(tmp_y,4);
-    int bottom_y = tmp.value;
-    // int bottom_x = *((&x1)+((tmp.index)<<1));
-
-    tmp = __findMin_INT(tmp_x,4);
-    // int left_y = *((&y1)+((tmp.index)<<1));
-    int left_x = tmp.value;
-
-    tmp = __findMax_INT(tmp_x,4);
-    // int right_y = *((&y1)+((tmp.index)<<1));
-    int right_x = tmp.value;
-
-    int area_width  = right_x  - left_x + 1;
-    int area_height = bottom_y - top_y  + 1;
+    int area_width  = xe  - xs + 1;
+    int area_height = ye - ys  + 1;
  // 分析四边形的边框,任意两点组合去除对角线
     int x11 = x1;
     int y11 = y1;
     int x22,y22,x33,y33,x44,y44;
     
-    int tmp_P1P2 = __Point_toLine(x1,y1,x2,y2, x3,y3) + __Point_toLine(x1,y1,x2,y2, x4,y4);
-    int tmp_P1P3 = __Point_toLine(x1,y1,x3,y3, x2,y2) + __Point_toLine(x1,y1,x3,y3, x4,y4);
+    int tmp_P1P2 = BLK_FUNC( Math, pt_line     )(x1,y1,x2,y2, x3,y3) + BLK_FUNC( Math, pt_line     )(x1,y1,x2,y2, x4,y4);
+    int tmp_P1P3 = BLK_FUNC( Math, pt_line     )(x1,y1,x3,y3, x2,y2) + BLK_FUNC( Math, pt_line     )(x1,y1,x3,y3, x4,y4);
 
-    if(tmp_P1P2 == 0){
+    if(tmp_P1P2 == kBLK_PtPos_beneath + kBLK_PtPos_above){
         x22 = x3; y22 = y3;
         x33 = x2; y33 = y2;
         x44 = x4; y44 = y4;
-    }else if(tmp_P1P3 == 0){
+    }else if(tmp_P1P3 == kBLK_PtPos_beneath+kBLK_PtPos_above){
         x22 = x2; y22 = y2;
         x33 = x3; y33 = y3;
         x44 = x4; y44 = y4;
@@ -1547,19 +1534,19 @@ E_Status_t BLK_FUNC( Graph, quad_fill    ) (int x1,int y1,int x2,int y2,int x3,i
         x44 = x3; y44 = y3;
     }
     // 创建临时空画布，大小取决于上述分析结果
-    BLK_TYPE(Pixel)* pBuffer = (BLK_TYPE(Pixel)*)calloc((area_height*area_width),sizeof(BLK_TYPE(Pixel)));
+    BLK_TYPE(Pixel)* pBuffer = (BLK_TYPE(Pixel)*)RH_CALLOC((area_height*area_width),sizeof(BLK_TYPE(Pixel)));
 
     // 绘制四边形边框，通过画线程序实现
-    BLK_TYPE(Canvas) pTmpInfo = {    .pBuffer = (void*)pBuffer    ,\
+    BLK_TYPE(Canvas) pTmpInfo = { .pBuffer = (void*)pBuffer    ,\
                                   .height  = area_height       ,\
                                   .width   = area_width        };
-    BLK_FUNC( Graph, line_raw )( x11-left_x , y11-top_y , x22-left_x , y22-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x11-xs , y11-ys , x22-xs , y22-ys ,&pTmpInfo,kApplyPixel_mark);
         
-    BLK_FUNC( Graph, line_raw )( x22-left_x , y22-top_y , x33-left_x , y33-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x22-xs , y22-ys , x33-xs , y33-ys ,&pTmpInfo,kApplyPixel_mark);
 
-    BLK_FUNC( Graph, line_raw )( x33-left_x , y33-top_y , x44-left_x , y44-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x33-xs , y33-ys , x44-xs , y44-ys ,&pTmpInfo,kApplyPixel_mark);
         
-    BLK_FUNC( Graph, line_raw )( x44-left_x , y44-top_y , x11-left_x , y11-top_y ,&pTmpInfo,kApplyPixel_mark);
+    BLK_FUNC( Graph, line_raw )( x44-xs , y44-ys , x11-xs , y11-ys ,&pTmpInfo,kApplyPixel_mark);
     
     // 从顶点开始，向下左右画点并搜寻,直到找到边线为止,随后填充
     for(int j = 0;j < area_height;j++){
@@ -1599,19 +1586,19 @@ E_Status_t BLK_FUNC( Graph, quad_fill    ) (int x1,int y1,int x2,int y2,int x3,i
         for( int i=0; i<area_width; i++){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             if( 0 != __BIT_GET( pBuffer[ area_width*(j>>3)+i ], j%8) )
-                ( *applyPixelMethod [method] )( i+left_x , j+top_y , GCFG.penColor, pInfo );
+                ( *applyPixelMethod [method] )( i+xs , j+ys , GCFG.penColor, pInfo );
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             BLK_GRAPH_ASSERT(0);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             if( 0 != pBuffer[ area_width*j+i ] )
-                ( *applyPixelMethod [method] )( i+left_x , j+top_y , GCFG.penColor, pInfo );
+                ( *applyPixelMethod [method] )( i+xs , j+ys , GCFG.penColor, pInfo );
 #else
   #error "[RH_graphic]: Unknown color type."
 #endif
         }
        
     }
-    free(pBuffer);
+    RH_FREE(pBuffer);
     return MAKE_ENUM( kStatus_Success );
 }
     
@@ -1711,6 +1698,8 @@ E_Status_t BLK_FUNC( Graph, capsule_fill ) (int xs,int ys,int xe,int ye, BLK_TYP
     }
     return MAKE_ENUM( kStatus_Success );
 }
+    
+    
     
     
 #ifdef __cplusplus

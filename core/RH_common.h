@@ -140,6 +140,10 @@ typedef struct __Range_t __Range_t;
 #ifndef M_ATAN_1_256
 #define M_ATAN_1_256  0.2238105003685                         /* arctan(1/256)  */
 #endif
+ 
+#ifndef M_MATH_SEED
+#define M_MATH_SEED   (0x3A97BFE0U)                           /* seed for random function */
+#endif
 
 
 typedef uint8_t                 u8;
@@ -187,28 +191,28 @@ typedef volatile uint64_t       vu64;
   #define __roll(a, lowerbound, upperbound)    (((a) > (upperbound)) ? lowerbound : (((a) < (lowerbound)) ? (upperbound) : (a) ))
 #endif
 
-#ifndef __limit
-  #define __limit(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
+#ifndef RH_LIMIT
+  #define RH_LIMIT(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
 #else
-  #error " '__limit' has been defined. "
+  #error " 'RH_LIMIT' has been defined. "
 #endif
 
-#ifndef __min
-  #define __min(a,b)                           (((a)<(b))?(a):(b))
+#ifndef RH_MIN
+  #define RH_MIN(a,b)                           (((a)<(b))?(a):(b))
 #else
   // #pragma message (" '__min' has been defined. ")
 #endif
 
-#ifndef __max
-  #define __max(a,b)                           (((a)>(b))?(a):(b))
+#ifndef RH_MAX
+  #define RH_MAX(a,b)                           (((a)>(b))?(a):(b))
 #else
   // #pragma message (" '__max' has been defined. ")
 #endif
 
-#ifndef __mid
-  #define __mid(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
+#ifndef RH_MID
+  #define RH_MID(a,b)                           (((a)<(b))?((a)+(((b)-(a)+1)>>1)):((b)+(((a)-(b)+1)>>1)) )
 #else
-  #error " '__mid' has been defined. "
+  #error " 'RH_MID' has been defined. "
 #endif
  
 #ifndef __exit
@@ -292,21 +296,21 @@ typedef volatile uint64_t       vu64;
  > DWORD --- 32  Bit
  =========================================================================================================*/
 
-#define __IN_BYTE   ( port )                 ( *((volatile uint8_t*  )(port)) )
-#define __IN_WORD   ( port )                 ( *((volatile uint16_t* )(port)) )
-#define __IN_DWORD  ( port )                 ( *((volatile uint32_t* )(port)) )
+#define RH_IN_BYTE   ( port )                 ( *((volatile uint8_t*  )(port)) )
+#define RH_IN_WORD   ( port )                 ( *((volatile uint16_t* )(port)) )
+#define RH_IN_DWORD  ( port )                 ( *((volatile uint32_t* )(port)) )
 
-#define __IN_8BIT   ( port )                 __IN_BYTE  ( port )
-#define __IN_16BIT  ( port )                 __IN_WORD  ( port )
-#define __IN_32BIT  ( port )                 __IN_DWORD ( port )
+#define RH_IN_8BIT   ( port )                 RH_IN_BYTE  ( port )
+#define RH_IN_16BIT  ( port )                 RH_IN_WORD  ( port )
+#define RH_IN_32BIT  ( port )                 RH_IN_DWORD ( port )
       
-#define __OUT_BYTE  ( port, val )            ( *((volatile uint8_t*  )(port)) = ((uint8_t )(val)) )
-#define __OUT_WORD  ( port, val )            ( *((volatile uint16_t* )(port)) = ((uint16_t)(val)) )
-#define __OUT_DWORD ( port, val )            ( *((volatile uint32_t* )(port)) = ((uint32_t)(val)) )
+#define RH_OUT_BYTE  ( port, val )            ( *((volatile uint8_t*  )(port)) = ((uint8_t )(val)) )
+#define RH_OUT_WORD  ( port, val )            ( *((volatile uint16_t* )(port)) = ((uint16_t)(val)) )
+#define RH_OUT_DWORD ( port, val )            ( *((volatile uint32_t* )(port)) = ((uint32_t)(val)) )
 
-#define __OUT_8BIT  ( port, val )            __OUT_BYTE  ( port, val )
-#define __OUT_16BIT ( port, val )            __OUT_WORD  ( port, val )
-#define __OUT_32BIT ( port, val )            __OUT_DWORD ( port, val )
+#define RH_OUT_8BIT  ( port, val )            RH_OUT_BYTE  ( port, val )
+#define RH_OUT_16BIT ( port, val )            RH_OUT_WORD  ( port, val )
+#define RH_OUT_32BIT ( port, val )            RH_OUT_DWORD ( port, val )
  
  
 /*=========================================================================================================
@@ -317,33 +321,33 @@ typedef volatile uint64_t       vu64;
  > SMP --- Smart Pi
  =========================================================================================================*/
 
-#define BLK_ENUM_MEMBER( name )              kBLK##name
-#define GLU_ENUM_MEMBER( name )              kGLU##name
-#define SMP_ENUM_MEMBER( name )              kSMP##name
+#define BLK_ENUM_MEMBER( name )              kBLK_##name
+#define GLU_ENUM_MEMBER( name )              kGLU_##name
+#define SMP_ENUM_MEMBER( name )              kSMP_##name
  
-#define BLK_GVAR( name )                     G_BLK##name
-#define GLU_GVAR( name )                     G_GLU##name
-#define SMP_GVAR( name )                     G_SMP##name
+#define BLK_GVAR( name )                     G_BLK_##name
+#define GLU_GVAR( name )                     G_GLU_##name
+#define SMP_GVAR( name )                     G_SMP_##name
 
 #define BLK_FUNC( class, method )            BLK_##class##_##method
 #define GLU_FUNC( class, method )            GLU_##class##_##method
 #define SMP_FUNC( class, method )            SMP_##class##_##method
  
-#define BLK_ENUM( enum )                     E_BLK##enum##_t
-#define GLU_ENUM( enum )                     E_GLU##enum##_t
-#define SMP_ENUM( enum )                     E_SMP##enum##_t
+#define BLK_ENUM( enum )                     E_BLK_##enum##_t
+#define GLU_ENUM( enum )                     E_GLU_##enum##_t
+#define SMP_ENUM( enum )                     E_SMP_##enum##_t
  
-#define BLK_SRCT( class )                    S_BLK##class##_t
-#define GLU_SRCT( class )                    S_GLU##class##_t
-#define SMP_SRCT( class )                    S_SMP##class##_t
+#define BLK_SRCT( class )                    S_BLK_##class##_t
+#define GLU_SRCT( class )                    S_GLU_##class##_t
+#define SMP_SRCT( class )                    S_SMP_##class##_t
  
-#define BLK_UION( union )                    U_BLK##union##_t
-#define GLU_UION( union )                    U_GLU##union##_t
-#define SMP_UION( union )                    U_SMP##union##_t
+#define BLK_UION( union )                    U_BLK_##union##_t
+#define GLU_UION( union )                    U_GLU_##union##_t
+#define SMP_UION( union )                    U_SMP_##union##_t
 
-#define BLK_TYPE( type )                     T_BLK##type##_t
-#define GLU_TYPE( type )                     T_GLU##type##_t
-#define SMP_TYPE( type )                     T_SMP##type##_t
+#define BLK_TYPE( type )                     T_BLK_##type##_t
+#define GLU_TYPE( type )                     T_GLU_##type##_t
+#define SMP_TYPE( type )                     T_SMP_##type##_t
  
 #if 0
 #error "Read the following tips and remove this error first."

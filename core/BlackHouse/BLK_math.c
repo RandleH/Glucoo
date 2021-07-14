@@ -3,7 +3,7 @@
 #include "BLK_math.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C" {}
 #endif
 /*===========================================================================================================================
  > Algebra Reference
@@ -34,6 +34,7 @@ long BLK_FUNC( Math, sqrt )(long x){
         return res;
     return (res+1);
 }
+
 /*========================================================================================================
  > DEC                        RAD                          TAN
  =========================================================================================================
@@ -73,7 +74,8 @@ const static uint16_t angle_dec_256[] = {
     1       
 };
 
-double BLK_cordic_tan(long dec){
+double        
+BLK_FUNC( Math, tan           )( long   dec ){
 
     long x = 0xffff;
     long y = 0;
@@ -101,7 +103,8 @@ double BLK_cordic_tan(long dec){
     return y/((double)(x));
 }
 
-double BLK_cordic_atan(long y,long x){
+double        
+BLK_FUNC( Math, atan          )( long   y, long   x ){
     
     __exitReturn( x==0 && y==0 ,    0 );
     __exitReturn( x==0 && y<0  ,  -90 );
@@ -136,23 +139,277 @@ double BLK_cordic_atan(long y,long x){
     return (angle_sum/256.0);
 }
       
-double BLK_FUNC( Math, sigmold )(double x){
+double        
+BLK_FUNC( Math, sigmold       )( double x ){
     return (double)(1.0/(1+exp(-x)));
 }
 
-double __gussian(long x,long __miu,double __sigma){
-// Same Effect but slower,only suitable when __sigma is a value of double.
+long          
+BLK_FUNC( Math, factorial     )( long   x ){ 
+    // [!] Limitation: x should be smaller than 20
+    __exitReturn(x<0, -1);
+    
+    long res = 1;
+    while(--x){
+        res*=(x+1);
+    }
+    return res;
+}
+      
+long          
+BLK_FUNC( Math, fibonacci     )( long   n ){
+    __exitReturn(n<0, -1);
+    
+    if(n==0)
+        return 1;
+    long res = 0;
+    long fnm1 = 1,fnm2 = 0;
+    for (int i=2; i<=n+1; i++) {
+        res  = fnm1+fnm2;
+        fnm2 = fnm1;
+        fnm1 = res;
+    }
+    return res;
+}
+    
+unsigned long 
+BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
+    __exitReturn( r>n , 0 );
+    #if 0
+    { // 初级算法
+        unsigned long son = 1, mum = 1;
+        for(unsigned long i=0; i<r;  ){
+            son*=(n-i);
+            mum*=(++i);
+        }
+        return (unsigned long)(son/mum);
+    }
+    #else
+    { // 进阶算法
+        uint16_t *temp = alloca(r*sizeof(uint16_t));
+        for( uint16_t i=0; i<r; i++ ){
+            temp[i] = (n-r+i+1);
+        }
+        
+        unsigned long mum=1, son=1;
+        // 先进行约分, 否则被除数太大
+        for( int32_t i=(int32_t)(r-1); i>=0; i-- ){
+            int32_t j=(int32_t)(r-1);
+            
+            for( ; j>=0; j-- ){
+                if( temp[j]%(i+1)==0 ){
+                    temp[j]/=(i+1);
+                    break;
+                }
+            }
+            if( j<0 )
+                mum *= i+1;
+        }
+        
+        for( uint16_t i=0; i<r; i++ ){
+            son*=temp[i];
+        }
+        
+        return (unsigned long)(son/mum);
+    }
+    #endif
+}
+    
+int           
+BLK_FUNC( Math, rand          )( void    ){
+    static uint32_t a = (uint32_t)M_MATH_SEED; /*Seed*/
+
+    /*Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs"*/
+    uint32_t x = a;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    a = x;
+
+    return (int)a;
+}
+    
+int           
+BLK_FUNC( Math, rand_in       )( int min, int max ){
+    return ( (unsigned)BLK_FUNC(Math, rand)() % (max - min + 1)) + min;
+}
+
+BLK_ENUM(Monotonicity)
+BLK_FUNC( Math, dir_line      )( int x1,int y1,int x2,int y2 ){
+    if(x1==x2)
+        return kBLK_Monotonicity_ver;
+    if(y1==y2)
+        return kBLK_Monotonicity_hor;
+
+    return ( (((x2-x1)<0)&&((y2-y1)<0)) || (((x2-x1)>0)&&((y2-y1)>0)) )?(kBLK_Monotonicity_inc):(kBLK_Monotonicity_dec);
+}
+
+
+BLK_ENUM(PtPos)   
+BLK_FUNC( Math, pt_line       )( int x1,int y1,int x2,int y2,               int px,int py ){
+    int param_1 = (x2>x1)?( (x2-x1)*py ):( (x1-x2)*py );
+    int param_2 = (x2>x1)?( (y2-y1)*px+(y2*(x2-x1)-x2*(y2-y1)) ):( (y1-y2)*px+(y2*(x1-x2)-x2*(y1-y2)) );
+
+    if(param_1 > param_2)
+        return kBLK_PtPos_above;
+    else if(param_1 < param_2)
+        return kBLK_PtPos_beneath;
+    else
+        return kBLK_PtPos_righton;
+}
+    
+
+long              
+BLK_FUNC( Math, area_triangle )( int x1,int y1,int x2,int y2,int x3,int y3 ){
+    
+   /* 
+     可用的测试用例:
+     Params                  | Answers
+    ========================================
+     ( 20,50, -40,25,  15, 15)  = 987.5
+     (-40,25,  20,50,  15, 15)  = ...
+     (-40,25,  15,15,  20, 50)  = ...
+     (-40,25,  15,15, -20,-60)  = 2237.5
+     (-40,25, -20,-60, 15, 15)  = ...
+     (-400,25, -200,-60, 150, 15)
+   */
+    
+    int type = ((x1<x2)<<2) | ((x1<x3)<<1) | ((x2<x3)<<0);
+    int area = -1;
+    switch(type){
+        case 0: // x1 >= x2 >= x3
+            area = __abs(( (y2+y3)*(x2-x3)+(y1+y2)*(x1-x2)-(y1+y3)*(x1-x3) ));
+            break;
+        case 1: // x1 >= x3 >= x2
+            area = __abs(( (y3+y2)*(x3-x2)+(y1+y3)*(x1-x3)-(y1+y2)*(x1-x2) ));
+            break;
+        default:// Should not be runned here.
+        case 2: // impossible
+            RH_ASSERT(0);
+        case 3: // x3 >  x1 >= x2
+            area = __abs(( (y1+y2)*(x1-x2)+(y3+y1)*(x3-x1)-(y3+y2)*(x3-x2) ));
+            break;
+        case 4: // x2 >  x1 >= x3
+            area = __abs(( (y1+y3)*(x1-x3)+(y2+y1)*(x2-x1)-(y2+y3)*(x2-x3) ));
+            break;
+        case 5: // x2 >  x1 >= x3
+            area = __abs(( (y1+y3)*(x1-x3)+(y2+y1)*(x2-x1)-(y2+y3)*(x2-x3) ));
+            break;
+        case 6: // x2 >  x3 >  x1
+            area = __abs(( (y3+y1)*(x3-x1)+(y2+y3)*(x2-x3)-(y2+y1)*(x2-x1) ));
+            break;
+        case 7: // x3 >  x2 >  x1
+            area = __abs(( (y2+y1)*(x2-x1)+(y3+y2)*(x3-x2)-(y3+y1)*(x3-x1) ));
+            break;
+    }
+
+    return (int)((area>>1) + (area&0x00));    
+}
+
+long              
+BLK_FUNC( Math, area_rectangular )(int x1,int y1,int x2,int y2){
+    return __abs((x2-x1)*(y2-y1));
+}
+
+BLK_ENUM(PtPos)   
+BLK_FUNC( Math, pt_triangle   )( int x1,int y1,int x2,int y2,int x3,int y3, int px,int py ){
+ #if 0
+    // Condition:
+    // P = A + u*(CA) + v*(BA)
+    // u >= 0 && v >= 0 && u+v <= 1
+    
+    // Any point can be represented by: (PA) = u*(CA) + v*(BA)
+    //
+    // When both multiply by (CA) and (BA):
+    // (PA)·(CA) = u*[(CA)·(CA)] + v*[(BA)·(CA)]
+    // (PA)·(BA) = u*[(BA)·(CA)] + v*[(BA)·(BA)]
+    
+    // Then:
+    //         [(BA)·(BA)]*[(PA)·(CA)] - [(BA)·(CA)]*[(PA)·(BA)]
+    // u = ---------------------------------------------------------
+    //         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
+    
+    //         [(CA)·(CA)]*[(PA)·(BA)] - [(CA)·(CA)]*[(PA)·(CA)]
+    // v = ---------------------------------------------------------
+    //         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
+    
+    // Assume A = (x1,y1) | B = (x2,y2) | C = (x3,y3) :
+    struct BLK_SRCT(Vector2D) v0 = {.x = x3-x1,.y = y3-y1};
+    struct BLK_SRCT(Vector2D) v1 = {.x = x2-x1,.y = y2-y1};
+    struct BLK_SRCT(Vector2D) v2 = {.x = px-x1,.y = py-y1};
+
+    int v00 = BLK_FUNC(Vector2D, dot)(&v0,&v0);
+    int v01 = BLK_FUNC(Vector2D, dot)(&v0,&v1);
+    int v02 = BLK_FUNC(Vector2D, dot)(&v0,&v2);
+    int v11 = BLK_FUNC(Vector2D, dot)(&v1,&v1);
+    int v12 = BLK_FUNC(Vector2D, dot)(&v1,&v2);
+
+    int u = v11*v02-v01*v12;
+    int v = v00*v12-v01*v02;
+    int d = v00*v11-v01*v01;
+    if(u<0 || v<0)
+        return -1;
+    else if(u==0 || v==0)
+        return 0;
+
+    if(u+v > d)
+        return -1;
+    else if(u+v < d)
+        return 1;
+    else
+        return 0;
+ #endif
+
+ #if 0 // Wrong
+    int signOfTrig = (x2 - x1)*(y3 - y1) - (y2 - y1)*(x3 - x1);
+    int signOfAB   = (x2 - x1)*(py - y1) - (y2 - y1)*(px - x1);
+    int signOfCA   = (x1 - x3)*(py - y3) - (y1 - y3)*(px - x3);
+    int signOfBC   = (x3 - x2)*(py - y3) - (y3 - y2)*(px - x2);
+  
+    bool d1 = (signOfAB<0&&signOfTrig<0) || (signOfAB>0&&signOfTrig>0);
+    bool d2 = (signOfCA<0&&signOfTrig<0) || (signOfCA>0&&signOfTrig>0);
+    bool d3 = (signOfBC<0&&signOfTrig<0) || (signOfBC>0&&signOfTrig>0);
+    
+    return d1 && d2 && d3;
+    
+ #endif
+ #if 1
+    long p_area = BLK_FUNC(Math,area_triangle)( px,py, x1,y1, x2,y2  ) + \
+                  BLK_FUNC(Math,area_triangle)( px,py, x2,y2, x3,y3  ) + \
+                  BLK_FUNC(Math,area_triangle)( px,py, x1,y1, x3,y3  );
+    long t_area = BLK_FUNC(Math,area_triangle)( x1,y1, x2,y2, x3,y3  );
+    
+    if( p_area > t_area )
+        return kBLK_PtPos_outside;
+    else
+        return kBLK_PtPos_inside;
+    
+ #endif
+}
+
+
+double
+BLK_FUNC( Gussian, func_1D    )( long x,long __miu,double __sigma ){
+    // Same Effect but slower,only suitable when __sigma is a value of double.
+    #if 1
     return ((__sigma==0)?(0):(double)((M_2_SQRTPI/((__sigma*2)*(M_SQRT2)))*exp(-(x-__miu)*(x-__miu)/(double)((__sigma*__sigma)*2))));
-//    return ((__sigma==0)?(0):(double)((M_2_SQRTPI/((__sigma<<1)*(M_SQRT2)))*exp(-(x-__miu)*(x-__miu)/(double)((__sigma*__sigma)<<1))));
+    #else
+    return ((__sigma==0)?(0):(double)((M_2_SQRTPI/((__sigma<<1)*(M_SQRT2)))*exp(-(x-__miu)*(x-__miu)/(double)((__sigma*__sigma)<<1))));
+    #endif
 }
 
-double __gussian2D(long x,long y,double __sigma){
-// Same Effect but slower,only suitable when __sigma is a value of double.
+double
+BLK_FUNC( Gussian, func_2D    )( long x,long y,double __sigma ){
+    // Same Effect but slower,only suitable when __sigma is a value of double.
+    #if 1
     return ((__sigma==0)?(0):((double)((1/(2*M_PI*__sigma*__sigma))*exp(-((x*x)+(y*y))/(double)((__sigma*__sigma)*2)))));
-//    return ((__sigma==0)?(0):((double)((1/(M_PI*__sigma*(__sigma<<1)))*exp(-((x*x)+(y*y))/(double)((__sigma*__sigma<<1))))));
+    #else
+    return ((__sigma==0)?(0):((double)((1/(M_PI*__sigma*(__sigma<<1)))*exp(-((x*x)+(y*y))/(double)((__sigma*__sigma<<1))))));
+    #endif
 }
 
-__Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel){
+BLK_SRCT(Kernel)*
+BLK_FUNC( Gussian, kernel     )( double __sigma,size_t order,BLK_SRCT(Kernel)* pKernel ){
     if( pKernel == NULL || pKernel->pBuffer == NULL ){
         return NULL;
     }
@@ -166,13 +423,13 @@ __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel){
     
     size_t half_order = ((order-1)>>1); // The index of the middle element. eg:  x x x ^ x x x ,which is "3".
     uint16_t* pCenter = pKernel->pBuffer + (half_order * order) + half_order;
-    double coe        = 1.0/__gussian2D(half_order,half_order,__sigma); // Make sure every element is larger than 0.
+    double coe        = 1.0/BLK_FUNC( Gussian, func_2D )(half_order,half_order,__sigma); // Make sure every element is larger than 0.
     
     pKernel->order = order;
     pKernel->sum = 0;
     for(int x=0;x<=half_order;x++){
         for(int y=0;y<=x;y++){
-            uint16_t temp = lround(coe*__gussian2D(x,y,__sigma));
+            uint16_t temp = lround(coe*BLK_FUNC( Gussian, func_2D )(x,y,__sigma));
             *(pCenter + (y*order) + x) = temp;
             *(pCenter - (y*order) + x) = temp;
             *(pCenter + (y*order) - x) = temp;
@@ -193,216 +450,91 @@ __Kernel_t* __gussianKernel(double __sigma,size_t order,__Kernel_t* pKernel){
     return pKernel;
 }
       
-long __pascal_triangle(long row, long col){
+long
+BLK_FUNC( Pascal, triangle    )( long row, long col ){
+
+    /*        
+
+                1 --------------- row = 0
+              1   1 ------------- row = 1    
+            1   2   1 ----------- row = 2
+          1   3   3   1 --------- row = 3
+        1   4   6   4   1 ------- row = 4
+        |      ...      |
+        |               |
+        |               |
+        |               |
+    col = 0         col = 4
+
+    */
+
+
     __exitReturn( col>row || col<0 || row<0 , -1 );
-    return (__pascal_triangle_row(row, NULL))[col];
-}
-    
-long* __pascal_triangle_row( long row , size_t* returnSize ){
-    __exitReturn( row<0 , NULL );
-    if( returnSize )
-        *returnSize = row+1;
-    
-    struct __Link{
-        struct __Link* pNext;
-        long*           data;
-        size_t         row;
-    };
-    typedef struct __Link __Link;
-    static struct __Link Head = {
-        .pNext = NULL ,
-        .data  = NULL ,
-        .row   = 0
-    };
-    if( Head.data == NULL ){
-        Head.data = (long*)malloc(sizeof(long));
-        Head.data[0] = 1;
-    }
-
-    __Link* pIter = &Head;
-    __Link* pOpti = &Head;
-    __Link* pLast = &Head;
-    
-    long dis_row_min    = __abs(row - pIter->row);
-    bool sgn            = (row > pIter->row);     // 标志,判断距离目标最近的那一行位于目标的上方还是下方 1 = 上方; 0 = 下方;
-    do{
-        // 行差越小，需要迭代的次数就越少
-        if( __abs(row-pIter->row) < dis_row_min ){
-            sgn = (row > pIter->row);
-            dis_row_min = row - pIter->row;
-            pOpti = pIter;
-        }
-        // 如果就是那一行，即行差为0，则直接返回值
-        if( pIter->row==row ){
-            return ( pIter->data );
-        }
-        // 继续迭代寻找
-        pLast = pIter;
-        pIter = pIter->pNext;
-   
-    }while( pIter != NULL );
-    
-    // 没有找到那一行，则从最接近那一行（pOpti->row）的数值开始向sgn方向计算，并记录之
-    // 此时 pOpti 代表距离最近的那一行数据，pLast为链表最后节点末尾。
-    __Link*  pasc_link = pLast;
-    long*    last_data = pOpti->data;                                      // 从距离目标最近的那一行开始
-    if( sgn == true ){ // =================================================// 距离最近的那一行位于目标上方
-        long   pasc_size = (pOpti->row)+2;                                 // 该行的元素个数为上一行行号+2
-        
-        while( dis_row_min-- ){
-            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
-            pasc_link           = pasc_link->pNext;
-            
-
-            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
-            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
-            pasc_link->pNext    = NULL;
-            
-            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
-            for( int i=1;i<=(pasc_size-1-i);i++ ){
-                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] + last_data[i-1];
-            }
-
-            last_data           = pasc_link->data;
-            pasc_size           = pasc_link->row+2;
-        }
-    }else{ // =============================================================// 距离最近的那一行位于目标下方
-        long   pasc_size = (pOpti->row)-2;                                 // 该行的元素个数为下一行行号-2
-        
-        while( dis_row_min-- ){
-            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
-            pasc_link           = pasc_link->pNext;
-            
-            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
-            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
-            pasc_link->pNext    = NULL;
-            
-            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
-            for( int i=1;i<=(pasc_size-1-i);i++ ){
-                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] - pasc_link->data[i-1];
-            }
-            
-            last_data           = pasc_link->data;
-            pasc_size           = pasc_link->row-2;
-        }
-    }
-
-    return pasc_link->data;
+    return BLK_FUNC(Math,combinatorial)(row,col);
 }
       
-inline long __step_mul(long x){ // [!] Limitation: x should be smaller than 20
-    __exitReturn(x<0, -1);
-    
-    long res = 1;
-    while(--x){
-        res*=(x+1);
+bool
+BLK_FUNC( Mandelbrot, set     )( float complex c, size_t nitersLimit ){
+    __exitReturn( cabs(c)<= 0.25, true  );
+    __exitReturn( cabs(c) > 2.0 , false );
+
+    float complex z = 0 + 0*I;
+
+    while( nitersLimit-- && cabs(z)<=2 ){
+        z*=z;
+        z+=c;
     }
-    return res;
+    
+    return (nitersLimit == 0)?true:false;
 }
-      
-long __fibonacci(long n){
-    __exitReturn(n<0, -1);
+
+#include "BLK_image.h"
+void 
+BLK_FUNC( Mandelbrot, image   )( float complex center, int img_w, int img_h, float scale_x, float scale_y, void* buf, void (*func)(int x,int y,uint32_t nIter, void* buf) ){
+    uint32_t nitersLimit = 0xff;
+
+    float x0 = creal(center);
+    float y0 = cimag(center);
+
     
-    if(n==0)
-        return 1;
-    long res = 0;
-    long fnm1 = 1,fnm2 = 0;
-    for (int i=2; i<=n+1; i++) {
-        res  = fnm1+fnm2;
-        fnm2 = fnm1;
-        fnm1 = res;
-    }
-    return res;
-}
-    
-unsigned long BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
-    __exitReturn( r>n , 0 );
-#if 0
-    { // 初级算法
-        unsigned long son = 1, mum = 1;
-        for(unsigned long i=0; i<r;  ){
-            son*=(n-i);
-            mum*=(++i);
-        }
-        return (unsigned long)(son/mum);
-    }
-#else
-    { // 进阶算法
-        uint16_t *temp = alloca(r*sizeof(uint16_t));
-        for( uint16_t i=0; i<r; i++ ){
-            temp[i] = (n-r+i+1);
-        }
-        
-        unsigned long mum=1, son=1;
-        for( int32_t i=(int32_t)(r-1); i>=0; i-- ){
-            int32_t j=(int32_t)(r-1);
+    for( int y=0; y<img_h; y++){
+        for ( int x=0; x<img_w; x++){
+           
+            double px = (x-(img_w>>1))*scale_x-x0;
+            double py = (y-(img_h>>1))*scale_y-y0;
             
-            for( ; j>=0; j-- ){
-                if( temp[j]%(i+1)==0 ){
-                    temp[j]/=(i+1);
-                    break;
+            if(x == 533 && y==462){
+                printf("%.22f,%.22f\n",px,py);
+            }
+            float complex c = px + py*I;
+
+            // 检查是否在集合内
+            {
+                float complex z      = 0 + 0*I;
+                uint32_t      niters = nitersLimit;
+                while( niters-- && cabs(z)<=2 ){
+                    z*=z;
+                    z+=c;
+                }
+                if(nitersLimit == 0){
+                    (*func)(x,y,     -1, buf);
+                }else{
+                    (*func)(x,y, nitersLimit-niters, buf);
                 }
             }
             
-            if( j<0 )
-                mum *= i+1;
-            
         }
-        
-        for( uint16_t i=0; i<r; i++ ){
-            son*=temp[i];
-        }
-        
-        return (unsigned long)(son/mum);
     }
-#endif
-}
+
+    BLK_SRCT(Img888)* dst = (BLK_SRCT(Img888)*)buf;
+
+    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->R = 0x00;
+    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->G = 0x00;
+    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->B = 0x00;
+
     
-int  BLK_FUNC( Math, rand          )   (void    ){
-    static uint32_t a = 0x37A4BD2F; /*Seed*/
-
-    /*Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs"*/
-    uint32_t x = a;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    a = x;
-
-    return (int)a;
-}
-    
-int BLK_FUNC( Math, rand_in )( int min, int max ){
-    return ( BLK_FUNC(Math, rand)() % (max - min + 1)) + min;
 }
 
-/*===========================================================================================================================
- > Quantity Reference
-============================================================================================================================*/
-struct IntArray_t __findMax_INT(const int* pValue,size_t num){
-    int max = *pValue;
-    int cnt = 0;
-    while(num--){
-        if(*pValue > max)
-            max = *pValue;
-        pValue++;
-        cnt++;
-    }
-    struct IntArray_t result = {.index = cnt,.value = max};
-    return result;
-}
-
-struct IntArray_t __findMin_INT(const int* pValue,size_t num){
-    int min = *pValue;
-    int cnt = 0;
-    while(num--){
-        if(*pValue < min)
-            min = *pValue;
-        pValue++;
-        cnt++;
-    }
-    struct IntArray_t result = {.index = cnt,.value = min};
-    return result;
-}
     
 /*===========================================================================================================================
  > Geometry Reference
@@ -429,135 +561,49 @@ Point3D_t __findPoint_VectorProportion (const Point3D_t*  A,const Point3D_t*  B,
     return result;
 }
 
-int __Vect2D_Dot(const Vector2D_t* vect1,const Vector2D_t* vect2){
+int
+BLK_FUNC( Vector2D, dot       )( const BLK_SRCT(Vector2D)* vect1,const BLK_SRCT(Vector2D)* vect2){
     return (int)((vect1->x*vect2->x)+(vect1->y*vect2->y));
 }
 
-int __Vect3D_Dot(const Vector3D_t* vect1,const Vector3D_t* vect2){
+int
+BLK_FUNC( Vector3D, dot       )( const BLK_SRCT(Vector3D)* vect1,const BLK_SRCT(Vector3D)* vect2){
     return (int)((vect1->x*vect2->x)+(vect1->y*vect2->y)+(vect1->z*vect2->z));
 }
 
-Vector3D_t __Vect3D_Cross(const Vector3D_t* vect1,const Vector3D_t* vect2){
-    Vector3D_t vecResult = {.x = ( vect1->y*vect2->z - vect1->z*vect2->y),\
+BLK_SRCT(Vector3D)
+BLK_FUNC( Vector3D, cross     )( const BLK_SRCT(Vector3D)* vect1,const BLK_SRCT(Vector3D)* vect2){
+    BLK_SRCT(Vector3D) vecResult = {.x = ( vect1->y*vect2->z - vect1->z*vect2->y),\
                             .y = ( vect1->z*vect2->x - vect1->x*vect2->z),\
                             .z = ( vect1->x*vect2->y - vect1->y*vect2->x)};
     return vecResult;
 }
 
- // -1    = Line is negative.
- //  0    = Line is horizontal.
- //  1    = Line is positive.
- // 65535 = Line is vertical.
-int __Dir_Line(int xs,int ys,int xe,int ye){
-    if(xs==xe)
-        return 65535;
-    if(ys==ye)
-        return 0;
-
-    return ((xe-xs)*(ye-ys)>0)?(1):(-1);
-}
-
- // -1 = (px,py) is below the line.
- //  0 = (px,py) is at the line.
- //  1 = (px,py) is above the line.
-int __Point_toLine(int xs,int ys,int xe,int ye,int px,int py){
-    int param_1 = (xe>xs)?( (xe-xs)*py ):( (xs-xe)*py );
-    int param_2 = (xe>xs)?( (ye-ys)*px+(ye*(xe-xs)-xe*(ye-ys)) ):( (ys-ye)*px+(ye*(xs-xe)-xe*(ys-ye)) );
-
-    if(param_1 > param_2)
-        return 1;
-    else if(param_1 < param_2)
-        return -1;
-    else
-        return 0;
-}
-
- // -1 = (px,py) is outside the triangle
- //  0 = (px,py) is at the edge of triangle
- //  1 = (px,py) is inside the triangle
-int __Point_toTriangle(int x1,int y1,int x2,int y2,int x3,int y3,int px,int py){
-    // Condition:
-    // P = A + u*(CA) + v*(BA)
-    // u >= 0 && v >= 0 && u+v <= 1
-    
-    // Any point can be represented by: (PA) = u*(CA) + v*(BA)
-    //
-    // When both multiply by (CA) and (BA):
-    // (PA)·(CA) = u*[(CA)·(CA)] + v*[(BA)·(CA)]
-    // (PA)·(BA) = u*[(BA)·(CA)] + v*[(BA)·(BA)]
-    
-    // Then:
-    //         [(BA)·(BA)]*[(PA)·(CA)] - [(BA)·(CA)]*[(PA)·(BA)]
-    // u = ---------------------------------------------------------
-    //         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
-    
-    //         [(CA)·(CA)]*[(PA)·(BA)] - [(CA)·(CA)]*[(PA)·(CA)]
-    // v = ---------------------------------------------------------
-    //         [(CA)·(CA)]*[(BA)·(BA)] - [(CA)·(BA)]*[(BA)·(CA)]
-    
-    // Assume A = (x1,y1) | B = (x2,y2) | C = (x3,y3) :
-    struct Vector2D_t v0 = {.x = x3-x1,.y = y3-y1};
-    struct Vector2D_t v1 = {.x = x2-x1,.y = y2-y1};
-    struct Vector2D_t v2 = {.x = px-x1,.y = py-y1};
-
-    int v00 = __Vect2D_Dot(&v0,&v0);
-    int v01 = __Vect2D_Dot(&v0,&v1);
-    int v02 = __Vect2D_Dot(&v0,&v2);
-    int v11 = __Vect2D_Dot(&v1,&v1);
-    int v12 = __Vect2D_Dot(&v1,&v2);
-
-    int u = v11*v02-v01*v12;
-    int v = v00*v12-v01*v02;
-    int d = v00*v11-v01*v01;
-    if(u<0 || v<0)
-        return -1;
-    else if(u==0 || v==0)
-        return 0;
-
-    if(u+v > d)
-        return -1;
-    else if(u+v < d)
-        return 1;
-    else
-        return 0;
-}
-
- // -1 = (px,py) is outside the circle
- //  0 = (px,py) is at the edge of circle
- //  1 = (px,py) is inside the circle
-int __Point_toCircle(int xc,int yc,int radius,int px,int py){
-    int key = (xc-px)*(xc-px)+(yc-py)*(yc-py);
-    int r_2 = radius*radius;
+BLK_ENUM(PtPos)
+BLK_FUNC( Math, pt_citcle     )( int xc,int yc,int r,                       int px,int py){
+    long key = (xc-px)*(xc-px)+(yc-py)*(yc-py);
+    long r_2 = r*r;
     if(key > r_2)
-        return -1;
+        return kBLK_PtPos_outside;
     else if(key < r_2)
-        return 1;
+        return kBLK_PtPos_inside;
     else
-        return 0;
+        return kBLK_PtPos_righton;
 }
 
-    
- // 0 = origin
- // 1 = Cord 1
- // 2 = Cord 2
- // 3 = Cord 3
- // 4 = Cord 4
- // 5 = Axis +X
- // 6 = Axis -X
- // 7 = Axis +Y
- // 8 = Axis -Y
-int __Point_toCord2D(int px,int py){
-    if( px==0&&py==0 ) return 0;
+BLK_ENUM(PtPos)
+BLK_FUNC( Math, pt_cord2D     )( int px,int py){
+    if( px==0&&py==0 ) return kBLK_PtPos_at_orgin;
     if( py==0 ){
-        if( px>0 )  return 5;
-        else        return 6;
+        if( px>0 )  return kBLK_PtPos_at_axisXp;
+        else        return kBLK_PtPos_at_axisXm;
     } 
     if( px==0 ){
-        if( py>0 )  return 7;
-        else        return 8;
+        if( py>0 )  return kBLK_PtPos_at_axisYp;
+        else        return kBLK_PtPos_at_axisYm;
     }
     uint8_t key = ((py<0)<<1)|(px<0);
-    return (int)(((key>>1)^key) +1);
+    return (BLK_ENUM(PtPos))(((key>>1)^key) +4);
 }
     
 #ifdef __cplusplus

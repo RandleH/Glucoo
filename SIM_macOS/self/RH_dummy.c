@@ -908,4 +908,423 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_leopard )( BLK_SRCT(Img888)* dst ){
     return dst;
 }
 
+
+// 给定颜色链 居中画竖直色块
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+    
+    const int xs   = (int)dst->width>>2;
+    const int xe   = (int)dst->width - xs +1;
+    const int xl   = xe - xs + 1;
+    
+    // 获取色条的起始横坐标
+    int* x_rect = alloca( (size+1)*sizeof(int) );
+    memset(x_rect, 0, size*sizeof(int));
+    x_rect[0]    = xs;
+    x_rect[size] = xe;
+    
+    {
+        int m   = (int) xl%size;
+        int k   = (int) size - m;
+        int len = (int) xl/size;
+        
+        for( int *p  = x_rect; m||k; p++ ){
+            if( p == x_rect){
+                *p = xs;
+                k--;
+                continue;
+            }else{
+                *p = *(p-1);
+            }
+            
+            if(k){
+                *p += len;
+                k--;
+            }else{
+                *p += len +1;
+                m--;
+            }
+            
+        }
+    }
+    
+    {
+        int ys = (int)dst->height/5;
+        int ye = (int)dst->height*4/5;
+        const BLK_TYPE(Pixel888)* pIterColor = colors;
+        for(int i=0; i<size; i++,pIterColor++){
+            for(int x = x_rect[i];x <= x_rect[i+1];x++)
+                dst->pBuffer[ ys*dst->width + x].data = *pIterColor;
+            for(int y = ys+1;y <= ye;y++)
+                memmove( (dst->pBuffer + y  * dst->width + x_rect[i]),\
+                         (dst->pBuffer + ys * dst->width + x_rect[i]),\
+                       ( (x_rect[i+1]-x_rect[i]+1)*sizeof(BLK_TYPE(Pixel888))) );
+        }
+    }
+    
+    return dst;
+}
+
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png )    (const char* __restrict__ path){
+#pragma pack(1)
+struct {
+//    uint32_t chunk_data_lenth;
+//    uint32_t chunk_type_code;
+    uint32_t width;                 /* __SWAP_DWORD */
+    uint32_t height;                /* __SWAP_DWORD */
+
+    uint8_t  bit_depth;
+    uint8_t  color_type;
+    uint8_t  compress_method;
+    uint8_t  filter_method;
+    uint8_t  interlace_method;
+    //...//
+    
+//    uint32_t CRC;
+}IHDR;
+    
+    
+    FILE*   png;
+    
+    BLK_SRCT(Img888)* pIMG = RH_MALLOC(sizeof(BLK_SRCT(Img888)));
+#ifdef RH_DEBUG
+    RH_ASSERT( pIMG );
+#endif
+    pIMG->height  = 0;
+    pIMG->width   = 0;
+    pIMG->pBuffer = NULL;
+    
+    // 打开文件
+    png = fopen(path, "r");
+#ifdef RH_DEBUG
+    RH_ASSERT( png );
+#endif
+    fseek(png,0L,SEEK_END);
+    size_t  f_size = ftell(png);
+    fseek(png,0L,SEEK_SET);
+    
+    // 检查PNG固定签名
+#ifdef RH_DEBUG
+    const uint8_t pngHead[8]     = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+    uint8_t       pngHeadRead[8] = {0};
+    for( int8_t i=0; i<8; i++ ){
+        fread(&pngHeadRead[i], 1, 1, png);
+        RH_ASSERT( pngHeadRead[i] == pngHead[i] );
+    }
+#endif
+    
+    uint32_t chunk_data_lenth = 0x00000000;
+    uint32_t chunk_type_code  = 0x00000000;
+    while( ftello(png) < f_size ){
+        uint8_t temp = 0x00;
+        chunk_data_lenth <<= 8;
+        chunk_data_lenth  |= (uint8_t)(chunk_type_code>>24);
+        fread( &temp, sizeof(temp), 1, png );
+        chunk_type_code  <<= 8;
+        chunk_type_code   |= temp;
+        
+        switch( chunk_type_code ){
+            case PNG_IHDR:  // 解析 <IHDR> Image Header
+                fread( &IHDR, sizeof(IHDR), 1, png );
+#ifdef RH_DEBUG
+                RH_ASSERT( chunk_data_lenth == sizeof(IHDR) );
+                RH_ASSERT( IHDR.bit_depth  == 0x08 ); //
+                RH_ASSERT( IHDR.color_type == 0x06 || IHDR.color_type==0x02 ); // 8/16bit 真彩色
+#endif
+                pIMG->width   = __SWAP_DWORD(IHDR.width);
+                pIMG->height  = __SWAP_DWORD(IHDR.height);
+                break;
+            case PNG_PLTE:  // 解析 <PLTE> Palette
+                //...//
+                break;
+            case PNG_IDAT:  // 解析 <IDAT> Image data
+                //...//
+                break;
+            case PNG_IEND:  // 解析 <IEND> Image trailer
+                //...//
+                break;
+                
+            case PNG_tRNS:
+                 RH_ASSERT(false);
+                break;
+                
+            case PNG_cHRM:
+                 RH_ASSERT(false);
+                break;
+            case PNG_gAMA:
+                 RH_ASSERT(false);
+                break;
+            case PNG_iCCP:
+                //...//
+                break;
+            case PNG_sBIT:
+                 RH_ASSERT(false);
+                break;
+            case PNG_sRGB:
+                 RH_ASSERT(false);
+                break;
+
+
+            case PNG_tEXt:
+                 RH_ASSERT(false);
+                break;
+            case PNG_zEXt:
+                 RH_ASSERT(false);
+                break;
+            case PNG_iEXt:
+                 RH_ASSERT(false);
+                break;
+
+            case PNG_bKGD:
+                 RH_ASSERT(false);
+                break;
+            case PNG_hIST:
+                 RH_ASSERT(false);
+                break;
+            case PNG_pHYs:
+                 RH_ASSERT(false);
+                break;
+            case PNG_sPLT:
+                 RH_ASSERT(false);
+                break;
+
+            case PNG_tIME:
+                 RH_ASSERT(false);
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    fclose(png);
+    
+    return pIMG;
+}
+
+static void Img888_line( int x1, int y1, int x2, int y2, BLK_SRCT(Img888)* dst, void (*func)(BLK_SRCT(Img888)* dst, int x, int y) ){
+    int dx = __abs( x2-x1 );
+    int dy = __abs( y2-y1 );
+    
+    int type = (int)( ((y2-y1<0)<<2) | ( (x2-x1<0)<<1) | (dy > dx));
+    
+    /* About this <type> : 通过平移, 将(x1,y1)移到原点, 此时(x2,y2)的位置决定type.
+    
+                      Y
+          *           |           *
+            *  type=3 | type=1  *
+              *       |       *
+                *     |     *
+        type=2    *   |   *    type=0
+                    * | *
+    ------------------+------------------ X
+                    * | *
+        type=6    *   |   *    type=4
+                *     |     *
+              *       |       *
+            *  type=7 | type=5  *
+          *           |           *
+     
+     测试用例:
+         type 0:   30,  30 ,    150,  90
+         type 1: -150,-150 ,   -134,  69
+         type 2:  -50,  10 ,   -100,  20
+         type 3:   30,  30 ,     10, 100
+         type 4:   50, -20 ,    150, -50
+         type 5:   20, -40 ,     60,-100
+         type 6:  150,  90 ,     30,  30
+         type 7:  -20, -40 ,    -40,-120
+         
+    */
+    
+    switch(type){
+        case 0:
+            break;
+        case 2: x2 = -x2;
+                x1 = -x1;
+            break;
+        case 1: __swap(x2, y2);
+                __swap(x1, y1);
+            break;
+        case 6: y2 = -y2;
+                y1 = -y1;
+                x2 = -x2;
+                x1 = -x1;
+            break;
+        case 3: x2 = -x2;
+                x1 = -x1;
+                __swap(x2, y2);
+                __swap(x1, y1);
+            break;
+        case 7: __swap(x2,y2);
+                __swap(x1,y1);
+                x2 = -x2; x1 = -x1;
+                y2 = -y2; y1 = -y1;
+            break;
+        case 5: y2 = -y2;
+                y1 = -y1;
+                __swap(x2,y2);
+                __swap(x1,y1);
+            break;
+        case 4: y2 = -y2;
+                y1 = -y1;
+            break;
+    }
+    
+# if 1
+    printf("type=%d\n",type);
+    { // 检查是否成功转换, 此段可注释
+        int dx = __abs( x2-x1 );
+        int dy = __abs( y2-y1 );
+        int type1 = (int)( ((y2-y1<=0)<<2) | ( (x2-x1<=0)<<1) | (dy > dx));
+        assert( type1 == 0 );
+    }
+#endif
+
+    dx = x2-x1 ;
+    dy = y2-y1 ;
+    
+    int d  = dy*2 -dx;
+    int x = x1, y = y1;
+    int res_x, res_y;
+    while( x <= x2 ){
+        
+        res_x = x; res_y = y;
+            switch(type){
+                case 0: break;
+                case 2: res_x = -res_x;
+                    break;
+                case 1: __swap(res_x, res_y);
+                    break;
+                case 6: res_y = -res_y;
+                        res_x = -res_x;
+                    break;
+                case 3: __swap(res_x,res_y);
+                        res_x = -res_x;
+                    break;
+                case 7: __swap(res_x,res_y);
+                        res_x = -res_x;
+                        res_y = -res_y;
+                    break;
+                case 5: res_y = -res_y;
+                        __swap(res_x,res_y);
+                    break;
+                case 4: res_y = -res_y;
+                    break;
+            }
+        
+            (*func)( dst, res_x, res_y );
+        
+        if( d < 0 || y>=y2 ){
+            d += 2*dy;
+        }else{
+            d += (dy-dx)*2;
+            y++;
+        }
+        x++;
+    }
+    
+}
+
+
+volatile long*        __pascal_triangle_row ( long row , size_t* returnSize );
+volatile long* __pascal_triangle_row( long row , size_t* returnSize ){
+    __exitReturn( row<0 , NULL );
+    if( returnSize )
+        *returnSize = row+1;
+    
+    struct __Link{
+        struct __Link* pNext;
+        long*           data;
+        size_t         row;
+    };
+    typedef struct __Link __Link;
+    static struct __Link Head = {
+        .pNext = NULL ,
+        .data  = NULL ,
+        .row   = 0
+    };
+    if( Head.data == NULL ){
+        Head.data = (long*)malloc(sizeof(long));
+        Head.data[0] = 1;
+    }
+
+    __Link* pIter = &Head;
+    __Link* pOpti = &Head;
+    __Link* pLast = &Head;
+    
+    long dis_row_min    = __abs(row - pIter->row);
+    bool sgn            = (row > pIter->row);     // 标志,判断距离目标最近的那一行位于目标的上方还是下方 1 = 上方; 0 = 下方;
+    do{
+        // 行差越小，需要迭代的次数就越少
+        if( __abs(row-pIter->row) < dis_row_min ){
+            sgn = (row > pIter->row);
+            dis_row_min = row - pIter->row;
+            pOpti = pIter;
+        }
+        // 如果就是那一行，即行差为0，则直接返回值
+        if( pIter->row==row ){
+            return ( pIter->data );
+        }
+        // 继续迭代寻找
+        pLast = pIter;
+        pIter = pIter->pNext;
+   
+    }while( pIter != NULL );
+    
+    // 没有找到那一行，则从最接近那一行（pOpti->row）的数值开始向sgn方向计算，并记录之
+    // 此时 pOpti 代表距离最近的那一行数据，pLast为链表最后节点末尾。
+    __Link*  pasc_link = pLast;
+    long*    last_data = pOpti->data;                                      // 从距离目标最近的那一行开始
+    if( sgn == true ){ // =================================================// 距离最近的那一行位于目标上方
+        long   pasc_size = (pOpti->row)+2;                                 // 该行的元素个数为上一行行号+2
+        
+        while( dis_row_min-- ){
+            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
+            pasc_link           = pasc_link->pNext;
+            
+
+            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
+            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
+            pasc_link->pNext    = NULL;
+            
+            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
+            for( int i=1;i<=(pasc_size-1-i);i++ ){
+                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] + last_data[i-1];
+            }
+
+            last_data           = pasc_link->data;
+            pasc_size           = pasc_link->row+2;
+        }
+    }else{ // =============================================================// 距离最近的那一行位于目标下方
+        long   pasc_size = (pOpti->row)-2;                                 // 该行的元素个数为下一行行号-2
+        
+        while( dis_row_min-- ){
+            pasc_link->pNext    = (__Link*)malloc( sizeof(__Link) );       // 新建一行
+            pasc_link           = pasc_link->pNext;
+            
+            pasc_link->data     = (long*)malloc( pasc_size * sizeof(long) );
+            pasc_link->row      = pasc_size-1;                             // 该行行号为该行元素数量-1
+            pasc_link->pNext    = NULL;
+            
+            pasc_link->data[pasc_size-1] = pasc_link->data[0] = 1;         // 该行边界均为1
+            for( int i=1;i<=(pasc_size-1-i);i++ ){
+                pasc_link->data[i] = pasc_link->data[pasc_size-1-i] = last_data[i] - pasc_link->data[i-1];
+            }
+            
+            last_data           = pasc_link->data;
+            pasc_size           = pasc_link->row-2;
+        }
+    }
+
+    return pasc_link->data;
+}
+
+
+
 #endif
