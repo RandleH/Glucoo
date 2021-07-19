@@ -96,7 +96,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
         }
         
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -173,7 +173,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                 }
                 
                 // 绘制背景色
-                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -224,7 +224,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         ys   += (pHistory->cur+1)*pHistory->bSize;
         y_fs += (pHistory->cur+1)*pHistory->bSize;
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
@@ -268,7 +268,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         y_fs -= pHistory->bSize;
         
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -344,7 +344,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 }
                 
                 // 绘制背景色
-                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -394,7 +394,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             ys   += (pHistory->cur-1)*pHistory->bSize;
             y_fs += (pHistory->cur-1)*pHistory->bSize;
             // 绘制背景色
-            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
@@ -438,7 +438,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             y_fs += pHistory->bSize;
             
             // 绘制背景色
-            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
             
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -560,7 +560,7 @@ E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
     GLU_FUNC( Font, backupCache )();
     
     if( cmd ){
-        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, NULL);
     }
 
     BLK_FUNC( Graph, restoreCache )();
@@ -619,7 +619,7 @@ E_Status_t GLU_FUNC( Menu, delete )    ( ID_t ID ){
     BLK_FUNC( Graph, rect_fill )( config->area.xs, \
                        config->area.ys, \
                        config->area.xs+(int)(config->area.width )-1, \
-                       config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+                       config->area.ys+(int)(config->area.height)-1, &info_MainScreen, NULL);
     
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \

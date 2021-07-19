@@ -110,21 +110,28 @@ void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
 #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     Screen.GRAM = GRAM;
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )
-    
+
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
 
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
     Screen.GRAM = (GLU_UION(Pixel) (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
 #endif
-    
+    BLK_FUNC( Graph, init )();
+    GLU_FUNC( Font , init )();
+
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
-    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #endif
+    
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_1Bit  );
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_16Bit  );
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_24Bit  );
+#endif
+    BLK_FUNC( Graph, set_render_method )  ( kBLK_RenderMethod_fill );
 
     Screen.autoDisplay = false;
 
@@ -135,8 +142,7 @@ void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
 
     Screen.windowCFG = NULL;
 
-    BLK_FUNC( Graph, init )();
-    GLU_FUNC( Font , init )();
+    
 }
 
 

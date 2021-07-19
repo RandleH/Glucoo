@@ -35,6 +35,7 @@ long                  BLK_FUNC( Math, fibonacci     )   ( long   n);
       
 double                BLK_FUNC( Gussian, func_1D    )   ( long   x,long __miu  ,double __sigma);
 double                BLK_FUNC( Gussian, func_2D    )   ( long   x,long y      ,double __sigma);
+double                BLK_FUNC( Gussian, func_2D_XY )   ( long x,long y,double sigma_x,double sigma_y,double miu_x, double miu_y);
 BLK_SRCT(Kernel)*     BLK_FUNC( Gussian, kernel     )   ( double __sigma,size_t order,BLK_SRCT(Kernel)* pKernel);
 
 long                  BLK_FUNC( Pascal, triangle    )   ( long row , long col );
@@ -50,7 +51,7 @@ struct BLK_SRCT(Vector2D){
    int y;
 };
 typedef struct BLK_SRCT(Vector2D) BLK_SRCT(Vector2D);
-typedef struct BLK_SRCT(Vector2D) Point2D_t;
+typedef struct BLK_SRCT(Vector2D) BLK_SRCT(Point2D);
 
 struct BLK_SRCT(Vector3D){
    int x;
@@ -59,6 +60,11 @@ struct BLK_SRCT(Vector3D){
 };
 typedef struct BLK_SRCT(Vector3D) BLK_SRCT(Vector3D);
 typedef struct BLK_SRCT(Vector3D) Point3D_t;
+
+BLK_SRCT(Point2D)  BLK_FUNC( Point2D, find_Ymax )( BLK_SRCT(Point2D)* pts, size_t size );
+BLK_SRCT(Point2D)  BLK_FUNC( Point2D, find_Ymin )( BLK_SRCT(Point2D)* pts, size_t size );
+BLK_SRCT(Point2D)  BLK_FUNC( Point2D, find_Xmax )( BLK_SRCT(Point2D)* pts, size_t size );
+BLK_SRCT(Point2D)  BLK_FUNC( Point2D, find_Xmin )( BLK_SRCT(Point2D)* pts, size_t size );
 
 
 Point3D_t __findPoint_VectorDistance   (const Point3D_t* A        ,const Point3D_t* B     ,int    dist_AP );

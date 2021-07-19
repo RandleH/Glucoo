@@ -4,6 +4,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+#ifndef BLK_DATA_ASSERT
+#define BLK_DATA_ASSERT(expr) ((void)0)
+#endif
+    
 
 /*=====================================================================
  > Data Structure Reference

@@ -28,14 +28,14 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            config->area.xs+(int)config->area.width -1-1, \
                            config->area.ys+(int)config->area.height-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
         if( config->showFrame ){
             BLK_FUNC( Graph, set_penColor )( config->bk_color );
             BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         }
     }else{
     #ifdef RH_DEBUG
@@ -49,14 +49,14 @@ static void __gui_remove_object_text      ( const __GUI_Object_t* config ){
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)pHistory->area.width -1, \
                            pHistory->area.ys+(int)pHistory->area.height-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
         if( pHistory->showFrame && !config->showFrame ){
             BLK_FUNC( Graph, set_penColor )( config->bk_color );
             BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                               config->area.ys, \
                               config->area.xs+(int)config->area.width -1, \
                               config->area.ys+(int)config->area.height-1, \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         }
     }
     
@@ -151,7 +151,7 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &info_MainScreen, NULL);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -266,7 +266,7 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &info_MainScreen, NULL);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -379,7 +379,7 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &info_MainScreen, NULL);
 
     }
     pHistory->showFrame = config->showFrame;
@@ -423,12 +423,12 @@ static void __gui_remove_object_switch    ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         BLK_FUNC( Graph, rect_raw )( config->area.xs, \
                           config->area.ys, \
                           config->area.xs+(int)(config->area.width )-1, \
                           config->area.ys+(int)(config->area.height)-1, \
-                          &info_MainScreen, kApplyPixel_fill);
+                          &info_MainScreen, NULL);
     }
     
     GLU_FUNC( Font, restoreCache )();
@@ -486,20 +486,20 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
         // 绘制滑杆柄
         BLK_FUNC( Graph, set_penColor )( color_switch.data );
         BLK_FUNC( Graph, circle_fill ) ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
         BLK_FUNC( Graph, set_penColor )( color_switch_on.data );
         BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.width)-(int)(area.height>>1)-1, \
                               area.ys+(int)(area.height>>1)-(area.height%2==0) , \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
 
         pHistory->cmd = true;
     }else{
@@ -510,31 +510,31 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
         BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
 #else
         BLK_FUNC( Graph, set_penColor )( color_switch_off.data );
         BLK_FUNC( Graph, capsule_fill )( area.xs, \
                               area.ys, \
                               area.xs+(int)(area.width  -1), \
                               area.ys+(int)(area.height -1), \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
         BLK_FUNC( Graph, set_penColor )( color_switch.data );
         BLK_FUNC( Graph, circle_fill ) ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
         BLK_FUNC( Graph, set_penColor )( color_switch_off.data );
         BLK_FUNC( Graph, circle_raw )  ( area.xs+(int)(area.height>>1), \
                               area.ys+(int)(area.height>>1)-(area.height%2==0), \
                               (int)area.height                   , \
-                              &info_MainScreen, kApplyPixel_fill);
+                              &info_MainScreen, NULL);
         
 #endif
         pHistory->cmd = false;
@@ -582,14 +582,14 @@ static void __gui_remove_object_bar_h     ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }else if(pHistory->bar_pos > bar_pos){
         BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
         BLK_FUNC( Graph, rect_fill )( bar_pos, \
                            config->area.ys+1, \
                            pHistory->bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
     
     GLU_FUNC( Font, restoreCache )();
@@ -640,7 +640,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
                       config->area.ys, \
                       config->area.xs+(int)(config->area.width )-1, \
                       config->area.ys+(int)(config->area.height)-1, \
-                      &info_MainScreen, kApplyPixel_fill);
+                      &info_MainScreen, NULL);
     
     if( pHistory->bar_pos < bar_pos ){
         BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
@@ -648,7 +648,7 @@ static void __gui_insert_object_bar_h     ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            bar_pos, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
 
     pHistory->bar_pos = bar_pos;
@@ -692,14 +692,14 @@ static void __gui_remove_object_bar_v     ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }else if(pHistory->bar_pos < bar_pos){
         BLK_FUNC( Graph, set_penColor )( color_bar_off.data );
         BLK_FUNC( Graph, rect_fill )( config->area.xs+1, \
                            pHistory->bar_pos, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            bar_pos, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
     
     GLU_FUNC( Font, restoreCache )();
@@ -749,7 +749,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
                       config->area.ys, \
                       config->area.xs+(int)(config->area.width )-1, \
                       config->area.ys+(int)(config->area.height)-1, \
-                      &info_MainScreen, kApplyPixel_fill);
+                      &info_MainScreen, NULL);
     
     if( pHistory->bar_pos > bar_pos ){
         BLK_FUNC( Graph, set_penColor )( color_bar_on.data );
@@ -757,7 +757,7 @@ static void __gui_insert_object_bar_v     ( const __GUI_Object_t* config ){
                            bar_pos, \
                            config->area.xs+(int)(config->area.width)-1, \
                            pHistory->bar_pos, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
 
     pHistory->bar_pos = bar_pos;
@@ -784,14 +784,14 @@ static void __gui_remove_object_joystick  ( const __GUI_Object_t* config ){
                            config->area.ys, \
                            config->area.xs+(int)(config->area.width )-1, \
                            config->area.ys+(int)(config->area.height)-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }else{
         
         BLK_FUNC( Graph, rect_fill )( pHistory->area.xs, \
                            pHistory->area.ys, \
                            pHistory->area.xs+(int)(pHistory->area.width )-1, \
                            pHistory->area.ys+(int)(pHistory->area.height)-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
@@ -815,29 +815,29 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
     bool eps = ((D&0x01)==0);
     int X = (int)( config->area.xs + (D>>1) - eps );
     int Y = (int)( config->area.ys + (D>>1) - eps  );
-//    BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+//    BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, NULL );
      if(  !pHistory  ){
-         BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+         BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, NULL );
      }else{
          
          switch( pHistory->cord ){
              
              case 1:
-                 BLK_FUNC( Graph, circle_qrt1_raw )( X    , Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt1_raw )( X    , Y+eps, (D>>1)+1, &info_MainScreen, NULL );
                  break;
              case 2:
-                 BLK_FUNC( Graph, circle_qrt2_raw )( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt2_raw )( X+eps, Y+eps, (D>>1)+1, &info_MainScreen, NULL );
                  break;
              case 3:
-                 BLK_FUNC( Graph, circle_qrt3_raw )( X+eps, Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt3_raw )( X+eps, Y    , (D>>1)+1, &info_MainScreen, NULL );
                  break;
              case 4:
-                 BLK_FUNC( Graph, circle_qrt4_raw )( X    , Y    , (D>>1)+1, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_qrt4_raw )( X    , Y    , (D>>1)+1, &info_MainScreen, NULL );
                  break;
              case 0:
              case 5:
              case 6:
-                 BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, kApplyPixel_fill );
+                 BLK_FUNC( Graph, circle_raw )( X, Y, D, &info_MainScreen, NULL );
                  break;
          }
      }
@@ -886,7 +886,7 @@ static void __gui_insert_object_joystick  ( const __GUI_Object_t* config ){
                 RH_ASSERT(0);
         }
     }
-    BLK_FUNC( Graph, circle_fill )( X+px, Y-py, pd, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, circle_fill )( X+px, Y-py, pd, &info_MainScreen, NULL);
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -942,7 +942,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
                            config->area.ys+1, \
                            config->area.xs+(int)(config->area.width )-1-1, \
                            config->area.ys+(int)(config->area.height)-1-1, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }else{
         int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
         int32_t max = ((__GUI_ObjDataScr_trunk*)config->dataScr)->max;
@@ -954,7 +954,7 @@ static void __gui_remove_object_trunk     ( const __GUI_Object_t* config ){
                                cache->bar_pos - config->text_size, \
                                config->area.xs+(int)(config->area.width )-1-1, \
                                bar_pos, \
-                               &info_MainScreen, kApplyPixel_fill);
+                               &info_MainScreen, NULL);
         }
         //...//
     }
@@ -1011,7 +1011,7 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
                            bar_pos, \
                            config->area.xs+(int)(config->area.width)-1-cache->margin, \
                            cache->bar_pos, \
-                           &info_MainScreen, kApplyPixel_fill);
+                           &info_MainScreen, NULL);
     }
     cache->bar_pos = bar_pos;
     // 绘制数字
@@ -1114,7 +1114,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
                                       cache->num.ys       , \
                                       (int)(cache->num.xs+cache->num.width -1), \
                                       (int)(cache->num.ys+cache->num.height-1), \
-                                      &info_MainScreen, kApplyPixel_fill );
+                                      &info_MainScreen, NULL );
     }
     
     // 清除三角形
@@ -1223,8 +1223,8 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
             int line_y1 = cache->lineUP = (int)(config->area.ys + ((config->area.height-(config->text_size+cache->margin))>>1));
             int line_y2 = cache->lineDN = (int)(config->area.ys + ((config->area.height+(config->text_size+cache->margin))>>1));
             BLK_FUNC( Graph, set_penColor )( M_COLOR_WHITE );
-            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y1, (int)(config->area.xs+config->area.width-1), line_y1, &info_MainScreen, kApplyPixel_fill );
-            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y2, (int)(config->area.xs+config->area.width-1), line_y2, &info_MainScreen, kApplyPixel_fill );
+            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y1, (int)(config->area.xs+config->area.width-1), line_y1, &info_MainScreen, NULL );
+            BLK_FUNC( Graph, line_raw )( config->area.xs, line_y2, (int)(config->area.xs+config->area.width-1), line_y2, &info_MainScreen, NULL );
         }
         
         { // 绘制文字
@@ -1427,7 +1427,7 @@ static void __gui_remove_object_button    ( const __GUI_Object_t* config ){
                                       config->area.ys       , \
                                       (int)(config->area.xs+config->area.width -1), \
                                       (int)(config->area.ys+config->area.height-1), \
-                                      &info_MainScreen, kApplyPixel_fill );
+                                      &info_MainScreen, NULL );
         BLK_FUNC( Graph, restoreCache )();
     }
     
@@ -1465,12 +1465,12 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
                                                                 config->area.ys+cache->margin, \
                                                                 (int)(config->area.xs+config->area.width-cache->margin-1  ), \
                                                                 (int)(config->area.ys+config->area.height-cache->margin-1 ), \
-                                                                &info_MainScreen, kApplyPixel_fill ) :
+                                                                &info_MainScreen, NULL ) :
                             BLK_FUNC( Graph, rect_round_raw )(  config->area.xs+cache->margin, \
                                                                 config->area.ys+cache->margin, \
                                                                 (int)(config->area.xs+config->area.width-cache->margin-1  ), \
                                                                 (int)(config->area.ys+config->area.height-cache->margin-1 ), \
-                                                                &info_MainScreen, kApplyPixel_fill );
+                                                                &info_MainScreen, NULL );
     
     
     // 绘制按钮上的文字
@@ -1521,7 +1521,7 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
                                       config->area.ys+cache->margin, \
                                       (int)(config->area.xs+config->area.width-1  ), \
                                       (int)(config->area.ys+config->area.height-1 ), \
-                                      &info_MainScreen, kApplyPixel_fill );
+                                      &info_MainScreen, NULL );
     }
     
     cache->radius = dataScr->radius;
@@ -1785,10 +1785,10 @@ E_Status_t        GLU_FUNC( Object, frame    )  ( ID_t ID  , bool  cmd   ){
     BLK_FUNC( Graph, backupCache )();
     if( cmd ){
         BLK_FUNC( Graph, set_penColor )( p->obj_color );
-        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, NULL);
     }else{
         BLK_FUNC( Graph, set_penColor )( p->bk_color );
-        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, NULL);
     }
     p->showFrame = cmd;
     BLK_FUNC( Graph, restoreCache )();
@@ -1859,7 +1859,7 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     BLK_FUNC( Graph, rect_fill )( config->area.xs, \
                        config->area.ys, \
                        config->area.xs+(int)(config->area.width )-1, \
-                       config->area.ys+(int)(config->area.height)-1, &info_MainScreen, kApplyPixel_fill);
+                       config->area.ys+(int)(config->area.height)-1, &info_MainScreen, NULL);
     
     GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
                                                  config->area.ys, \

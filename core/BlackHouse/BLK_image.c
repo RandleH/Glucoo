@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include "BLK_image.h"
+#include "BLK_graphic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -1545,7 +1546,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
         
         
         int ys = (unsigned)BLK_FUNC(Math,rand)()%(dst->height/3), ye = (int)(dst->height<<1)/3 + (unsigned)BLK_FUNC(Math,rand)()%(dst->height/3);
-        
+       
         float _2_sigma_2 = (ye-ys)*(ye-ys)/18.0;
         BLK_UION(Pixel888)* pIterUP = dst->pBuffer + ys*(dst->width) +x;
         BLK_UION(Pixel888)* pIterDN = dst->pBuffer + ye*(dst->width) +x;
@@ -1585,6 +1586,10 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
     
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
 ( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
     
     const int x0 = (int)dst->width>>1;
     const int y0 = (int)dst->height>>1;
@@ -1619,7 +1624,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
         int ye = RH_MAX(y0, RH_MAX(cord[cnt].y, cord[cnt+1].y));
         
          // 填充三个点组成的三角形: (x0,y0) (cord[cnt].x, cord[cnt].y) (cord[cnt+1].x, cord[cnt+1].y)
-        
         for(int y=ys; y<=ye; y++){
             int x = xs;
 
@@ -1638,43 +1642,293 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )
     return dst;
 }
 
-static void applyMandelBrotPix_RGB888(int x,int y,int nIter, void* p){
-    BLK_SRCT(Img888)* dst = (BLK_SRCT(Img888)*)p;
-    if(nIter == -1)
-        nIter = 0;
-
-    nIter = RH_MIN( 0xff, nIter );
-
-    (dst->pBuffer + y*dst->width + x)->R = nIter;
-    (dst->pBuffer + y*dst->width + x)->G = nIter;
-    (dst->pBuffer + y*dst->width + x)->B = nIter;
-    
-}
-
-BLK_SRCT(Img888)*  BLK_FUNC( Img888, draw_img_mandelbrot )(  BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
-    return dst;
-}
-
     
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_radar )
 ( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
-
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+    
     int cx = (int)(dst->width>>1);
     int cy = (int)(dst->height>>1);
     
-    int step = RH_LIMIT( (int)RH_MIN(dst->width, dst->height) / size, 5, (int)dst->width);
+    /* About this <type> : 通过平移, 将(x1,y1)移到原点, 此时(x2,y2)的位置决定type.
+    
+                      Y
+          *           |           *
+         (x0,y0)      |      (x1,y1)
+              *       |       *
+                *     |     *
+                  *   |   *
+                    * | *
+    ------------------+------------------ X
+                    * | *
+                  *   |   *
+                *     |     *
+              *       |       *
+         (x3,y3)      |       (x2,y2)
+          *           |           *
+     
+     */
+    
+    int x[4] = {0};
+    int y[4] = {0};
+    
+    x[0] = x[3] = RH_LIMIT( (int)(cx-cy),  0, cx);
+    x[1] = x[2] = RH_LIMIT( (int)(cx+cy), cx, (int)dst->width-1);
+    
+    y[0] = y[1] = RH_LIMIT( (int)(cy-cx),  0, cy);
+    y[2] = y[3] = RH_LIMIT( (int)(cy+cx), cy, (int)dst->height-1);
+    
+    int step = RH_LIMIT( (int)RH_MIN(dst->width, dst->height) / 10, 5, (int)dst->width);
     
     int r = step*2;
     
+    if( !colors )
+        size = 0;
+    
+    if( size < 4 ){
+        BLK_TYPE(Pixel888)* temp = (BLK_TYPE(Pixel888)*)alloca(4);
+        memset(temp, 0xff, 4*sizeof(BLK_TYPE(Pixel888)));
+        memcpy(temp, colors, size*sizeof(BLK_TYPE(Pixel888)));
+        colors = temp;
+    }
     
     
-    // while( r++ < RH_MAX( dst->width, dst->height ) ){
-    //     __img888_draw_circle_fill( cx, cy, r<<1, dst, )
-    // }
+    BLK_FUNC(Graph,backupCache)();
+    BLK_FUNC(Graph,set_penSize       )( RH_LIMIT( step/9, 1, step ));
+    BLK_FUNC(Graph,set_penColor      )( M_COLOR_YELLOW );
+    BLK_FUNC(Graph,set_color_depth   )( kBLK_ColorDepth_24Bit  );
+    BLK_FUNC(Graph,set_render_method )( kBLK_RenderMethod_fill );
+    
+    // 绘制45度斜线
+    BLK_FUNC(Graph,set_penColor      )( colors[2] );
+    BLK_FUNC(Graph,line_edged  )( x[0], y[0], x[2], y[2],               dst, NULL);
+    BLK_FUNC(Graph,line_edged  )( x[1], y[1], x[3], y[3],               dst, NULL);
+    
+    // 绘制靶心
+    BLK_FUNC(Graph,set_penColor      )( colors[0] );
+    BLK_FUNC(Graph,circle_fill )( cx, cy, step<<1,                      dst, NULL);
+    
+    // 绘制十字准心
+    BLK_FUNC(Graph,set_penColor      )( colors[1] );
+    BLK_FUNC(Graph,line_edged  )(   cx,    0,   cx, (int)dst->height-1, dst, NULL);
+    BLK_FUNC(Graph,line_edged  )(    0,   cy, (int)dst->width -1,   cy, dst, NULL);
+    
+    BLK_FUNC(Graph,set_penColor      )( colors[3] );
+    while( r < RH_MAX( dst->width, dst->height ) ){
+        BLK_FUNC(Graph,circle_edged)( cx, cy, r<<1, dst, NULL );
+        r+=step;
+    }
+    BLK_FUNC(Graph,restoreCache)();
+    return dst;
+}
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded  )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst          );
+    RH_ASSERT( dst->pBuffer );
+    RH_ASSERT( dst->height  );
+    RH_ASSERT( dst->width   );
+    
+    BLK_UION(Pixel888)* p = dst->pBuffer;
+    // 染蓝色
+    for(int y=0; y<dst->height; y++){
+        for(int x=0; x<dst->width; x++,p++){
+            p->B =0x7e;
+        }
+    }
+    
+    // 染红色
+    p = dst->pBuffer;
+    int delta_x    = (int)( dst->width );
+    int delta_y    = (int)( 0xff );
+    int j = 0;
+    int e = 0;
+    for(int x=0; x<dst->width; x++,p++){
+        BLK_UION(Pixel888)* q = p;
+        for(int y=0; y<dst->height; y++,q+=dst->width){
+            q->R = j;
+        }
+        e += delta_y;
+        while( 2*( e + delta_y ) > delta_x){
+            j++;
+            e -= delta_x;
+        }
+    }
+    
+    // 染绿色
+    p = dst->pBuffer;
+    delta_x    = (int)( dst->height );
+    delta_y    = (int)( 0xff );
+    j = 0;
+    e = 0;
+    for(int y=0; y<dst->height; y++){
+        
+        for(int x=0; x<dst->width; x++,p++){
+            p->G = j;
+        }
+        e += delta_y;
+        while( 2*( e + delta_y ) > delta_x){
+            j++;
+            e -= delta_x;
+        }
+    }
     
     return dst;
 }
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    
+    
+    
+    int sig_x = (int)dst->width>>1;
+    int sig_y = (int)dst->height>>1;
+    
+    const BLK_UION(Pixel888) colorB = {.data=colors[0]};
+    const BLK_UION(Pixel888) colorA = {.data=colors[1]};
+    
+    // 以下代码被优化
+#if 0
+    int miu_x = (int)dst->width>>1;
+    int miu_y = (int)dst->height>>1;
+    
+    BLK_UION(Pixel888)* pIter = dst->pBuffer;
+    for( int y=0; y<dst->height; y++){
+        for( int x=0; x < dst->width; x++, pIter++){
+            float del = expf(-0.5*( ((x-miu_x)*(x-miu_x))/(float)(sig_x*sig_x) + ((y-miu_y)*(y-miu_y))/(float)(sig_y*sig_y) ));
+            BLK_GRAPH_ASSERT(del <= 1.0);
+            pIter->R = roundf( colorA.R+del*(colorB.R-colorA.R) );
+            pIter->G = roundf( colorA.G+del*(colorB.G-colorA.G) );
+            pIter->B = roundf( colorA.B+del*(colorB.B-colorA.B) );
+            
+        }
+    }
+    // 以下代码再次被优化
+#elif 0
+    int miu_x = (int)dst->width>>1;
+    int miu_y = (int)dst->height>>1;
+    
+    BLK_UION(Pixel888)* pIter2 = dst->pBuffer;
+    BLK_UION(Pixel888)* pIter1 = dst->pBuffer+dst->width-1;
+    BLK_UION(Pixel888)* pIter3 = dst->pBuffer+(dst->height-1)*dst->width;
+    BLK_UION(Pixel888)* pIter4 = dst->pBuffer+dst->height*dst->width-1;
+    
+    pIter2->data = M_COLOR_ORANGE;
+    pIter1->data = M_COLOR_RED;
+    pIter3->data = M_COLOR_YELLOW;
+    pIter4->data = M_COLOR_GREEN;
+    
+    for( int ys=0,ye=(int)dst->height-1; ys<=ye; ys++,ye--,  pIter2+=dst->width,pIter1+=dst->width,pIter3-=dst->width,pIter4-=dst->width){
+        for( int xs=0,xe=(int)dst->width-1; xs<=xe; xs++,xe--,  pIter1--,pIter4--,pIter2++,pIter3++ ){
+            
+            float del = expf(-0.5*( ((xs-miu_x)*(xs-miu_x))/(float)(sig_x*sig_x) + ((ys-miu_y)*(ys-miu_y))/(float)(sig_y*sig_y) ));
+            BLK_GRAPH_ASSERT(del <= 1.0);
+            pIter2->R = pIter1->R = pIter3->R = pIter4->R = roundf( colorA.R+del*(colorB.R-colorA.R) );
+            pIter2->G = pIter1->G = pIter3->G = pIter4->G = roundf( colorA.G+del*(colorB.G-colorA.G) );
+            pIter2->B = pIter1->B = pIter3->B = pIter4->B = roundf( colorA.B+del*(colorB.B-colorA.B) );
+        }
+        pIter1+=(dst->width>>1)+(dst->width&0x01);
+        pIter2-=(dst->width>>1)+(dst->width&0x01);
+        pIter3-=(dst->width>>1)+(dst->width&0x01);
+        pIter4+=(dst->width>>1)+(dst->width&0x01);
+    }
+    
+#else
+    BLK_UION(Pixel888)* pIter2 = dst->pBuffer;
+    BLK_UION(Pixel888)* pIter1 = dst->pBuffer+dst->width-1;
+    BLK_UION(Pixel888)* pIter3 = dst->pBuffer+(dst->height-1)*dst->width;
+    BLK_UION(Pixel888)* pIter4 = dst->pBuffer+dst->height*dst->width-1;
+    
+    for( int ys=0,ye=(int)dst->height-1; ys<=ye; ys++,ye--,  pIter2+=dst->width,pIter1+=dst->width,pIter3-=dst->width,pIter4-=dst->width){
+        for( int xs=0,xe=(int)dst->width-1; xs<=xe; xs++,xe--,  pIter1--,pIter4--,pIter2++,pIter3++ ){
+           
+            /*=======================================================================================================
+             * 假设 miu == sig == dst/2 的情况下
+             * expf函数参数可以化简为
+             *
+             *      x*(x-2*sig_x)         y*(y-2*sig_y)
+             * ( ------------------- + ------------------- + 2 ) * (-0.5)
+             *       sig_x*sig_x           sig_y*sig_y
+             *
+             *         x*(0.5*x-sig_x)         y*(0.5*y-sig_y)
+             *  - ( -------------------- + ---------------------- + 1 )
+             *           sig_x*sig_x           sig_y*sig_y
+             *
+             *
+             * 由于 x 和 y 的范围限定在 [0~2*sig_x] 和 [0~2*sig_y]之间, 因此上述式子值介于 [-1,0]之间
+             * 那么将上式乘以256
+             *
+             *         x*(128*x-256*sig_x)          y*(128*y-256*sig_y)
+             *  - ( ------------------------- + -------------------------- + 256 ) 值介于[-256,0]
+             *             sig_x*sig_x                  sig_y*sig_y
+             *
+             *
+             =======================================================================================================*/
+            
+           const uint8_t exps[257] = {  255 , 255 , 255 , 254 , 253 , 252 , 251 , 250 , 249 , 248 , 247 , 246 , 245 , 244 , \
+                                        243 , 242 , 241 , 240 , 240 , 239 , 238 , 237 , 236 , 235 , 234 , 233 , 232 , 231 , \
+                                        230 , 229 , 229 , 228 , 227 , 226 , 225 , 224 , 223 , 222 , 222 , 221 , 220 , 219 , \
+                                        218 , 217 , 216 , 216 , 215 , 214 , 213 , 212 , 211 , 211 , 210 , 209 , 208 , 207 , \
+                                        207 , 206 , 205 , 204 , 203 , 203 , 202 , 201 , 200 , 199 , 199 , 198 , 197 , 196 , \
+                                        196 , 195 , 194 , 193 , 192 , 192 , 191 , 190 , 190 , 189 , 188 , 187 , 187 , 186 , \
+                                        185 , 184 , 184 , 183 , 182 , 182 , 181 , 180 , 179 , 179 , 178 , 177 , 177 , 176 , \
+                                        175 , 175 , 174 , 173 , 173 , 172 , 171 , 171 , 170 , 169 , 169 , 168 , 167 , 167 , \
+                                        166 , 165 , 165 , 164 , 163 , 163 , 162 , 161 , 161 , 160 , 160 , 159 , 158 , 158 , \
+                                        157 , 156 , 156 , 155 , 155 , 154 , 153 , 153 , 152 , 152 , 151 , 150 , 150 , 149 , \
+                                        149 , 148 , 148 , 147 , 146 , 146 , 145 , 145 , 144 , 144 , 143 , 142 , 142 , 141 , \
+                                        141 , 140 , 140 , 139 , 139 , 138 , 138 , 137 , 136 , 136 , 135 , 135 , 134 , 134 , \
+                                        133 , 133 , 132 , 132 , 131 , 131 , 130 , 130 , 129 , 129 , 128 , 128 , 127 , 127 , \
+                                        126 , 126 , 125 , 125 , 124 , 124 , 123 , 123 , 122 , 122 , 121 , 121 , 120 , 120 , \
+                                        120 , 119 , 119 , 118 , 118 , 117 , 117 , 116 , 116 , 115 , 115 , 114 , 114 , 114 , \
+                                        113 , 113 , 112 , 112 , 111 , 111 , 111 , 110 , 110 , 109 , 109 , 108 , 108 , 108 , \
+                                        107 , 107 , 106 , 106 , 105 , 105 , 105 , 104 , 104 , 103 , 103 , 103 , 102 , 102 , \
+                                        101 , 101 , 101 , 100 , 100 , 99  , 99  , 99  , 98  , 98  , 98  , 97  , 97  , 96  , \
+                                        96  , 96  , 95  , 95  , 95  };
+            
+            int16_t del1 = ( xs*((xs<<7) - (sig_x<<8))/(sig_x*sig_x) + ys*((ys<<7) - (sig_y<<8))/(sig_y*sig_y) + 256 );
+            RH_ASSERT(del1<=256);
+            pIter2->R = pIter1->R = pIter3->R = pIter4->R = colorA.R+  (exps[del1]*(colorB.R-colorA.R)>>8);
+            pIter2->G = pIter1->G = pIter3->G = pIter4->G = colorA.G+  (exps[del1]*(colorB.G-colorA.G)>>8);
+            pIter2->B = pIter1->B = pIter3->B = pIter4->B = colorA.B+  (exps[del1]*(colorB.B-colorA.B)>>8);
+        }
+        pIter1+=(dst->width>>1)+(dst->width&0x01);
+        pIter2-=(dst->width>>1)+(dst->width&0x01);
+        pIter3-=(dst->width>>1)+(dst->width&0x01);
+        pIter4+=(dst->width>>1)+(dst->width&0x01);
+    }
+    
+#endif
 
+    return dst;
+}
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_center1 )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    
+    int miu_x = (int)dst->width>>1;
+    int miu_y = (int)dst->height>>1;
+    
+    int sig_x = (int)dst->width/6;
+    int sig_y = (int)dst->width/6;
+    
+    BLK_UION(Pixel888)* pIter = dst->pBuffer;
+    for( int y=0; y<dst->height; y++){
+        for( int x=0; x < dst->width; x++, pIter++){
+            float del = expf(-0.5*( ((x-miu_x)*(x-miu_x))/(sig_x*sig_x) + ((y-miu_y)*(y-miu_y))/(sig_y*sig_y) ));
+            
+            BLK_GRAPH_ASSERT(del <= 1.0);
+            pIter->R = (uint8_t)roundf(0xff*del);
+            pIter->G = (uint8_t)roundf(0xff*del);
+            pIter->B = (uint8_t)roundf(0xff*del);
+            
+        }
+    }
+
+    return dst;
+}
 #ifdef __cplusplus
 }
 #endif

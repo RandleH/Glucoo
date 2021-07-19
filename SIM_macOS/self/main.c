@@ -77,8 +77,7 @@ int main(int argc, const char * argv[]) {
         .font  = kGLU_Font_SignPrinter
     };
 
-    BLK_SRCT(Img888)* IMG = BLK_Img888_create(800, 480);
-    
+
     BLK_TYPE(Pixel888) colors[5] = {
         MAKE_COLOR(255,105,180) ,\
         MAKE_COLOR(135,206,235) ,\
@@ -86,14 +85,11 @@ int main(int argc, const char * argv[]) {
         MAKE_COLOR(173,255, 47) ,\
         MAKE_COLOR(250,250,210) ,\
     };
-    
-    BLK_FUNC( Img888, draw_img_ )( IMG, colors, 5 );
-    
-    BLK_FUNC(Img888, out_bmp)("/Users/randle_h/Desktop/screen.bmp", IMG);
-    
-//    GLU_FUNC( Image, profile )( kGLU_ImageStyle_aurora, colors, 5, &text, 30 );
-//
-//    GLU_FUNC( GUI, refreashEntireScreen )();
+
+
+    GLU_Image_profile ( kGLU_ImageStyle_aurora, colors, 5, &text, 30 );
+
+    GLU_GUI_refreashEntireScreen ();
     
     
 #endif
