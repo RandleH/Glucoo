@@ -10,19 +10,28 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Pixel)* colors, uint8_t size, const GLU_SRCT(Text)* text, uint8_t alpha_100 ){
+void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* text, uint8_t alpha_100 ){
     
     RH_ASSERT(colors);
     RH_ASSERT(size);
+    
     
     switch( style ){
         default:
             break;
         case kGLU_ImageStyle_aurora:{
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                BLK_FUNC( ImgBin, draw_img_aurora )( &info_MainScreen, colors, size );
+                GLU_TYPE(Pixel)* colors_1Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
+                for( uint8_t i=0; i<size; i++){
+                    colors_1Bit[i] = COLOR_1BIT(colors[i]);
+                }
+                BLK_FUNC( ImgBin, draw_img_aurora )( &info_MainScreen, colors_1Bit, size );
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                BLK_FUNC( Img565, draw_img_aurora )( &info_MainScreen, colors, size );
+                GLU_TYPE(Pixel)* colors_16Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
+                for( uint8_t i=0; i<size; i++){
+                    colors_16Bit[i] = COLOR_16BIT(colors[i]);
+                }
+                BLK_FUNC( Img565, draw_img_aurora )( &info_MainScreen, colors_16Bit, size );
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                 BLK_FUNC( Img888, draw_img_aurora )( &info_MainScreen, colors, size );
             #else

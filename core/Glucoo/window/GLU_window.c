@@ -224,7 +224,7 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
         
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         RH_ASSERT(false);
-        typeof(info_MainScreen.pBuffer) pIterScr  = info_MainScreen.pBuffer.pBuffer[ ((ys+bar_size)>>3)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
+        typeof(info_MainScreen.pBuffer) pIterScr  = &info_MainScreen.pBuffer[ ((ys+bar_size)>>3)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
         for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info_MainScreen.width ){

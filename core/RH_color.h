@@ -49,6 +49,10 @@ extern "C" {
 #define MAKE_COLOR_24BIT(R_255,G_255,B_255)    (uint32_t)((((R_255)&0xff)<<16)|(((G_255)&0xff)<<8)|((B_255)&0xff))
 #define MAKE_COLOR                             MAKE_COLOR_24BIT
 
+#define COLOR_16BIT(color)                   MAKE_COLOR_16BIT( (((color)>>16)&0xff), (((color)>>8)&0xff), (((color))&0xff) )
+#define COLOR_1BIT(color)                    MAKE_COLOR_1BIT( (((color)>>16)&0xff), (((color)>>8)&0xff), (((color))&0xff) )
+#define COLOR_24BIT(color)                   (uint32_t)((color)&0x00ffffff)
+
 // Standard
 #define M_COLOR_WHITE                        (MAKE_COLOR(255,255,255))  // 白色
 #define M_COLOR_BLACK                        (MAKE_COLOR(  0,  0,  0))  // 黑色

@@ -52,13 +52,10 @@ int main(int argc, const char * argv[]) {
 
     Simul_API_Init();
 
-    GLU_FUNC( GUI, init        )();
-    GLU_FUNC( GUI, setPenSize  )(5);
-    GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
+    GLU_GUI_init        ();
+    GLU_GUI_setPenSize  (5);
+    GLU_GUI_setPenColor (M_COLOR_WHITE);
     
-    
-    
-
 # if 1
     
 //    GLU_FUNC( Font, set_size )(200);
@@ -72,8 +69,8 @@ int main(int argc, const char * argv[]) {
     GLU_SRCT(Text) text = {
         .align = kGLU_Align_Middle ,
         .size  = 200,
-        .str   = "Glucoo" ,
-        .color = M_COLOR_RED,
+        .str   = "XingYue" ,
+        .color = M_COLOR_BLACK,
         .font  = kGLU_Font_SignPrinter
     };
 
