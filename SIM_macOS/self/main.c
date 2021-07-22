@@ -40,6 +40,7 @@ int main(int argc, const char * argv[]) {
         .str   = "COMMON" ,
         .color = M_COLOR_BLACK,
         .font  = kGLU_Font_Optima
+
     };
 
 
