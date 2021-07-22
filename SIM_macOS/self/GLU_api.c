@@ -80,7 +80,8 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     BLK_FUNC( Img565, out_bmp )(dst_path,pTmpScreenShot);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    BLK_FUNC( Img888, out_bmp )(dst_path,pTmpScreenShot);
+//    BLK_FUNC( Img888, out_bmp )(dst_path,pTmpScreenShot);
+    BLK_FUNC( Img888, out_png )("/Users/randle_h/desktop/screen.png",pTmpScreenShot);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif

@@ -90,7 +90,7 @@
 		E38C37A82647D2DD0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = Glucoo/object/GLU_object.c; sourceTree = "<group>"; };
 		E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_ArialRoundedBold.c; path = Glucoo/font/GLU_font_ArialRoundedBold.c; sourceTree = "<group>"; };
 		E38C37AC2647E0C50057F552 /* GLU_window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_window.h; path = Glucoo/window/GLU_window.h; sourceTree = "<group>"; };
-		E38C37AD2647E0C50057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = Glucoo/window/GLU_window.c; sourceTree = "<group>"; };
+		E38C37AD2647E0C50057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = Glucoo/window/GLU_window.c; sourceTree = "<group>"; wrapsLines = 0; };
 		E38C37AF2647E55D0057F552 /* GLU_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_menu.h; path = Glucoo/menu/GLU_menu.h; sourceTree = "<group>"; };
 		E38C37B02647E55D0057F552 /* GLU_menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_menu.c; path = Glucoo/menu/GLU_menu.c; sourceTree = "<group>"; };
 		E38EBE9626930A8C003C3E6D /* GLU_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_image.c; path = Glucoo/image/GLU_image.c; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		E3A277AC2648EF6E00D29934 /* BLK_graphic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_graphic.c; sourceTree = "<group>"; };
 		E3A277AD2648EF6E00D29934 /* BLK_graphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_graphic.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A277B72648F00600D29934 /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_common.h; sourceTree = "<group>"; };
-		E3A277B82648F00600D29934 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; };
+		E3A277B82648F00600D29934 /* RH_color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RH_color.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "GLU_font_unscii-8.c"; path = "Glucoo/font/GLU_font_unscii-8.c"; sourceTree = "<group>"; };
 		E3A3C50F268B1DA600EA234D /* GLU_pixel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLU_pixel.h; path = Glucoo/GLU_pixel.h; sourceTree = "<group>"; };
 		E3A3C513268B249300EA234D /* GLU_font_Optima.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_Optima.c; path = Glucoo/font/GLU_font_Optima.c; sourceTree = "<group>"; };

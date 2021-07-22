@@ -20,4 +20,8 @@ typedef BLK_TYPE(Pixel888)     GLU_TYPE(Pixel);
   #error "[RH_gui_config]: Unknown color type."
 #endif
 
+
+
+typedef uint32_t GLU_TYPE(Color);
+
 #endif

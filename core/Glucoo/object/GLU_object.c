@@ -463,8 +463,8 @@ static void __gui_insert_object_switch    ( const __GUI_Object_t* config ){
     //...//
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
     GLU_UION(Pixel) color_switch_on  = {.data = config->obj_color };
-    GLU_UION(Pixel) color_switch_off = {.data = M_COLOR_COAL      };
-    GLU_UION(Pixel) color_switch     = {.data = M_COLOR_WHITESMOKE};
+    GLU_UION(Pixel) color_switch_off = {.data = COLOR_16BIT(M_COLOR_COAL      ) };
+    GLU_UION(Pixel) color_switch     = {.data = COLOR_16BIT(M_COLOR_WHITESMOKE) };
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     GLU_UION(Pixel) color_switch_on  = {.data = config->obj_color };
     GLU_UION(Pixel) color_switch_off = {.data = M_COLOR_COAL      };
@@ -1689,13 +1689,22 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
     config->widget    = widget;
     config->showFrame = true;
     
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    config->bk_color    = COLOR_1BIT(M_COLOR_BLACK);
+    config->obj_color   = COLOR_1BIT(M_COLOR_WHITE);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    config->bk_color    = COLOR_16BIT(M_COLOR_BLACK);
+    config->obj_color   = COLOR_16BIT(M_COLOR_WHITE);
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    config->bk_color    = COLOR_24BIT(M_COLOR_BLACK);
+    config->obj_color   = COLOR_24BIT(M_COLOR_WHITE);
+#endif
+    
     // Speacial Settings
     switch ( widget ) {
         case kGUI_ObjStyle_text:
         case kGUI_ObjStyle_num:
         case kGUI_ObjStyle_fnum:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->font        = kGLU_Font_ArialRounded_Bold;
             config->text_align  = kGLU_Align_Middle;
             config->text_size   = RH_LIMIT((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
@@ -1707,8 +1716,6 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             break;
             
         case kGUI_ObjStyle_switch:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_GREEN;
             config->area.width  = (int)((hypotf(GUI_X_WIDTH, GUI_Y_WIDTH)+646)/26.3);
             config->area.height = RH_LIMIT( (signed)(config->area.width>>1), 4, GUI_Y_WIDTH);
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
@@ -1716,32 +1723,24 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             break;
             
         case kGUI_ObjStyle_barH:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.width  = GUI_X_WIDTH>>2;
             config->area.height = config->area.width>>3;
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
         case kGUI_ObjStyle_barV:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.height = (GUI_Y_WIDTH*3)>>3;
             config->area.width  = RH_LIMIT( (signed)(config->area.height>>3), 4, GUI_X_WIDTH );
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
         case kGUI_ObjStyle_joystick:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.width  = config->area.height = RH_MIN(GUI_X_WIDTH, GUI_Y_WIDTH)>>1;
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
             
         case kGUI_ObjStyle_trunk:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.height = (GUI_Y_WIDTH*3)>>2;
             config->area.width  = RH_LIMIT( (signed)(config->area.height>>1), 4, GUI_X_WIDTH );
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
@@ -1750,8 +1749,6 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->text_align  = kGLU_Align_Middle;
             break;
         case kGUI_ObjStyle_spinbox:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.height = (GUI_Y_WIDTH*3)>>2;
             config->area.width  = (GUI_X_WIDTH*3)>>2;
             config->area.xs     = (int)(GUI_X_WIDTH - config->area.width)>>1;
@@ -1759,8 +1756,6 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->text_size   = 8;
             config->text_align  = kGLU_Align_Left;
         case kGUI_ObjStyle_button:
-            config->bk_color    = M_COLOR_BLACK;
-            config->obj_color   = M_COLOR_WHITE;
             config->area.width  = (GUI_X_WIDTH)>>1;
             config->area.height = (GUI_Y_WIDTH)>>1;
             config->area.xs     = (int)(GUI_X_WIDTH-config->area.width)>>1;

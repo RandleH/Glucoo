@@ -177,7 +177,7 @@ static __Method rhtt  = {   // Present by Randle Hemlslay  --> rh
 static struct{
     GLU_SRCT(FontImg)    img;
     GLU_ENUM(Font)       style;
-    uint8_t              size;
+    uint16_t             size;
     float                scale;
     int                  ascent;
     int                  descent;
@@ -269,6 +269,12 @@ static struct{
                 #else
                     NULL,
                 #endif
+             [kGLU_Font_Optima] =
+               #if RH_CFG_FONT_STYLE__Optima
+                   "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Optima.ttf"       ,
+               #else
+                   NULL,
+               #endif
              
         };
     #endif
@@ -413,7 +419,7 @@ GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
 }
 
 void
-GLU_FUNC( Font, set_size       ) ( uint8_t        size    ){
+GLU_FUNC( Font, set_size       ) ( uint16_t        size    ){
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     FCFG.method = &stbtt;

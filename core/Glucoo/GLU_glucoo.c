@@ -294,7 +294,7 @@ void GLU_FUNC( GUI, setPenSize  )           ( size_t    penSize  ){
     BLK_FUNC( Graph, set_penSize ) ( penSize );
 }
 
-void GLU_FUNC( GUI, setPenColor )           ( GLU_TYPE(Pixel) penColor ){
+void GLU_FUNC( GUI, setPenColor )           ( uint32_t penColor ){
     BLK_FUNC( Graph, set_penColor )(penColor);
 }
 
