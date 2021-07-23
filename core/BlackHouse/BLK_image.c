@@ -1782,8 +1782,6 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded  )
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur )
 ( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
     
-    
-    
     int sig_x = (int)dst->width>>1;
     int sig_y = (int)dst->height>>1;
     

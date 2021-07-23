@@ -34,6 +34,7 @@
 		E3A3C50D268AD35C00EA234D /* GLU_font_unscii-8.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A3C50C268AD35C00EA234D /* GLU_font_unscii-8.c */; };
 		E3A3C514268B249300EA234D /* GLU_font_Optima.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A3C513268B249300EA234D /* GLU_font_Optima.c */; };
 		E3B2063C2654EFE800F94242 /* BLK_poker.c in Sources */ = {isa = PBXBuildFile; fileRef = E3B2063B2654EFE800F94242 /* BLK_poker.c */; };
+		E3CA09B926A9C20D00930E2A /* RH_common.c in Sources */ = {isa = PBXBuildFile; fileRef = E3CA09B726A9BF9A00930E2A /* RH_common.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -120,6 +121,7 @@
 		E3B206392654B29F00F94242 /* BLK_poker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLK_poker.h; sourceTree = "<group>"; };
 		E3B2063B2654EFE800F94242 /* BLK_poker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BLK_poker.c; sourceTree = "<group>"; };
 		E3BDD82526A5B7AD00398EE1 /* GLU_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_image.h; path = Glucoo/image/GLU_image.h; sourceTree = "<group>"; };
+		E3CA09B726A9BF9A00930E2A /* RH_common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RH_common.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 		E35B3B3D261D5BDA0031A366 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				E3CA09B726A9BF9A00930E2A /* RH_common.c */,
 				E3A277B82648F00600D29934 /* RH_color.h */,
 				E3A277B72648F00600D29934 /* RH_common.h */,
 				E38C37912647C7410057F552 /* Glucoo */,
@@ -372,6 +375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3CA09B926A9C20D00930E2A /* RH_common.c in Sources */,
 				E3A277B42648EF6E00D29934 /* BLK_dsp.c in Sources */,
 				E35B3B9A261D5C990031A366 /* RH_dummy.c in Sources */,
 				E375772A268A0AD8000EB4F3 /* GLU_font_CourierNewItalic.c in Sources */,

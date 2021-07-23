@@ -23,7 +23,7 @@ extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
 ===============================================================================================================*/
-void RH_PREMAIN GLU_FUNC( GUI, init )        ( void );
+void GLU_FUNC( GUI, init )        ( void );
 
 void GLU_FUNC( GUI, setPenSize  )            ( size_t           penSize  );
 void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );

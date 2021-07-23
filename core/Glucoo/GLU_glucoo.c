@@ -106,7 +106,7 @@ BLK_TYPE(Canvas) info_MainScreen = { //...//
     .width  = GUI_X_WIDTH ,
 };
 
-void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
+void GLU_FUNC( GUI, init )        ( void ){
 #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     Screen.GRAM = GRAM;
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )

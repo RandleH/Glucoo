@@ -13,7 +13,7 @@ extern "C" {
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
 
-#define RH_CFG_GRAPHIC_COLOR_TYPE              1   // < select > < above option >
+#define RH_CFG_GRAPHIC_COLOR_TYPE              2   // < select > < above option >
 
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
