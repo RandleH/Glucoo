@@ -1288,7 +1288,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         snprintf( ptrNum, size, "%d", cache->value );
         ptrNum[size-1] = '\0';
         
-        GLU_FUNC( Font, get_str_ImgInfo )( &cache->num.width, &cache->num.height, ptrNum);
+        GLU_FUNC( Font, get_str_ImgInfo )( (size_t*)&cache->num.width, (size_t*)&cache->num.height, ptrNum);
         cache->num.xs     = (int)(cache->textXS - cache->num.width - dataScr->margin);
         cache->num.ys     = cache->textYS;
         
@@ -1709,8 +1709,8 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->text_align  = kGLU_Align_Middle;
             config->text_size   = RH_LIMIT((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
             config->text        = pText;
-            config->area.width  = RH_LIMIT((config->text_size*strlen(pText)),0,GUI_X_WIDTH);
-            config->area.height = RH_LIMIT((config->text_size + (RH_LIMIT((signed)(config->text_size>>3), 1, config->text_size )<<2)),0,GUI_Y_WIDTH);
+            config->area.width  = (var)RH_LIMIT((config->text_size*strlen(pText)),0,GUI_X_WIDTH);
+            config->area.height = (var)RH_LIMIT((config->text_size + (RH_LIMIT((signed)(config->text_size>>3), 1, config->text_size )<<2)),0,GUI_Y_WIDTH);
             config->area.xs     = (int)( GUI_X_WIDTH - config->area.width  )>>1;
             config->area.ys     = (int)( GUI_Y_WIDTH - config->area.height )>>1;
             break;
@@ -1755,6 +1755,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( __GUI_Object_t* config, E_GUI_
             config->area.ys     = (int)(GUI_Y_WIDTH - config->area.height)>>1;
             config->text_size   = 8;
             config->text_align  = kGLU_Align_Left;
+            break;
         case kGUI_ObjStyle_button:
             config->area.width  = (GUI_X_WIDTH)>>1;
             config->area.height = (GUI_Y_WIDTH)>>1;

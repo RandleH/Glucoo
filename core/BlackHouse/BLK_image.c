@@ -773,8 +773,8 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
     
     if( area==NULL ){
         area = alloca( sizeof(__Area_t) );
-        area->height = src->height;
-        area->width  = src->width;
+        area->height = (var)src->height;
+        area->width  = (var)src->width;
         area->xs = area->ys = 0;
     }
     

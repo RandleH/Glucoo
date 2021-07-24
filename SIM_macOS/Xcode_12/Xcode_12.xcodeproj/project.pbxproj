@@ -88,7 +88,7 @@
 		E38C379E2647CC900057F552 /* GLU_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font.c; path = Glucoo/font/GLU_font.c; sourceTree = "<group>"; };
 		E38C379F2647CC900057F552 /* GLU_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_font.h; path = Glucoo/font/GLU_font.h; sourceTree = "<group>"; };
 		E38C37A72647D2DD0057F552 /* GLU_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_object.h; path = Glucoo/object/GLU_object.h; sourceTree = "<group>"; };
-		E38C37A82647D2DD0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = Glucoo/object/GLU_object.c; sourceTree = "<group>"; };
+		E38C37A82647D2DD0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = Glucoo/object/GLU_object.c; sourceTree = "<group>"; wrapsLines = 0; };
 		E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_ArialRoundedBold.c; path = Glucoo/font/GLU_font_ArialRoundedBold.c; sourceTree = "<group>"; };
 		E38C37AC2647E0C50057F552 /* GLU_window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_window.h; path = Glucoo/window/GLU_window.h; sourceTree = "<group>"; };
 		E38C37AD2647E0C50057F552 /* GLU_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_window.c; path = Glucoo/window/GLU_window.c; sourceTree = "<group>"; wrapsLines = 0; };

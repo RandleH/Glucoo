@@ -22,16 +22,19 @@
 ===============================================================================================================*/
 void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
 // THIS MAY COST SOME TIME.
+    UNUSED(x1);UNUSED(y1);UNUSED(x2);UNUSED(y2);UNUSED(pixData);
 }
 void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData) = GUI_DrawArea;
 
 void RH_WEAK GUI_DummyDrawPixel (int x,int y,const GLU_TYPE(Pixel) pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
+    UNUSED(x);UNUSED(y);UNUSED(pixData);
 }
 void (*GUI_API_DrawPixel)                     (int x ,int y ,const GLU_TYPE(Pixel) pixData)          = GUI_DummyDrawPixel;
 
 void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
+    UNUSED(expression);UNUSED(WHAT_IS_WRONG);
 }
 void (*GUI_API_AssertParam)                   (bool expression,const char* WHAT_IS_WRONG)      = GUI_AsserParam;
 

@@ -15,6 +15,7 @@ extern "C"{
 
 typedef void* ID_t;
 
+
 extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData);
 extern void (*GUI_API_DrawPixel)      (int x ,int y ,const GLU_TYPE(Pixel) pixData);
 extern void (*GUI_API_DelayMs)        (unsigned long ms);

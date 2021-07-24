@@ -1,0 +1,107 @@
+# Project: DevC++6.5
+# Makefile created by Dev-C++ 6.5
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = self/GLU_api.o self/main.o ../core/RH_common.o ../core/Glucoo/GLU_glucoo.o ../core/Glucoo/object/GLU_object.o ../core/Glucoo/draw/GLU_draw.o ../core/Glucoo/font/GLU_font.o ../core/Glucoo/font/GLU_font_ArialRoundedBold.o ../core/Glucoo/font/GLU_font_CourierNew.o ../core/Glucoo/font/GLU_font_CourierNewBold.o ../core/Glucoo/font/GLU_font_CourierNewItalic.o ../core/Glucoo/font/GLU_font_NewYork.o ../core/Glucoo/font/GLU_font_NewYork_Italic.o ../core/Glucoo/font/GLU_font_Optima.o ../core/Glucoo/font/GLU_font_unscii-8.o ../core/Glucoo/image/GLU_image.o ../core/Glucoo/menu/GLU_menu.o ../core/Glucoo/window/GLU_window.o ../core/BlackHouse/BLK_data.o ../core/BlackHouse/BLK_dsp.o ../core/BlackHouse/BLK_graphic.o ../core/BlackHouse/BLK_image.o ../core/BlackHouse/BLK_lib.o ../core/BlackHouse/BLK_math.o ../core/BlackHouse/BLK_poker.o ../core/BlackHouse/BLK_time.o ../core/BlackHouse/BLK_utility.o
+LINKOBJ  = self/GLU_api.o self/main.o ../core/RH_common.o ../core/Glucoo/GLU_glucoo.o ../core/Glucoo/object/GLU_object.o ../core/Glucoo/draw/GLU_draw.o ../core/Glucoo/font/GLU_font.o ../core/Glucoo/font/GLU_font_ArialRoundedBold.o ../core/Glucoo/font/GLU_font_CourierNew.o ../core/Glucoo/font/GLU_font_CourierNewBold.o ../core/Glucoo/font/GLU_font_CourierNewItalic.o ../core/Glucoo/font/GLU_font_NewYork.o ../core/Glucoo/font/GLU_font_NewYork_Italic.o ../core/Glucoo/font/GLU_font_Optima.o ../core/Glucoo/font/GLU_font_unscii-8.o ../core/Glucoo/image/GLU_image.o ../core/Glucoo/menu/GLU_menu.o ../core/Glucoo/window/GLU_window.o ../core/BlackHouse/BLK_data.o ../core/BlackHouse/BLK_dsp.o ../core/BlackHouse/BLK_graphic.o ../core/BlackHouse/BLK_image.o ../core/BlackHouse/BLK_lib.o ../core/BlackHouse/BLK_math.o ../core/BlackHouse/BLK_poker.o ../core/BlackHouse/BLK_time.o ../core/BlackHouse/BLK_utility.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/lib" -static-libstdc++ -static-libgcc -g3
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.2.0/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.2.0/include-fixed" -I"./core" -I"../core" -I"../core/BlackHouse" -I"../core/STB" -I"../core/Glucoo" -I"../core/Glucoo/image" -I"../core/Glucoo/object" -I"../core/Glucoo/font" -I"../core/Glucoo/window" -I"../core/Glucoo/draw" -I"./self"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.2.0/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.2.0/include-fixed" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.2.0" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.2.0/i686-w64-mingw32" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.2.0/backward"
+BIN      = DevC++6.5.exe
+CXXFLAGS = $(CXXINCS) -Wall -Wextra -g3
+ENCODINGS = -finput-charset=utf-8 -fexec-charset=gbk
+CFLAGS   = $(INCS) -Wall -Wextra -g3
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+self/GLU_api.o: self\GLU_api.c ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_common.h self\GLU_api.h self\RH_config.h
+	$(CC) -c self/GLU_api.c -o self/GLU_api.o $(CFLAGS) 
+
+self/main.o: self\main.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_Glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\image\GLU_image.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c self/main.c -o self/main.o $(CFLAGS) 
+
+../core/RH_common.o: ..\core\RH_common.c ..\core\RH_common.h
+	$(CC) -c ../core/RH_common.c -o ../core/RH_common.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/GLU_glucoo.o: ..\core\Glucoo\GLU_glucoo.c ..\core\BlackHouse\BLK_data.h ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/GLU_glucoo.c -o ../core/Glucoo/GLU_glucoo.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/object/GLU_object.o: ..\core\Glucoo\object\GLU_object.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/object/GLU_object.c -o ../core/Glucoo/object/GLU_object.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/draw/GLU_draw.o: ..\core\Glucoo\draw\GLU_draw.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/draw/GLU_draw.c -o ../core/Glucoo/draw/GLU_draw.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font.o: ..\core\Glucoo\font\GLU_font.c ..\core\BlackHouse\BLK_data.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_pixel.h ..\core\RH_common.h ..\core\STB\stb_truetype.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font.c -o ../core/Glucoo/font/GLU_font.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/font/GLU_font_ArialRoundedBold.o: ..\core\Glucoo\font\GLU_font_ArialRoundedBold.c ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_pixel.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_ArialRoundedBold.c -o ../core/Glucoo/font/GLU_font_ArialRoundedBold.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_CourierNew.o: ..\core\Glucoo\font\GLU_font_CourierNew.c self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_CourierNew.c -o ../core/Glucoo/font/GLU_font_CourierNew.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_CourierNewBold.o: ..\core\Glucoo\font\GLU_font_CourierNewBold.c ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_pixel.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_CourierNewBold.c -o ../core/Glucoo/font/GLU_font_CourierNewBold.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_CourierNewItalic.o: ..\core\Glucoo\font\GLU_font_CourierNewItalic.c ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_pixel.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_CourierNewItalic.c -o ../core/Glucoo/font/GLU_font_CourierNewItalic.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_NewYork.o: ..\core\Glucoo\font\GLU_font_NewYork.c self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_NewYork.c -o ../core/Glucoo/font/GLU_font_NewYork.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_NewYork_Italic.o: ..\core\Glucoo\font\GLU_font_NewYork_Italic.c self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_NewYork_Italic.c -o ../core/Glucoo/font/GLU_font_NewYork_Italic.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_Optima.o: ..\core\Glucoo\font\GLU_font_Optima.c self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_Optima.c -o ../core/Glucoo/font/GLU_font_Optima.o $(CFLAGS) 
+
+../core/Glucoo/font/GLU_font_unscii-8.o: ..\core\Glucoo\font\GLU_font_unscii-8.c self\RH_config.h
+	$(CC) -c ../core/Glucoo/font/GLU_font_unscii-8.c -o ../core/Glucoo/font/GLU_font_unscii-8.o $(CFLAGS) 
+
+../core/Glucoo/image/GLU_image.o: ..\core\Glucoo\image\GLU_image.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\image\GLU_image.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/image/GLU_image.c -o ../core/Glucoo/image/GLU_image.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/menu/GLU_menu.o: ..\core\Glucoo\menu\GLU_menu.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/menu/GLU_menu.c -o ../core/Glucoo/menu/GLU_menu.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/Glucoo/window/GLU_window.o: ..\core\Glucoo\window\GLU_window.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\Glucoo\font\GLU_font.h ..\core\Glucoo\GLU_glucoo.h ..\core\Glucoo\GLU_pixel.h ..\core\Glucoo\menu\GLU_menu.h ..\core\Glucoo\object\GLU_object.h ..\core\Glucoo\window\GLU_window.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/Glucoo/window/GLU_window.c -o ../core/Glucoo/window/GLU_window.o $(CFLAGS) 
+
+../core/BlackHouse/BLK_data.o: ..\core\BlackHouse\BLK_data.c ..\core\BlackHouse\BLK_data.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_data.c -o ../core/BlackHouse/BLK_data.o $(CFLAGS) 
+
+../core/BlackHouse/BLK_dsp.o: ..\core\BlackHouse\BLK_dsp.c ..\core\BlackHouse\BLK_dsp.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_dsp.c -o ../core/BlackHouse/BLK_dsp.o $(CFLAGS) 
+
+../core/BlackHouse/BLK_graphic.o: ..\core\BlackHouse\BLK_graphic.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_graphic.c -o ../core/BlackHouse/BLK_graphic.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/BlackHouse/BLK_image.o: ..\core\BlackHouse\BLK_image.c ..\core\BlackHouse\BLK_graphic.h ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h ..\core\RH_color.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_image.c -o ../core/BlackHouse/BLK_image.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/BlackHouse/BLK_lib.o: ..\core\BlackHouse\BLK_lib.c ..\core\BlackHouse\BLK_data.h ..\core\BlackHouse\BLK_lib.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_lib.c -o ../core/BlackHouse/BLK_lib.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/BlackHouse/BLK_math.o: ..\core\BlackHouse\BLK_math.c ..\core\BlackHouse\BLK_image.h ..\core\BlackHouse\BLK_lib.h ..\core\BlackHouse\BLK_math.h
+	$(CC) -c ../core/BlackHouse/BLK_math.c -o ../core/BlackHouse/BLK_math.o $(CFLAGS)  $(ENCODINGS) 
+
+../core/BlackHouse/BLK_poker.o: ..\core\BlackHouse\BLK_poker.c ..\core\BlackHouse\BLK_poker.h ..\core\RH_common.h self\RH_config.h
+	$(CC) -c ../core/BlackHouse/BLK_poker.c -o ../core/BlackHouse/BLK_poker.o $(CFLAGS) 
+
+../core/BlackHouse/BLK_time.o: ..\core\BlackHouse\BLK_time.c ..\core\BlackHouse\BLK_time.h
+	$(CC) -c ../core/BlackHouse/BLK_time.c -o ../core/BlackHouse/BLK_time.o $(CFLAGS) 
+
+../core/BlackHouse/BLK_utility.o: ..\core\BlackHouse\BLK_utility.c ..\core\BlackHouse\BLK_utility.h ..\core\RH_common.h
+	$(CC) -c ../core/BlackHouse/BLK_utility.c -o ../core/BlackHouse/BLK_utility.o $(CFLAGS)  $(ENCODINGS) 

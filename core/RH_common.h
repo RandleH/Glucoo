@@ -29,8 +29,14 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
- 
+
+#if defined ( __CC_ARM )
 #pragma anon_unions
+#endif
+ 
+#ifndef UNUSED
+#define UNUSED(x)    (void)(x)
+#endif
  
 #define RH_DEBUG
  
@@ -39,6 +45,8 @@
 #define RH_NONNULL
 #define RH_ALLOCATED  
 
+typedef int var;    // 泛指数值, 具体随项目规模或实际设备
+typedef int num;
  
 struct __Region_t{
     int    xs;
@@ -196,7 +204,7 @@ typedef volatile uint64_t       vu64;
 #endif
 
 #ifndef RH_LIMIT
-  #define RH_LIMIT(a, lowerbound, upperbound)   (((a) >= (upperbound)) ? upperbound : (((a) <= (lowerbound)) ? (lowerbound) : (a) ))
+  #define RH_LIMIT(a, lowerbound, upperbound)   ((((signed)(a)) >= ((signed)(upperbound))) ? upperbound : (((signed)(a) <= ((signed)(lowerbound))) ? (lowerbound) : (a) ))
 #else
   #error " 'RH_LIMIT' has been defined. "
 #endif

@@ -42,10 +42,10 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
     }
 
 #ifdef RH_DEBUG
-    RH_ASSERT( x1<RH_CFG_SCREEN_WIDTH && x1>=0 );
-    RH_ASSERT( x2<RH_CFG_SCREEN_WIDTH && x2>=0 );
-    RH_ASSERT( y1<RH_CFG_SCREEN_HEIGHT && y1>=0 );
-    RH_ASSERT( y2<RH_CFG_SCREEN_HEIGHT && y2>=0 );
+    RH_ASSERT( x1<(int)RH_CFG_SCREEN_WIDTH && x1>=0 );
+    RH_ASSERT( x2<(int)RH_CFG_SCREEN_WIDTH && x2>=0 );
+    RH_ASSERT( y1<(int)RH_CFG_SCREEN_HEIGHT && y1>=0 );
+    RH_ASSERT( y2<(int)RH_CFG_SCREEN_HEIGHT && y2>=0 );
 #endif
     
     
@@ -62,8 +62,8 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     const size_t width   = __abs(x2 - x1) + 1;
     const size_t height  = __abs(y2 - y1) + 1;
-    for(int y=0;y<height;y++){
-        for(int x=0;x<width;x++){
+    for(int y=0;y<(int)height;y++){
+        for(int x=0;x<(int)width;x++){
             pTmpScreenShot->pBuffer[(y1+y)*RH_CFG_SCREEN_WIDTH + (x1+x)].data = pixData[ y*width+x];
         }
     }
