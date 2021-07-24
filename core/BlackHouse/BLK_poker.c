@@ -89,9 +89,9 @@ static void __poker_remove( int8_t idx ){
     
 }
 
-typedef int8_t var;
-static int __compar( const void* p1, const void* p2 ){
 
+static int __compar( const void* p1, const void* p2 ){
+    typedef int8_t var;
     if( *(var*)p2 > *(var*)p1 ){
         return 1;
     }else if( *(var*)p2 < *(var*)p1 ){

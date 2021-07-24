@@ -177,7 +177,7 @@ static __Method rhtt  = {   // Present by Randle Hemlslay  --> rh
 static struct{
     GLU_SRCT(FontImg)    img;
     GLU_ENUM(Font)       style;
-    uint8_t              size;
+    uint16_t             size;
     float                scale;
     int                  ascent;
     int                  descent;
@@ -269,6 +269,12 @@ static struct{
                 #else
                     NULL,
                 #endif
+             [kGLU_Font_Optima] =
+               #if RH_CFG_FONT_STYLE__Optima
+                   "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Optima.ttf"       ,
+               #else
+                   NULL,
+               #endif
              
         };
     #endif
@@ -356,7 +362,7 @@ static const rhtt_fontinfo* font_bit_array[kGLU_NUM_FontStyle] = {
 #endif
 
 
-void RH_PREMAIN
+void
 GLU_FUNC( Font, init           ) ( void ){
     FCFG.style     = kGLU_Font_Unscii;
     FCFG.size      = 24;
@@ -413,7 +419,7 @@ GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
 }
 
 void
-GLU_FUNC( Font, set_size       ) ( uint8_t        size    ){
+GLU_FUNC( Font, set_size       ) ( uint16_t        size    ){
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     FCFG.method = &stbtt;
@@ -525,12 +531,36 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     FCFG.img.img_buf = RH_CALLOC( FCFG.img.img_w*FCFG.img.img_h, sizeof(uint8_t) );
     
     // 迭代字符渲染
+#if 0 // 较少内存
     cnt = 0;
     while( str[cnt]!='\0' ){
         uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + cx[cnt];
         (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pIter, cw[cnt], ch[cnt], (int)FCFG.img.img_w, FCFG.scale, FCFG.scale, str[cnt] );
         cnt++;
     }
+#else // 较高质量
+    cnt = 0;
+    
+    int cw_max, ch_max;
+    BLK_Array_max( ch, (strlen(str)+1), &ch_max, NULL );
+    BLK_Array_max( cw, (strlen(str)+1), &cw_max, NULL );
+    
+    uint8_t *pTmp = RH_CALLOC( cw_max*ch_max, sizeof(uint8_t) );
+    while( str[cnt]!='\0' ){
+        (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pTmp, cw[cnt], ch[cnt], cw_max, FCFG.scale, FCFG.scale, str[cnt] );
+        
+        uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + cx[cnt];
+        for( int y=0; y<ch[cnt]; y++ ){
+            for( int x=0; x<cw[cnt]; x++ ){
+                *(pIter+FCFG.img.img_w*y+x) =  RH_LIMIT( *(pIter+FCFG.img.img_w*y+x) + *(pTmp+cw_max*y+x), 0, 0xff );
+            }
+        }
+        memset(pTmp, 0, cw_max*ch_max*sizeof(uint8_t));
+        cnt++;
+    }
+    RH_FREE(pTmp);
+#endif
+    
 #if RH_CFG_OUTPUT_FONT_PNG
     stbi_write_png("/Users/randle_h/Desktop/output.png", FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif

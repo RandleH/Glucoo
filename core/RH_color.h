@@ -10,7 +10,7 @@ extern "C" {
 
 #if ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
   #define REVERSE_COLOR( M_COLOR )         (((M_COLOR)==0)?(0xff):(0x00))
-  #define MAKE_COLOR(R_255,G_255,B_255)    (uint8_t)(((R_255+G_255+B_255)/3 > 128)?0xff:0x00)
+  
   #define COLOR_MASK_RED                   0xff
   #define COLOR_MASK_GREEN                 0xff
   #define COLOR_MASK_BLUE                  0xff
@@ -20,7 +20,6 @@ extern "C" {
 
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565    )
   
-  #define MAKE_COLOR(R_255,G_255,B_255)    (uint16_t)((((R_255)>>3)<<11)|(((G_255)>>2)<<5)|((B_255)>>3))
   #define COLOR_MASK_RED                   0xF800
   #define COLOR_MASK_GREEN                 0x7E00
   #define COLOR_MASK_BLUE                  0x001F
@@ -32,7 +31,6 @@ extern "C" {
 
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888    )
 
-  #define MAKE_COLOR(R_255,G_255,B_255)    (uint32_t)((((R_255)&0xff)<<16)|(((G_255)&0xff)<<8)|((B_255)&0xff))
   #define COLOR_MASK_RED                   0x00FF0000
   #define COLOR_MASK_GREEN                 0x0000FF00
   #define COLOR_MASK_BLUE                  0x000000FF
@@ -44,6 +42,20 @@ extern "C" {
 #else
   #error "[RH_color]: Unknown color type."
 #endif
+
+
+#define MAKE_COLOR_1BIT(R_255,G_255,B_255)     (uint8_t)(((R_255+G_255+B_255)/3 > 128)?0xff:0x00)
+#define MAKE_COLOR_16BIT(R_255,G_255,B_255)    (uint16_t)((((R_255)>>3)<<11)|(((G_255)>>2)<<5)|((B_255)>>3))
+#define MAKE_COLOR_24BIT(R_255,G_255,B_255)    (uint32_t)((((R_255)&0xff)<<16)|(((G_255)&0xff)<<8)|((B_255)&0xff))
+#define MAKE_COLOR                             MAKE_COLOR_24BIT
+
+#define COLOR_16BIT(color)                 (uint16_t)((0xf800&(((color)>>19)<<11)) | (0x07e0&(((color)>>10)<<5 )) | (0x001f&(((color)>>3 ))))
+#define COLOR_1BIT(color)                  ((color)==0)?((uint8_t)(0x00)):((uint8_t)(0xff))
+#define COLOR_24BIT(color)                 (uint32_t)((color)&0x00ffffff)
+
+
+
+
 
 // Standard
 #define M_COLOR_WHITE                        (MAKE_COLOR(255,255,255))  // 白色

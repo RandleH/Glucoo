@@ -13,9 +13,8 @@ extern "C"{
 #endif
 
 
-
-
 typedef void* ID_t;
+
 
 extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData);
 extern void (*GUI_API_DrawPixel)      (int x ,int y ,const GLU_TYPE(Pixel) pixData);
@@ -25,11 +24,11 @@ extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
 ===============================================================================================================*/
-void RH_PREMAIN GLU_FUNC( GUI, init )        ( void );
+void GLU_FUNC( GUI, init )        ( void );
 
-void GLU_FUNC( GUI, setPenSize  )            ( size_t    penSize  );
-void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Pixel) penColor );
-void GLU_FUNC( GUI, autoDisplay )            ( bool      cmd      );
+void GLU_FUNC( GUI, setPenSize  )            ( size_t           penSize  );
+void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );
+void GLU_FUNC( GUI, autoDisplay )            ( bool             cmd      );
 
 
 void GLU_FUNC( GUI, refreashScreenArea   )   ( int xs,int ys,int xe,int ye );

@@ -13,11 +13,12 @@ extern "C"{
 
 enum GLU_ENUM(ImageStyle){
     kGLU_ImageStyle_aurora ,
+    kGLU_ImageStyle_blur   ,
     NUM_kGLU_ImageStyles   ,
 };
 typedef enum GLU_ENUM(ImageStyle) GLU_ENUM(ImageStyle);
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Pixel)* colors, uint8_t size, const GLU_SRCT(Text)* text, uint8_t alpha_100 );
+void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* text, uint8_t alpha_100 );
 
 
 

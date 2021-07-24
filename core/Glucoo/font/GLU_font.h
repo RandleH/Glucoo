@@ -56,8 +56,8 @@ typedef enum{
 
 struct GLU_SRCT(Text){
     GLU_ENUM(Font)  font;
-    uint8_t         size;
-    GLU_TYPE(Pixel) color;
+    uint16_t         size;
+    GLU_TYPE(Color) color;
     GLU_ENUM(Align) align;
     const char*     str;
 };
@@ -73,7 +73,7 @@ typedef struct GLU_SRCT(FontImg) GLU_SRCT(FontImg);
 void                RH_PREMAIN            GLU_FUNC( Font, init           ) ( void );
            
 void                                      GLU_FUNC( Font, set_font       ) ( GLU_ENUM(Font) font   );
-void                                      GLU_FUNC( Font, set_size       ) ( uint8_t        size   );
+void                                      GLU_FUNC( Font, set_size       ) ( uint16_t       size   );
            
 uint8_t                                   GLU_FUNC( Font, get_size       ) ( void );
 GLU_ENUM(Font)                            GLU_FUNC( Font, get_font       ) ( void );

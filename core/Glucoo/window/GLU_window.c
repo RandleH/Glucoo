@@ -26,15 +26,15 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     const int bar_edge   = config->win_edge;
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     
-    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
-    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_BLACK    ):( M_COLOR_WHITE  )};
-    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_BLACK ) ):( COLOR_1BIT(M_COLOR_WHITE) )};
+    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_WHITE ) ):( COLOR_1BIT(M_COLOR_BLACK) )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_BLACK ) ):( COLOR_1BIT(M_COLOR_WHITE) )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_WHITE ) ):( COLOR_1BIT(M_COLOR_BLACK) )};
 #else
-    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_DARKGRAY) ):( COLOR_16BIT(M_COLOR_SILVER) )};
+    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_WHITE   ) ):( COLOR_16BIT(M_COLOR_BLACK ) )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_COAL    ) ):( COLOR_16BIT(M_COLOR_WHITE ) )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_WHITE   ) ):( COLOR_16BIT(M_COLOR_BLACK ) )};
 #endif
     
     BLK_FUNC( Graph, backupCache )();
@@ -43,14 +43,14 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     // Window Bar
     BLK_FUNC( Graph, set_penColor   )( color_bar.data);
     BLK_FUNC( Graph, set_penSize    )( bar_rad);
-    BLK_FUNC( Graph, rect_round_fill)(xs   , ys         , xe  , ys+bar_size+bar_rad, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, rect_round_fill)(xs   , ys         , xe  , ys+bar_size+bar_rad, info_MainScreen.pBuffer, NULL);
     
-    BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , &info_MainScreen, kApplyPixel_fill);
-    BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , info_MainScreen.pBuffer, NULL);
     
     for(int i=0; i<bar_edge; i++){
-        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
-        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.pBuffer, NULL);
     }
     
     // Title
@@ -93,7 +93,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     
     // Context
     BLK_FUNC( Graph, set_penColor )(color_blank.data);
-    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.pBuffer, NULL);
     
     
     if( config->text != NULL ){
@@ -146,9 +146,9 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     const GLU_UION(Pixel) color_button_zm = {.data = 0x00};
     const GLU_UION(Pixel) color_button_mi = {.data = 0x00};
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-    const GLU_UION(Pixel) color_button_cl = {.data = M_COLOR_BLOODYMEAT };
-    const GLU_UION(Pixel) color_button_zm = {.data = M_COLOR_GOLDEN     };
-    const GLU_UION(Pixel) color_button_mi = {.data = M_COLOR_LAWNGREEN  };
+    const GLU_UION(Pixel) color_button_cl = {.data = COLOR_16BIT(M_COLOR_BLOODYMEAT) };
+    const GLU_UION(Pixel) color_button_zm = {.data = COLOR_16BIT(M_COLOR_GOLDEN    ) };
+    const GLU_UION(Pixel) color_button_mi = {.data = COLOR_16BIT(M_COLOR_LAWNGREEN ) };
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     const GLU_UION(Pixel) color_button_cl = {.data = M_COLOR_BLOODYMEAT };
     const GLU_UION(Pixel) color_button_zm = {.data = M_COLOR_GOLDEN     };
@@ -158,13 +158,13 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #endif
     // Button
     BLK_FUNC( Graph, set_penColor )(color_button_cl.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+bar_size_2, RH_MID(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size_2, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
 
     BLK_FUNC( Graph, set_penColor )(color_button_zm.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+bar_size+bar_size_4, RH_MID(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size+bar_size_4, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
 
     BLK_FUNC( Graph, set_penColor )(color_button_mi.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
     
     BLK_FUNC( Graph, restoreCache )();
     GLU_FUNC( Font, restoreCache )();
@@ -186,38 +186,38 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     const int bar_edge   = config->win_edge;
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_DARKGRAY ):( M_COLOR_SILVER )};
-//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
-    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_COAL     ):( M_COLOR_WHITE  )};
-    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( M_COLOR_WHITE    ):( M_COLOR_BLACK  )};
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_DARKGRAY) ):( COLOR_1BIT(M_COLOR_SILVER) )};
+//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_WHITE   ) ):( COLOR_1BIT(M_COLOR_BLACK ) )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_COAL    ) ):( COLOR_1BIT(M_COLOR_WHITE ) )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_1BIT(M_COLOR_WHITE   ) ):( COLOR_1BIT(M_COLOR_BLACK ) )};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_DARKGRAY) ):( COLOR_16BIT(M_COLOR_SILVER) )};
+//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_WHITE   ) ):( COLOR_16BIT(M_COLOR_BLACK ) )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_COAL    ) ):( COLOR_16BIT(M_COLOR_WHITE ) )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_16BIT(M_COLOR_WHITE   ) ):( COLOR_16BIT(M_COLOR_BLACK ) )};
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    const GLU_UION(Pixel) color_bar   = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_24BIT(M_COLOR_DARKGRAY) ):( COLOR_24BIT(M_COLOR_SILVER) )};
+//    const GLU_UION(Pixel) color_title = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_24BIT(M_COLOR_WHITE   ) ):( COLOR_24BIT(M_COLOR_BLACK ) )};
+    const GLU_UION(Pixel) color_blank = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_24BIT(M_COLOR_COAL    ) ):( COLOR_24BIT(M_COLOR_WHITE ) )};
+    const GLU_UION(Pixel) color_text  = {.data = (config->appearance==kGUI_Appearance_Dark)?( COLOR_24BIT(M_COLOR_WHITE   ) ):( COLOR_24BIT(M_COLOR_BLACK ) )};
 #endif
-//    BLK_TYPE(Canvas) info_MainScreen = {
-//        .pBuffer = Screen.GRAM[M_SCREEN_MAIN][0]  ,
-//        .height  = GUI_Y_WIDTH                    ,
-//        .width   = GUI_X_WIDTH                    ,
-//    };
     
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
     
     BLK_FUNC( Graph, set_penColor ) (color_bar.data);
-    BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, info_MainScreen.pBuffer, NULL );
     
         
     for(int i=0; i<bar_edge; i++){
-        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , &info_MainScreen, kApplyPixel_fill);
-        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , &info_MainScreen, kApplyPixel_fill);
-        BLK_FUNC( Graph, line_raw )     (xs   , ye-i       , xe  , ye-i, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )     (xs   , ye-i       , xe  , ye-i, info_MainScreen.pBuffer, NULL);
     }
     
     // Context
     BLK_FUNC( Graph, set_penColor ) (color_blank.data);
-    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, &info_MainScreen, kApplyPixel_fill);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.pBuffer, NULL);
     
     if( config->text != NULL ){
         uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
@@ -273,37 +273,37 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     const int button_cl_ye = ys+button_h-1, button_zm_ye = button_cl_ye         , button_mi_ye = button_cl_ye;
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, rect_fill )   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, info_MainScreen.pBuffer, NULL );
     {
         int xs = RH_MID(button_cl_xs,button_cl_xe)-(button_h>>3);
         int ys = RH_MID(button_cl_ys,button_cl_ye)-(button_h>>3);
         int xe = RH_MID(button_cl_xs,button_cl_xe)+(button_h>>3);
         int ye = RH_MID(button_cl_ys,button_cl_ye)+(button_h>>3);
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
-        BLK_FUNC( Graph, line_raw )( xs, ye, xe, ys, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )( xs, ye, xe, ys, info_MainScreen.pBuffer, NULL);
     }
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, rect_fill )   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, info_MainScreen.pBuffer, NULL );
     {
         int xs = RH_MID(button_zm_xs,button_zm_xe)-(button_h>>3);
         int ys = RH_MID(button_zm_ys,button_zm_ye)-(button_h>>3);
         int xe = RH_MID(button_zm_xs,button_zm_xe)+(button_h>>3);
         int ye = RH_MID(button_zm_ys,button_zm_ye)+(button_h>>3);
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, rect_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, rect_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
     }
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, &info_MainScreen, kApplyPixel_fill );
+    BLK_FUNC( Graph, rect_fill )   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, info_MainScreen.pBuffer, NULL );
     {
         int xs = RH_MID(button_mi_xs,button_mi_xe)-(button_h>>3);
         int ys = RH_MID(button_mi_ys,button_mi_ye);
         int xe = RH_MID(button_mi_xs,button_mi_xe)+(button_h>>3);
         int ye = ys;
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, &info_MainScreen, kApplyPixel_fill);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
     }
     
     BLK_FUNC( Graph, restoreCache )();

@@ -17,83 +17,53 @@
 
 #include "GLU_glucoo.h"
 #include "GLU_image.h"
+#include "BLK_graphic.h"
 
 #include "BLK_image.h"
 #include "BLK_time.h"
 
-#define DICE_NUM_MAX      6
-#define DICE_NUM_MIN      1
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
-#define PROJ_MIN(a,b)                           (((a)<(b))?(a):(b))
-
-#define PROJ_MAX(a,b)                           (((a)>(b))?(a):(b))
-
-
-void d( int son, int div ){
-    int m = son%div;
-    int k = div - m;
-    int base = son/div;
-    
-    for( bool flag=false; m||k; flag=!flag ){
-        if( flag  && m )  {
-            m--;
-            printf( "%d\n", base+1 );
-        }
-        if( !flag && k )  {
-            k--;
-            printf( "%d\n", base );
-        }
-    }
-    
-}
-
+#include <dirent.h>
 
 int main(int argc, const char * argv[]) {
-
-    Simul_API_Init();
-
-    GLU_FUNC( GUI, init        )();
-    GLU_FUNC( GUI, setPenSize  )(5);
-    GLU_FUNC( GUI, setPenColor )(M_COLOR_WHITE);
+    GLU_API_init();
+    GLU_GUI_init();
     
+    DIR* dir = opendir("/Users/randle_h/GitHub/Glucoo");
+    assert(dir);
+    struct dirent * dirent = readdir(dir);
     
+    printf("%s\n",dirent->d_name );
     
-
 # if 1
-    
-//    GLU_FUNC( Font, set_size )(200);
-//    GLU_FUNC( Font, set_font )( kGLU_Font_SignPrinter );
-//
-//    size_t w,h;
-//    GLU_Font_get_str_ImgInfo(&w, &h, "Glucoo");
-//
-//    GLU_Font_out_str_Img("Glucoo");
     
     GLU_SRCT(Text) text = {
         .align = kGLU_Align_Middle ,
-        .size  = 200,
-        .str   = "Glucoo" ,
-        .color = M_COLOR_RED,
-        .font  = kGLU_Font_SignPrinter
+        .size  = 520,
+        .str   = "COMMON" ,
+        .color = M_COLOR_BLACK,
+        .font  = kGLU_Font_Optima
     };
 
-    BLK_SRCT(Img888)* IMG = BLK_Img888_create(800, 480);
-    
-    BLK_TYPE(Pixel888) colors[5] = {
-        MAKE_COLOR(255,105,180) ,\
-        MAKE_COLOR(135,206,235) ,\
-        MAKE_COLOR( 64,224,208) ,\
-        MAKE_COLOR(173,255, 47) ,\
-        MAKE_COLOR(250,250,210) ,\
+    BLK_TYPE(Pixel888) colors[2] = {
+        M_COLOR_CYAN ,\
+        M_COLOR_BLUE
     };
+
+    GLU_Image_profile ( kGLU_ImageStyle_blur, colors, sizeof(colors)/sizeof(*colors), &text, 70 );
     
-    BLK_FUNC( Img888, draw_img_ )( IMG, colors, 5 );
-    
-    BLK_FUNC(Img888, out_bmp)("/Users/randle_h/Desktop/screen.bmp", IMG);
-    
-//    GLU_FUNC( Image, profile )( kGLU_ImageStyle_aurora, colors, 5, &text, 30 );
-//
-//    GLU_FUNC( GUI, refreashEntireScreen )();
+    GLU_Font_set_font(kGLU_Font_SignPrinter);
+    GLU_Font_set_size(240);
+    GLU_SRCT(FontImg)* pF = GLU_Font_out_str_Img("by Randle.Helmslay");
+    BLK_SRCT(ImgGry) img_font = {
+        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf ,
+        .height  = pF->img_h   ,
+        .width   = pF->img_w
+    };
+    BLK_ImgGry_into_Img888(&img_font, &info_MainScreen, 867, 1216, M_COLOR_BLACK, 100);
+
+    GLU_GUI_refreashEntireScreen ();
     
     
 #endif

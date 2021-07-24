@@ -22,16 +22,19 @@
 ===============================================================================================================*/
 void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
 // THIS MAY COST SOME TIME.
+    UNUSED(x1);UNUSED(y1);UNUSED(x2);UNUSED(y2);UNUSED(pixData);
 }
 void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData) = GUI_DrawArea;
 
 void RH_WEAK GUI_DummyDrawPixel (int x,int y,const GLU_TYPE(Pixel) pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
+    UNUSED(x);UNUSED(y);UNUSED(pixData);
 }
 void (*GUI_API_DrawPixel)                     (int x ,int y ,const GLU_TYPE(Pixel) pixData)          = GUI_DummyDrawPixel;
 
 void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
+    UNUSED(expression);UNUSED(WHAT_IS_WRONG);
 }
 void (*GUI_API_AssertParam)                   (bool expression,const char* WHAT_IS_WRONG)      = GUI_AsserParam;
 
@@ -106,25 +109,32 @@ BLK_TYPE(Canvas) info_MainScreen = { //...//
     .width  = GUI_X_WIDTH ,
 };
 
-void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
+void GLU_FUNC( GUI, init )        ( void ){
 #if   ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     Screen.GRAM = GRAM;
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTADDR  )
-    
+
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTSECT  )
 
 #elif ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_EXTPTR   )
     Screen.GRAM = (GLU_UION(Pixel) (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
 #endif
-    
+    BLK_FUNC( Graph, init )();
+    GLU_FUNC( Font , init )();
+
     info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
-    #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
-    #endif
+    
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_1Bit  );
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_16Bit  );
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+    memset( Screen.GRAM , 0, M_SCREEN_CNT*GUI_Y_WIDTH*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
+    BLK_FUNC( Graph, set_color_depth   )  ( kBLK_ColorDepth_24Bit  );
+#endif
+    BLK_FUNC( Graph, set_render_method )  ( kBLK_RenderMethod_fill );
 
     Screen.autoDisplay = false;
 
@@ -135,8 +145,7 @@ void RH_PREMAIN GLU_FUNC( GUI, init )        ( void ){
 
     Screen.windowCFG = NULL;
 
-    BLK_FUNC( Graph, init )();
-    GLU_FUNC( Font , init )();
+    
 }
 
 
@@ -288,7 +297,7 @@ void GLU_FUNC( GUI, setPenSize  )           ( size_t    penSize  ){
     BLK_FUNC( Graph, set_penSize ) ( penSize );
 }
 
-void GLU_FUNC( GUI, setPenColor )           ( GLU_TYPE(Pixel) penColor ){
+void GLU_FUNC( GUI, setPenColor )           ( uint32_t penColor ){
     BLK_FUNC( Graph, set_penColor )(penColor);
 }
 

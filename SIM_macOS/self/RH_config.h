@@ -7,12 +7,14 @@
 extern "C" {
 #endif
 
-#define RH_CFG_RECORD_VERSION
+#define RH_CFG_RECORD_VERSION                 (0U)                          // < select > < 0=disable : 1=enable >
 
 #define RH_CFG_GRAPHIC_COLOR_BIN              (0U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
-#define RH_CFG_GRAPHIC_COLOR_TYPE             RH_CFG_GRAPHIC_COLOR_RGB888   // < select > < above option >
+
+#define RH_CFG_GRAPHIC_COLOR_TYPE              2   // < select > < above option >
+
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
@@ -30,8 +32,8 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__Optima             (1U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Sign_Printer       (1U)                          // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_SCREEN_HEIGHT                  (480U)                        // < select >
-#define RH_CFG_SCREEN_WIDTH                   (800U)                        // < select >
+#define RH_CFG_SCREEN_HEIGHT                  (1920)                        // < select >
+#define RH_CFG_SCREEN_WIDTH                   (3072U)                        // < select >
 
 #define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >
 #define RH_CFG_GRAM_EXTADDR                   (1U)                          // < option >

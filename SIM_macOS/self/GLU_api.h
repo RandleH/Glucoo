@@ -9,7 +9,7 @@ extern "C"{
 
 #define __SIMUL_ON_MACOS__
 
-void Simul_API_Init(void);
+void GLU_FUNC( API, init )(void);
 
 #ifdef __cplusplcus
 }
