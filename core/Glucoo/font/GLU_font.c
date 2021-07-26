@@ -191,36 +191,6 @@ static struct{
 
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
-/*==================================================================================================================================
- * 配置外部TruethType文件方式获取字体数据
- *==================================================================================================================================
- * 以下为外部字体文件的路径名称字符串, 以供读取.
- * 字体路径顺序随枚举顺序.
- * 根据宏 RH_CFG_FONT_STYLE__xxxx 进行初始化, 如果未开启该字体宏, 则路径将为NULL
- * __read_ttf_file 为字体ttf文件读取函数, 将数据拷贝至FCFG.ttf中
- ==================================================================================================================================*/
-    static E_Status_t __read_ttf_file( const char* path ){
-        FILE* fontFile = fopen( path , "rb" );
-    #ifdef RH_DEBUG
-        RH_ASSERT( fontFile );
-    #endif
-        __exitReturn( !fontFile, MAKE_ENUM( kStatus_BadAccess ) );
-
-        fseek(fontFile, 0, SEEK_END);
-        size_t size = ftell(fontFile);
-        fseek(fontFile, 0, SEEK_SET);
-
-        if( !FCFG.font_data ){
-            RH_FREE((void*)FCFG.font_data);
-        }
-
-        FCFG.font_data = RH_CALLOC(size, sizeof(uint8_t));
-
-        fread((void*)FCFG.font_data, size, sizeof(uint8_t), fontFile);
-        fclose(fontFile);
-
-        return MAKE_ENUM(kStatus_Success);
-    }
     #if defined (__WIN32)
       #error "WIN32 NOT SUPPORTED YET."
         static const char* font_ttf_path[kGLU_NUM_FontStyle] = {
@@ -279,6 +249,60 @@ static struct{
         };
     #endif
 
+/*==================================================================================================================================
+ * 配置外部TruethType文件方式获取字体数据
+ *==================================================================================================================================
+ * 以下为外部字体文件的路径名称字符串, 以供读取.
+ * 字体路径顺序随枚举顺序.
+ * 根据宏 RH_CFG_FONT_STYLE__xxxx 进行初始化, 如果未开启该字体宏, 则路径将为NULL
+ * __read_ttf_file 为字体ttf文件读取函数, 将数据拷贝至FCFG.ttf中
+ ==================================================================================================================================*/
+    static E_Status_t __read_ttf_file( const char* path ){
+        FILE* fontFile = fopen( path , "rb" );
+        
+        RH_ASSERT( fontFile );
+
+        fseek(fontFile, 0, SEEK_END);
+        size_t size = ftell(fontFile);
+        fseek(fontFile, 0, SEEK_SET);
+
+        if( !FCFG.font_data ){
+            RH_FREE((void*)FCFG.font_data);
+        }
+
+        FCFG.font_data = RH_CALLOC(size, sizeof(uint8_t));
+
+        fread((void*)FCFG.font_data, size, sizeof(uint8_t), fontFile);
+        fclose(fontFile);
+
+        return MAKE_ENUM(kStatus_Success);
+    }
+
+    static E_Status_t __make_ttf_path( void ){
+ #define MAX_PATH_SIZE 255
+        char path_tmp[MAX_PATH_SIZE] = {0};
+
+        BLK_Dir_back(__FILE__, path_tmp, MAX_PATH_SIZE, 1);
+        size_t idx = strlen(path_tmp);
+        
+#define CONNECT_PATH( a ) strcpy( malloc(idx+strlen( (a) )+1), strcpy(&path_tmp[idx], (a) )-idx )
+#define CLEAR_PATH        memset(&path_tmp[idx], 0, MAX_PATH_SIZE-idx-1)
+        
+        font_ttf_path[ kGLU_Font_Unscii            ] = CONNECT_PATH("/unscii-8.ttf");           CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_ArialRounded_Bold ] = CONNECT_PATH("/Arial Rounded Bold.ttf"); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew        ] = CONNECT_PATH("/Courier New.ttf");        CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew_Italic ] = CONNECT_PATH("/Courier New Italic.ttf"); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew_Bold   ] = CONNECT_PATH("/Courier New Bold.ttf");   CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_NewYork           ] = CONNECT_PATH("/NewYork.ttf");            CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_NewYork_Italic    ] = CONNECT_PATH("/NewYorkItalic.ttf");      CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_SignPrinter       ] = CONNECT_PATH("/Sign Printer.ttf");       CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_Optima            ] = CONNECT_PATH("/Optima.ttf");             CLEAR_PATH;
+        
+#undef CONNECT_PATH
+#undef CLEAR_PATH
+        
+        return MAKE_ENUM(kStatus_Success);
+    }
 
 #elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
 /*==================================================================================================================================
@@ -362,10 +386,13 @@ static const rhtt_fontinfo* font_bit_array[kGLU_NUM_FontStyle] = {
 #endif
 
 
+
 void
 GLU_FUNC( Font, init           ) ( void ){
     FCFG.style     = kGLU_Font_Unscii;
     FCFG.size      = 24;
+    
+    __make_ttf_path();
     
     GLU_FUNC( Font, set_font )( kGLU_Font_Unscii );
     
@@ -568,17 +595,17 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 }
 
 #include "BLK_data.h"
-static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, size_t width ){
+static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){
 
     // 获取空格的最小像素宽度,为改字体下的空格所占宽度的一半.
-    size_t spW = 0;
-    size_t spH = 0;
+    var spW = 0;
+    var spH = 0;
     GLU_FUNC( Font, get_chr_ImgInfo )(&spW, &spH, 'r' );
     
     // 定义词汇数据结构,字符串及所需绘制的像素点宽度.
     struct WordInfo_t{
         char*   str;
-        size_t  pixsW;
+        var     pixsW;
     };
     typedef struct WordInfo_t WordInfo_t;
     
@@ -616,13 +643,13 @@ static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, size_t width ){
     }while( pIter );
     #endif
 
-    size_t pixCnt   = 0;          // 用于记录一行已使用的像素栏
-    size_t wordCnt  = 0;          // 用于记录一行单词有多少个
-    size_t spCnt    = 0;          // 用于记录一行单词间隙有多少个, 永远等于单词数减1
-    size_t spExtra  = 0;          // 一行单词出去基本空格单元像素(spW)点后,额外的所有空格占用的像素点
-    size_t spAvg    = 0;          // 平均每个单词间隙空格占用的像素点
-    size_t spRemain = 0;          // spAvg的余数
-    size_t rowCnt   = 0;          // 用于记录左右文本对其后所需的行数, height = rowCnt* FCFG.height
+    var pixCnt   = 0;          // 用于记录一行已使用的像素栏
+    var wordCnt  = 0;          // 用于记录一行单词有多少个
+    var spCnt    = 0;          // 用于记录一行单词间隙有多少个, 永远等于单词数减1
+    var spExtra  = 0;          // 一行单词出去基本空格单元像素(spW)点后,额外的所有空格占用的像素点
+    var spAvg    = 0;          // 平均每个单词间隙空格占用的像素点
+    var spRemain = 0;          // spAvg的余数
+    var rowCnt   = 0;          // 用于记录左右文本对其后所需的行数, height = rowCnt* FCFG.height
     bool   spAdded = false;       // 用于记录单词结尾是否添加过空格
     do{
         if( pIter1 != NULL && pixCnt + ((WordInfo_t*)(pIter1->object))->pixsW < width ){
@@ -737,13 +764,13 @@ static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, size_t width ){
     BLK_FUNC( LinkDB, removeAll )(pTextHead);
     return &FCFG.img;
 }
-static GLU_SRCT(FontImg)*  __out_txt_Left     ( const char* str, size_t width ){
+static GLU_SRCT(FontImg)*  __out_txt_Left     ( const char* str, var width ){
     return NULL;
 }//
-static GLU_SRCT(FontImg)*  __out_txt_Right    ( const char* str, size_t width ){
+static GLU_SRCT(FontImg)*  __out_txt_Right    ( const char* str, var width ){
     return NULL;
 }//
-static GLU_SRCT(FontImg)*  __out_txt_Middle   ( const char* str, size_t width ){
+static GLU_SRCT(FontImg)*  __out_txt_Middle   ( const char* str, var width ){
     return NULL;
 }//
 
@@ -764,7 +791,7 @@ GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align
 }
 
 void
-GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, char        c   ){
+GLU_FUNC( Font, get_chr_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, char        c   ){
     int c_x1 , c_y1 , c_x2 , c_y2;
     (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, c, FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     if( width )
@@ -775,7 +802,7 @@ GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE
 }
 
 void
-GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, const char* str ){
+GLU_FUNC( Font, get_str_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, const char* str ){
     
     if( height ){
         *height = FCFG.ascent-FCFG.descent+FCFG.lineGap;
@@ -798,7 +825,7 @@ GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE
 }
 
 int
-GLU_FUNC( Font, get_str_WordCnt) ( size_t width, const char* str ){
+GLU_FUNC( Font, get_str_WordCnt) ( var width, const char* str ){
     int cnt=0, w=0;
     
     int advanceWidth,leftSideBearing;

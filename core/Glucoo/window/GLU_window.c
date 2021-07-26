@@ -15,10 +15,10 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     __exit( !config );
 #endif
     
-    const int xs = config->area.xs;
-    const int ys = config->area.ys;
-    const int xe = (int)(xs + config->area.width -1);
-    const int ye = (int)(ys + config->area.height-1);
+    const int xs = (int)(config->area.xs);
+    const int ys = (int)(config->area.ys);
+    const int xe = (int)(xs+config->area.w-1);
+    const int ye = (int)(ys+config->area.h-1);
     const int bar_size   = RH_LIMIT( (int)(config->size), 5, 256 );//38
     const int bar_size_2 = bar_size>>1;
     const int bar_size_4 = bar_size>>2;
@@ -179,8 +179,8 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     
     const int xs = config->area.xs;
     const int ys = config->area.ys;
-    const int xe = (int)(xs + config->area.width -1);
-    const int ye = (int)(ys + config->area.height-1);
+    const int xe = (int)(xs+config->area.w-1);
+    const int ye = (int)(ys+config->area.h-1);
     const int bar_size   = RH_LIMIT( (int)((config->size<<1)/3), 10, 256 );//38
     const int bar_size_2 = bar_size>>1;
     const int bar_edge   = config->win_edge;
@@ -359,7 +359,7 @@ ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config )
         GLU_FUNC( Font, set_size )(m_config->text_size);
         __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
 
-        size_t fontW = m_config->area.width-((m_config->win_edge+m_config->text_margin)<<1);
+        size_t fontW = m_config->area.w-((m_config->win_edge+m_config->text_margin)<<1);
         
         GLU_SRCT(FontImg)* p = GLU_FUNC( Font, out_txt_Img )( m_config->text, fontW, kGLU_Align_Justify );
         
@@ -387,8 +387,8 @@ __GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config )
     
     config->area.xs      = 0;
     config->area.ys      = 0;
-    config->area.height  = 0;
-    config->area.width   = 0;
+    config->area.h       = 0;
+    config->area.w       = 0;
     config->type         = kGUI_WindowType_macOS;
     config->appearance   = kGUI_Appearance_Light;
     config->size         = 40;
@@ -412,14 +412,10 @@ E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
     RH_ASSERT( ID );
 #endif
     (*((__GUI_Window_t*)ID)->insert_func)( (__GUI_Window_t*)ID );
-    if( GLU_FUNC( GUI, isAutoDisplay )() ){
-        
-    }else{
-        GLU_FUNC( GUI, addScreenArea )(      ((__GUI_Window_t*)ID)->area.xs ,\
-                                             ((__GUI_Window_t*)ID)->area.ys ,\
-                                       (int)(((__GUI_Window_t*)ID)->area.xs +  ((__GUI_Window_t*)ID)->area.width -1),\
-                                       (int)(((__GUI_Window_t*)ID)->area.ys +  ((__GUI_Window_t*)ID)->area.height-1));
-    }
+    
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &((__GUI_Window_t*)ID)->area )
+                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &((__GUI_Window_t*)ID)->area );
+    
     return MAKE_ENUM( kStatus_Success );
 }
 

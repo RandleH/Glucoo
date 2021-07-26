@@ -644,8 +644,27 @@ void* BLK_FUNC( Memory, grbArea        )(void* __restrict__ __dst,const void* __
     
     return __dst;
 }
+    
+#include <stdlib.h>
+char* BLK_FUNC( Dir, realpath   ) (const char * RH_RESTRICT file_name, char *RH_RESTRICT resolved_name){
+    return realpath(file_name, resolved_name);
+}
 
+char* BLK_FUNC( Dir, back       ) (const char * RH_RESTRICT path_name, char *RH_RESTRICT answer, size_t size, int backlevel ){
+#warning "Got some problems here."
+    
+    if( !answer ) return NULL;
 
+    char* str = alloca(strlen(path_name));
+    realpath( path_name, str );
+    size_t len = strlen(str);
+    int cnt = 0;
+    while( cnt<backlevel && len-- ){
+        if( str[len] == '/') cnt++;
+    }
+    str[len] = '\0';
+    return strcpy( answer, str);
+}
 
 #ifdef __cplusplus
 }

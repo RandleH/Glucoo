@@ -32,7 +32,7 @@ extern "C" {
 #define RH_CFG_FONT_STYLE__Optima             (1U)                          // < select > < 0=disable : 1=enable >
 #define RH_CFG_FONT_STYLE__Sign_Printer       (1U)                          // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_SCREEN_HEIGHT                  (1920)                        // < select >
+#define RH_CFG_SCREEN_HEIGHT                  (1920U)                        // < select >
 #define RH_CFG_SCREEN_WIDTH                   (3072U)                        // < select >
 
 #define RH_CFG_GRAM_INTERNAL                  (0U)                          // < option >

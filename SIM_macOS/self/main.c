@@ -26,15 +26,11 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 #include <dirent.h>
 
+
 int main(int argc, const char * argv[]) {
     GLU_API_init();
     GLU_GUI_init();
-    
-    DIR* dir = opendir("/Users/randle_h/GitHub/Glucoo");
-    assert(dir);
-    struct dirent * dirent = readdir(dir);
-    
-    printf("%s\n",dirent->d_name );
+
     
 # if 1
     

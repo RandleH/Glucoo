@@ -773,18 +773,18 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
     
     if( area==NULL ){
         area = alloca( sizeof(__Area_t) );
-        area->height = (var)src->height;
-        area->width  = (var)src->width;
+        area->h = (var)src->height;
+        area->w = (var)src->width;
         area->xs = area->ys = 0;
     }
     
     unsigned long sum_R = 0, sum_G = 0, sum_B = 0;
     unsigned long div = 0;
     
-    int xs = area->xs;
-    int ys = area->ys;
-    int xe = (int)(area->xs + area->width -1);
-    int ye = (int)(area->ys + area->height-1);
+    var xs = area->xs;
+    var ys = area->ys;
+    var xe = area->xs + area->w-1;
+    var ye = area->ys + area->h-1;
     
     // Pre-Calculation
     int half_order  = (int)((order+1)>>1); // Kernel
@@ -866,7 +866,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
                 pDstData[ target ].B = sum_B*br_100/(div*100);
             }
         }else{ // Scan Direction:  [new] <--<-- [old]
-            target+=area->width-1;
+            target+=area->w-1;
             for(int i=xs; i <= xe; i++, target-- ){
                 int k = (int)(xe + xs - i); // reverse i   i in (xs->xe); k in (xe -> xs)
 
@@ -913,7 +913,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
                 pDstData[ target ].G = sum_G*br_100/(div*100);
                 pDstData[ target ].B = sum_B*br_100/(div*100);
             }
-            target += area->width+1;
+            target += area->w+1;
             
         }
         // End of scanning of this row.
@@ -998,7 +998,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,
     
     const int xs = area->xs;
     const int ys = area->ys;
-    const int xe = (int)(area->xs + area->width  -1);
+    const int xe = (int)(area->xs + area->w  -1);
  // const int ye = (int)(area->ys + area->height -1);
     
     const BLK_UION(Pixel888)* pSrcData = src->pBuffer;
@@ -1010,7 +1010,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,
 
     long accumulate_R=0, accumulate_G=0, accumulate_B=0;
     // Horizontal Processing
-    for( int y=0; y<area->height; y++ ){
+    for( int y=0; y<area->h; y++ ){
         BLK_UION(Pixel888) pix_s = pSrcData[ (y+ys)*src->width + xs ];
         BLK_UION(Pixel888) pix_e = pSrcData[ (y+ys)*src->width + xe ];
         
@@ -1035,42 +1035,42 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,
             accumulate_G += pSrcData[ (y+ys)*src->width + xs+rx ].G - pix_s.G;
             accumulate_R += pSrcData[ (y+ys)*src->width + xs+rx ].R - pix_s.R;
 
-            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
         
         // Now: rx=2*radSize+1; lx=0;
         // printf( "rx=%d lx=%d\n",rx,lx );
-        for( int x=radSize+1; x<area->width-radSize; x++,rx++,lx++ ){
+        for( int x=radSize+1; x<area->w-radSize; x++,rx++,lx++ ){
             accumulate_B += pSrcData[ (y+ys)*src->width + xs+rx ].B - pSrcData[ (y+ys)*src->width + xs+lx ].B;
             accumulate_G += pSrcData[ (y+ys)*src->width + xs+rx ].G - pSrcData[ (y+ys)*src->width + xs+lx ].G;
             accumulate_R += pSrcData[ (y+ys)*src->width + xs+rx ].R - pSrcData[ (y+ys)*src->width + xs+lx ].R;
         
-            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
         // Now: rx=area->width; lx=area->width-2*radSize-1;
         // printf( "rx=%d lx=%d\n",rx,lx );
-        for( int x=(int)(area->width-radSize); x<area->width; x++,lx++ ){
+        for( int x=(int)(area->w-radSize); x<area->w; x++,lx++ ){
             accumulate_B += pix_e.B - pSrcData[ (y+ys)*src->width + xs+lx ].B;
             accumulate_G += pix_e.R - pSrcData[ (y+ys)*src->width + xs+lx ].G;
             accumulate_R += pix_e.R - pSrcData[ (y+ys)*src->width + xs+lx ].R;
         
-            pTmpData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pTmpData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pTmpData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
         // printf( "rx=%d lx=%d\n\n",rx,lx);
 
     }
     
     // Trunk Processing
-    for( int x=0; x<area->width; x++ ){
-        BLK_UION(Pixel888) pix_s = pSrcData[                                x ];
-        BLK_UION(Pixel888) pix_e = pSrcData[ (area->height-1)*area->width + x ];
+    for( int x=0; x<area->w; x++ ){
+        BLK_UION(Pixel888) pix_s = pSrcData[                       x ];
+        BLK_UION(Pixel888) pix_e = pSrcData[ (area->h-1)*area->w + x ];
 
         accumulate_B = (radSize+1)*pix_s.B;
         accumulate_G = (radSize+1)*pix_s.G;
@@ -1080,39 +1080,39 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,
         int by = radSize;
 
         for( int y=0; y<radSize; y++ ){
-            accumulate_B += pTmpData[ y*area->width + x ].B;
-            accumulate_G += pTmpData[ y*area->width + x ].G;
-            accumulate_R += pTmpData[ y*area->width + x ].R;
+            accumulate_B += pTmpData[ y*area->w + x ].B;
+            accumulate_G += pTmpData[ y*area->w + x ].G;
+            accumulate_R += pTmpData[ y*area->w + x ].R;
         }
 
         for( int y=0; y<=radSize; y++,by++ ){
-            accumulate_B += pTmpData[ by*area->width + x ].B - pix_s.B;
-            accumulate_G += pTmpData[ by*area->width + x ].G - pix_s.G;
-            accumulate_R += pTmpData[ by*area->width + x ].R - pix_s.R;
+            accumulate_B += pTmpData[ by*area->w + x ].B - pix_s.B;
+            accumulate_G += pTmpData[ by*area->w + x ].G - pix_s.G;
+            accumulate_R += pTmpData[ by*area->w + x ].R - pix_s.R;
 
-            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
-        for( int y=radSize+1; y<area->height-radSize; y++, ty++, by++ ){
-            accumulate_B += pTmpData[ by*area->width + x ].B - pTmpData[ ty*area->width + x ].B;
-            accumulate_G += pTmpData[ by*area->width + x ].G - pTmpData[ ty*area->width + x ].G;
-            accumulate_R += pTmpData[ by*area->width + x ].R - pTmpData[ ty*area->width + x ].R;
+        for( int y=radSize+1; y<area->h-radSize; y++, ty++, by++ ){
+            accumulate_B += pTmpData[ by*area->w + x ].B - pTmpData[ ty*area->w + x ].B;
+            accumulate_G += pTmpData[ by*area->w + x ].G - pTmpData[ ty*area->w + x ].G;
+            accumulate_R += pTmpData[ by*area->w + x ].R - pTmpData[ ty*area->w + x ].R;
 
-            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
-        for( int y=(int)(area->height-radSize); y<area->height; y++, ty++ ){
-            accumulate_B += pix_e.B - pTmpData[ ty*area->width + x ].B;
-            accumulate_G += pix_e.G - pTmpData[ ty*area->width + x ].G;
-            accumulate_R += pix_e.R - pTmpData[ ty*area->width + x ].R;
+        for( int y=(int)(area->h-radSize); y<area->h; y++, ty++ ){
+            accumulate_B += pix_e.B - pTmpData[ ty*area->w + x ].B;
+            accumulate_G += pix_e.G - pTmpData[ ty*area->w + x ].G;
+            accumulate_R += pix_e.R - pTmpData[ ty*area->w + x ].R;
 
-            pDstData[ y*area->width + x ].B = accumulate_B / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].G = accumulate_G / ((radSize<<1)+1);
-            pDstData[ y*area->width + x ].R = accumulate_R / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].B = accumulate_B / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].G = accumulate_G / ((radSize<<1)+1);
+            pDstData[ y*area->w + x ].R = accumulate_R / ((radSize<<1)+1);
         }
 
     }

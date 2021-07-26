@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "glu_glucoo.h": "c",
+        "rh_common.h": "c",
+        "stdint.h": "c"
+    }
+}

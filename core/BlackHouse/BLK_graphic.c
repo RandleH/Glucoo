@@ -839,10 +839,10 @@ E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int 
  > 插入空心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pIMG, callback );
 }
     
@@ -850,10 +850,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,    
  > 插入实心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pIMG, callback );
 }
     
@@ -861,10 +861,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,    
  > 插入一个空心长发形,线宽随设定(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                       RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                       RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                        pIMG, callback );
 }
     
@@ -872,10 +872,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,    
  > 插入填充圆角长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                            RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             pIMG, callback );
 }
 
@@ -883,10 +883,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,    
  > 插入空心圆角长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_round_raw )( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                            RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_round_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             pIMG, callback );
 }
     

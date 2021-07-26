@@ -31,8 +31,10 @@ void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );
 void GLU_FUNC( GUI, autoDisplay )            ( bool             cmd      );
 
 
-void GLU_FUNC( GUI, refreashScreenArea   )   ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, addScreenArea        )   ( int xs,int ys,int xe,int ye );
+void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
+void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
+void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
+void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
 void GLU_FUNC( GUI, refreashScreen       )   ( void );
 void GLU_FUNC( GUI, refreashEntireScreen )   ( void );

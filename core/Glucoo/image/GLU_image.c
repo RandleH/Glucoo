@@ -85,11 +85,11 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
                     .width   = pF->img_w,
                     .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
                 };
-                size_t w,h;
+                var w,h;
                 GLU_FUNC(Font, get_str_ImgInfo)(&w, &h, text->str);
                 
-                int fs_x = RH_LIMIT( ((int)(info_MainScreen.width  - w)>>1), 0, GUI_X_WIDTH-1);;
-                int fs_y = RH_LIMIT( ((int)(info_MainScreen.height - h)>>1), 0, GUI_Y_WIDTH-1);
+                var fs_x = RH_LIMIT( ((info_MainScreen.width  - w)>>1), 0, GUI_X_WIDTH-1);
+                var fs_y = RH_LIMIT( ((info_MainScreen.height - h)>>1), 0, GUI_Y_WIDTH-1);
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, fs_x, fs_y, text->color, alpha_100 );

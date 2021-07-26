@@ -1,3 +1,5 @@
+
+#include <unistd.h>
 #include "./RH_common.h"
 
 
@@ -11,7 +13,8 @@ void RH_PREMAIN RH_init(void){
     RH_TIME = __TIME__;
     
     // 获取项目路径
-    const char* str = __FILE__;
+    char str[1024] = {0};
+    realpath( __FILE__, str );
     size_t len = strlen(str);
     size_t cnt = 0;
     while( cnt<2 && len-- ){

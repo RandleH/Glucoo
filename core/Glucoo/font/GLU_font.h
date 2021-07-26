@@ -65,8 +65,8 @@ typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
 
 struct GLU_SRCT(FontImg){
     uint8_t* img_buf;
-    int      img_h;
-    int      img_w;
+    var      img_h;
+    var      img_w;
 };
 typedef struct GLU_SRCT(FontImg) GLU_SRCT(FontImg);
 
@@ -85,10 +85,10 @@ GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_chr_Img    ) ( uin
 GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_str_Img    ) ( const char* str );
 GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align) align );
 
-void                                      GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, char        c   );
-void                                      GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, const char* str );
+void                                      GLU_FUNC( Font, get_chr_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, char        c   );
+void                                      GLU_FUNC( Font, get_str_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, const char* str );
            
-int                                       GLU_FUNC( Font, get_str_WordCnt) ( size_t width, const char* str );
+int                                       GLU_FUNC( Font, get_str_WordCnt) ( var width, const char* str );
 
 
 

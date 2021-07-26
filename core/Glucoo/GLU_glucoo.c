@@ -163,32 +163,27 @@ void GLU_FUNC( GUI, init )        ( void ){
  * 如果配置为内置显存, 那么图像数据将直接从 Screen.GRAM 逐一画点.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
-void GLU_FUNC( GUI, refreashScreenArea )     ( int xs, int ys, int xe, int ye ){
+void GLU_FUNC( GUI, refreashScreenArea )     ( var xs, var ys, var xe, var ye ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     // 内置显存需要向外导出数据
     if(GUI_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        const int x_width = xe-xs+1;
-        const int ps      = ys>>3;
-        const int pe      = ye>>3;
-        const int p_width = (pe-ps+1);
+        const var x_width = xe-xs+1;
+        const var ps      = ys>>3;
+        const var pe      = ye>>3;
+        const var p_width = pe-ps+1;
         GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(p_width)*sizeof(GLU_TYPE(Pixel)));
+        BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] , sizeof(GLU_TYPE(Pixel)) , GUI_X_WIDTH, (int)xs, (int)ps, (int)xe, (int)pe  );
         
-       (*GUI_API_DrawArea)( xs , ys , xe , ye ,
-                           BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
-                                             sizeof(GLU_TYPE(Pixel))             ,\
-                                             GUI_X_WIDTH                   ,\
-                                             xs, ps, xe, pe                ) );
+       (*GUI_API_DrawArea)( xs , ys , xe , ye , p );
 
 #else
-        const int x_width = xe-xs+1;
-        const int y_width = ye-ys+1;
+        const var x_width = xe-xs+1;
+        const var y_width = ye-ys+1;
         GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(y_width)*sizeof(GLU_TYPE(Pixel)));
-        (*GUI_API_DrawArea)( xs , ys , xe , ye ,
-                            BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] ,\
-                                              sizeof(GLU_TYPE(Pixel))             ,\
-                                              GUI_X_WIDTH                   ,\
-                                              xs, ys, xe, ye                ) );
+        
+        BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] , sizeof(GLU_TYPE(Pixel)), GUI_X_WIDTH, (int)xs, (int)ys, (int)xe, (int)ye);
+        (*GUI_API_DrawArea)( xs , ys , xe , ye , p);
 #endif
         RH_FREE(p);
     }
@@ -211,6 +206,10 @@ void GLU_FUNC( GUI, refreashScreenArea )     ( int xs, int ys, int xe, int ye ){
     // 如果配置为外置显存, 则无需软件控制显示屏
 
 #endif
+}
+
+void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area ){
+    GLU_FUNC( GUI, refreashScreenArea )( area->xs, area->ys, area->xs+area->w-1, area->ys+area->h-1 );
 }
 
 /*==============================================================================================================
@@ -240,10 +239,7 @@ void GLU_FUNC( GUI, refreashScreen )         ( void ){
         while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
             
             p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
-            GLU_FUNC( GUI, refreashScreenArea )( (int)(p->xs)             ,\
-                                    (int)(p->ys)             ,\
-                                    (int)(p->xs+p->width-1)  ,\
-                                    (int)(p->ys+p->height-1) );
+            GLU_FUNC( GUI, refreashScreenArea )( p->xs, p->ys, p->xs+p->w-1, p->ys+p->h-1 );
             RH_FREE(p);
         }
     }
@@ -251,7 +247,7 @@ void GLU_FUNC( GUI, refreashScreen )         ( void ){
 #endif
 }
 
-void GLU_FUNC( GUI, addScreenArea )          ( int xs, int ys, int xe, int ye ){
+void GLU_FUNC( GUI, addScreenArea )          ( var xs, var ys, var xe, var ye ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         __Area_t *p = NULL;
@@ -263,11 +259,31 @@ void GLU_FUNC( GUI, addScreenArea )          ( int xs, int ys, int xe, int ye ){
     }
     
     __Area_t* pArea = (__Area_t*)RH_MALLOC( sizeof(__Area_t) );
-    pArea->xs      = xs;
-    pArea->ys      = ys;
-    pArea->width   = xe-xs+1;
-    pArea->height  = ye-ys+1;
-    Screen.areaNeedRefreashPixelCnt += pArea->width*pArea->height;
+    pArea->xs = xs;
+    pArea->ys = ys;
+    pArea->w  = xe-xs+1;
+    pArea->h  = ye-ys+1;
+    Screen.areaNeedRefreashPixelCnt += pArea->w*pArea->h;
+    if( Screen.areaNeedRefreashPixelCnt < GUI_X_WIDTH*GUI_Y_WIDTH )
+        BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
+#endif
+}
+
+void GLU_FUNC( GUI, EX_addScreenArea )( const __Area_t* area ){
+#if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
+    if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
+        __Area_t *p = NULL;
+        while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
+            p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
+            RH_FREE(p);
+        }
+        return;
+    }
+    
+    RH_ASSERT(area);
+    __Area_t* pArea = (__Area_t*)RH_MALLOC( sizeof(__Area_t) );
+    memcpy( pArea, area, sizeof(__Area_t) );
+    Screen.areaNeedRefreashPixelCnt += pArea->w*pArea->h;
     if( Screen.areaNeedRefreashPixelCnt < GUI_X_WIDTH*GUI_Y_WIDTH )
         BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
 #endif

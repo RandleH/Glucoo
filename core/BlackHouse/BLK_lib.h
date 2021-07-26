@@ -74,7 +74,8 @@ void* BLK_FUNC( Memory, setArea ) (void*                __b,int                 
 void* BLK_FUNC( Memory, cpyArea ) (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 void* BLK_FUNC( Memory, grbArea ) (void* __restrict__ __dst,const void* __restrict__ __src,size_t size,size_t nmenb_line,long xs,long ys,long xe,long ye);
 
-#include "RH_config.h"
+char* BLK_FUNC( Dir, realpath   ) (const char * RH_RESTRICT file_name, char *RH_RESTRICT resolved_name);
+char* BLK_FUNC( Dir, back       ) (const char * RH_RESTRICT path_name, char *RH_RESTRICT answer, size_t size, int backlevel );
 
 #ifdef __cplusplus
 }

@@ -85,8 +85,8 @@
 		E38C37922647C7500057F552 /* GLU_glucoo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_glucoo.c; path = Glucoo/GLU_glucoo.c; sourceTree = "<group>"; };
 		E38C37932647C7500057F552 /* GLU_glucoo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_glucoo.h; path = Glucoo/GLU_glucoo.h; sourceTree = "<group>"; };
 		E38C379A2647C7BE0057F552 /* GLU_draw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_draw.c; path = Glucoo/draw/GLU_draw.c; sourceTree = "<group>"; };
-		E38C379E2647CC900057F552 /* GLU_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font.c; path = Glucoo/font/GLU_font.c; sourceTree = "<group>"; };
-		E38C379F2647CC900057F552 /* GLU_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_font.h; path = Glucoo/font/GLU_font.h; sourceTree = "<group>"; };
+		E38C379E2647CC900057F552 /* GLU_font.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font.c; path = Glucoo/font/GLU_font.c; sourceTree = "<group>"; wrapsLines = 0; };
+		E38C379F2647CC900057F552 /* GLU_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_font.h; path = Glucoo/font/GLU_font.h; sourceTree = "<group>"; wrapsLines = 0; };
 		E38C37A72647D2DD0057F552 /* GLU_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_object.h; path = Glucoo/object/GLU_object.h; sourceTree = "<group>"; };
 		E38C37A82647D2DD0057F552 /* GLU_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_object.c; path = Glucoo/object/GLU_object.c; sourceTree = "<group>"; wrapsLines = 0; };
 		E38C37AA2647D9BD0057F552 /* GLU_font_ArialRoundedBold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_font_ArialRoundedBold.c; path = Glucoo/font/GLU_font_ArialRoundedBold.c; sourceTree = "<group>"; };
