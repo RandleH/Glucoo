@@ -32,8 +32,26 @@ int main(int argc, const char * argv[]) {
     GLU_API_init();
     GLU_GUI_init();
     
-# if 1
+    uint16_t buf[7*7];
+    S_BLK_Kernel_t kernel = {
+        .pBuffer = buf ,
+        .order   = 7
+    };
+    BLK_Gussian_kernel(2.9, 7, &kernel);
     
+
+    S_BLK_Img888_t* IMG = BLK_Img888_load_jpg("/Users/randle_h/Downloads/IMG_4006.JPG");
+   
+    
+    RH_RECORD_TIME( BLK_Img888_trans_mirror(IMG, IMG, 0), printf );
+    
+    BLK_Img888_out_bmp("/Users/randle_h/Downloads/IMG_4006_Conv2D.bmp", IMG);
+    
+    BLK_Img888_free(IMG);
+    
+//    system("open /Users/randle_h/Downloads/IMG_4006_Conv2D.bmp");
+    
+# if 0
     GLU_SRCT(Text) text = {
         .align = kGLU_Align_Middle ,
         .size  = 520,
@@ -60,10 +78,7 @@ int main(int argc, const char * argv[]) {
     BLK_ImgGry_into_Img888(&img_font, &info_MainScreen, 867, 1216, M_COLOR_BLACK, 100);
     
     
-    
     GLU_GUI_refreashEntireScreen ();
-    
-    
 #endif
     return 0;
 }

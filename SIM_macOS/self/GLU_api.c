@@ -88,17 +88,8 @@ static void Simul_API_DrawArea(var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)
 }
     
 static void Simul_API_DrawPixel(var x ,var y ,const GLU_TYPE(Pixel) pixData){
-    if( pTmpScreenShot == NULL ){
-#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        while(1);
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        while(1);
-#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        while(1);
-#else
-  #error "[RH_gui_api]: Unknown color type."
-#endif
-    }
+    RH_ASSERT( pTmpScreenShot );
+
     pTmpScreenShot->ptr[(y)*RH_CFG_SCREEN_WIDTH + (x)].data = pixData;
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -121,9 +112,7 @@ void GLU_FUNC( API, init )(void){
     
     dst_path = RH_MALLOC(sizeof(temp)+strlen(RH_DIR_PRJ)-1);
     
-    strcpy( &dst_path[0]                   , RH_DIR_PRJ);
-    memcpy( &dst_path[ strlen(RH_DIR_PRJ) ], temp, sizeof(temp));
-    
+    sprintf( dst_path, "%s%s", RH_DIR_PRJ, temp);
     
     GLU_API_DrawArea     = Simul_API_DrawArea;
     GLU_API_AssertParam  = Simul_API_AssertParam;

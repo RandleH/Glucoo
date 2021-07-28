@@ -464,17 +464,25 @@ BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D   )    (const BLK_SRCT(Img565)* src,B
         dst->ptr = (BLK_UION(Pixel565)*)RH_MALLOC(src->w * src->h * sizeof(BLK_UION(Pixel565)));
     }
 #warning "Able to optimize."
+    
+
+    uint16_t *pIterKer = k->pBuffer;
+    
     for(var j=0;j<src->h;j++){
         for(var i=0;i<src->w;i++){
             int div = k->sum;
             
             // Here comes the convolution part.
+            
             unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0; // Preparation for RGB data.
             for(var n=0;n<k->order;n++){
-                for(var m=0;m<k->order;m++){
+                for(var m=0;m<k->order;m++,  pIterKer++){
                     var offset_y  = j-(k->order>>1)+n;
                     var offset_x  = i-(k->order>>1)+m;
-                    int selectKernel = *( k->pBuffer + n       * k->order + m       );
+                    // int selectKernel = *( k->pBuffer + n       * k->order + m       );
+                    
+                    uint16_t selectKernel = *pIterKer;
+                    
                     if( offset_x>=src->w || offset_y>=src->h ){
                         div -= selectKernel;
                     }else{
@@ -703,7 +711,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_warm )  (const BLK_SRCT(Img888)* src,
 }
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
-    uint32_t threshold = 0;
+    uint8_t threshold = 0;
     __exitReturn( !src      , NULL);
     __exitReturn( !src->ptr , NULL);
     __exitReturn( !dst      , NULL);
@@ -711,7 +719,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS )  (const BLK_SRCT(Img888)* src,
     
     BLK_FUNC( Img888, data_OTUS )(src, &threshold);
     
-    __exitReturn(threshold == (uint32_t)(-1), NULL);
+    __exitReturn(threshold == (uint8_t)(-1), NULL);
     
     BLK_UION(Pixel888)* pIterDst = dst->ptr;
     BLK_UION(Pixel888)* pIterSrc = src->ptr;
@@ -730,8 +738,8 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS )  (const BLK_SRCT(Img888)* src,
 }
      
 BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint8_t HV){
-#warning "Able to optimize"
-    if( src == NULL || src->ptr == NULL ){
+
+    if( !src || !src->ptr ){
         return NULL;
     }
     if(dst == NULL){
@@ -748,18 +756,35 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror)  (const BLK_SRCT(Img888)* src,
             return dst;
     }
     
+    dst->w = src->w;
+    dst->h = src->h;
+    
     switch(HV){
-        case 0:
-            for(var y=0;y<src->h;y++){
-                for(var x=0;x<((src->w+1)>>1);x++){
-                    BLK_UION(Pixel888) tmp_fore = src->ptr[y*src->w + x];
-                    BLK_UION(Pixel888) tmp_back = src->ptr[y*src->w + src->w - 1 - x];
-                    dst->ptr[y*src->w+x]                = tmp_back;
-                    dst->ptr[y*src->w + src->w - 1 - x] = tmp_fore;
+        case 0:{
+            BLK_UION(Pixel888) *pIterDst_f = dst->ptr;
+            BLK_UION(Pixel888) *pIterDst_b = dst->ptr+dst->w-1;
+            BLK_UION(Pixel888) *pIterSrc_f = src->ptr;
+            BLK_UION(Pixel888) *pIterSrc_b = src->ptr+src->w-1;
+            for(var y=0;y<src->h;y++,pIterSrc_f += src->w - ((src->w>>1)+(src->w&0x01)) ,\
+                                     pIterSrc_b += src->w + ((src->w>>1)+(src->w&0x01)) ,\
+                                     pIterDst_f += dst->w - ((dst->w>>1)+(dst->w&0x01)) ,\
+                                     pIterDst_b += dst->w + ((dst->w>>1)+(dst->w&0x01))  \
+                ){
+                
+                for(var x=0;x<((src->w+1)>>1);x++, pIterDst_f++, pIterSrc_f++, pIterDst_b--, pIterSrc_b--){
+                    BLK_UION(Pixel888) tmp_fore = *pIterSrc_f;
+                    BLK_UION(Pixel888) tmp_back = *pIterSrc_b;
+                    *pIterDst_f = tmp_back;
+                    *pIterSrc_b = tmp_fore;
+                
                 }
+                
             }
-
+            
             break;
+        }
+
+            
         case 1:
             for(size_t y=0;y<src->h;y++){
                 memmove(&dst->ptr[(src->h-1-y)*dst->w], &src->ptr[y*src->w], src->w*sizeof(BLK_UION(Pixel888)));
@@ -1216,35 +1241,13 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor )  (const BLK_SRCT(Img888
 
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D      )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100){
-    if( src == NULL || src->ptr == NULL || k == NULL ){
-        return dst;
-    }
-    
-    if(dst == NULL){
-        dst = (BLK_SRCT(Img888)*)RH_MALLOC(sizeof(BLK_SRCT(Img888)));
-        if(dst == NULL) // Not enough space :-(
-            return dst;
-        dst->ptr = (BLK_UION(Pixel888)*)RH_MALLOC(src->w * src->h * sizeof(BLK_UION(Pixel888)));
-        if(dst->ptr == NULL) // Not enough space :-(
-            return dst;
-    }
-    
-    if(dst->ptr == NULL){
-        dst->ptr = (BLK_UION(Pixel888)*)RH_MALLOC(src->w * src->h * sizeof(BLK_UION(Pixel888)));
-        if(dst->ptr == NULL) // Not enough space :-(
-            return dst;
-    }
-    
-    if(dst == NULL){
-        dst = (BLK_SRCT(Img888)*)RH_MALLOC(sizeof(BLK_SRCT(Img888)));
-        if(dst == NULL) // Not enough space :-(
-            return dst;
-        dst->ptr = (BLK_UION(Pixel888)*)RH_MALLOC(src->w * src->h * sizeof(BLK_UION(Pixel888)));
+    if( !src || !src->ptr || !k || !dst || !dst->ptr ){
+        return NULL;
     }
 
-    for(int j=0;j<src->h;j++){
-        for(int i=0;i<src->w;i++){
-            int div = k->sum;
+    for(var j=0;j<src->h;j++){
+        for(var i=0;i<src->w;i++){
+            long div = k->sum;
             
             // Here comes the convolution part.
             unsigned long tmp_R = 0,tmp_G = 0,tmp_B = 0; // Preparation for RGB data.
@@ -1289,13 +1292,13 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D      )  (const BLK_SRCT(Img888)* src,
     return dst;
 }
    
-void              BLK_FUNC( Img888, data_OTUS   )  (const BLK_SRCT(Img888)* src,uint32_t* threshold){
-#warning "Need to optimize."
-    *threshold = (uint32_t)(-1);
+void              BLK_FUNC( Img888, data_OTUS   )  (const BLK_SRCT(Img888)* src,uint8_t* threshold){
+    __exit( !threshold );
+    *threshold = (uint8_t)(-1);
     __exit( !src      );
     __exit( !src->ptr );
     
-    int    threshold_temp;
+    uint8_t  threshold_temp;
     long   NumOf_bckPixel = 0;    //Number of pixels defined as background
     long   SumOf_bckPixel = 0;    //Sum of pixels defined as background
     float  AvgOf_bckPixel = 0.0;  //Average value of pixels defined as background
@@ -1311,11 +1314,12 @@ void              BLK_FUNC( Img888, data_OTUS   )  (const BLK_SRCT(Img888)* src,
     // Make Statistic...
 
     long gray_cnt[255] = {0};
-    for (int row = 0; row < src->h; row++){
-        for (int col = 0; col < src->w; col++){
-            uint8_t temp = ( __array1D(src->ptr, src->w, row, col)->R*19595 + \
-                             __array1D(src->ptr, src->w, row, col)->G*38469 + \
-                             __array1D(src->ptr, src->w, row, col)->B*7472 )>>16;
+    BLK_UION(Pixel888) *pIterSrc = src->ptr;
+    for (var row = 0; row < src->h; row++){
+        for (var col = 0; col < src->w; col++,pIterSrc++){
+            uint8_t temp = ( pIterSrc->R*38 + \
+                             pIterSrc->G*75 + \
+                             pIterSrc->B*15 )>>7;
             gray_cnt[temp]++;
         }
     }

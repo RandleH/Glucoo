@@ -589,8 +589,9 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #endif
     
 #if RH_CFG_OUTPUT_FONT_PNG
-#warning "Be careful with the path."
-    stbi_write_png("/Users/randle_h/Desktop/output.png", FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
+    char path[255] = {0};
+    sprintf( path, "%s%s", RH_DIR_PRJ, "/SIM_macOS/output/font_str_preview.png");
+    stbi_write_png(path, FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif
     return &FCFG.img;
 }
