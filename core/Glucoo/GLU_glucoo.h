@@ -16,10 +16,10 @@ extern "C"{
 typedef void* ID_t;
 
 
-extern void (*GUI_API_DrawArea)       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData);
-extern void (*GUI_API_DrawPixel)      (int x ,int y ,const GLU_TYPE(Pixel) pixData);
-extern void (*GUI_API_DelayMs)        (unsigned long ms);
-extern void (*GUI_API_AssertParam)    (bool expression,const char* WHAT_IS_WRONG );
+extern void (*GLU_API_DrawArea)       (var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)* pixData);
+extern void (*GLU_API_DrawPixel)      (var x ,var y ,const GLU_TYPE(Pixel) pixData);
+extern void (*GLU_API_DelayMs)        (unsigned long ms);
+extern void (*GLU_API_AssertParam)    (bool expr,const char* WHAT_IS_WRONG );
 
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]

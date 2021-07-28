@@ -96,48 +96,49 @@ typedef struct  BLK_SRCT(Pixel888)   BLK_SRCT(Pixel888);
 typedef union   BLK_UION(Pixel888)   BLK_UION(Pixel888);
 
 struct BLK_SRCT(ImgBin){
-    BLK_UION(PixelBin)*    pBuffer;
-    size_t      width;
-    size_t      height;
+    BLK_UION(PixelBin)*    ptr;
+    var      w;
+    var      h;
 };
 typedef struct BLK_SRCT(ImgBin)  BLK_SRCT(ImgBin);
 
 struct BLK_SRCT(Img565){
-    BLK_UION(Pixel565)*    pBuffer;
-    size_t      width;
-    size_t      height;
+    BLK_UION(Pixel565)*    ptr;
+    var      w;
+    var      h;
 };
 typedef struct BLK_SRCT(Img565)  BLK_SRCT(Img565);
 
 struct BLK_SRCT(ImgGry){
-    BLK_UION(PixelGry)*    pBuffer;
-    size_t      width;
-    size_t      height;
+    BLK_UION(PixelGry)*    ptr;
+    var      w;
+    var      h;
 };
 typedef struct BLK_SRCT(ImgGry) BLK_SRCT(ImgGry);
  
 
 struct BLK_SRCT(Img888){
-    BLK_UION(Pixel888)* pBuffer;
-    size_t      width;
-    size_t      height;
+    BLK_UION(Pixel888)* ptr;
+    var      w;
+    var      h;
 };
 typedef struct BLK_SRCT(Img888)  BLK_SRCT(Img888);
 
 BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, create       ) (size_t width,size_t height);
-BLK_SRCT(Img565)* BLK_FUNC( Img565, create       ) (size_t width,size_t height);//
-BLK_SRCT(Img888)* BLK_FUNC( Img888, create       ) (size_t width,size_t height);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, create       ) (var    width,var    height);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, create       ) (var    width,var    height);
 
 
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp     ) (const char* __restrict__ path);
-BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp     ) (const char* __restrict__ path);//
-BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp     ) (const char* __restrict__ path);
-BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png     ) (const char* __restrict__ path);//
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, load_bmp     ) (const char* RH_RESTRICT path);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, load_bmp     ) (const char* RH_RESTRICT path);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_bmp     ) (const char* RH_RESTRICT path);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_jpg     ) (const char* RH_RESTRICT path);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png     ) (const char* RH_RESTRICT path);//
 
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(ImgBin)* p);
-BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(Img565)* p);//
-BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp      ) (const char* __restrict__ path, const BLK_SRCT(Img888)* p);
-BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png      ) (const char* __restrict__ path, const BLK_SRCT(Img888)* img);
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, out_bmp      ) (const char* RH_RESTRICT path, const BLK_SRCT(ImgBin)* p);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, out_bmp      ) (const char* RH_RESTRICT path, const BLK_SRCT(Img565)* p);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_bmp      ) (const char* RH_RESTRICT path, const BLK_SRCT(Img888)* p);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, out_png      ) (const char* RH_RESTRICT path, const BLK_SRCT(Img888)* img);
 
 BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, copy         ) (const BLK_SRCT(ImgBin)* src,BLK_SRCT(ImgBin)* dst);
 BLK_SRCT(Img565)* BLK_FUNC( Img565, copy         ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst);//
@@ -181,9 +182,11 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_radar  )( BLK_SRCT(Img888)* dst, co
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded  )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur   )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_ )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_       )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, spy_img_blur    )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size, const __Area_t* area );
 
 #ifdef __cplusplus
 }

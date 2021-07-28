@@ -15,7 +15,7 @@ extern "C"{
 #endif
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-static BLK_SRCT(ImgBin)*    pTmpScreenShot = NULL;
+static BLK_SRCT(ImgBin)* pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
 static BLK_SRCT(Img565)* pTmpScreenShot = NULL;
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
@@ -27,7 +27,7 @@ static BLK_SRCT(Img888)* pTmpScreenShot = NULL;
 
 char* dst_path = NULL;
     
-static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
+static void Simul_API_DrawArea(var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)* pixData){
 
     if( pTmpScreenShot == NULL ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -42,29 +42,29 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
     }
 
 #ifdef RH_DEBUG
-    RH_ASSERT( x1<(int)RH_CFG_SCREEN_WIDTH && x1>=0 );
-    RH_ASSERT( x2<(int)RH_CFG_SCREEN_WIDTH && x2>=0 );
-    RH_ASSERT( y1<(int)RH_CFG_SCREEN_HEIGHT && y1>=0 );
-    RH_ASSERT( y2<(int)RH_CFG_SCREEN_HEIGHT && y2>=0 );
+    RH_ASSERT( x1<(var)RH_CFG_SCREEN_WIDTH && x1>=0 );
+    RH_ASSERT( x2<(var)RH_CFG_SCREEN_WIDTH && x2>=0 );
+    RH_ASSERT( y1<(var)RH_CFG_SCREEN_HEIGHT && y1>=0 );
+    RH_ASSERT( y2<(var)RH_CFG_SCREEN_HEIGHT && y2>=0 );
 #endif
     
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-    const int xs = RH_MIN(x1, x2);
-    const int xe = RH_MAX(x1, x2);
-    const int ps = ((RH_MIN(y1, y2))>>3);
-    const int pe = ((RH_MAX(y1, y2))>>3);
-    for ( int p=ps; p<=pe; p++ ) {
+    const var xs = RH_MIN(x1, x2);
+    const var xe = RH_MAX(x1, x2);
+    const var ps = ((RH_MIN(y1, y2))>>3);
+    const var pe = ((RH_MAX(y1, y2))>>3);
+    for ( var p=ps; p<=pe; p++ ) {
         memcpy(&pTmpScreenShot->pBuffer[ p*RH_CFG_SCREEN_WIDTH + xs ].data, pixData, (xe-xs+1));
         pixData += (xe-xs+1);
     }
         
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-    const size_t width   = __abs(x2 - x1) + 1;
-    const size_t height  = __abs(y2 - y1) + 1;
-    for(int y=0;y<(int)height;y++){
-        for(int x=0;x<(int)width;x++){
-            pTmpScreenShot->pBuffer[(y1+y)*RH_CFG_SCREEN_WIDTH + (x1+x)].data = pixData[ y*width+x];
+    const var width   = __abs(x2 - x1) + 1;
+    const var height  = __abs(y2 - y1) + 1;
+    for(var y=0;y<height;y++){
+        for(var x=0;x<width;x++){
+            pTmpScreenShot->ptr[(y1+y)*RH_CFG_SCREEN_WIDTH + (x1+x)].data = pixData[ y*width+x];
         }
     }
 #else
@@ -78,14 +78,16 @@ static void Simul_API_DrawArea(int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)
     BLK_FUNC( Img565, out_bmp )(dst_path,pTmpScreenShot);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
     BLK_FUNC( Img888, out_bmp )(dst_path,pTmpScreenShot);
-//    BLK_FUNC( Img888, out_png )("/Users/randle_h/desktop/screen.png",pTmpScreenShot);
+    RH_MESSAGE("export: %s size=%ld byte\n",dst_path, (long)pTmpScreenShot->h*pTmpScreenShot->w);
 #else
   #error "[RH_gui_api]: Unknown color type."
 #endif
-    
+    char cmd[255] = {0};
+    sprintf(cmd, "open %s",dst_path);
+    system(cmd);
 }
     
-static void Simul_API_DrawPixel(int x ,int y ,const GLU_TYPE(Pixel) pixData){
+static void Simul_API_DrawPixel(var x ,var y ,const GLU_TYPE(Pixel) pixData){
     if( pTmpScreenShot == NULL ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
@@ -97,7 +99,7 @@ static void Simul_API_DrawPixel(int x ,int y ,const GLU_TYPE(Pixel) pixData){
   #error "[RH_gui_api]: Unknown color type."
 #endif
     }
-    pTmpScreenShot->pBuffer[(y)*RH_CFG_SCREEN_WIDTH + (x)].data = pixData;
+    pTmpScreenShot->ptr[(y)*RH_CFG_SCREEN_WIDTH + (x)].data = pixData;
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         while(1);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
@@ -109,7 +111,8 @@ static void Simul_API_DrawPixel(int x ,int y ,const GLU_TYPE(Pixel) pixData){
 #endif
 }
 
-static void Simul_API_AssertParam(bool expression,const char* WHAT_IS_WRONG){
+static void Simul_API_AssertParam(bool expr,const char* WHAT_IS_WRONG){
+    UNUSED(expr);
     printf("%s\n",WHAT_IS_WRONG);
 }
 
@@ -122,9 +125,9 @@ void GLU_FUNC( API, init )(void){
     memcpy( &dst_path[ strlen(RH_DIR_PRJ) ], temp, sizeof(temp));
     
     
-    GUI_API_DrawArea     = Simul_API_DrawArea;
-    GUI_API_AssertParam  = Simul_API_AssertParam;
-    GUI_API_DrawPixel    = Simul_API_DrawPixel;
+    GLU_API_DrawArea     = Simul_API_DrawArea;
+    GLU_API_AssertParam  = Simul_API_AssertParam;
+    GLU_API_DrawPixel    = Simul_API_DrawPixel;
 }
 
 

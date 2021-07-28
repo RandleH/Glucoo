@@ -74,6 +74,7 @@ const static uint16_t angle_dec_256[] = {
     1       
 };
 
+
 double        
 BLK_FUNC( Math, tan           )( long   dec ){
 
@@ -447,9 +448,9 @@ BLK_FUNC( Mandelbrot, image   )( float complex center, int img_w, int img_h, flo
 
     BLK_SRCT(Img888)* dst = (BLK_SRCT(Img888)*)buf;
 
-    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->R = 0x00;
-    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->G = 0x00;
-    (dst->pBuffer + (dst->height>>1)*dst->width + (dst->width>>1))->B = 0x00;
+    (dst->ptr + (dst->h>>1)*dst->w + (dst->w>>1))->R = 0x00;
+    (dst->ptr + (dst->h>>1)*dst->w + (dst->w>>1))->G = 0x00;
+    (dst->ptr + (dst->h>>1)*dst->w + (dst->w>>1))->B = 0x00;
 
     
 }

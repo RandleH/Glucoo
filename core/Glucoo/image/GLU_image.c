@@ -53,7 +53,6 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
     RH_ASSERT(colors);
     RH_ASSERT(size);
     
-    
     switch( style ){
         default:
             break;
@@ -81,15 +80,15 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 var w,h;
                 GLU_FUNC(Font, get_str_ImgInfo)(&w, &h, text->str);
                 
-                var fs_x = RH_LIMIT( ((info_MainScreen.width  - w)>>1), 0, GUI_X_WIDTH-1);
-                var fs_y = RH_LIMIT( ((info_MainScreen.height - h)>>1), 0, GUI_Y_WIDTH-1);
+                var fs_x = RH_LIMIT( ((info_MainScreen.w - w)>>1), 0, GUI_X_WIDTH-1);
+                var fs_y = RH_LIMIT( ((info_MainScreen.h - h)>>1), 0, GUI_Y_WIDTH-1);
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, fs_x, fs_y, text->color, alpha_100 );

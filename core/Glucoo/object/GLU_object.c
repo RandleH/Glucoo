@@ -118,9 +118,9 @@ static void __gui_insert_object_text      ( const __GUI_Object_t* config ){
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h   = pF->img_h,
+            .w   = pF->img_w,
+            .ptr = (BLK_UION(PixelGry)*)pF->img_buf
         };
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
@@ -233,11 +233,10 @@ static void __gui_insert_object_num       ( const __GUI_Object_t* config ){
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h   = pF->img_h,
+            .w   = pF->img_w,
+            .ptr = (BLK_UION(PixelGry)*)pF->img_buf
         };
-        
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         
         BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->obj_color, 100);
@@ -345,9 +344,9 @@ static void __gui_insert_object_fnum      ( const __GUI_Object_t* config ){
     
     // 引用灰度字体图像(类型信息复制转换)
     BLK_SRCT(ImgGry) img_font = {
-        .height  = pF->img_h,
-        .width   = pF->img_w,
-        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+        .h   = pF->img_h,
+        .w   = pF->img_w,
+        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
     };
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1034,9 +1033,9 @@ static void __gui_insert_object_trunk     ( const __GUI_Object_t* config ){
     
     // 引用灰度字体图像(类型信息复制转换)
     BLK_SRCT(ImgGry) img_font = {
-        .height  = pF->img_h,
-        .width   = pF->img_w,
-        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+        .h   = pF->img_h,
+        .w   = pF->img_w,
+        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
     };
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1097,7 +1096,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             var ys  = cache->lineDN + cache->margin ;                 // 三角形(上下) 底起始位置
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             for( var y=ys; len>0&&y<config->area.ys+config->area.h; len-=2, y++, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[(y>>3)*info_MainScreen.w + xs];
                 for( var x=0; x<len; x++,pIter++ ){
                     if( config->bk_color!=0 ){
                         pIter->data = __BIT_SET( pIter->data, y%8 );
@@ -1108,14 +1107,14 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             for( var y=ys; len>0&&y<config->area.ys+config->area.h; len-=2, y++, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( var x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
             }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             for( var y=ys; len>0&&y<config->area.ys+config->area.h; len-=2, y++, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( var x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
@@ -1130,7 +1129,7 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             var ys  = cache->lineUP - cache->margin;                        // 三角形(上下) 底起始位置
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
             for( var y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[(y>>3)*info_MainScreen.w + xs];
                 for( int x=0; x<len; x++, pIter++ ){
                     if( config->bk_color!=0 ){
                         pIter->data = __BIT_SET( pIter->data, y%8 );
@@ -1142,14 +1141,14 @@ static void __gui_remove_object_spinbox   ( const __GUI_Object_t* config ){
             }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
             for( var y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( var x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
             }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
             for( var y=ys; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( var x=0; x<len; x++,pIter++ ){
                     pIter->data = config->bk_color;
                 }
@@ -1215,9 +1214,9 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 
                 var width;
@@ -1271,9 +1270,9 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h   = pF->img_h,
+            .w   = pF->img_w,
+            .ptr = (BLK_UION(PixelGry)*)pF->img_buf
         };
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -1299,7 +1298,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         if( cache->triUP ){
             for( var y=ys[0]; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[(y>>3)*info_MainScreen.w + xs];
                 for( var x=0; x<len; x++, pIter++ ){
                     if( config->obj_color!=0 ){
                         pIter->data = __BIT_SET( pIter->data, y%8 );
@@ -1315,7 +1314,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         xs  = (config->area.xs + cache->textXS - len)>>1;
         if( cache->triDN ){
             for( var y=ys[1]; len>0&&y<config->area.ys+config->area.h; len-=2, y++, xs++ ){
-                GLU_UION(Pixel)* pIter = &info_MainScreen.pBuffer[(y>>3)*info_MainScreen.width + xs];
+                GLU_UION(Pixel)* pIter = &info_MainScreen.ptr[(y>>3)*info_MainScreen.w + xs];
                 for( var x=0; x<len; x++,pIter++ ){
                     if( config->obj_color!=0 ){
                         pIter->data = __BIT_SET( pIter->data, y%8 );
@@ -1329,7 +1328,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         
         if( cache->triUP ){
             for( int y=ys[0]; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( int x=0; x<len; x++,pIter++ ){
                     pIter->data = config->obj_color;
                 }
@@ -1340,7 +1339,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         xs  = cache->num.xs + (int)((cache->num.width - len)>>1);
         if( cache->triDN ){
             for( int y=ys[1]; len>0&&y<config->area.ys+config->area.height; len-=2, y++, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( int x=0; x<len; x++,pIter++ ){
                     pIter->data = config->obj_color;
                 }
@@ -1350,7 +1349,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         if( cache->triUP ){
             for( int y=ys[0]; len>0&&y>=config->area.ys; len-=2, y--, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( int x=0; x<len; x++,pIter++ ){
                     pIter->data = config->obj_color;
                 }
@@ -1361,7 +1360,7 @@ static void __gui_insert_object_spinbox   ( const __GUI_Object_t* config ){
         xs  = cache->num.xs + ((cache->num.w - len)>>1);
         if( cache->triDN ){
             for( var y=ys[1]; len>0&&y<config->area.ys+config->area.h; len-=2, y++, xs++ ){
-                GLU_UION( Pixel )* pIter = &info_MainScreen.pBuffer[ y*info_MainScreen.width+xs ];
+                GLU_UION( Pixel )* pIter = &info_MainScreen.ptr[ y*info_MainScreen.w+xs ];
                 for( var x=0; x<len; x++,pIter++ ){
                     pIter->data = config->obj_color;
                 }
@@ -1461,9 +1460,9 @@ static void __gui_insert_object_button    ( const __GUI_Object_t* config ){
 
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h   = pF->img_h,
+            .w   = pF->img_w,
+            .ptr = (BLK_UION(PixelGry)*)pF->img_buf
         };
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )

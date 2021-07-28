@@ -27,10 +27,10 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 #include <dirent.h>
 
 
+
 int main(int argc, const char * argv[]) {
     GLU_API_init();
     GLU_GUI_init();
-
     
 # if 1
     
@@ -53,12 +53,14 @@ int main(int argc, const char * argv[]) {
     GLU_Font_set_size(240);
     GLU_SRCT(FontImg)* pF = GLU_Font_out_str_Img("by Randle.Helmslay");
     BLK_SRCT(ImgGry) img_font = {
-        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf ,
-        .height  = pF->img_h   ,
-        .width   = pF->img_w
+        .ptr = (BLK_UION(PixelGry)*)pF->img_buf ,
+        .h   = pF->img_h   ,
+        .w   = pF->img_w
     };
     BLK_ImgGry_into_Img888(&img_font, &info_MainScreen, 867, 1216, M_COLOR_BLACK, 100);
-
+    
+    
+    
     GLU_GUI_refreashEntireScreen ();
     
     

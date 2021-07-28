@@ -107,6 +107,10 @@ extern void* RH_CFG_GRAM_POINTER;
                                               }while(0)
 #endif
 
+#ifndef RH_MESSAGE
+#define RH_MESSAGE(format,...)                printf(format,##__VA_ARGS__)
+#endif
+
 #ifndef RH_CALLOC
   #define RH_CALLOC(x,size)                   calloc(x,size)//BLK_FUNC( Memory, debug_print )( BLK_FUNC( Memory, debug_calloc )(x,size,__FILE__,__LINE__,calloc), NULL )
 #else

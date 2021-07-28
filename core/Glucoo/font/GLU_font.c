@@ -589,6 +589,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #endif
     
 #if RH_CFG_OUTPUT_FONT_PNG
+#warning "Be careful with the path."
     stbi_write_png("/Users/randle_h/Desktop/output.png", FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif
     return &FCFG.img;

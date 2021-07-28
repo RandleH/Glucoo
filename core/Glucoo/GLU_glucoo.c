@@ -15,34 +15,34 @@
 
 /*===============================================================================================================
  * 定义对外API函数指针, 合计4个
- * [ GUI_API_DrawArea    ] 给定区域, 以及该片区域的显存数据(内存重组对齐), 绘制在屏幕上
- * [ GUI_API_DrawPixel   ] 给定一个像素点, 在屏幕上绘制一个像素点
+ * [ GLU_API_DrawArea    ] 给定区域, 以及该片区域的显存数据(内存重组对齐), 绘制在屏幕上
+ * [ GLU_API_DrawPixel   ] 给定一个像素点, 在屏幕上绘制一个像素点
  * [ GUI_API_AssertParam ] 断言输出
  * [ GUI_API_DelayMs     ] (未使用)
 ===============================================================================================================*/
-void RH_WEAK GUI_DrawArea       (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData){
+void RH_WEAK GLU_DrawArea       (var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)* pixData){
 // THIS MAY COST SOME TIME.
     UNUSED(x1);UNUSED(y1);UNUSED(x2);UNUSED(y2);UNUSED(pixData);
 }
-void (*GUI_API_DrawArea)                      (int x1,int y1,int x2,int y2,const GLU_TYPE(Pixel)* pixData) = GUI_DrawArea;
+void (*GLU_API_DrawArea)        (var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)* pixData) = GLU_DrawArea;
 
-void RH_WEAK GUI_DummyDrawPixel (int x,int y,const GLU_TYPE(Pixel) pixData){
+void RH_WEAK GLU_DummyDrawPixel (var x,var y,const GLU_TYPE(Pixel) pixData){
 // IF U DONT GIVE ME A PEN, HOW CAN I DRAW !?
     UNUSED(x);UNUSED(y);UNUSED(pixData);
 }
-void (*GUI_API_DrawPixel)                     (int x ,int y ,const GLU_TYPE(Pixel) pixData)          = GUI_DummyDrawPixel;
+void (*GLU_API_DrawPixel)       (var x,var y,const GLU_TYPE(Pixel) pixData) = GLU_DummyDrawPixel;
 
-void RH_WEAK GUI_AsserParam     (bool expression,const char* WHAT_IS_WRONG){
+void RH_WEAK GLU_AsserParam     (bool expr,const char* WHAT_IS_WRONG){
 // DONT KEEP MY MOTH SHUT, I GOT A PROBLEM TO REPORT.
-    UNUSED(expression);UNUSED(WHAT_IS_WRONG);
+    UNUSED(expr);UNUSED(WHAT_IS_WRONG);
 }
-void (*GUI_API_AssertParam)                   (bool expression,const char* WHAT_IS_WRONG)      = GUI_AsserParam;
+void (*GLU_API_AssertParam)     (bool expr,const char* WHAT_IS_WRONG) = GLU_AsserParam;
 
-void RH_WEAK GUI_Delay          (unsigned long ms){
+void RH_WEAK GLU_Delay          (unsigned long ms){
     ms*=1000;
     while(ms--){}
 }
-void (*GUI_API_DelayMs)                       (unsigned long ms)                               = GUI_Delay;
+void (*GLU_API_DelayMs)         (unsigned long ms) = GLU_Delay;
 
 #define M_SCREEN_MAIN   0
 #define M_SCREEN_CNT    1
@@ -105,8 +105,8 @@ static struct{
 }Screen;
 
 BLK_TYPE(Canvas) info_MainScreen = { //...//
-    .height = GUI_Y_WIDTH ,
-    .width  = GUI_X_WIDTH ,
+    .h  = GUI_Y_WIDTH ,
+    .w  = GUI_X_WIDTH ,
 };
 
 void GLU_FUNC( GUI, init )        ( void ){
@@ -122,7 +122,7 @@ void GLU_FUNC( GUI, init )        ( void ){
     BLK_FUNC( Graph, init )();
     GLU_FUNC( Font , init )();
 
-    info_MainScreen.pBuffer = Screen.GRAM[M_SCREEN_MAIN][0];
+    info_MainScreen.ptr = Screen.GRAM[M_SCREEN_MAIN][0];
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     memset( Screen.GRAM , 0, M_SCREEN_CNT*(GUI_Y_WIDTH>>3)*GUI_X_WIDTH*sizeof(GLU_TYPE(Pixel)) );
@@ -154,19 +154,19 @@ void GLU_FUNC( GUI, init )        ( void ){
  ================================================================================================================
  * 此函数将会调用显示屏API, 并立即在显示屏上显示图像.
  *
- * 以下情况,当API中支持区域刷新即 GUI_API_DrawArea不为NULL时:
+ * 以下情况,当API中支持区域刷新即 GLU_API_DrawArea不为NULL时:
  * 如果配置为内置显存, 那么图像数据将创建该区域的动态缓存,并从内置的 Screen.GRAM 中拷贝到其中(字节宽度对齐),刷新
    屏幕后释放动态缓存.
  * 如果配置为外置显存, 进死循环,暂未开发.
  *
- * 以下情况,当API不支持区域刷新, 仅有单个画点函数时即 GUI_API_DrawPixel :
+ * 以下情况,当API不支持区域刷新, 仅有单个画点函数时即 GLU_API_DrawPixel :
  * 如果配置为内置显存, 那么图像数据将直接从 Screen.GRAM 逐一画点.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
 void GLU_FUNC( GUI, refreashScreenArea )     ( var xs, var ys, var xe, var ye ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     // 内置显存需要向外导出数据
-    if(GUI_API_DrawArea != NULL){
+    if(GLU_API_DrawArea != NULL){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         const var x_width = xe-xs+1;
         const var ps      = ys>>3;
@@ -175,7 +175,7 @@ void GLU_FUNC( GUI, refreashScreenArea )     ( var xs, var ys, var xe, var ye ){
         GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(p_width)*sizeof(GLU_TYPE(Pixel)));
         BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] , sizeof(GLU_TYPE(Pixel)) , GUI_X_WIDTH, (int)xs, (int)ps, (int)xe, (int)pe  );
         
-       (*GUI_API_DrawArea)( xs , ys , xe , ye , p );
+       (*GLU_API_DrawArea)( xs , ys , xe , ye , p );
 
 #else
         const var x_width = xe-xs+1;
@@ -183,7 +183,7 @@ void GLU_FUNC( GUI, refreashScreenArea )     ( var xs, var ys, var xe, var ye ){
         GLU_TYPE(Pixel)* p = (GLU_TYPE(Pixel)*)RH_MALLOC((x_width)*(y_width)*sizeof(GLU_TYPE(Pixel)));
         
         BLK_FUNC( Memory, grbArea )(p, Screen.GRAM[M_SCREEN_MAIN][0] , sizeof(GLU_TYPE(Pixel)), GUI_X_WIDTH, (int)xs, (int)ys, (int)xe, (int)ye);
-        (*GUI_API_DrawArea)( xs , ys , xe , ye , p);
+        (*GLU_API_DrawArea)( xs , ys , xe , ye , p);
 #endif
         RH_FREE(p);
     }
@@ -192,13 +192,13 @@ void GLU_FUNC( GUI, refreashScreenArea )     ( var xs, var ys, var xe, var ye ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         for(int y=ys;y<=ye;y++)
             for(int x=xs;x<=xe;x++)
-                (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y>>3][x].data);
+                (*GLU_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y>>3][x].data);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
         RH_ASSERT(false);
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         for(int y=ys;y<=ye;y++)
             for(int x=xs;x<=xe;x++)
-                (*GUI_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y][x].data);
+                (*GLU_API_DrawPixel)(x,y,Screen.GRAM[M_SCREEN_MAIN][y][x].data);
 #endif
     }
     
@@ -301,7 +301,7 @@ void GLU_FUNC( GUI, EX_addScreenArea )( const __Area_t* area ){
 void GLU_FUNC( GUI, refreashEntireScreen )  ( void ){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __Area_t *p = NULL;
-    (*GUI_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (GLU_TYPE(Pixel)*)Screen.GRAM[M_SCREEN_MAIN][0] );
+    (*GLU_API_DrawArea)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (GLU_TYPE(Pixel)*)Screen.GRAM[M_SCREEN_MAIN][0] );
     while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
         p = BLK_FUNC( Stack, pop   )( Screen.areaNeedRefreashHead );
         RH_FREE(p);

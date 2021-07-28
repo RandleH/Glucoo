@@ -43,14 +43,14 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     // Window Bar
     BLK_FUNC( Graph, set_penColor   )( color_bar.data);
     BLK_FUNC( Graph, set_penSize    )( bar_rad);
-    BLK_FUNC( Graph, rect_round_fill)(xs   , ys         , xe  , ys+bar_size+bar_rad, info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, rect_round_fill)(xs   , ys         , xe  , ys+bar_size+bar_rad, info_MainScreen.ptr, NULL);
     
-    BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , info_MainScreen.pBuffer, NULL);
-    BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye         , xe  , ye                 , info_MainScreen.ptr, NULL);
+    BLK_FUNC( Graph, line_raw )     (xs   , ye-1       , xe  , ye-1               , info_MainScreen.ptr, NULL);
     
     for(int i=0; i<bar_edge; i++){
-        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.pBuffer, NULL);
-        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.ptr, NULL);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.ptr, NULL);
     }
     
     // Title
@@ -68,20 +68,20 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
                 if( pixWeight ){
-                    const size_t  index    = ((y+font_ys)>>3)*info_MainScreen.width + (x+font_xs);
+                    const size_t  index    = ((y+font_ys)>>3)*info_MainScreen.w + (x+font_xs);
                     const size_t  offset   = (y+font_ys)%8;
                     if( color_title.data == 0 )
-                        info_MainScreen.pBuffer[ index ].data = __BIT_CLR(info_MainScreen.pBuffer[ index ].data, offset);
+                        info_MainScreen.ptr[ index ].data = __BIT_CLR(info_MainScreen.ptr[ index ].data, offset);
                     else
-                        info_MainScreen.pBuffer[ index ].data = __BIT_SET(info_MainScreen.pBuffer[ index ].data, offset);
+                        info_MainScreen.ptr[ index ].data = __BIT_SET(info_MainScreen.ptr[ index ].data, offset);
                 }
 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
                 if( pixWeight != 0 ){
-                    const size_t  index     = (y+font_ys)*info_MainScreen.width + (x+font_xs);
-                    info_MainScreen.pBuffer[ index ].R = info_MainScreen.pBuffer[ index ].R + (( (color_title.R - info_MainScreen.pBuffer[ index ].R) * pixWeight )>>8);
-                    info_MainScreen.pBuffer[ index ].G = info_MainScreen.pBuffer[ index ].G + (( (color_title.G - info_MainScreen.pBuffer[ index ].G) * pixWeight )>>8);
-                    info_MainScreen.pBuffer[ index ].B = info_MainScreen.pBuffer[ index ].B + (( (color_title.B - info_MainScreen.pBuffer[ index ].B) * pixWeight )>>8);
+                    const size_t  index     = (y+font_ys)*info_MainScreen.w + (x+font_xs);
+                    info_MainScreen.ptr[ index ].R = info_MainScreen.ptr[ index ].R + (( (color_title.R - info_MainScreen.ptr[ index ].R) * pixWeight )>>8);
+                    info_MainScreen.ptr[ index ].G = info_MainScreen.ptr[ index ].G + (( (color_title.G - info_MainScreen.ptr[ index ].G) * pixWeight )>>8);
+                    info_MainScreen.ptr[ index ].B = info_MainScreen.ptr[ index ].B + (( (color_title.B - info_MainScreen.ptr[ index ].B) * pixWeight )>>8);
                 }
             #else
               #error "[RH_graphic]: Unknown color type."
@@ -93,13 +93,13 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     
     // Context
     BLK_FUNC( Graph, set_penColor )(color_blank.data);
-    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.ptr, NULL);
     
     
     if( config->text != NULL ){
         uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        typeof(info_MainScreen.pBuffer) pIterScr  = &info_MainScreen.pBuffer[ ((ys+bar_size)>>3)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
+        typeof(info_MainScreen.ptr) pIterScr  = &info_MainScreen.ptr[ ((ys+bar_size)>>3)*info_MainScreen.w + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
         for( int y=ys+bar_size; y<ye-2; y++ ){
@@ -115,10 +115,10 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
             if(cntOfFontPix == numOfFontPix)
                 break;
             pIterScr -= config->text_bitW;
-            pIterScr += ((y+1)%8==0)*info_MainScreen.width;
+            pIterScr += ((y+1)%8==0)*info_MainScreen.w;
         }
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        typeof(info_MainScreen.pBuffer) pIterScr  = &info_MainScreen.pBuffer[ (ys+bar_size)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
+        typeof(info_MainScreen.ptr) pIterScr  = &info_MainScreen.ptr[ (ys+bar_size)*info_MainScreen.w + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
         for( int y=ys+bar_size; y<ye-2; y++ ){
@@ -133,7 +133,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
             if(cntOfFontPix == numOfFontPix)
                 break;
             pIterScr -= config->text_bitW;
-            pIterScr += info_MainScreen.width;
+            pIterScr += info_MainScreen.w;
         }
     
     #else
@@ -158,13 +158,13 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #endif
     // Button
     BLK_FUNC( Graph, set_penColor )(color_button_cl.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+bar_size_2, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size_2, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.ptr, NULL);
 
     BLK_FUNC( Graph, set_penColor )(color_button_zm.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+bar_size+bar_size_4, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, circle_fill )  (xs+bar_size+bar_size_4, RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.ptr, NULL);
 
     BLK_FUNC( Graph, set_penColor )(color_button_mi.data);
-    BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.ptr, NULL);
     
     BLK_FUNC( Graph, restoreCache )();
     GLU_FUNC( Font, restoreCache )();
@@ -206,28 +206,28 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     GLU_FUNC( Font, backupCache )();
     
     BLK_FUNC( Graph, set_penColor ) (color_bar.data);
-    BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, info_MainScreen.pBuffer, NULL );
+    BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, info_MainScreen.ptr, NULL );
     
         
     for(int i=0; i<bar_edge; i++){
-        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.pBuffer, NULL);
-        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.pBuffer, NULL);
-        BLK_FUNC( Graph, line_raw )     (xs   , ye-i       , xe  , ye-i, info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )     (xs+i , ys+bar_size, xs+i, ye  , info_MainScreen.ptr, NULL);
+        BLK_FUNC( Graph, line_raw )     (xe-i , ys+bar_size, xe-i, ye  , info_MainScreen.ptr, NULL);
+        BLK_FUNC( Graph, line_raw )     (xs   , ye-i       , xe  , ye-i, info_MainScreen.ptr, NULL);
     }
     
     // Context
     BLK_FUNC( Graph, set_penColor ) (color_blank.data);
-    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.pBuffer, NULL);
+    BLK_FUNC( Graph, rect_fill )    (xs+bar_edge , ys+bar_size, xe-bar_edge, ye-bar_edge, info_MainScreen.ptr, NULL);
     
     if( config->text != NULL ){
         uint8_t*             pIterFont = ((uint8_t*)config->text_bitMap) + (config->text_rs*config->text_bitW);
         
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
         RH_ASSERT(false);
-        typeof(info_MainScreen.pBuffer) pIterScr  = &info_MainScreen.pBuffer[ ((ys+bar_size)>>3)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
+        typeof(info_MainScreen.ptr) pIterScr  = &info_MainScreen.ptr[ ((ys+bar_size)>>3)*info_MainScreen.w + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
-        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info_MainScreen.width ){
+        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info_MainScreen.w ){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
                 if( (*pIterFont>128) ^ (color_text.data) ){
                     pIterScr->data = __BIT_SET( pIterScr->data, y%8 );
@@ -242,10 +242,10 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
         }
 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 ) || ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
         
-        typeof(info_MainScreen.pBuffer) pIterScr  = &info_MainScreen.pBuffer[ (ys+bar_size)*info_MainScreen.width + xs+bar_edge+config->text_margin ];
+        typeof(info_MainScreen.ptr) pIterScr  = &info_MainScreen.ptr[ (ys+bar_size)*info_MainScreen.w + xs+bar_edge+config->text_margin ];
         size_t               numOfFontPix = config->text_bitH*config->text_bitW;
         size_t               cntOfFontPix = 0;
-        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info_MainScreen.width ){
+        for( int y=ys+bar_size; y<ye-2; y++, pIterScr+=info_MainScreen.w ){
             for( int x=0; x<config->text_bitW; x++, pIterFont++, pIterScr++ ){
                 if( *pIterFont != 0x00 ){
                     pIterScr->R = pIterScr->R + (( (color_text.R - pIterScr->R) * (*pIterFont) )>>8);
@@ -273,37 +273,37 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     const int button_cl_ye = ys+button_h-1, button_zm_ye = button_cl_ye         , button_mi_ye = button_cl_ye;
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, info_MainScreen.pBuffer, NULL );
+    BLK_FUNC( Graph, rect_fill )   ( button_cl_xs, button_cl_ys, button_cl_xe, button_cl_ye, info_MainScreen.ptr, NULL );
     {
         int xs = RH_MID(button_cl_xs,button_cl_xe)-(button_h>>3);
         int ys = RH_MID(button_cl_ys,button_cl_ye)-(button_h>>3);
         int xe = RH_MID(button_cl_xs,button_cl_xe)+(button_h>>3);
         int ye = RH_MID(button_cl_ys,button_cl_ye)+(button_h>>3);
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
-        BLK_FUNC( Graph, line_raw )( xs, ye, xe, ys, info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.ptr, NULL);
+        BLK_FUNC( Graph, line_raw )( xs, ye, xe, ys, info_MainScreen.ptr, NULL);
     }
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, info_MainScreen.pBuffer, NULL );
+    BLK_FUNC( Graph, rect_fill )   ( button_zm_xs, button_zm_ys, button_zm_xe, button_zm_ye, info_MainScreen.ptr, NULL );
     {
         int xs = RH_MID(button_zm_xs,button_zm_xe)-(button_h>>3);
         int ys = RH_MID(button_zm_ys,button_zm_ye)-(button_h>>3);
         int xe = RH_MID(button_zm_xs,button_zm_xe)+(button_h>>3);
         int ye = RH_MID(button_zm_ys,button_zm_ye)+(button_h>>3);
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, rect_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, rect_raw )( xs, ys, xe, ye, info_MainScreen.ptr, NULL);
     }
     
     BLK_FUNC( Graph, set_penColor )(color_bar.data);
-    BLK_FUNC( Graph, rect_fill )   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, info_MainScreen.pBuffer, NULL );
+    BLK_FUNC( Graph, rect_fill )   ( button_mi_xs, button_mi_ys, button_mi_xe, button_mi_ye, info_MainScreen.ptr, NULL );
     {
         int xs = RH_MID(button_mi_xs,button_mi_xe)-(button_h>>3);
         int ys = RH_MID(button_mi_ys,button_mi_ye);
         int xe = RH_MID(button_mi_xs,button_mi_xe)+(button_h>>3);
         int ye = ys;
         BLK_FUNC( Graph, set_penColor )(M_COLOR_WHITE);
-        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.pBuffer, NULL);
+        BLK_FUNC( Graph, line_raw )( xs, ys, xe, ye, info_MainScreen.ptr, NULL);
     }
     
     BLK_FUNC( Graph, restoreCache )();

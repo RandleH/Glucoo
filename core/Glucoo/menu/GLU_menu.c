@@ -33,9 +33,9 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h    = pF->img_h,
+            .w    = pF->img_w,
+            .ptr  = (BLK_UION(PixelGry)*)pF->img_buf
         };
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -70,8 +70,8 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     GLU_FUNC( Font, set_size )( pHistory->bFontH );
     
     // 菜单内容字体的起始绘制坐标
-    int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
-    int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    var x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    var y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
     
     // 菜单栏起始绘制坐标,即右上角
     int xs   = RH_LIMIT( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
@@ -107,9 +107,9 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -184,9 +184,9 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                     
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
-                        .height  = pF->img_h,
-                        .width   = pF->img_w,
-                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                        .h   = pF->img_h,
+                        .w   = pF->img_w,
+                        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                     };
                     
                     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -240,9 +240,9 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -288,9 +288,9 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -365,9 +365,9 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                     GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
-                        .height  = pF->img_h,
-                        .width   = pF->img_w,
-                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                        .h   = pF->img_h,
+                        .w   = pF->img_w,
+                        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                     };
                     
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -418,9 +418,9 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -464,9 +464,9 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
