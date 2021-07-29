@@ -1830,7 +1830,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded   )
             q->R = j;
         }
         e += delta_y;
-        while( 2*( e + delta_y ) > delta_x){
+        while( ( (e+delta_y)<<1 ) > delta_x){
             j++;
             e -= delta_x;
         }
@@ -1848,7 +1848,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded   )
             p->G = j;
         }
         e += delta_y;
-        while( 2*( e + delta_y ) > delta_x){
+        while( ( (e+delta_y)<<1 ) > delta_x){
             j++;
             e -= delta_x;
         }

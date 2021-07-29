@@ -1,0 +1,3 @@
+/Users/randle_h/GitHub/Glucoo/SIM_windows/CMake/CMakeFiles/rebuild_cache.dir
+/Users/randle_h/GitHub/Glucoo/SIM_windows/CMake/CMakeFiles/edit_cache.dir
+/Users/randle_h/GitHub/Glucoo/SIM_windows/CMake/CMakeFiles/Glucoo.dir

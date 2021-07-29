@@ -40,12 +40,14 @@ int main(int argc, const char * argv[]) {
 //    }
     
     BLK_SRCT(Img888) *IMG = BLK_Img888_create(3100, 1920);
-    BLK_TYPE(Pixel888) colors[2] = {
+    BLK_TYPE(Pixel888) colors[4] = {
         M_COLOR_CYAN ,\
-        M_COLOR_BLUE
+        M_COLOR_BLUE ,\
+        M_COLOR_GREEN,\
+        M_COLOR_RED
     };
     
-    RH_RECORD_TIME( BLK_Img888_draw_img_aurora(IMG, colors, 2), printf);
+    RH_RECORD_TIME( BLK_Img888_draw_img_faded(IMG, colors, 4), printf);
     
     BLK_Img888_out_bmp("/Users/randle_h/Desktop/img.bmp", IMG);
     system("open /Users/randle_h/Desktop/img.bmp");
