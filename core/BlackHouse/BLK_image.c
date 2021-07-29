@@ -1589,13 +1589,10 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
         
         
         var ys = ((unsigned)BLK_FUNC(Math,rand)())%(dst->h/3), ye = (var)(dst->h<<1)/3 + ((unsigned)BLK_FUNC(Math,rand)())%(dst->h/3);
-       
-        float _2_sigma_2 = (ye-ys)*(ye-ys)/18.0;
+        
         BLK_UION(Pixel888)* pIterUP = dst->ptr + ys*(dst->w) +x;
         BLK_UION(Pixel888)* pIterDN = dst->ptr + ye*(dst->w) +x;
-
-#warning "Need to optimize."
-
+        
 #if 0
         // 原代码_2 为:
         for( int y=ys; pIterUP<=pIterDN; y++, pIterUP+=dst->w, pIterDN-=dst->w ){
@@ -1613,7 +1610,8 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
             printf("%d\n",tmp);
         }
         
-#elif 1 // 初级优化
+#elif 0 // 初级优化
+        float _2_sigma_2 = (ye-ys)*(ye-ys)/18.0;
         long tmp = ((ye - ys)*(ye - ys)>>2);
         for( var y=ys; pIterUP<=pIterDN; y++, pIterUP+=dst->w, pIterDN-=dst->w, tmp += ((y+1)<<1)-(ye+ys) ){
             
@@ -1622,6 +1620,40 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )
             pIterUP->B = pIterDN->B = roundl( color.B* exp2( -tmp/_2_sigma_2));
             
         }
+        
+#elif 1 // 高级优化
+        
+        const uint8_t gus_exp[257] = {   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   2,   2,   2,   2,\
+                                         2,   2,   2,   2,   2,   2,   2,   2,   2,   3,   3,   3,   3,   3,\
+                                         3,   3,   3,   4,   4,   4,   4,   4,   4,   4,   5,   5,   5,   5,\
+                                         5,   6,   6,   6,   6,   6,   7,   7,   7,   7,   8,   8,   8,   8,\
+                                         9,   9,   9,  10,  10,  10,  11,  11,  11,  12,  12,  13,  13,  13,\
+                                        14,  14,  15,  15,  16,  16,  17,  17,  18,  18,  19,  19,  20,  20,\
+                                        21,  22,  22,  23,  24,  24,  25,  26,  26,  27,  28,  29,  30,  30,\
+                                        31,  32,  33,  34,  35,  36,  37,  37,  38,  39,  40,  41,  43,  44,\
+                                        45,  46,  47,  48,  49,  50,  52,  53,  54,  55,  56,  58,  59,  60,\
+                                        62,  63,  65,  66,  67,  69,  70,  72,  73,  75,  76,  78,  79,  81,\
+                                        83,  84,  86,  88,  89,  91,  93,  94,  96,  98, 100, 101, 103, 105,\
+                                       107, 109, 111, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132,\
+                                       134, 136, 138, 140, 142, 144, 146, 148, 150, 152, 154, 156, 158, 160,\
+                                       162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188,\
+                                       190, 191, 193, 195, 197, 199, 201, 203, 204, 206, 208, 210, 211, 213,\
+                                       215, 216, 218, 219, 221, 222, 224, 225, 227, 228, 230, 231, 232, 234,\
+                                       235, 236, 237, 239, 240, 241, 242, 243, 244, 245, 246, 246, 247, 248,\
+                                       249, 249, 250, 251, 251, 252, 252, 253, 253, 254, 254, 254, 254, 255,\
+                                       255, 255, 255, 255, 255 };
+        
+        size_t idx = 0;
+        for( var y=ys; pIterUP<=pIterDN; y++, pIterUP+=dst->w, pIterDN-=dst->w ){
+            idx = ((y-ys)<<9)/(ye-ys);
+            RH_ASSERT( idx<=256 );
+            
+            pIterUP->R = pIterDN->R = color.R*gus_exp[idx]>>8 ;
+            pIterUP->G = pIterDN->G = color.G*gus_exp[idx]>>8 ;
+            pIterUP->B = pIterDN->B = color.B*gus_exp[idx]>>8 ;
+            
+        }
+        
 
 #endif
         

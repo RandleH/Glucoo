@@ -62,8 +62,8 @@
             filePath = "../../core/BlackHouse/BLK_image.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2022"
-            endingLineNumber = "2022"
+            startingLineNumber = "2054"
+            endingLineNumber = "2054"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -78,24 +78,8 @@
             filePath = "../../core/BlackHouse/BLK_image.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2049"
-            endingLineNumber = "2049"
-            landmarkName = "unknown"
-            landmarkType = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3D07CD38-6779-466C-AA2A-A5452E74F96E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../core/BlackHouse/BLK_image.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1595"
-            endingLineNumber = "1595"
+            startingLineNumber = "2081"
+            endingLineNumber = "2081"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>

@@ -32,24 +32,23 @@ int main(int argc, const char * argv[]) {
     GLU_API_init();
     GLU_GUI_init();
     
-    uint16_t buf[7*7];
-    S_BLK_Kernel_t kernel = {
-        .pBuffer = buf ,
-        .order   = 7
+//    for (int i=255,j=0; i>=0; i--,j++) {
+//        if( j%14==0 )
+//            printf("\n");
+//        printf("%3d, ", lround( 255*expf(-(i*i)/11734.688) ));
+//
+//    }
+    
+    BLK_SRCT(Img888) *IMG = BLK_Img888_create(3100, 1920);
+    BLK_TYPE(Pixel888) colors[2] = {
+        M_COLOR_CYAN ,\
+        M_COLOR_BLUE
     };
-    BLK_Gussian_kernel(2.9, 7, &kernel);
     
-
-    S_BLK_Img888_t* IMG = BLK_Img888_load_jpg("/Users/randle_h/Downloads/IMG_4006.JPG");
-   
+    RH_RECORD_TIME( BLK_Img888_draw_img_aurora(IMG, colors, 2), printf);
     
-    RH_RECORD_TIME( BLK_Img888_trans_mirror(IMG, IMG, 0), printf );
-    
-    BLK_Img888_out_bmp("/Users/randle_h/Downloads/IMG_4006_Conv2D.bmp", IMG);
-    
-    BLK_Img888_free(IMG);
-    
-//    system("open /Users/randle_h/Downloads/IMG_4006_Conv2D.bmp");
+    BLK_Img888_out_bmp("/Users/randle_h/Desktop/img.bmp", IMG);
+    system("open /Users/randle_h/Desktop/img.bmp");
     
 # if 0
     GLU_SRCT(Text) text = {
