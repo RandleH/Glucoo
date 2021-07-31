@@ -25,17 +25,17 @@ include_directories( ../../core/Glucoo/font   )
 include_directories( ../../core/BlackHouse    )
 include_directories( ../../core/STB           )
 
-add_executable( Glucoo ${dir_RH};
-                       ${dir_Glucoo};
-                       ${dir_Glucoo_image};
-                       ${dir_Glucoo_draw};
-                       ${dir_Glucoo_font};
-                       ${dir_Glucoo_object};
-                       ${dir_Glucoo_window};
-                       ${dir_Glucoo_menu};
-                       ${dir_BlackHouse};
-                       ${dir_STB};
-                       ${dir_self};  )
+add_executable( ${PROJECT_NAME} ${dir_RH};
+                                ${dir_Glucoo};
+                                ${dir_Glucoo_image};
+                                ${dir_Glucoo_draw};
+                                ${dir_Glucoo_font};
+                                ${dir_Glucoo_object};
+                                ${dir_Glucoo_window};
+                                ${dir_Glucoo_menu};
+                                ${dir_BlackHouse};
+                                ${dir_STB};
+                                ${dir_self};  )
 
 
 
