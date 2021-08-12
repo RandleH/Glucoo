@@ -12,11 +12,15 @@
 #include "RH_color.h"
 
 #include "GLU_api.h"
+#include "GLU_area.h"
+
 #include "BLK_data.h"
 
 
 #include "GLU_glucoo.h"
 #include "GLU_image.h"
+#include "GLU_glucoo.h"
+
 #include "BLK_graphic.h"
 
 #include "BLK_image.h"
@@ -26,47 +30,37 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 #include <dirent.h>
 
+
+
 int main(int argc, const char * argv[]) {
     GLU_API_init();
     GLU_GUI_init();
     
-    DIR* dir = opendir("/Users/randle_h/GitHub/Glucoo");
-    assert(dir);
-    struct dirent * dirent = readdir(dir);
+    __Area_t a = { .xs = 500, .ys = 500, .w = 300, .h = 400 };
+    __Area_t b = { 0 };
     
-    printf("%s\n",dirent->d_name );
+    GLU_Utility_align_screen( 400, 300, &b, M_UTILITY_ALIGN_VM | M_UTILITY_ALIGN_HM );
     
-# if 1
+    GLU_GUI_autoDisplay(false);
     
-    GLU_SRCT(Text) text = {
-        .align = kGLU_Align_Middle ,
-        .size  = 520,
-        .str   = "COMMON" ,
-        .color = M_COLOR_BLACK,
-        .font  = kGLU_Font_Optima
+    
+    __Area_t c[10] = {
+        {.w=10,.h=10},{.w=20,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},\
+        {.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10}
     };
-
-    BLK_TYPE(Pixel888) colors[2] = {
-        M_COLOR_CYAN ,\
-        M_COLOR_BLUE
-    };
-
-    GLU_Image_profile ( kGLU_ImageStyle_blur, colors, sizeof(colors)/sizeof(*colors), &text, 70 );
     
-    GLU_Font_set_font(kGLU_Font_SignPrinter);
-    GLU_Font_set_size(240);
-    GLU_SRCT(FontImg)* pF = GLU_Font_out_str_Img("by Randle.Helmslay");
-    BLK_SRCT(ImgGry) img_font = {
-        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf ,
-        .height  = pF->img_h   ,
-        .width   = pF->img_w
-    };
-    BLK_ImgGry_into_Img888(&img_font, &info_MainScreen, 867, 1216, M_COLOR_BLACK, 100);
 
-    GLU_GUI_refreashEntireScreen ();
+    GLU_Utility_area_hdiv( &a, c, 10);
     
+    GLU_GUI_EX_rect_raw(&a);
     
-#endif
+    GLU_GUI_setPenColor(M_COLOR_RED);
+    for (int i=0; i<10; i++) {
+        GLU_GUI_EX_rect_fill(&c[i]);
+        printf("(%d,%d)\n",c[i].xs,c[i].ys);
+    }
+    GLU_GUI_refreashScreen();
+    
     return 0;
 }
 

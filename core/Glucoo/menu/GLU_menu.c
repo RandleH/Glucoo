@@ -9,45 +9,42 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     struct{
-        int8_t idx;          // 上一次选中的菜单索引(一定小于config->nItem)
-        int8_t cur;          // 选中的菜单实际索引(一定小于 nIterPer)
-        int8_t bSize;        // 菜单栏行高 bar size
-        int8_t tSize;        // 标题行高 title size
-        int8_t tFontH;       // 菜单标题字体高度
-        int8_t bFontH;       // 菜单栏字体高度
-        int8_t nItemPer;     // 一版最多可显示菜单行数
+        var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        var bSize;        // 菜单栏行高 bar size
+        var tSize;        // 标题行高 title size
+        var tFontH;       // 菜单标题字体高度
+        var bFontH;       // 菜单栏字体高度
+        var nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
     GLU_FUNC( Font, set_size )( pHistory->tFontH );
     
-    int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->title ); // 计算最多可容纳的字符个数
+    int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->title ); // 计算最多可容纳的字符个数
     char* p = NULL;
     if( cnt>0 ){
         p = alloca( cnt+sizeof('\0') );  // 分配空间
         strncpy(p, config->title, cnt);  // 截取字符串到该空间
         p[cnt] = '\0';                   // 末尾取0
         GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
-        int x_fs = RH_LIMIT( config->area.xs +(((int)(config->area.width - pF->img_w))>>1)     , 0, GUI_X_WIDTH-1 );
-        int y_fs = RH_LIMIT( config->area.ys +(((int)(pHistory->tSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+        var x_fs = RH_LIMIT( config->area.xs +((config->area.w - pF->img_w)>>1)        , 0, GUI_X_WIDTH-1 );
+        var y_fs = RH_LIMIT( config->area.ys +((pHistory->tSize - pHistory->tFontH)>>1), 0, GUI_Y_WIDTH-1 );
         
         // 引用灰度字体图像(类型信息复制转换)
         BLK_SRCT(ImgGry) img_font = {
-            .height  = pF->img_h,
-            .width   = pF->img_w,
-            .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+            .h    = pF->img_h,
+            .w    = pF->img_w,
+            .ptr  = (BLK_UION(PixelGry)*)pF->img_buf
         };
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        
         BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        
         BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        
         BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, config->color_title, 100);
         
     #else
@@ -60,21 +57,21 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
 
 static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     struct{
-        int8_t idx;          // 上一次选中的菜单索引(一定小于config->nItem)
-        int8_t cur;          // 选中的菜单实际索引(一定小于 nIterPer)
-        int8_t bSize;        // 菜单栏行高 bar size
-        int8_t tSize;        // 标题行高 title size
-        int8_t tFontH;       // 菜单标题字体高度
-        int8_t bFontH;       // 菜单栏字体高度
-        int8_t nItemPer;     // 一版最多可显示菜单行数
+        var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        var bSize;        // 菜单栏行高 bar size
+        var tSize;        // 标题行高 title size
+        var tFontH;       // 菜单标题字体高度
+        var bFontH;       // 菜单栏字体高度
+        var nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
     GLU_FUNC( Font, set_size )( pHistory->bFontH );
     
     // 菜单内容字体的起始绘制坐标
-    int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
-    int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
+    var x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
+    var y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
     
     // 菜单栏起始绘制坐标,即右上角
     int xs   = RH_LIMIT( config->area.xs + 1               , 0, GUI_X_WIDTH-1 );
@@ -84,7 +81,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     for ( int8_t i=0; i<pHistory->nItemPer&&i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         
         if( i == pHistory->cur ){  // 该行被选中, 颜色选反色
@@ -96,7 +93,11 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
         }
         
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+        BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                      (int)( ys                               ),\
+                                      (int)( config->area.xs+config->area.w-2 ),\
+                                      (int)( ys+pHistory->bSize               ),\
+                                      &info_MainScreen, NULL );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -106,41 +107,37 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-            
             BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-            
             BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-            
             BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #else
              
         #endif
             
-        
         }
     }
 }
 
 static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     struct{
-        int8_t idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
-        int8_t cur;          // 选中的菜单行(一定小于 nIterPer)
-        int8_t bSize;        // 菜单栏行高 bar size
-        int8_t tSize;        // 标题行高 title size
-        int8_t tFontH;       // 菜单标题字体高度
-        int8_t bFontH;       // 菜单栏字体高度
-        int8_t nItemPer;     // 一版最多可显示菜单行数
+        var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
+        var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
+        var bSize;        // 菜单栏行高 bar size
+        var tSize;        // 标题行高 title size
+        var tFontH;       // 菜单标题字体高度
+        var bFontH;       // 菜单栏字体高度
+        var nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
@@ -161,7 +158,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             pHistory->idx--;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == 0 ){        // 首行颜色选反色
@@ -173,7 +170,11 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                 }
                 
                 // 绘制背景色
-                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+                BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                              (int)( ys                               ),\
+                                              (int)( config->area.xs+config->area.w-2 ),\
+                                              (int)( ys+pHistory->bSize               ),\
+                                              &info_MainScreen, NULL );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -183,9 +184,9 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
                     
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
-                        .height  = pF->img_h,
-                        .width   = pF->img_w,
-                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                        .h   = pF->img_h,
+                        .w   = pF->img_w,
+                        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                     };
                     
                     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -214,7 +215,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     }else{                          //  游标未到顶端, 先移动游标
         pHistory->cur--;
         // 绘制之前选中,现在未选中的那条菜单栏
-        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
+        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         // 配置画笔颜色
         text_color.data = config->text_color;
@@ -223,8 +224,14 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         // 重新配置坐标起始位置
         ys   += (pHistory->cur+1)*pHistory->bSize;
         y_fs += (pHistory->cur+1)*pHistory->bSize;
+        
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+        BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                      (int)( ys                               ),\
+                                      (int)( config->area.xs+config->area.w-2 ),\
+                                      (int)( ys+pHistory->bSize               ),\
+                                      &info_MainScreen, NULL );
+        
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
@@ -233,9 +240,9 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -257,7 +264,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         }
         
         // 绘制之前未选中,现在选中的那条菜单栏
-        cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+        cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
         p = NULL;
         // 配置画笔颜色
         text_color.data = REVERSE_COLOR( config->text_color );
@@ -268,7 +275,11 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
         y_fs -= pHistory->bSize;
         
         // 绘制背景色
-        BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+        BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                      (int)( ys                               ),\
+                                      (int)( config->area.xs+config->area.w-2 ),\
+                                      (int)( ys+pHistory->bSize               ),\
+                                      &info_MainScreen, NULL );
         
         if( cnt>0 ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -277,21 +288,18 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
             GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
-                .height  = pF->img_h,
-                .width   = pF->img_w,
-                .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                .h   = pF->img_h,
+                .w   = pF->img_w,
+                .ptr = (BLK_UION(PixelGry)*)pF->img_buf
             };
             
         #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-            
             BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-            
             BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-            
             BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
             
         #else
@@ -305,13 +313,13 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
 
 static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     struct{
-        int8_t idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
-        int8_t cur;          // 选中的菜单行(一定小于 nIterPer)
-        int8_t bSize;        // 菜单栏行高 bar size
-        int8_t tSize;        // 标题行高 title size
-        int8_t tFontH;       // 菜单标题字体高度
-        int8_t bFontH;       // 菜单栏字体高度
-        int8_t nItemPer;     // 一版最多可显示菜单行数
+        var idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
+        var cur;          // 选中的菜单行(一定小于 nIterPer)
+        var bSize;        // 菜单栏行高 bar size
+        var tSize;        // 标题行高 title size
+        var tFontH;       // 菜单标题字体高度
+        var bFontH;       // 菜单栏字体高度
+        var nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
@@ -332,7 +340,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             pHistory->idx++;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == pHistory->nItemPer-1 ){        // 首行颜色选反色
@@ -344,7 +352,11 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 }
                 
                 // 绘制背景色
-                BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+                BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                              (int)( ys                               ),\
+                                              (int)( config->area.xs+config->area.w-2 ),\
+                                              (int)( ys+pHistory->bSize               ),\
+                                              &info_MainScreen, NULL );
                 
                 if( cnt>0 ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -353,21 +365,18 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                     GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
-                        .height  = pF->img_h,
-                        .width   = pF->img_w,
-                        .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                        .h   = pF->img_h,
+                        .w   = pF->img_w,
+                        .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                     };
                     
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                    
                     BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                    
                     BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                    
                     BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #else
@@ -384,7 +393,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
         if( pHistory->cur+1 != config->nItem ){// 判断游标是否为菜单底端, 菜单栏数可能小于屏幕所容纳的最大栏目数
             pHistory->cur++;                   // 移动游标
             // 绘制之前选中,现在未选中的那条菜单栏
-            int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
+            int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
             char* p = NULL;
             // 配置画笔颜色
             text_color.data = config->text_color;
@@ -393,8 +402,14 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             // 重新配置坐标起始位置
             ys   += (pHistory->cur-1)*pHistory->bSize;
             y_fs += (pHistory->cur-1)*pHistory->bSize;
+
             // 绘制背景色
-            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+            BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                          (int)( ys                               ),\
+                                          (int)( config->area.xs+config->area.w-2 ),\
+                                          (int)( ys+pHistory->bSize               ),\
+                                          &info_MainScreen, NULL );
+            
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
@@ -403,21 +418,18 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 
             #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                
                 BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                
                 BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                
                 BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                 
             #else
@@ -427,7 +439,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             }
             
             // 绘制之前未选中,现在选中的那条菜单栏
-            cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.width, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+            cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
             p = NULL;
             // 配置画笔颜色
             text_color.data = REVERSE_COLOR( config->text_color );
@@ -438,7 +450,11 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
             y_fs += pHistory->bSize;
             
             // 绘制背景色
-            BLK_FUNC( Graph, rect_fill )(xs, ys, config->area.xs+(int)config->area.width-2, ys+pHistory->bSize, &info_MainScreen, NULL );
+            BLK_FUNC( Graph, rect_fill )( (int)( xs                               ),\
+                                          (int)( ys                               ),\
+                                          (int)( config->area.xs+config->area.w-2 ),\
+                                          (int)( ys+pHistory->bSize               ),\
+                                          &info_MainScreen, NULL );
             
             if( cnt>0 ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
@@ -448,21 +464,18 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
-                    .height  = pF->img_h,
-                    .width   = pF->img_w,
-                    .pBuffer = (BLK_UION(PixelGry)*)pF->img_buf
+                    .h   = pF->img_h,
+                    .w   = pF->img_w,
+                    .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 
                 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-                    
                     BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-                    
                     BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-                    
                     BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, text_color.data, 100);
                     
                 #else
@@ -500,13 +513,13 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     struct{
-        int8_t idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
-        int8_t cur;          // 选中的菜单行(一定小于 nIterPer)
-        int8_t bSize;        // 菜单栏行高 bar size
-        int8_t tSize;        // 标题行高 title size
-        int8_t tFontH;       // 菜单标题字体高度
-        int8_t bFontH;       // 菜单栏字体高度
-        int8_t nItemPer;     // 一版最多可显示菜单行数
+        var idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
+        var cur;          // 选中的菜单行(一定小于 nIterPer)
+        var bSize;        // 菜单栏行高 bar size
+        var tSize;        // 标题行高 title size
+        var tFontH;       // 菜单标题字体高度
+        var bFontH;       // 菜单栏字体高度
+        var nItemPer;     // 一版最多可显示菜单行数
     }*pHistory = (void*)config->history;
     
     BLK_FUNC( Graph, backupCache )();
@@ -522,10 +535,10 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
         pHistory->bSize     = 12;//
         pHistory->tSize     = 12;//
         pHistory->idx       = 0;
-        pHistory->nItemPer  = config->area.height/pHistory->bSize;
+        pHistory->nItemPer  = config->area.h/pHistory->bSize;
         pHistory->tFontH    = 8; //
         pHistory->bFontH    = 8; //
-        pHistory->nItemPer  = (config->area.height-pHistory->tSize)/pHistory->bSize;
+        pHistory->nItemPer  = (config->area.h-pHistory->tSize)/pHistory->bSize;
         pHistory->cur       = 0;
     
     }
@@ -537,15 +550,8 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     BLK_FUNC( Graph, restoreCache )();
     GLU_FUNC( Font, restoreCache )();
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1) \
-                       :
-                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1);
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )
+                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
     
     return MAKE_ENUM( kStatus_Success );
 }
@@ -560,7 +566,7 @@ E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
     GLU_FUNC( Font, backupCache )();
     
     if( cmd ){
-        BLK_FUNC( Graph, rect_raw )(p->area.xs, p->area.ys, p->area.xs+(int)(p->area.width)-1, p->area.ys+(int)(p->area.height)-1, &info_MainScreen, NULL);
+        BLK_FUNC( Graph, EX_rect_raw )( &p->area, &info_MainScreen, NULL);
     }
 
     BLK_FUNC( Graph, restoreCache )();
@@ -593,15 +599,8 @@ int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
     BLK_FUNC( Graph, restoreCache )();
     GLU_FUNC( Font, restoreCache )();
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1) \
-                       :
-                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1);
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )
+                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
     
     return MAKE_ENUM( kStatus_Success );
 }
@@ -616,20 +615,10 @@ E_Status_t GLU_FUNC( Menu, delete )    ( ID_t ID ){
     BLK_FUNC( Graph, backupCache  )();
     BLK_FUNC( Graph, set_penColor )(config->bk_color);
     
-    BLK_FUNC( Graph, rect_fill )( config->area.xs, \
-                       config->area.ys, \
-                       config->area.xs+(int)(config->area.width )-1, \
-                       config->area.ys+(int)(config->area.height)-1, &info_MainScreen, NULL);
+    BLK_FUNC( Graph, EX_rect_fill )( &config->area, &info_MainScreen, NULL);
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, refreashScreenArea )( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1) \
-                       :
-                         GLU_FUNC( GUI, addScreenArea )     ( config->area.xs, \
-                                                 config->area.ys, \
-                                                 config->area.xs+(int)(config->area.width )-1, \
-                                                 config->area.ys+(int)(config->area.height)-1);
+    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )
+                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
     
     RH_FREE( config );
     BLK_FUNC( Graph, restoreCache )();

@@ -36,30 +36,30 @@ static struct __GraphConfig_t GCFG = {
         BLK_SRCT(ImgBin)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        __exit( x>=pInfo->width || y>=pInfo->height || x<0 || y<0);
-        (pInfo->pBuffer+((y>>3)*pInfo->width)+x)->data = __BIT_CLR( (pInfo->pBuffer+((y>>3)*pInfo->width)+x)->data , y%8 );
+        __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0);
+        (pInfo->ptr+((y>>3)*pInfo->w)+x)->data = __BIT_CLR( (pInfo->ptr+((y>>3)*pInfo->w)+x)->data , y%8 );
     }
     static void __render_1bit_unmark   (int x, int y, void* pIMG){
         BLK_SRCT(ImgBin)* pInfo = pIMG;
     #ifdef RH_DEBUG
        BLK_GRAPH_ASSERT(pInfo);
-       BLK_GRAPH_ASSERT(pInfo->pBuffer);
+       BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-       __exit( x>=pInfo->width || y>=pInfo->height || x<0 || y<0);
-       (pInfo->pBuffer+((y>>3)*pInfo->width)+x)->data = __BIT_SET( (pInfo->pBuffer+((y>>3)*pInfo->width)+x)->data , y%8 );
+       __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0);
+       (pInfo->ptr+((y>>3)*pInfo->w)+x)->data = __BIT_SET( (pInfo->ptr+((y>>3)*pInfo->w)+x)->data , y%8 );
     }
     static void __render_1bit_fill     (int x, int y, void* pIMG){
         BLK_SRCT(ImgBin)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        __exit( x>=pInfo->width || y>=pInfo->height || x<0 || y<0 );
-        size_t index = (y>>3)*pInfo->width+x;
-        BLK_TYPE(PixelBin) data = pInfo->pBuffer[ index ].data;
-        pInfo->pBuffer[ index ].data = (GCFG.penColor==0)?(__BIT_CLR( data , y%8 )):(__BIT_SET( data , y%8 ));
+        __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0 );
+        size_t index = (y>>3)*pInfo->w+x;
+        BLK_TYPE(PixelBin) data = pInfo->ptr[ index ].data;
+        pInfo->ptr[ index ].data = (GCFG.penColor==0)?(__BIT_CLR( data , y%8 )):(__BIT_SET( data , y%8 ));
     }
     static void __render_1bit_light    (int x, int y, void* pIMG){
         
@@ -112,25 +112,25 @@ static struct __GraphConfig_t GCFG = {
         BLK_SRCT(Img565)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        __exit( x>=pInfo->width || y>=pInfo->height || x<0 || y<0 );
-        pInfo->pBuffer[y*pInfo->width+x].data = (BLK_TYPE(Pixel565))GCFG.penColor;
+        __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0 );
+        pInfo->ptr[y*pInfo->w+x].data = (BLK_TYPE(Pixel565))GCFG.penColor;
     }
     static void __render_16bit_light   (int x, int y, void* pIMG){
         BLK_SRCT(Img565)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        BLK_TYPE(Pixel565)* p = (BLK_TYPE(Pixel565)*)(pInfo->pBuffer);
+        BLK_TYPE(Pixel565)* p = (BLK_TYPE(Pixel565)*)(pInfo->ptr);
         BLK_UION(Pixel565) temp = {
-            .data = *(p+y*pInfo->width+x)
+            .data = *(p+y*pInfo->w+x)
         };
         temp.R = RH_LIMIT((signed)(temp.R*110/100) , 0 , ((1<<5)-1));
         temp.G = RH_LIMIT((signed)(temp.G*110/100) , 0 , ((1<<6)-1));
         temp.B = RH_LIMIT((signed)(temp.B*110/100) , 0 , ((1<<5)-1));
-        *(p+y*pInfo->width+x) = temp.data;
+        *(p+y*pInfo->w+x) = temp.data;
     }
     static void __render_16bit_depix   (int x, int y, void* pIMG){
         
@@ -155,25 +155,25 @@ static struct __GraphConfig_t GCFG = {
         BLK_SRCT(Img888)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        __exit( x>=pInfo->width || y>=pInfo->height || x<0 || y<0 );
-        pInfo->pBuffer[y*pInfo->width+x].data = (BLK_TYPE(Pixel888))GCFG.penColor;
+        __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0 );
+        pInfo->ptr[y*pInfo->w+x].data = (BLK_TYPE(Pixel888))GCFG.penColor;
     }
     static void __render_24bit_light   (int x, int y, void* pIMG){
         BLK_SRCT(Img888)* pInfo = pIMG;
     #ifdef RH_DEBUG
         BLK_GRAPH_ASSERT(pInfo);
-        BLK_GRAPH_ASSERT(pInfo->pBuffer);
+        BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
-        BLK_TYPE(Pixel888)* p = (BLK_TYPE(Pixel888)*)(pInfo->pBuffer);
+        BLK_TYPE(Pixel888)* p = (BLK_TYPE(Pixel888)*)(pInfo->ptr);
         BLK_UION(Pixel888) temp = {
-            .data = *(p+y*pInfo->width+x)
+            .data = *(p+y*pInfo->w+x)
         };
         temp.R = RH_LIMIT((signed)(temp.R*110/100) , 0 , ((1<<8)-1));
         temp.G = RH_LIMIT((signed)(temp.G*110/100) , 0 , ((1<<8)-1));
         temp.B = RH_LIMIT((signed)(temp.B*110/100) , 0 , ((1<<8)-1));
-        *(p+y*pInfo->width+x) = temp.data;
+        *(p+y*pInfo->w+x) = temp.data;
     }
     static void __render_24bit_depix   (int x, int y, void* pIMG){
         
@@ -198,9 +198,9 @@ E_Status_t      BLK_FUNC( Graph, init          )  (void){
     GCFG.blur_size   = 44100;
     GCFG.penSize     = 3;
     
-    GCFG.blur_tmp.pBuffer = NULL;
-    GCFG.blur_tmp.height  = 0;
-    GCFG.blur_tmp.width   = 0;
+    GCFG.blur_tmp.ptr = NULL;
+    GCFG.blur_tmp.h   = 0;
+    GCFG.blur_tmp.w   = 0;
     
     BLK_FUNC(Graph,set_color_depth)   ( kBLK_ColorDepth_24Bit  );
     BLK_FUNC(Graph,set_penColor)      ( M_COLOR_WHITE          );
@@ -704,30 +704,30 @@ E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int 
         for( int p=ps; p<=pe; p++ ){
             switch( ((p==ps)<<1)|(p==pe) ){
                 case 0: // p!=ps && p!=pe
-                    memset(pInfo->pBuffer + p*pInfo->width+xs, GCFG.penColor, xe-xs+1);
+                    memset(pInfo->ptr + p*pInfo->w+xs, GCFG.penColor, xe-xs+1);
                     break;
                 case 1: // p!=ps && p==pe
                     for( int x=xs; x<= xe; x++ ){
                         if( GCFG.penColor == 0x00 )
-                            pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)((1<<((ye&7)+1))-1) );
+                            pInfo->ptr[ p*pInfo->w+x ].data &= ~( (uint8_t)((1<<((ye&7)+1))-1) );
                         else
-                            pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)((1<<((ye&7)+1))-1)  ;
+                            pInfo->ptr[ p*pInfo->w+x ].data |=    (uint8_t)((1<<((ye&7)+1))-1)  ;
                     }
                     break;
                 case 2: // p==ps && p!=pe
                     for( int x=xs; x<= xe; x++ ){
                         if( GCFG.penColor == 0x00 )
-                            pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)(0xff<<(ys&7)) );
+                            pInfo->ptr[ p*pInfo->w+x ].data &= ~( (uint8_t)(0xff<<(ys&7)) );
                         else
-                            pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)(0xff<<(ys&7))  ;
+                            pInfo->ptr[ p*pInfo->w+x ].data |=    (uint8_t)(0xff<<(ys&7))  ;
                     }
                     break;
                 case 3: // ps == pe
                     for( int x=xs; x<= xe; x++ ){
                         if( GCFG.penColor == 0x00 ){
-                            pInfo->pBuffer[ p*pInfo->width+x ].data &= ~( (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7))) );
+                            pInfo->ptr[ p*pInfo->w+x ].data &= ~( (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7))) );
                         }else{
-                            pInfo->pBuffer[ p*pInfo->width+x ].data |=    (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7)))  ;
+                            pInfo->ptr[ p*pInfo->w+x ].data |=    (uint8_t)( ((1<<((ye&7)+1))-1)&(0xff<<(ys&7)))  ;
                         }
                     }
                     break;
@@ -739,25 +739,25 @@ E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int 
         for(int x = xs;x <= xe;x++)
             callback(x,ys,pInfo);
         for(int y = ys+1;y <= ye;y++)
-            memmove((pInfo->pBuffer + y  * pInfo->width + xs),\
-                    (pInfo->pBuffer + ys * pInfo->width + xs),\
-                    ((xe-xs+1)*sizeof(pInfo->pBuffer[0]))   );
+            memmove((pInfo->ptr + y  * pInfo->w + xs),\
+                    (pInfo->ptr + ys * pInfo->w + xs),\
+                    ((xe-xs+1)*sizeof(pInfo->ptr[0]))   );
     }else if ( callback == __render_16bit_fill ){
         BLK_SRCT(Img565)* pInfo = pIMG;
         for(int x = xs;x <= xe;x++)
             callback(x,ys,pInfo);
         for(int y = ys+1;y <= ye;y++)
-            memmove((pInfo->pBuffer + y  * pInfo->width + xs),\
-                    (pInfo->pBuffer + ys * pInfo->width + xs),\
-                    ((xe-xs+1)*sizeof(pInfo->pBuffer[0]))   );
+            memmove((pInfo->ptr + y  * pInfo->w + xs),\
+                    (pInfo->ptr + ys * pInfo->w + xs),\
+                    ((xe-xs+1)*sizeof(pInfo->ptr[0]))   );
     }else if ( callback == __render_24bit_fill ){
         BLK_SRCT(Img888)* pInfo = pIMG;
         for(int x = xs;x <= xe;x++)
             callback(x,ys,pInfo);
         for(int y = ys+1;y <= ye;y++)
-            memmove((pInfo->pBuffer + y  * pInfo->width + xs),\
-                    (pInfo->pBuffer + ys * pInfo->width + xs),\
-                    ((xe-xs+1)*sizeof(pInfo->pBuffer[0]))   );
+            memmove((pInfo->ptr + y  * pInfo->w + xs),\
+                    (pInfo->ptr + ys * pInfo->w + xs),\
+                    ((xe-xs+1)*sizeof(pInfo->ptr[0]))   );
     }else{
         for( int y=ys; y<=ye; y++ ){
             for( int x=xs; x<= xe; x++ )
@@ -839,10 +839,10 @@ E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int 
  > 插入空心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pIMG, callback );
 }
     
@@ -850,10 +850,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,    
  > 插入实心长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                      RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                      RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                      RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                      RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       pIMG, callback );
 }
     
@@ -861,10 +861,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,    
  > 插入一个空心长发形,线宽随设定(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                       RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                       RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                       RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                       RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                        pIMG, callback );
 }
     
@@ -872,10 +872,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,    
  > 插入填充圆角长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                            RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             pIMG, callback );
 }
 
@@ -883,10 +883,10 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,    
  > 插入空心圆角长方形(使用__Area_t参数)
 =====================================*/
 E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
-    return BLK_FUNC(Graph,rect_round_raw )( RH_LIMIT( (signed)( area->xs               ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys               ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
-                                            RH_LIMIT( (signed)( area->xs+area->width -1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
-                                            RH_LIMIT( (signed)( area->ys+area->height-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+    return BLK_FUNC(Graph,rect_round_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
+                                            RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
+                                            RH_LIMIT( (signed)( area->ys+area->h-1), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             pIMG, callback );
 }
     
@@ -1245,9 +1245,9 @@ E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int 
     BLK_UION(PixelBin)* pBuffer = RH_CALLOC((area_height*area_width),sizeof(BLK_UION(PixelBin)));
 
     // 绘制四边形边框，通过画线程序实现
-    BLK_SRCT(ImgBin) pTmpImg = {  .pBuffer = pBuffer      ,\
-                                  .height  = area_height  ,\
-                                  .width   = area_width   };
+    BLK_SRCT(ImgBin) pTmpImg = {  .ptr = pBuffer      ,\
+                                  .h   = area_height  ,\
+                                  .w   = area_width   };
 
     BLK_FUNC( Graph, line_raw )( x11-xs , y11-ys , x22-xs , y22-ys ,&pTmpImg, __render_1bit_fill );        
     BLK_FUNC( Graph, line_raw )( x22-xs , y22-ys , x33-xs , y33-ys ,&pTmpImg, __render_1bit_fill );
