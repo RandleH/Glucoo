@@ -44,6 +44,20 @@ void GLU_FUNC( GUI, EX_rect_raw      )   ( const __Area_t* pArea ){
     GLU_FUNC(GUI, rect_raw)( pArea->xs, pArea->ys, xe, ye );
 }
 
+void GLU_FUNC( GUI, EX_rect_edged    )   ( const __Area_t* pArea ){
+    var xe = RH_LIMIT( pArea->xs+pArea->w-1, 0, GUI_X_WIDTH-1 );
+    var ye = RH_LIMIT( pArea->ys+pArea->h-1, 0, GUI_Y_WIDTH-1 );;
+    
+    GLU_FUNC(GUI, rect_edged)( pArea->xs, pArea->ys, xe, ye );
+}
+
+void GLU_FUNC( GUI, EX_rect_fill     )   ( const __Area_t* pArea ){
+    var xe = RH_LIMIT( pArea->xs+pArea->w-1, 0, GUI_X_WIDTH-1 );
+    var ye = RH_LIMIT( pArea->ys+pArea->h-1, 0, GUI_Y_WIDTH-1 );;
+    
+    GLU_FUNC(GUI, rect_fill)( pArea->xs, pArea->ys, xe, ye );
+}
+
 void GLU_FUNC( GUI, circle_raw       )   ( int x , int y , int d ){
 #ifdef RH_DEBUG
 #endif

@@ -53,6 +53,8 @@ void GLU_FUNC( GUI, rect_fill        )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, rect_round_fill  )       ( int xs,int ys,int xe,int ye );
 
 void GLU_FUNC( GUI, EX_rect_raw      )       ( const __Area_t* pArea );
+void GLU_FUNC( GUI, EX_rect_edged    )       ( const __Area_t* pArea );
+void GLU_FUNC( GUI, EX_rect_fill     )       ( const __Area_t* pArea );
 
 void GLU_FUNC( GUI, circle_raw       )       ( int x ,int y ,int d );
 void GLU_FUNC( GUI, circle_edged     )       ( int x ,int y ,int d );

@@ -2,7 +2,7 @@
 
 
 
-void GLU_FUNC( Utility, area_align )( const __Area_t* src, var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
+void GLU_FUNC( Utility, align_area )( const __Area_t* src, var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
     RH_ASSERT(src);
     RH_ASSERT(dst);
     M_UTILITY_ALIGN_xx &= 0x0000003f;
@@ -28,11 +28,54 @@ void GLU_FUNC( Utility, area_align )( const __Area_t* src, var w, var h, __Area_
     dst->h = h;
 }
 
-void GLU_FUNC( Utility, screen_align )( var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
+void GLU_FUNC( Utility, align_screen )( var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
     __Area_t src = {.xs = 0, .ys = 0, .w = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT };
-    GLU_FUNC( Utility, area_align )( &src, w, h, dst, M_UTILITY_ALIGN_xx );
+    GLU_FUNC( Utility, align_area )( &src, w, h, dst, M_UTILITY_ALIGN_xx );
 }
 
+bool GLU_FUNC( Utility, pt_in_area   )( var x, var y, const __Area_t* pArea ){
+    RH_ASSERT(pArea);
+    
+    return (bool)((x>=pArea->xs)&&(x<pArea->xs+pArea->w)&&(y>=pArea->ys)&&(y<pArea->ys+pArea->h));
+}
+
+void GLU_FUNC( Utility, area_hdiv    )( const __Area_t* total, __Area_t p[], size_t size ){
+    RH_ASSERT(total);
+    RH_ASSERT(p);
+    
+    if(size==1){
+        GLU_Utility_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
+        return;
+    }
+    
+    uint32_t length = 0;
+    {
+        __Area_t *iter = p;
+        for( size_t i=0; i<size; i++, iter++ ){
+            length += iter->w;
+        }
+    }
+    
+    RH_ASSERT(length<total->w);
+    
+    int32_t remain = (signed)(total->w) - (signed)(length);
+    {
+        var        x    = total->xs;
+        __Area_t *iter = p;
+        
+        for( size_t i=0; i<size; i++, iter++ ){
+            iter->xs = x;
+
+            x+= iter->w;
+            if( (size-1-i) != 0 ){
+                x      += remain/(size-1-i);
+                remain -= remain/(size-1-i);
+            }
+            
+            GLU_FUNC(Utility,align_area)( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
+        }
+    }
+}
 
 
 
