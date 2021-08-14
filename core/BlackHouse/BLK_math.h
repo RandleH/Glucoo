@@ -29,6 +29,8 @@ unsigned long         BLK_FUNC( Math, combinatorial )   ( unsigned long n, unsig
       
 double                BLK_FUNC( Math, tan           )   ( long   dec);
 double                BLK_FUNC( Math, atan          )   ( long   y,long x     );
+
+long                  BLK_FUNC( Math, gcd           )   ( long   a,long b     );
       
 long                  BLK_FUNC( Math, factorial     )   ( long   x);
 long                  BLK_FUNC( Math, fibonacci     )   ( long   n);
