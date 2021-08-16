@@ -173,6 +173,29 @@ BLK_FUNC( Math, fibonacci     )( long   n ){
     return res;
 }
     
+long
+BLK_FUNC( Math, gcd           )( long   a, long b  ){
+   
+#define THIS  BLK_FUNC(Math, gcd)
+    
+    if( b>a )
+        __swap(a, b);
+    
+    if( b==0 )
+        return a;
+    
+    if( !(a&1) ){
+        if( !(b&1) ) return (long)(THIS(a>>1, b>>1) <<1);
+        else         return (long)(THIS(a>>1, b   )    );
+    }else{
+        if( !(b&1) ) return (long)(THIS(a   , b>>1)    );
+        else         return (long)(THIS(a-b , b   )    );
+    }
+    
+#undef THIS
+    
+}
+
 unsigned long 
 BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
     __exitReturn( r>n , 0 );
@@ -185,8 +208,8 @@ BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
         }
         return (unsigned long)(son/mum);
     }
-    #else
-    { // 进阶算法
+    #elif 1
+    { // 进阶算法 1
         uint16_t *temp = alloca(r*sizeof(uint16_t));
         for( uint16_t i=0; i<r; i++ ){
             temp[i] = (n-r+i+1);
@@ -212,6 +235,20 @@ BLK_FUNC( Math, combinatorial )( unsigned long n, unsigned long r ){
         }
         
         return (unsigned long)(son/mum);
+    }
+    
+    #else // 进阶算法 2
+    {
+        unsigned long son = 1, mum = 1;
+        for(unsigned long i=0; i<r;  ){
+            son*=(n-i);
+            mum*=(++i);
+            long gcd = BLK_FUNC(Math, gcd)( son, mum );
+            son /= gcd;
+            mum /= gcd;
+        }
+        return son;
+        
     }
     #endif
 }
