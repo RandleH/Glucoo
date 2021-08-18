@@ -191,63 +191,17 @@ static struct{
 
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
-    #if defined (__WIN32)
-      #error "WIN32 NOT SUPPORTED YET."
-        static const char* font_ttf_path[kGLU_NUM_FontStyle] = {
-            0
-        };
-    #elif defined  (__APPLE__)
-        static const char* font_ttf_path[kGLU_NUM_FontStyle] = {
-             [kGLU_Font_Unscii] =
-            "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/unscii-8.ttf"           ,
-             [kGLU_Font_ArialRounded_Bold] =
-            "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Arial Rounded Bold.ttf" ,
-            
-             [kGLU_Font_CourierNew] =
-                #if RH_CFG_FONT_STYLE__CourierNew
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Courier New.ttf"        ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_CourierNew_Italic] =
-                #if RH_CFG_FONT_STYLE__CourierNew_Italic
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Courier New Italic.ttf" ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_CourierNew_Bold] =
-                #if RH_CFG_FONT_STYLE__CourierNew_Bold
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Courier New Bold.ttf"   ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_NewYork] =
-                #if RH_CFG_FONT_STYLE__NewYork
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/NewYork.ttf"            ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_NewYork_Italic] =
-                #if RH_CFG_FONT_STYLE__NewYork_Italic
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/NewYorkItalic.ttf"      ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_SignPrinter] =
-                #if RH_CFG_FONT_STYLE__Sign_Printer
-                    "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Sign Printer.ttf"       ,
-                #else
-                    NULL,
-                #endif
-             [kGLU_Font_Optima] =
-               #if RH_CFG_FONT_STYLE__Optima
-                   "/Users/randle_h/GitHub/Glucoo/core/Glucoo/font/Optima.ttf"       ,
-               #else
-                   NULL,
-               #endif
-             
-        };
-    #endif
+    static const char* font_ttf_path[kGLU_NUM_FontStyle] = {
+        [ kGLU_Font_Unscii            ] = NULL ,
+        [ kGLU_Font_ArialRounded_Bold ] = NULL ,
+        [ kGLU_Font_CourierNew        ] = NULL , 
+        [ kGLU_Font_CourierNew_Italic ] = NULL ,
+        [ kGLU_Font_CourierNew_Bold   ] = NULL ,
+        [ kGLU_Font_NewYork           ] = NULL ,
+        [ kGLU_Font_NewYork_Italic    ] = NULL ,
+        [ kGLU_Font_SignPrinter       ] = NULL ,
+        [ kGLU_Font_Optima            ] = NULL ,
+    };
 
 /*==================================================================================================================================
  * 配置外部TruethType文件方式获取字体数据
@@ -279,15 +233,16 @@ static struct{
     }
 
     static E_Status_t __make_ttf_path( void ){
- #define MAX_PATH_SIZE 255
+
+    #define MAX_PATH_SIZE 255
         char path_tmp[MAX_PATH_SIZE] = {0};
 
         BLK_Dir_back(__FILE__, path_tmp, MAX_PATH_SIZE, 1);
         size_t idx = strlen(path_tmp);
         
-#define CONNECT_PATH( a ) strcpy( malloc(idx+strlen( (a) )+1), strcpy(&path_tmp[idx], (a) )-idx )
-#define CLEAR_PATH        memset(&path_tmp[idx], 0, MAX_PATH_SIZE-idx-1)
-        
+    #define CONNECT_PATH( a ) strcpy( malloc(idx+strlen( (a) )+1), strcpy(&path_tmp[idx], (a) )-idx )
+    #define CLEAR_PATH        memset(&path_tmp[idx], 0, MAX_PATH_SIZE-idx-1)
+            
         font_ttf_path[ kGLU_Font_Unscii            ] = CONNECT_PATH("/unscii-8.ttf");           CLEAR_PATH;
         font_ttf_path[ kGLU_Font_ArialRounded_Bold ] = CONNECT_PATH("/Arial Rounded Bold.ttf"); CLEAR_PATH;
         font_ttf_path[ kGLU_Font_CourierNew        ] = CONNECT_PATH("/Courier New.ttf");        CLEAR_PATH;
@@ -298,8 +253,8 @@ static struct{
         font_ttf_path[ kGLU_Font_SignPrinter       ] = CONNECT_PATH("/Sign Printer.ttf");       CLEAR_PATH;
         font_ttf_path[ kGLU_Font_Optima            ] = CONNECT_PATH("/Optima.ttf");             CLEAR_PATH;
         
-#undef CONNECT_PATH
-#undef CLEAR_PATH
+    #undef CONNECT_PATH
+    #undef CLEAR_PATH
         
         return MAKE_ENUM(kStatus_Success);
     }
