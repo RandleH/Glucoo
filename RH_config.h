@@ -7,14 +7,12 @@
 extern "C" {
 #endif
 
-#define RH_CFG_RECORD_VERSION                 (0U)                          // < select > < 0=disable : 1=enable >
+#define RH_CFG_RECORD_VERSION                 "RH_CONFIG - 08/15/2021"
 
 #define RH_CFG_GRAPHIC_COLOR_BIN              (0U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
-
-#define RH_CFG_GRAPHIC_COLOR_TYPE              2   // < select > < above option >
-
+#define RH_CFG_GRAPHIC_COLOR_TYPE              2                            // < select > < above option >
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
@@ -131,28 +129,28 @@ extern void* RH_CFG_GRAM_POINTER;
   #error " 'RH_FREE' has been defined. "
 #endif
 
-#define BLK_POKER_CALLOC(x,s)          calloc(x,s)
-#define BLK_POKER_MALLOC(x)            malloc(x)
-#define BLK_POKER_FREE(x)              free(x)
-#define BLK_POKER_ASSERT(expr)         assert(expr)
-
-#define BLK_DATA_CALLOC(x,s)           calloc(x,s)
-#define BLK_DATA_MALLOC(x)             malloc(x)
-#define BLK_DATA_FREE(x)               free(x)
-#define BLK_DATA_ASSERT(expr)          assert(expr)
-#define BLK_DATA_HASH_CALLOC(x,s)      calloc(x,s)
-#define BLK_DATA_HASH_MALLOC(x)        malloc(x)
-#define BLK_DATA_HASH_FREE(x)          free(x)
-
-#define BLK_DSP_CALLOC(x,s)            calloc(x,s)
-#define BLK_DSP_MALLOC(x)              malloc(x)
-#define BLK_DSP_FREE(x)                free(x)
-#define BLK_DSP_ASSERT(expr)           assert(expr)
-
-#define BLK_GRAPH_CALLOC(x,s)          calloc(x,s)
-#define BLK_GRAPH_MALLOC(x)            malloc(x)
-#define BLK_GRAPH_FREE(x)              free(x)
-#define BLK_GRAPH_ASSERT(expr)         assert(expr)
+#define BLK_POKER_CALLOC(x,s)                 calloc(x,s)
+#define BLK_POKER_MALLOC(x)                   malloc(x)
+#define BLK_POKER_FREE(x)                     free(x)
+#define BLK_POKER_ASSERT(expr)                assert(expr)
+       
+#define BLK_DATA_CALLOC(x,s)                  calloc(x,s)
+#define BLK_DATA_MALLOC(x)                    malloc(x)
+#define BLK_DATA_FREE(x)                      free(x)
+#define BLK_DATA_ASSERT(expr)                 assert(expr)
+#define BLK_DATA_HASH_CALLOC(x,s)             calloc(x,s)
+#define BLK_DATA_HASH_MALLOC(x)               malloc(x)
+#define BLK_DATA_HASH_FREE(x)                 free(x)
+       
+#define BLK_DSP_CALLOC(x,s)                   calloc(x,s)
+#define BLK_DSP_MALLOC(x)                     malloc(x)
+#define BLK_DSP_FREE(x)                       free(x)
+#define BLK_DSP_ASSERT(expr)                  assert(expr)
+       
+#define BLK_GRAPH_CALLOC(x,s)                 calloc(x,s)
+#define BLK_GRAPH_MALLOC(x)                   malloc(x)
+#define BLK_GRAPH_FREE(x)                     free(x)
+#define BLK_GRAPH_ASSERT(expr)                assert(expr)
 
 
 

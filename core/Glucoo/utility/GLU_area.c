@@ -77,5 +77,34 @@ void GLU_FUNC( Utility, area_hdiv    )( const __Area_t* total, __Area_t p[], siz
     }
 }
 
-
+void GLU_FUNC( Utility, optimal_text )( const __Area_t* src, const char* str, GLU_ENUM(Font) font, GLU_SRCT(Text)* dst ){
+    RH_ASSERT(src);
+    RH_ASSERT(dst);
+    RH_ASSERT(str);
+    
+    dst->str  = str;
+    dst->font = font;
+    
+    GLU_Font_backupCache();
+    
+    GLU_Font_set_font(font);
+    
+    var l=8,r=RH_MIN(src->w,src->h);
+    dst->size = ((r+l)>>1);
+    var w=0, h=0;
+    while( r-l>1 ){
+        
+        GLU_Font_set_size(dst->size);
+        GLU_Font_get_str_ImgInfo( &w, &h, str);
+        if( w<((src->w*3)>>2) && h<((src->h*3)>>2) ){
+            l = dst->size;
+        }else{
+            r = dst->size;
+        }
+        
+        dst->size = ((r+l)>>1);
+    }
+    
+    GLU_Font_restoreCache();
+}
 

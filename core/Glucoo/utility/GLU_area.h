@@ -1,6 +1,8 @@
 #include "RH_common.h"
 #include "RH_config.h"
 
+#include "GLU_font.h"
+
 #define M_UTILITY_ALIGN_LF        ((uint32_t)( 1<<0 ))
 #define M_UTILITY_ALIGN_RH        ((uint32_t)( 1<<1 ))
 #define M_UTILITY_ALIGN_UP        ((uint32_t)( 1<<2 ))
@@ -16,5 +18,5 @@ bool GLU_FUNC( Utility, pt_in_area   )( var x, var y, const __Area_t* pArea );
 void GLU_FUNC( Utility, area_hdiv    )( const __Area_t* all, __Area_t sub[], size_t size );
 void GLU_FUNC( Utility, area_vdiv    )( const __Area_t* all, __Area_t sub[], size_t size );//
 
-
+void GLU_FUNC( Utility, optimal_text )( const __Area_t* src, const char* str, GLU_ENUM(Font) font, GLU_SRCT(Text)* dst );
 

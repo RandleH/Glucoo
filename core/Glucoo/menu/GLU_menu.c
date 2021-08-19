@@ -7,6 +7,11 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
+extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
+extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
+extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
+extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
+
 static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     struct{
         var idx;          // 上一次选中的菜单索引(一定小于config->nItem)

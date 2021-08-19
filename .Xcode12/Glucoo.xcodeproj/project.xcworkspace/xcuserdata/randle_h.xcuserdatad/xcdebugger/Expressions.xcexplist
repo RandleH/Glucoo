@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "GLU_Utility_optimal_text:GLU_area.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "src">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__gui_adjust_object_button:GLU_object.c">
+      </ContextState>
+      <ContextState
+         contextName = "__gui_insert_object_button:GLU_object.c">
+      </ContextState>
+      <ContextState
+         contextName = "main:main.c">
+      </ContextState>
+      <ContextState
+         contextName = "BLK_Graph_rect_fill:BLK_graphic.c">
+      </ContextState>
+      <ContextState
+         contextName = "__gui_remove_object_button:GLU_object.c">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

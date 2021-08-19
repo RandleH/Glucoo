@@ -16,11 +16,6 @@ extern "C"{
 typedef void* ID_t;
 
 
-extern void (*GLU_API_DrawArea)       (var x1,var y1,var x2,var y2,const GLU_TYPE(Pixel)* pixData);
-extern void (*GLU_API_DrawPixel)      (var x ,var y ,const GLU_TYPE(Pixel) pixData);
-extern void (*GLU_API_DelayMs)        (unsigned long ms);
-extern void (*GLU_API_AssertParam)    (bool expr,const char* WHAT_IS_WRONG );
-
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
 ===============================================================================================================*/
@@ -30,11 +25,6 @@ void GLU_FUNC( GUI, setPenSize  )            ( size_t           penSize  );
 void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );
 void GLU_FUNC( GUI, autoDisplay )            ( bool             cmd      );
 
-
-void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
 void GLU_FUNC( GUI, refreashScreen       )   ( void );
 void GLU_FUNC( GUI, refreashEntireScreen )   ( void );
@@ -76,8 +66,8 @@ void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
-ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const __GUI_Object_t* config, const void* RH_NULLABLE dataScr );
-E_Status_t                GLU_FUNC( Object, template )  (       __GUI_Object_t* config  , E_GUI_ObjWidget_t widget );
+ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
+E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config  , E_GUI_ObjWidget_t widget );
 E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );
 E_Status_t                GLU_FUNC( Object, insert   )  ( ID_t ID );

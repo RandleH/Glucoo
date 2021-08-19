@@ -26,9 +26,15 @@
 //#include <malloc.h>
 //#include "RH_config.h"
 
+#include <alloca.h>
+#include <unistd.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif
+
+#define RH_COM_RECORD_VERSION                 "RH_COMMON - 08/18/2021"
+
 
 #if defined ( __CC_ARM )
 #pragma anon_unions
@@ -37,13 +43,13 @@
 #ifndef UNUSED
 #define UNUSED(x)    (void)(x)
 #endif
- 
+
 #define RH_DEBUG
  
 
 #define RH_NULLABLE
 #define RH_NONNULL
-#define RH_ALLOCATED  
+#define RH_ALLOCATED
 
 typedef int16_t var;    // 泛指数值, 具体随项目规模或实际设备
 typedef int num;
@@ -358,6 +364,10 @@ typedef volatile uint64_t       vu64;
 #define BLK_TYPE( type )                     T_BLK_##type##_t
 #define GLU_TYPE( type )                     T_GLU_##type##_t
 #define SMP_TYPE( type )                     T_SMP_##type##_t
+ 
+#define BLK_API
+#define GLU_API
+#define SMP_API
  
 #if 0
 #error "Read the following tips and remove this error first."
