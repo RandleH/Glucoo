@@ -545,7 +545,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     
 #if RH_CFG_OUTPUT_FONT_PNG
     char path[255] = {0};
-    sprintf( path, "%s%s", RH_DIR_PRJ, "/SIM_macOS/output/font_str_preview.png");
+    sprintf( path, "%s%s", RH_DIR, "/SIM_macOS/output/font_str_preview.png");
     stbi_write_png(path, FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif
     return &FCFG.img;

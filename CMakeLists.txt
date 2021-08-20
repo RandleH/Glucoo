@@ -9,7 +9,7 @@ aux_source_directory( ./core/Glucoo/object  dir_glu_object )
 aux_source_directory( ./core/Glucoo/menu    dir_glu_menu   )
 aux_source_directory( ./core/Glucoo/font    dir_glu_font   )
 aux_source_directory( ./core/Glucoo/window  dir_glu_window )
-aux_source_directory( ./core/GLucoo/utility dir_glu_utility)
+aux_source_directory( ./core/Glucoo/utility dir_glu_utility)
 
 include_directories( ./                    )
 include_directories( ./core/BlackHouse     )
@@ -21,7 +21,7 @@ include_directories( ./core/Glucoo/object  )
 include_directories( ./core/Glucoo/menu    )
 include_directories( ./core/Glucoo/font    )
 include_directories( ./core/Glucoo/window  )
-include_directories( ./core/GLucoo/utility )
+include_directories( ./core/Glucoo/utility )
 
 link_libraries( "-lm" )
 

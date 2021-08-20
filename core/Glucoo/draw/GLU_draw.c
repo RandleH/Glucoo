@@ -206,7 +206,48 @@ void GLU_FUNC( GUI, quad_raw         )   ( int x1,int y1,int x2,int y2,int x3,in
 }
 
 
+void GLU_FUNC( GUI, screen_fill      )   ( GLU_TYPE(Color) M_COLOR_xxxx ){
+#if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
 
+    GLU_TYPE(Pixel) color = COLOR_1BIT(M_COLOR_xxxx);
+    if( color == 0x00 ){
+        memset( canvas.ptr, 0x00, (RH_CFG_SCREEN_HEIGHT>>3)*RH_CFG_SCREEN_WIDTH );
+    }else{
+        memset( canvas.ptr, 0xff, (RH_CFG_SCREEN_HEIGHT>>3)*RH_CFG_SCREEN_WIDTH );
+    }
+
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
+
+    GLU_TYPE(Pixel) color = COLOR_16BIT(M_COLOR_xxxx);
+    if( sizeof(uint16_t)==sizeof(wchar_t) ){
+        wmemset( (wchar_t*)canvas.ptr, color, RH_CFG_SCREEN_HEIGHT*RH_CFG_SCREEN_WIDTH );
+    }else{
+        uint16_t *iter = (uint16_t*)canvas.ptr;
+        for( size_t i=0; i<RH_CFG_SCREEN_HEIGHT*RH_CFG_SCREEN_WIDTH; i++, iter++ ){
+             *iter = color;
+        }
+    }
+
+#elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
+
+    GLU_TYPE(Pixel) color = COLOR_24BIT(M_COLOR_xxxx);
+    if( sizeof(uint32_t)==sizeof(wchar_t) ){
+        wmemset( (wchar_t*)canvas.ptr, color, RH_CFG_SCREEN_HEIGHT*RH_CFG_SCREEN_WIDTH );
+    }else{
+        uint32_t *iter = (uint32_t*)canvas.ptr;
+        for( size_t i=0; i<RH_CFG_SCREEN_HEIGHT*RH_CFG_SCREEN_WIDTH; i++, iter++ ){
+             *iter = color;
+        }
+    }
+
+#endif
+
+    GLU_FUNC( GUI, isAutoDisplay )() ? \
+        GLU_FUNC( GUI, refreashEntireScreen )()
+        :
+        GLU_FUNC( GUI, addScreenArea      )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
+
+}
 
 
 

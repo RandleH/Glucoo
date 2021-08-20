@@ -62,6 +62,8 @@ void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
 void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4 );
 
+void GLU_FUNC( GUI, screen_fill      )       ( GLU_TYPE(Color) M_COLOR_xxxx );
+
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/

@@ -68,7 +68,7 @@ GLU_API void GLU_API_user_init( void ){
 GLU_API void GLU_API_user_disp( void ){
     char path[255] = {0};
     const char* name = "snapshot";
-    sprintf( path, "%s/%s.bmp", RH_DIR_PRJ, name );
+    sprintf( path, "%s/%s.bmp", RH_DIR, name );
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     BLK_ImgBin_out_bmp( path, canvas);
@@ -80,7 +80,7 @@ GLU_API void GLU_API_user_disp( void ){
     
     printf("Export bmp image: %s; size=%ld\n", path, (size_t)canvas->h*canvas->w);
     
-    char cmd[255] = {0};
+    char cmd[512] = {0};
     sprintf( cmd, "open %s", path);
     system(cmd);
     

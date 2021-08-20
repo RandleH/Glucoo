@@ -3,9 +3,8 @@
 #include "RH_common.h"
 
 
-
-const char* RH_DIR_PRJ = NULL;
-const char* RH_TIME    = NULL;
+const char* RH_DIR   = NULL;
+const char* RH_TIME  = NULL;
 
 void RH_PREMAIN RH_init(void){
     
@@ -13,21 +12,18 @@ void RH_PREMAIN RH_init(void){
     RH_TIME = __TIME__;
     
     // 获取项目路径
-    char str[1024] = {0};
-    realpath( __FILE__, str );
-    size_t len = strlen(str);
-    size_t cnt = 0;
-    while( cnt<2 && len-- ){
-        if( str[len] == '/') cnt++;
+    char temp[1024] = {0};
+    if( realpath( __FILE__, temp )==NULL ){
+        // printf("Path is too long\n");
+        while(1);
     }
-    char* p = malloc(len+1);
-    memcpy( p, str, len);
-    p[len] = '\0';
-    RH_DIR_PRJ = p;
     
-//    printf("RH_PRJ_DIR: %s\n", RH_DIR_PRJ );
+    *(strstr( temp, "RH_common.c" )-1) = '\0';
+
+    // Allocate enough space for coping string.    
+    RH_DIR = strcpy( calloc(strlen(temp)+1, sizeof(char)), temp ); 
     
-    // 获取桌面路径
+    // printf("RH_DIR: %s\n", RH_DIR );
     
     
 }
