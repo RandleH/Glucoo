@@ -12,17 +12,6 @@ extern "C"{
 #endif
 
 
-#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
-
-#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
-
-#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_BITMAP )
-
-#else
-
-  #error "Unknown font data source."
-#endif
-
 
 struct rhtt_fontinfo{
     uint8_t   h;

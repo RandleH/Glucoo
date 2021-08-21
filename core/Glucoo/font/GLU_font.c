@@ -243,15 +243,15 @@ static struct{
     #define CONNECT_PATH( a ) strcpy( malloc(idx+strlen( (a) )+1), strcpy(&path_tmp[idx], (a) )-idx )
     #define CLEAR_PATH        memset(&path_tmp[idx], 0, MAX_PATH_SIZE-idx-1)
             
-        font_ttf_path[ kGLU_Font_Unscii            ] = CONNECT_PATH("/unscii-8.ttf");           CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_ArialRounded_Bold ] = CONNECT_PATH("/Arial Rounded Bold.ttf"); CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_CourierNew        ] = CONNECT_PATH("/Courier New.ttf");        CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_CourierNew_Italic ] = CONNECT_PATH("/Courier New Italic.ttf"); CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_CourierNew_Bold   ] = CONNECT_PATH("/Courier New Bold.ttf");   CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_NewYork           ] = CONNECT_PATH("/NewYork.ttf");            CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_NewYork_Italic    ] = CONNECT_PATH("/NewYorkItalic.ttf");      CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_SignPrinter       ] = CONNECT_PATH("/Sign Printer.ttf");       CLEAR_PATH;
-        font_ttf_path[ kGLU_Font_Optima            ] = CONNECT_PATH("/Optima.ttf");             CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_Unscii            ] = CONNECT_PATH( "/ttf/unscii-8.ttf"           ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_ArialRounded_Bold ] = CONNECT_PATH( "/ttf/Arial Rounded Bold.ttf" ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew        ] = CONNECT_PATH( "/ttf/Courier New.ttf"        ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew_Italic ] = CONNECT_PATH( "/ttf/Courier New Italic.ttf" ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_CourierNew_Bold   ] = CONNECT_PATH( "/ttf/Courier New Bold.ttf"   ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_NewYork           ] = CONNECT_PATH( "/ttf/NewYork.ttf"            ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_NewYork_Italic    ] = CONNECT_PATH( "/ttf/NewYorkItalic.ttf"      ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_SignPrinter       ] = CONNECT_PATH( "/ttf/Sign Printer.ttf"       ); CLEAR_PATH;
+        font_ttf_path[ kGLU_Font_Optima            ] = CONNECT_PATH( "/ttf/Optima.ttf"             ); CLEAR_PATH;
         
     #undef CONNECT_PATH
     #undef CLEAR_PATH
@@ -455,6 +455,8 @@ GLU_FUNC( Font, out_chr_Img    ) ( uint16_t    chr ){
     (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, FCFG.img.img_buf, (int)FCFG.img.img_w, (int)FCFG.img.img_h, (int)FCFG.img.img_w, FCFG.scale, FCFG.scale, chr );
     
 #ifdef STB_OUTPUT_FONT_PNG
+    #error "Path is not correct."
+
     stbi_write_png("/Users/randle_h/Desktop/img_buf.png", (int)FCFG.img.img_w, (int)FCFG.img.img_h, 1, FCFG.img.img_buf, (int)FCFG.img.img_w);
     stbi_write_png("C:/Users/asus/Desktop/img_buf.png", (int)FCFG.img.img_w, (int)FCFG.img.img_h, 1, FCFG.img.img_buf, (int)FCFG.img.img_w);
     
@@ -544,7 +546,9 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #endif
     
 #if RH_CFG_OUTPUT_FONT_PNG
+    #error "Path is not correct."
     char path[255] = {0};
+
     sprintf( path, "%s%s", RH_DIR, "/SIM_macOS/output/font_str_preview.png");
     stbi_write_png(path, FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif

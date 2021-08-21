@@ -69,11 +69,13 @@ void GLU_FUNC( GUI, screen_fill      )       ( GLU_TYPE(Color) M_COLOR_xxxx );
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
 ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
-E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config  , E_GUI_ObjWidget_t widget );
+E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config, E_GUI_ObjWidget_t widget );
 E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );
 E_Status_t                GLU_FUNC( Object, insert   )  ( ID_t ID );
 E_Status_t                GLU_FUNC( Object, delete   )  ( ID_t ID );
+
+E_Status_t                GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, E_GUI_ObjWidget_t widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]

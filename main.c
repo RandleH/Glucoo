@@ -24,13 +24,15 @@ int main(int argc, char const *argv[]){
     GLU_SRCT(Object) config;
     GLU_Object_template( &config, kGUI_ObjStyle_button );
     
-    config.text.align  = kGLU_Align_Middle;
-    config.text.color  = M_COLOR_BLACK;
-    config.area.h = 300;
-    config.area.w = 600;
-    config.showFrame   = false;
+    // config.text.align  = kGLU_Align_Middle;
+    // config.text.color  = M_COLOR_BLACK;
+    // config.area.xs = 100;
+    // config.area.ys = 100;
+    // config.area.h  = 1600;
+    // config.area.w  = 2900;
+    // config.showFrame   = false;
     
-    GLU_Utility_optimal_text( &config.area, "Glucoo", kGLU_Font_ArialRounded_Bold, &config.text );
+    // GLU_Utility_optimal_text( &config.area, "Check", kGLU_Font_NewYork, &config.text );
     
     __GUI_ObjDataScr_button dataSrc = {
         .cmd    = true,
@@ -47,7 +49,8 @@ int main(int argc, char const *argv[]){
     
     GLU_GUI_refreashScreen();
     
-
+#error    "dataSrc is not included in func <GLU_Object_template>."
+#warning  "I dont't like the enumeration name: <E_GUI_ObjWidget_t>."
 
 #endif
     

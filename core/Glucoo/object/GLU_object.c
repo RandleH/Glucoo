@@ -1,5 +1,6 @@
 
-#include "../GLU_glucoo.h"
+#include "GLU_glucoo.h"
+#include "GLU_area.h"
 
 #include "BLK_graphic.h"
 
@@ -1655,7 +1656,6 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
 #endif
-//    const char* pText = "DEMO";
     // Common Settings
     config->text.str  = "DEMO";
     config->widget    = widget;
@@ -1729,15 +1729,12 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
             config->text.align  = kGLU_Align_Left;
             break;
         case kGUI_ObjStyle_button:
-            config->area.w      = (var)((GUI_X_WIDTH)>>1);
-            config->area.h      = (var)((GUI_Y_WIDTH)>>1);
-            config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
-            config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
-            config->text.size   = 8;
+            GLU_FUNC( Object, preferred_area )( &config->area, widget );
+            GLU_Utility_optimal_text( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
             config->text.align  = kGLU_Align_Middle;
             break;
         default:
-            break;
+            return MAKE_ENUM( kStatus_NotFound );
     }
     
     
@@ -1811,5 +1808,24 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     BLK_FUNC( Graph, restoreCache )();
     GLU_FUNC( Font, restoreCache )();
     
+    return MAKE_ENUM( kStatus_Success );
+}
+
+
+E_Status_t        GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, E_GUI_ObjWidget_t widget ){
+    
+    RH_ASSERT( preferred_area );
+    
+    switch( widget ){
+        case kGUI_ObjStyle_button:
+            preferred_area->w = (var)( RH_CFG_SCREEN_WIDTH  /6 );
+            preferred_area->h = (var)( RH_CFG_SCREEN_HEIGHT>>3 );
+            break;
+        default: 
+            return MAKE_ENUM( kStatus_NotFound );
+    }
+
+    GLU_FUNC( Utility, align_screen )( preferred_area->w, preferred_area->h, preferred_area, M_UTILITY_ALIGN_VM|M_UTILITY_ALIGN_HM );
+
     return MAKE_ENUM( kStatus_Success );
 }
