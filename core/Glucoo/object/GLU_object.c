@@ -1,4 +1,7 @@
 
+#include "RH_common.h"
+#include "RH_config.h"
+
 #include "GLU_glucoo.h"
 #include "GLU_area.h"
 
@@ -18,7 +21,7 @@ static void __gui_remove_object_text      ( const GLU_SRCT(Object)* config ){
     struct{
         __Area_t area;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
 #ifdef RH_DEBUG
     RH_ASSERT( config->widget == kGUI_ObjStyle_text || \
@@ -81,11 +84,11 @@ static void __gui_insert_object_text      ( const GLU_SRCT(Object)* config ){
     struct{
         __Area_t area;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
     }
     
     BLK_FUNC( Graph, backupCache )();
@@ -190,11 +193,11 @@ static void __gui_insert_object_num       ( const GLU_SRCT(Object)* config ){
     struct{
         __Area_t area;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
     }
     
     // 绘制数字
@@ -297,11 +300,11 @@ static void __gui_insert_object_fnum      ( const GLU_SRCT(Object)* config ){
     struct{
         __Area_t area;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
     }
     
     
@@ -404,7 +407,7 @@ static void __gui_remove_object_switch    ( const GLU_SRCT(Object)* config ){
     struct{
         bool     cmd;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
@@ -441,7 +444,7 @@ static void __gui_insert_object_switch    ( const GLU_SRCT(Object)* config ){
     struct{
         bool     cmd;
         bool     showFrame;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -532,7 +535,7 @@ static void __gui_insert_object_switch    ( const GLU_SRCT(Object)* config ){
         pHistory->cmd = false;
     }
     
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory);
+    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
     
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
@@ -550,7 +553,7 @@ static void __gui_remove_object_bar_h     ( const GLU_SRCT(Object)* config ){
     // 记录历史改动区域
     struct{
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
@@ -597,7 +600,7 @@ static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
     struct{
         int     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
 
     __gui_remove_object_bar_h(config);
     
@@ -607,7 +610,7 @@ static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
         RH_ASSERT( pHistory );
     #endif
         pHistory->bar_pos = config->area.xs;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory );
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory );
     }
 
     GLU_FUNC( Font, backupCache )();
@@ -657,7 +660,7 @@ static void __gui_remove_object_bar_v     ( const GLU_SRCT(Object)* config ){
     // 记录历史改动区域
     struct{
         var     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     int32_t min = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->min;
     int32_t max = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->max;
@@ -703,7 +706,7 @@ static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
     struct{
         var     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
 
     __gui_remove_object_bar_v(config);
     
@@ -713,7 +716,7 @@ static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
         RH_ASSERT( pHistory );
     #endif
         pHistory->bar_pos = config->area.ys+config->area.h-1;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory );
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory );
     }
     
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
@@ -760,7 +763,7 @@ static void __gui_remove_object_joystick  ( const GLU_SRCT(Object)* config ){
     struct{
         int      cord; // (x,y)象限信息
         __Area_t area;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
     BLK_FUNC( Graph, set_penColor )( config->bk_color );
@@ -776,7 +779,7 @@ static void __gui_insert_object_joystick  ( const GLU_SRCT(Object)* config ){
     struct{
         int      cord; // (x,y)象限信息
         __Area_t area;
-    }*pHistory = (void*)config->history;
+    }*pHistory = (void*)config->cache;
     
     
     __gui_remove_object_joystick(config);
@@ -871,7 +874,7 @@ static void __gui_insert_object_joystick  ( const GLU_SRCT(Object)* config ){
     #ifdef RH_DEBUG
         RH_ASSERT( pHistory );
     #endif
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, pHistory);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
     }
     pHistory->cord     = cord;
     pHistory->area.xs  = (X+px-(pd>>1)+eps);
@@ -898,7 +901,7 @@ static void __gui_remove_object_trunk     ( const GLU_SRCT(Object)* config ){
         var     bar_e;   /* 进度条的终末位置 */
         var     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         var     margin;  /* 留白 */
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     
     
     GLU_FUNC( Font, backupCache )();
@@ -947,7 +950,7 @@ static void __gui_insert_object_trunk     ( const GLU_SRCT(Object)* config ){
         var     bar_e;   /* 进度条的终末位置 */
         var     bar_pos; /* 上一次进度条所在的像素点位置(横坐标) */
         var     margin;  /* 留白 */
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     
     __gui_remove_object_trunk(config);
     
@@ -960,7 +963,7 @@ static void __gui_insert_object_trunk     ( const GLU_SRCT(Object)* config ){
         cache->bar_s = config->area.ys + config->text.size + cache->margin;
         cache->bar_e = config->area.ys + config->area.h-1-1;
         cache->bar_pos = cache->bar_e;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, cache );
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache );
     }
     
     int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
@@ -1077,7 +1080,7 @@ static void __gui_remove_object_spinbox   ( const GLU_SRCT(Object)* config ){
         var        textYS;
         __Area_t   num;
         bool       active;
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     
     __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
     BLK_FUNC( Graph, backupCache )();
@@ -1180,7 +1183,7 @@ static void __gui_insert_object_spinbox   ( const GLU_SRCT(Object)* config ){
         var        textYS;
         __Area_t   num;
         bool       active;
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     
     __GUI_ObjDataScr_spinbox* dataScr = (__GUI_ObjDataScr_spinbox*)(config->dataScr);
     
@@ -1245,7 +1248,7 @@ static void __gui_insert_object_spinbox   ( const GLU_SRCT(Object)* config ){
                 
             }
         }
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, cache);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache);
     }else{
         __gui_remove_object_spinbox( config );
     }
@@ -1394,7 +1397,7 @@ static void __gui_remove_object_button    ( const GLU_SRCT(Object)* config ){
         bool   active;
         var    margin;
         var    radius;
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     const __GUI_ObjDataScr_button* dataScr = config->dataScr;
     
     if( dataScr->cmd!=cache->cmd || dataScr->radius!=cache->radius ){
@@ -1411,13 +1414,13 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
         bool   active;
         var    margin;
         var    radius;
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     
     const __GUI_ObjDataScr_button* dataScr = config->dataScr;
     
     if( !cache ){
         cache = RH_CALLOC( 1, sizeof(*cache));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, cache);
+        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache);
         cache->margin = 1;
         cache->cmd    = !dataScr->cmd;
     }else{
@@ -1510,7 +1513,7 @@ static void __gui_adjust_object_button    ( const GLU_SRCT(Object)* config ){
         bool   active;
         var    margin;
         var    radius;
-    }*cache = (void*)config->history;
+    }*cache = (void*)config->cache;
     const __GUI_ObjDataScr_button* dataScr = config->dataScr;
     
     if( dataScr->cmd!=cache->cmd || dataScr->active!=cache->active || dataScr->radius!=cache->radius ){
@@ -1528,7 +1531,7 @@ static inline void __gui_check_object     ( const GLU_SRCT(Object)* config ){
 }
 #endif
 
-ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr ){
+ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* dataScr ){
     GLU_SRCT(Object)* m_config = (GLU_SRCT(Object)*)RH_MALLOC( sizeof(GLU_SRCT(Object)) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -1536,77 +1539,81 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
     __gui_check_object(config);
 #endif
     memmove(m_config, config, sizeof(GLU_SRCT(Object)));
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, m_config, history, NULL);
+    __SET_STRUCT_MB(GLU_SRCT(Object), void*, m_config, cache, NULL);
+
+
     
     switch( m_config->widget ){
+
+#define ALLOCATE_DATA_SOURCE( S_cfg, S_type )       do{                                                                 \
+                                                        if( S_cfg->callmalloc){                                         \
+                                                            S_cfg->dataScr     = S_cfg->callmalloc( sizeof( S_type) );  \
+                                                            memset( S_cfg->dataScr, 0, sizeof( S_type) );               \
+                                                        }else{                                                          \
+                                                            S_cfg->dataScr    = RH_CALLOC( 1U, sizeof( S_type) );       \
+                                                        }                                                               \
+                                                    }while(0)
+
         case kGUI_ObjStyle_text:
             m_config->insert_func = __gui_insert_object_text;
             m_config->remove_func = __gui_remove_object_text;
             m_config->adjust_func = __gui_adjust_object_text;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_text) );
+            
+            if( m_config->callmalloc ){
+                m_config->dataScr     = m_config->callmalloc( sizeof(struct __GUI_ObjDataScr_text) );
+                memset( m_config->dataScr, 0, sizeof(struct __GUI_ObjDataScr_text) );
+            }else
+                m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_text) );
+            
             break;
         case kGUI_ObjStyle_num:
             m_config->insert_func = __gui_insert_object_num;
             m_config->remove_func = __gui_remove_object_num;
             m_config->adjust_func = __gui_adjust_object_num;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_num) );
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_num );    
             break;
         case kGUI_ObjStyle_fnum:
             m_config->insert_func = __gui_insert_object_fnum;
             m_config->remove_func = __gui_remove_object_fnum;
             m_config->adjust_func = __gui_adjust_object_fnum;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_fnum) );
-//            if( !dataScr ){}
-//            else{}
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_fnum ); 
             break;
         case kGUI_ObjStyle_switch:
             m_config->insert_func = __gui_insert_object_switch;
             m_config->remove_func = __gui_remove_object_switch;
             m_config->adjust_func = __gui_adjust_object_switch;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_switch) );
-            if( !dataScr ){
-                ((__GUI_ObjDataScr_switch*)m_config->dataScr)->cmd   = false;
-            }else{
-                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_switch ));
-            }
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_switch ); 
             break;
         case kGUI_ObjStyle_barH:
             m_config->insert_func = __gui_insert_object_bar_h;
             m_config->remove_func = __gui_remove_object_bar_h;
             m_config->adjust_func = __gui_adjust_object_bar_h;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_barH) );
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_barH ); 
             break;
         case kGUI_ObjStyle_barV:
             m_config->insert_func = __gui_insert_object_bar_v;
             m_config->remove_func = __gui_remove_object_bar_v;
             m_config->adjust_func = __gui_adjust_object_bar_v;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(       __GUI_ObjDataScr_barV) );
-            if( !dataScr ){
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
-            }else{
-                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_barV ));
-            }
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_barV ); 
             break;
         case kGUI_ObjStyle_trunk:
             m_config->insert_func = __gui_insert_object_trunk;
             m_config->remove_func = __gui_remove_object_trunk;
             m_config->adjust_func = __gui_adjust_object_trunk;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof( __GUI_ObjDataScr_trunk) );
-            if( !dataScr ){
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->max   = 100;
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->min   = 0;
-                ((__GUI_ObjDataScr_barV*)m_config->dataScr)->value = 0;
-            }else{
-                memcpy(m_config->dataScr, dataScr, sizeof( __GUI_ObjDataScr_trunk));
-            }
+    
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_trunk ); 
             break;
         case kGUI_ObjStyle_joystick:
             m_config->insert_func = __gui_insert_object_joystick;
             m_config->remove_func = __gui_remove_object_joystick;
             m_config->adjust_func = __gui_adjust_object_joystick;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_joystick) );
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_joystick ); 
             if( !dataScr ){
                 ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[0]   = 100;
                 ((struct __GUI_ObjDataScr_joystick*)m_config->dataScr)->max[1]   = 100;
@@ -1622,7 +1629,8 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
             m_config->insert_func = __gui_insert_object_spinbox;
             m_config->remove_func = __gui_remove_object_spinbox;
             m_config->adjust_func = __gui_adjust_object_spinbox;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_spinbox) );
+
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_spinbox ); 
             if( !dataScr ){
                 ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->min  = 0;
                 ((struct __GUI_ObjDataScr_spinbox*)m_config->dataScr)->max  = 100;
@@ -1635,17 +1643,22 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
             m_config->insert_func = __gui_insert_object_button;
             m_config->remove_func = __gui_remove_object_button;
             m_config->adjust_func = __gui_adjust_object_button;
-            m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_button) );
+            
+            ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_button ); 
             if( !dataScr ){
                 ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->active = true;
                 ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->cmd    = true;
                 ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->radius = 126;
             }else{
-                memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_spinbox));
+                memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_button));
             }
             break;
         default:
             RH_ASSERT(0);
+
+#undef  ALLOCATE_DATA_SOURCE
+
+
     }
     
     return (ID_t)m_config;
@@ -1657,9 +1670,11 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
 #endif
     // Common Settings
-    config->text.str  = "DEMO";
-    config->widget    = widget;
-    config->showFrame = true;
+    config->text.str   = "DEMO";
+    config->widget     = widget;
+    config->showFrame  = true;
+    config->callmalloc = NULL;
+    config->callfree   = NULL;
     
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     config->bk_color    = COLOR_1BIT(M_COLOR_BLACK);
@@ -1731,7 +1746,8 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
         case kGUI_ObjStyle_button:
             GLU_FUNC( Object, preferred_area )( &config->area, widget );
             GLU_Utility_optimal_text( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
-            config->text.align  = kGLU_Align_Middle;
+            config->text.align   = kGLU_Align_Middle;
+            
             break;
         default:
             return MAKE_ENUM( kStatus_NotFound );
@@ -1791,9 +1807,9 @@ E_Status_t        GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, siz
 
 E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)( ID );
-    RH_FREE( (void*)config->history );
+    RH_FREE( (void*)config->cache );
     RH_FREE( (void*)config->dataScr );
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, history, NULL);
+    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, NULL);
     
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
@@ -1806,7 +1822,7 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     
     RH_FREE( config );
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    GLU_FUNC( Font, restoreCache  )();
     
     return MAKE_ENUM( kStatus_Success );
 }

@@ -44,11 +44,11 @@ typedef enum{
 }GLU_ENUM(Align);
 
 struct GLU_SRCT(Text){
-    GLU_ENUM(Font)  font;
+    GLU_ENUM(Font)   font;
     uint16_t         size;
-    GLU_TYPE(Color) color;
-    GLU_ENUM(Align) align;
-    const char*     str;
+    GLU_TYPE(Color)  color;
+    GLU_ENUM(Align)  align;
+    const char*      str;
 };
 typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
 

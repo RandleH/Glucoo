@@ -58,7 +58,20 @@ struct GLU_SRCT(Object){
      * Data Source --- This parameter is speacifiled with widgets. It is a point to the
                        type like "__GUI_ObjDataSrc_xxxx" listed as following code.
      ===================================================================================*/
-    void*                dataScr;
+    void*   RH_ALLOCATED dataScr;
+
+    /*===================================================================================
+     * Data Source --- This parameter is speacifiled with widgets. It is a point to the
+                       type like "__GUI_ObjDataSrc_xxxx" listed as following code.
+     ===================================================================================*/
+    void*   RH_ALLOCATED dataScr_init;
+
+    /*===================================================================================
+     * Allocated Method --- Please provide a memory allocating method in a form of 
+                            callback function.
+     ===================================================================================*/
+    void *  RH_NULLABLE (*callmalloc)(size_t);
+    void    RH_NULLABLE (*callfree  )(void *);
     
     /*===================================================================================
      * Shoe Frame (Deprecated)
@@ -72,7 +85,7 @@ struct GLU_SRCT(Object){
     void (*insert_func)(const struct GLU_SRCT(Object)*);  // DO NOT MODIFY
     void (*remove_func)(const struct GLU_SRCT(Object)*);  // DO NOT MODIFY
     void (*adjust_func)(const struct GLU_SRCT(Object)*);  // DO NOT MODIFY
-    const void*   const  history;                       // DO NOT MODIFY
+    const void*   const  cache;                           // DO NOT MODIFY
 };
 typedef struct GLU_SRCT(Object) GLU_SRCT(Object);
 
