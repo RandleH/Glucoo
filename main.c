@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]){
     __GUI_ObjDataScr_button dataSrc = {
         .cmd    = true ,
         .active = false,
-        .radius = 100,
+        .radius = 70,
     };
     
     ID_t obj1 = GLU_Object_create( &config, &dataSrc);

@@ -1745,7 +1745,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, GLU_
             break;
         case kGLU_ObjWidget_button:
             GLU_FUNC( Object, preferred_area )( &config->area, widget );
-            GLU_Utility_optimal_text( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
+            GLU_FUNC( Utility, optimal_text )( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
             config->text.align   = kGLU_Align_Middle;
             
             break;

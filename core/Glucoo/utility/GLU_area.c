@@ -96,7 +96,7 @@ void GLU_FUNC( Utility, optimal_text )( const __Area_t* src, const char* str, GL
         
         GLU_Font_set_size(dst->size);
         GLU_Font_get_str_ImgInfo( &w, &h, str);
-        if( w<((src->w*3)>>2) && h<((src->h*3)>>2) ){
+        if( w<((src->w*3)>>2) && h<(src->h/3) ){
             l = dst->size;
         }else{
             r = dst->size;
