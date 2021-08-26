@@ -113,7 +113,10 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
         GLU_FUNC( Font , restoreCache )();
     }
 
-    GLU_FUNC( GUI, isAutoDisplay ) ? GLU_FUNC( GUI, refreashScreen )():GLU_FUNC( GUI, addScreenArea )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
+    if(GLU_FUNC( GUI, isAutoDisplay ))
+        GLU_FUNC( GUI, refreashScreenArea )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
+    else
+        GLU_FUNC( GUI, addScreenArea      )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
 
 }
 

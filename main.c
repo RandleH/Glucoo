@@ -12,6 +12,15 @@
 #include "GLU_image.h"
 #include "GLU_object.h"
 
+static void open_img(void){
+    char path[255] = {0};
+    const char* name = "snapshot";
+    sprintf( path, "%s/%s.bmp", RH_DIR, name );
+    
+    char cmd[255+5] = {0};
+    sprintf( cmd, "open %s", path);
+    system(cmd);
+}
 
 int main(int argc, char const *argv[]){
     
@@ -21,27 +30,29 @@ int main(int argc, char const *argv[]){
     
     GLU_GUI_autoDisplay(true);
     
-
-    GLU_SRCT(Text) text = {
-        .str   = "Skylee"          ,
-        .size  = 700               ,
-        .color = M_COLOR_BLACK     ,
-        .align = kGLU_Align_Middle ,
-        .font  = kGLU_Font_SignPrinter  ,
+    
+    S_GLU_Object_t config = {0};
+    GLU_Object_template( &config, kGLU_ObjWidget_button);
+    
+    __GUI_ObjDataScr_button dataSrc = {
+        .cmd    = true ,
+        .active = false,
+        .radius = 100,
     };
-
-    GLU_TYPE(Color) color[] = {
-        M_COLOR_MAGENTA         ,
-        M_COLOR_CADETBLUE       ,
-        M_COLOR_POWDERBLUE      ,
-    };
-
-    GLU_Image_profile( kGLU_ImageStyle_aurora, &color[0], sizeof(color)/sizeof(*color), &text, 30 );
-    // GLU_GUI_refreashEntireScreen();
-
+    
+    ID_t obj1 = GLU_Object_create( &config, &dataSrc);
+    
+    GLU_Object_insert(obj1);
+    
+    GLU_GUI_refreashEntireScreen();
+    
 #endif
     
 
-
+    open_img();
+    
     return 0;
 }
+
+
+

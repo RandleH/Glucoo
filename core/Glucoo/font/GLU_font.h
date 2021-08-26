@@ -5,7 +5,7 @@
 #include "RH_common.h"
 #include "RH_config.h"
 #include "GLU_pixel.h"
-
+#include "GLU_glucoo.h"
 
 #ifdef __cpluplus
 extern "C"{
@@ -23,34 +23,9 @@ typedef struct rhtt_fontinfo rhtt_fontinfo;
 
 
 
-typedef enum{
-    kGLU_Font_Unscii            ,
-    kGLU_Font_ArialRounded_Bold ,
-    kGLU_Font_CourierNew        ,
-    kGLU_Font_CourierNew_Italic ,
-    kGLU_Font_CourierNew_Bold   ,
-    kGLU_Font_NewYork           ,
-    kGLU_Font_NewYork_Italic    ,
-    kGLU_Font_Optima            ,
-    kGLU_Font_SignPrinter       ,
-    kGLU_NUM_FontStyle
-}GLU_ENUM(Font);
 
-typedef enum{
-    kGLU_Align_Right   ,
-    kGLU_Align_Left    ,
-    kGLU_Align_Middle  ,
-    kGLU_Align_Justify
-}GLU_ENUM(Align);
 
-struct GLU_SRCT(Text){
-    GLU_ENUM(Font)   font;
-    uint16_t         size;
-    GLU_TYPE(Color)  color;
-    GLU_ENUM(Align)  align;
-    const char*      str;
-};
-typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
+
 
 struct GLU_SRCT(FontImg){
     uint8_t* img_buf;

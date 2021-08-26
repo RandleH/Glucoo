@@ -15,6 +15,74 @@ extern "C"{
 
 typedef void* ID_t;
 
+/*===============================================================================================================
+ * GLU_FONT --- Definition as follow
+===============================================================================================================*/
+typedef enum{
+    kGLU_Font_Unscii            ,
+    kGLU_Font_ArialRounded_Bold ,
+    kGLU_Font_CourierNew        ,
+    kGLU_Font_CourierNew_Italic ,
+    kGLU_Font_CourierNew_Bold   ,
+    kGLU_Font_NewYork           ,
+    kGLU_Font_NewYork_Italic    ,
+    kGLU_Font_Optima            ,
+    kGLU_Font_SignPrinter       ,
+    kGLU_NUM_FontStyle
+}GLU_ENUM(Font);
+
+typedef enum{
+    kGLU_Align_Right   ,
+    kGLU_Align_Left    ,
+    kGLU_Align_Middle  ,
+    kGLU_Align_Justify
+}GLU_ENUM(Align);
+
+struct GLU_SRCT(Text){
+    GLU_ENUM(Font)   font;
+    uint16_t         size;
+    GLU_TYPE(Color)  color;
+    GLU_ENUM(Align)  align;
+    const char*      str;
+    bool             ul;
+    bool             ml;
+};
+typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
+
+/*===============================================================================================================
+ * GLU_OBJECT --- Definition as follow
+===============================================================================================================*/
+typedef enum{
+    kGLU_ObjWidget_text     ,
+    kGLU_ObjWidget_num      ,
+    kGLU_ObjWidget_fnum     ,
+    
+    kGLU_ObjWidget_switch   ,
+    kGLU_ObjWidget_barH     ,
+    kGLU_ObjWidget_barV     ,
+    kGLU_ObjWidget_trunk    ,//
+    
+    kGLU_ObjWidget_joystick ,
+    kGLU_ObjWidget_spinbox  ,
+    kGLU_ObjWidget_button   ,
+    NUM_kGUI_ObjWidgets    ,
+}GLU_ENUM(ObjWidget);
+
+/*===============================================================================================================
+ * GLU_WINDOW --- Definition as follow
+===============================================================================================================*/
+typedef enum{
+    kGUI_Appearance_Light  ,
+    kGUI_Appearance_Dark   ,
+    
+}E_GUI_Appearance_t;
+
+typedef enum{
+    kGUI_WindowType_macOS  ,
+    kGUI_WindowType_win10  ,
+    NUM_kGUI_WindowType    ,
+}E_GUI_WindowStyle_t;
+
 
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
@@ -69,13 +137,13 @@ void GLU_FUNC( GUI, screen_fill      )       ( GLU_TYPE(Color) M_COLOR_xxxx );
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
 ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
-E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config, E_GUI_ObjWidget_t widget );
+E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget );
 E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );
 E_Status_t                GLU_FUNC( Object, insert   )  ( ID_t ID );
 E_Status_t                GLU_FUNC( Object, delete   )  ( ID_t ID );
 
-E_Status_t                GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, E_GUI_ObjWidget_t widget );
+E_Status_t                GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]

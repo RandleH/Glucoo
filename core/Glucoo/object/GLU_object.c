@@ -24,9 +24,9 @@ static void __gui_remove_object_text      ( const GLU_SRCT(Object)* config ){
     }*pHistory = (void*)config->cache;
     
 #ifdef RH_DEBUG
-    RH_ASSERT( config->widget == kGUI_ObjStyle_text || \
-               config->widget == kGUI_ObjStyle_num  || \
-               config->widget == kGUI_ObjStyle_fnum  );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_text || \
+               config->widget == kGLU_ObjWidget_num  || \
+               config->widget == kGLU_ObjWidget_fnum  );
 #endif
     
     BLK_FUNC( Graph, backupCache )();
@@ -76,7 +76,7 @@ static void __gui_insert_object_text      ( const GLU_SRCT(Object)* config ){
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
     RH_ASSERT( config->text.str );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_text );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_text );
 #endif
     
     __gui_remove_object_text(config);
@@ -183,7 +183,7 @@ static void __gui_insert_object_num       ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_num );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_num );
 #endif
     __gui_remove_object_num(config);
     
@@ -292,7 +292,7 @@ static void __gui_insert_object_fnum      ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_fnum );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_fnum );
 #endif
     __gui_remove_object_fnum(config);
     
@@ -400,7 +400,7 @@ static void __gui_adjust_object_fnum      ( const GLU_SRCT(Object)* config ){
 static void __gui_remove_object_switch    ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_switch );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_switch );
 #endif
     
     // 加载历史改动区域
@@ -438,7 +438,7 @@ static void __gui_remove_object_switch    ( const GLU_SRCT(Object)* config ){
 static void __gui_insert_object_switch    ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_switch );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_switch );
 #endif
     // 记录历史改动区域
     struct{
@@ -547,7 +547,7 @@ static void __gui_adjust_object_switch    ( const GLU_SRCT(Object)* config ){
 static void __gui_remove_object_bar_h     ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_barH );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_barH );
 #endif
     
     // 记录历史改动区域
@@ -594,7 +594,7 @@ static void __gui_remove_object_bar_h     ( const GLU_SRCT(Object)* config ){
 static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_barH );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_barH );
 #endif
     // 记录历史改动区域
     struct{
@@ -655,7 +655,7 @@ static void __gui_adjust_object_bar_h     ( const GLU_SRCT(Object)* config ){
 static void __gui_remove_object_bar_v     ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_barV );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_barV );
 #endif
     // 记录历史改动区域
     struct{
@@ -700,7 +700,7 @@ static void __gui_remove_object_bar_v     ( const GLU_SRCT(Object)* config ){
 static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_barV );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_barV );
 #endif
     // 记录历史改动区域
     struct{
@@ -893,7 +893,7 @@ static void __gui_adjust_object_joystick  ( const GLU_SRCT(Object)* config ){
 static void __gui_remove_object_trunk     ( const GLU_SRCT(Object)* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
-    RH_ASSERT( config->widget == kGUI_ObjStyle_trunk );
+    RH_ASSERT( config->widget == kGLU_ObjWidget_trunk );
 #endif
     // 记录历史改动区域
     struct{
@@ -1554,7 +1554,7 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
                                                         }                                                               \
                                                     }while(0)
 
-        case kGUI_ObjStyle_text:
+        case kGLU_ObjWidget_text:
             m_config->insert_func = __gui_insert_object_text;
             m_config->remove_func = __gui_remove_object_text;
             m_config->adjust_func = __gui_adjust_object_text;
@@ -1566,49 +1566,49 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
                 m_config->dataScr     = RH_CALLOC( 1U, sizeof(struct __GUI_ObjDataScr_text) );
             
             break;
-        case kGUI_ObjStyle_num:
+        case kGLU_ObjWidget_num:
             m_config->insert_func = __gui_insert_object_num;
             m_config->remove_func = __gui_remove_object_num;
             m_config->adjust_func = __gui_adjust_object_num;
 
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_num );    
             break;
-        case kGUI_ObjStyle_fnum:
+        case kGLU_ObjWidget_fnum:
             m_config->insert_func = __gui_insert_object_fnum;
             m_config->remove_func = __gui_remove_object_fnum;
             m_config->adjust_func = __gui_adjust_object_fnum;
 
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_fnum ); 
             break;
-        case kGUI_ObjStyle_switch:
+        case kGLU_ObjWidget_switch:
             m_config->insert_func = __gui_insert_object_switch;
             m_config->remove_func = __gui_remove_object_switch;
             m_config->adjust_func = __gui_adjust_object_switch;
 
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_switch ); 
             break;
-        case kGUI_ObjStyle_barH:
+        case kGLU_ObjWidget_barH:
             m_config->insert_func = __gui_insert_object_bar_h;
             m_config->remove_func = __gui_remove_object_bar_h;
             m_config->adjust_func = __gui_adjust_object_bar_h;
 
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_barH ); 
             break;
-        case kGUI_ObjStyle_barV:
+        case kGLU_ObjWidget_barV:
             m_config->insert_func = __gui_insert_object_bar_v;
             m_config->remove_func = __gui_remove_object_bar_v;
             m_config->adjust_func = __gui_adjust_object_bar_v;
 
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_barV ); 
             break;
-        case kGUI_ObjStyle_trunk:
+        case kGLU_ObjWidget_trunk:
             m_config->insert_func = __gui_insert_object_trunk;
             m_config->remove_func = __gui_remove_object_trunk;
             m_config->adjust_func = __gui_adjust_object_trunk;
     
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_trunk ); 
             break;
-        case kGUI_ObjStyle_joystick:
+        case kGLU_ObjWidget_joystick:
             m_config->insert_func = __gui_insert_object_joystick;
             m_config->remove_func = __gui_remove_object_joystick;
             m_config->adjust_func = __gui_adjust_object_joystick;
@@ -1625,7 +1625,7 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
                 memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_joystick));
             }
             break;
-        case kGUI_ObjStyle_spinbox:
+        case kGLU_ObjWidget_spinbox:
             m_config->insert_func = __gui_insert_object_spinbox;
             m_config->remove_func = __gui_remove_object_spinbox;
             m_config->adjust_func = __gui_adjust_object_spinbox;
@@ -1639,7 +1639,7 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
             }
             //...//
             break;
-        case kGUI_ObjStyle_button:
+        case kGLU_ObjWidget_button:
             m_config->insert_func = __gui_insert_object_button;
             m_config->remove_func = __gui_remove_object_button;
             m_config->adjust_func = __gui_adjust_object_button;
@@ -1664,7 +1664,7 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
     return (ID_t)m_config;
 }
 
-E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GUI_ObjWidget_t widget ){
+E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1689,9 +1689,9 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
     
     // Speacial Settings
     switch ( widget ) {
-        case kGUI_ObjStyle_text:
-        case kGUI_ObjStyle_num:
-        case kGUI_ObjStyle_fnum:
+        case kGLU_ObjWidget_text:
+        case kGLU_ObjWidget_num:
+        case kGLU_ObjWidget_fnum:
             config->text.font   = kGLU_Font_ArialRounded_Bold;
             config->text.align  = kGLU_Align_Middle;
             config->text.size   = RH_LIMIT((GUI_Y_WIDTH*GUI_X_WIDTH)>>10, 8, 64);
@@ -1701,33 +1701,33 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
             config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
             break;
             
-        case kGUI_ObjStyle_switch:
+        case kGLU_ObjWidget_switch:
             config->area.w      = (var)((hypotf(GUI_X_WIDTH, GUI_Y_WIDTH)+646)/26.3);
             config->area.h      = (var)(RH_LIMIT( config->area.w>>1, 4, GUI_Y_WIDTH));
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
             config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
             break;
             
-        case kGUI_ObjStyle_barH:
+        case kGLU_ObjWidget_barH:
             config->area.w      = (var)(GUI_X_WIDTH>>2);
             config->area.h      = (var)(config->area.w>>3);
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
             config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
             break;
-        case kGUI_ObjStyle_barV:
+        case kGLU_ObjWidget_barV:
             config->area.h      = (var)((GUI_Y_WIDTH*3)>>3);
             config->area.w      = (var)(RH_LIMIT( config->area.h>>3, 4, GUI_X_WIDTH ));
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
             config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
             break;
-        case kGUI_ObjStyle_joystick:
+        case kGLU_ObjWidget_joystick:
             config->area.w      = (var)(RH_MIN(GUI_X_WIDTH, GUI_Y_WIDTH)>>1);
             config->area.h      = (var)(RH_MIN(GUI_X_WIDTH, GUI_Y_WIDTH)>>1);
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
             config->area.ys     = (var)(( GUI_Y_WIDTH - config->area.h )>>1);
             break;
             
-        case kGUI_ObjStyle_trunk:
+        case kGLU_ObjWidget_trunk:
             config->area.h      = (var)((GUI_Y_WIDTH*3)>>2);
             config->area.w      = (var)RH_LIMIT( config->area.h>>1, 4, GUI_X_WIDTH );
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
@@ -1735,7 +1735,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
             config->text.size   = 8;
             config->text.align  = kGLU_Align_Middle;
             break;
-        case kGUI_ObjStyle_spinbox:
+        case kGLU_ObjWidget_spinbox:
             config->area.h      = (var)((GUI_Y_WIDTH*3)>>2);
             config->area.w      = (var)((GUI_X_WIDTH*3)>>2);
             config->area.xs     = (var)(( GUI_X_WIDTH - config->area.w )>>1);
@@ -1743,7 +1743,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, E_GU
             config->text.size   = 8;
             config->text.align  = kGLU_Align_Left;
             break;
-        case kGUI_ObjStyle_button:
+        case kGLU_ObjWidget_button:
             GLU_FUNC( Object, preferred_area )( &config->area, widget );
             GLU_Utility_optimal_text( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
             config->text.align   = kGLU_Align_Middle;
@@ -1828,12 +1828,12 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
 }
 
 
-E_Status_t        GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, E_GUI_ObjWidget_t widget ){
+E_Status_t        GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget ){
     
     RH_ASSERT( preferred_area );
     
     switch( widget ){
-        case kGUI_ObjStyle_button:
+        case kGLU_ObjWidget_button:
             preferred_area->w = (var)( RH_CFG_SCREEN_WIDTH  /6 );
             preferred_area->h = (var)( RH_CFG_SCREEN_HEIGHT>>3 );
             break;

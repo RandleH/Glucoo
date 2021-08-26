@@ -80,10 +80,6 @@ GLU_API void GLU_API_user_disp( void ){
     
     printf("Export bmp image: %s; size=%ld\n", path, (size_t)canvas->h*canvas->w);
     
-    char cmd[512] = {0};
-    sprintf( cmd, "open %s", path);
-    system(cmd);
-    
 }
 
 

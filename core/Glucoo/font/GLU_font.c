@@ -363,7 +363,7 @@ GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
     // 导入字体文件数据
     RH_ASSERT( font_ttf_path[style] ); // 失败: 检查对应字体宏 RH_CFG_FONT_STYLE__xxxx 是否开启
     RH_ASSERT( MAKE_ENUM(kStatus_Success) == __read_ttf_file( font_ttf_path[style] ) );
-    (*FCFG.method->_InitFont)(&FCFG.stb_info, FCFG.font_data, 0);
+    (*FCFG.method->_InitFont)(&FCFG.stb_info, FCFG.font_data, stbtt_GetFontOffsetForIndex(FCFG.font_data,0));
     
     // 记录字体类型
     FCFG.style        = style;
@@ -455,9 +455,9 @@ GLU_FUNC( Font, out_chr_Img    ) ( uint16_t    chr ){
     (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, FCFG.img.img_buf, (int)FCFG.img.img_w, (int)FCFG.img.img_h, (int)FCFG.img.img_w, FCFG.scale, FCFG.scale, chr );
     
 #ifdef STB_OUTPUT_FONT_PNG
-    #error "Path is not correct."
+//    #error "Path is not correct."
 
-    stbi_write_png("/Users/randle_h/Desktop/img_buf.png", (int)FCFG.img.img_w, (int)FCFG.img.img_h, 1, FCFG.img.img_buf, (int)FCFG.img.img_w);
+    stbi_write_png("/Users/randle_h/Desktop/font.png", (int)FCFG.img.img_w, (int)FCFG.img.img_h, 1, FCFG.img.img_buf, (int)FCFG.img.img_w);
     stbi_write_png("C:/Users/asus/Desktop/img_buf.png", (int)FCFG.img.img_w, (int)FCFG.img.img_h, 1, FCFG.img.img_buf, (int)FCFG.img.img_w);
     
 	printf("ascent = %d\n"   , FCFG.ascent);
@@ -488,10 +488,12 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     while( str[cnt]!='\0' ){
         {// 字符外框大小
             int c_x1 , c_y1 , c_x2 , c_y2;
+
             (*FCFG.method->_GetCodepointBitmapBox)( &FCFG.stb_info, str[cnt], FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
             cw[cnt] = c_x2-c_x1;
-            ch[cnt] = c_y2-c_y1;
+            ch[cnt] = c_y2-c_y1+FCFG.lineGap;
             cy[cnt] = FCFG.ascent + c_y1;
+            
         }
         
         {// 字符横向间隙和宽度
@@ -539,6 +541,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
                 *(pIter+FCFG.img.img_w*y+x) =  RH_LIMIT( *(pIter+FCFG.img.img_w*y+x) + *(pTmp+cw_max*y+x), 0, 0xff );
             }
         }
+//        stbi_write_png("/Users/randle_h/Desktop/s.png", cw_max, ch_max, 1, pTmp, cw_max);
         memset(pTmp, 0, cw_max*ch_max*sizeof(uint8_t));
         cnt++;
     }
@@ -546,11 +549,10 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #endif
     
 #if RH_CFG_OUTPUT_FONT_PNG
-    #error "Path is not correct."
-    char path[255] = {0};
-
-    sprintf( path, "%s%s", RH_DIR, "/SIM_macOS/output/font_str_preview.png");
-    stbi_write_png(path, FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
+//    #error "Path is not correct."
+//    char path[255] = {0};
+//    sprintf( path, "%s%s", RH_DIR, "/Users/randle_h/Desktop/font.png");
+    stbi_write_png("/Users/randle_h/Desktop/font.png", FCFG.img.img_w, FCFG.img.img_h, 1, FCFG.img.img_buf, FCFG.img.img_w);
 #endif
     return &FCFG.img;
 }

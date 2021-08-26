@@ -2,26 +2,7 @@
 #define _GLU_OBJECT_H
 
 #include "GLU_font.h"
-
-/*===============================================================================================================
- * 各个object插件的widget列表
-===============================================================================================================*/
-typedef enum{
-    kGUI_ObjStyle_text     ,
-    kGUI_ObjStyle_num      ,
-    kGUI_ObjStyle_fnum     ,
-    
-    kGUI_ObjStyle_switch   ,
-    kGUI_ObjStyle_barH     ,
-    kGUI_ObjStyle_barV     ,
-    kGUI_ObjStyle_trunk    ,//
-    
-    kGUI_ObjStyle_joystick ,
-    kGUI_ObjStyle_spinbox  ,
-    kGUI_ObjStyle_button   ,
-    NUM_kGUI_ObjWidgets    ,
-}E_GUI_ObjWidget_t;
-
+#include "GLU_glucoo.h"
 
 /*===============================================================================================================
  * 声明object插件的信息数据结构
@@ -37,10 +18,10 @@ struct GLU_SRCT(Object){
     
     /*===================================================================================
      * widget --- This is a REQUIRED param. You must give a valid widget in the form of
-                  <E_GUI_ObjWidget_t> enumeration. The widget determine lots of
+                  <GLU_ENUM(ObjWidget)> enumeration. The widget determine lots of
                   attributions of an object.
      ===================================================================================*/
-    E_GUI_ObjWidget_t    widget;
+    GLU_ENUM(ObjWidget)    widget;
         
     /*===================================================================================
      * text --- This is an optional param. Only available when this widget has text

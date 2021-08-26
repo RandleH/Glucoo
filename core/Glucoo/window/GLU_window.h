@@ -2,20 +2,10 @@
 #define _GLU_WINDOW_H
 
 #include "GLU_font.h"
+#include "GLU_glucoo.h"
 
 
 
-typedef enum{
-    kGUI_Appearance_Light  ,
-    kGUI_Appearance_Dark   ,
-    
-}E_GUI_Appearance_t;
-
-typedef enum{
-    kGUI_WindowType_macOS  ,
-    kGUI_WindowType_win10  ,
-    NUM_kGUI_WindowType    ,
-}E_GUI_WindowStyle_t;
 
 
 struct __GUI_Window_t{
