@@ -1,7 +1,7 @@
 #include "BLK_graphic.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C" ??????
 #endif
     
 
@@ -332,6 +332,8 @@ void            BLK_FUNC( Graph, restoreCache ) (void){
         backupGCFG = false;
     }
 }
+
+
     
 /*===========================================
  > 插入一个空心圆,线宽为1

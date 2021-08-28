@@ -24,6 +24,10 @@ static void open_img(void){
 
 int main(int argc, char const *argv[]){
     
+    
+    
+    printf("%x\n", REVERSE_COLOR( M_COLOR_WHITE ));
+    
 #if 1
 
     GLU_GUI_init();
@@ -34,10 +38,15 @@ int main(int argc, char const *argv[]){
     S_GLU_Object_t config = {0};
     GLU_Object_template( &config, kGLU_ObjWidget_button);
     
+    config.bk_color   = M_COLOR_DIMGRAY;
+    config.obj_color  = M_COLOR_WHITE;
+    config.text.color = M_COLOR_WHITE;
+    config.text.str   = "Start";
+    
     __GUI_ObjDataScr_button dataSrc = {
-        .cmd    = true ,
-        .active = false,
-        .radius = 70,
+        .state  = 2     ,
+        .frame  = false ,
+        .radius = 20     ,
     };
     
     ID_t obj1 = GLU_Object_create( &config, &dataSrc);

@@ -1393,14 +1393,14 @@ static void __gui_adjust_object_spinbox   ( const GLU_SRCT(Object)* config ){
 
 static void __gui_remove_object_button    ( const GLU_SRCT(Object)* config ){
     struct{
-        bool   cmd;
-        bool   active;
+        int8_t state;
+        bool   frame;
         var    margin;
         var    radius;
     }*cache = (void*)config->cache;
     const __GUI_ObjDataScr_button* dataScr = config->dataScr;
     
-    if( dataScr->cmd!=cache->cmd || dataScr->radius!=cache->radius ){
+    if( dataScr->state!=cache->state || dataScr->radius!=cache->radius ){
         BLK_FUNC( Graph, backupCache )();
         BLK_FUNC( Graph, set_penColor )( config->bk_color );
         BLK_FUNC( Graph, EX_rect_fill )( &config->area, &info_MainScreen, NULL );
@@ -1410,8 +1410,8 @@ static void __gui_remove_object_button    ( const GLU_SRCT(Object)* config ){
 }
 static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     struct{
-        bool   cmd;
-        bool   active;
+        int8_t state;
+        bool   frame;
         var    margin;
         var    radius;
     }*cache = (void*)config->cache;
@@ -1422,33 +1422,71 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
         cache = RH_CALLOC( 1, sizeof(*cache));
         __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache);
         cache->margin = 1;
-        cache->cmd    = !dataScr->cmd;
+        cache->state  = !dataScr->state;
     }else{
         __gui_remove_object_button( config );
     }
     
     
     BLK_FUNC( Graph, backupCache  )();
+    
+    
+    // In this widget, it has 3 states to switch.
+    #define NUM_TOTAL_STATE 3
+    
+    /*
+     * ----------------------------------------------------------------
+     *   state | cl_button | cl_text | appearance |  description
+     * --------+-----------+---------+------------+--------------------
+     *     0   |     bk    |   txt   |   raw      |  按钮未按下的状态
+     * --------+-----------+---------+------------+--------------------
+     *     1   |    !bk    |   txt   |   fill     |  预选中的状态
+     * --------+-----------+---------+------------+--------------------
+     *     2   |     obj   |  !txt   |   fill     |  按钮按下状态
+     * ----------------------------------------------------------------
+     *
+     */
+    
+    int8_t          st_button = dataScr->state % NUM_TOTAL_STATE;
+    GLU_TYPE(Pixel) cl_button[ NUM_TOTAL_STATE ] = { config->bk_color                 ,\
+                                                     REVERSE_COLOR(config->bk_color)   ,\
+                                                     config->obj_color                 };
+    GLU_TYPE(Pixel) cl_text  [ NUM_TOTAL_STATE ] = { config->text.color                ,\
+                                                     config->text.color                ,
+                                                     REVERSE_COLOR(config->text.color) };
 
     // 绘制按钮
-    BLK_FUNC( Graph, set_penColor )( config->obj_color );
-    var roundRadius = RH_LIMIT( dataScr->radius, 0, RH_MIN(config->area.h>>1, config->area.w>>1) );
     
     // 绘制实心圆角矩形
+    var roundRadius = RH_LIMIT( dataScr->radius, 0, RH_MIN(config->area.h>>1, config->area.w>>1) );
     BLK_FUNC( Graph, set_penSize  )( roundRadius );
-    
-    if(dataScr->cmd == true)
-        BLK_FUNC( Graph, rect_round_fill)( (int)( config->area.xs+cache->margin                  ),\
-                                           (int)( config->area.ys+cache->margin                  ),\
-                                           (int)( config->area.xs+config->area.w-cache->margin-1 ),\
-                                           (int)( config->area.ys+config->area.h-cache->margin-1 ),\
-                                           &info_MainScreen, NULL );
-    else
-        BLK_FUNC( Graph, rect_round_raw )( (int)( config->area.xs+cache->margin                  ),\
-                                           (int)( config->area.ys+cache->margin                  ),\
-                                           (int)( config->area.xs+config->area.w-cache->margin-1 ),\
-                                           (int)( config->area.ys+config->area.h-cache->margin-1 ),\
-                                           &info_MainScreen, NULL );
+    switch ( dataScr->state%NUM_TOTAL_STATE ) {
+        case 0:
+            BLK_FUNC( Graph, set_penColor    )( cl_button[0] );
+            BLK_FUNC( Graph, rect_round_raw  )( (int)( config->area.xs+cache->margin                  ),\
+                                                (int)( config->area.ys+cache->margin                  ),\
+                                                (int)( config->area.xs+config->area.w-cache->margin-1 ),\
+                                                (int)( config->area.ys+config->area.h-cache->margin-1 ),\
+                                                &info_MainScreen, NULL );
+            break;
+        case 1:
+            BLK_FUNC( Graph, set_penColor    )( cl_button[1] );
+            BLK_FUNC( Graph, rect_round_fill )( (int)( config->area.xs+cache->margin                  ),\
+                                                (int)( config->area.ys+cache->margin                  ),\
+                                                (int)( config->area.xs+config->area.w-cache->margin-1 ),\
+                                                (int)( config->area.ys+config->area.h-cache->margin-1 ),\
+                                                &info_MainScreen, NULL );
+            break;
+        case 2:
+            BLK_FUNC( Graph, set_penColor    )( cl_button[2] );
+            BLK_FUNC( Graph, rect_round_fill )( (int)( config->area.xs+cache->margin                  ),\
+                                                (int)( config->area.ys+cache->margin                  ),\
+                                                (int)( config->area.xs+config->area.w-cache->margin-1 ),\
+                                                (int)( config->area.ys+config->area.h-cache->margin-1 ),\
+                                                &info_MainScreen, NULL );
+        default:
+            break;
+    }
     
     
     // 绘制按钮上的文字
@@ -1475,13 +1513,13 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
         };
         
     #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
-        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
+        BLK_FUNC(ImgGry,into_ImgBin)(&img_font, &info_MainScreen, x_fs, y_fs, cl_text[ st_button ], 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB565 )
-        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
+        BLK_FUNC(ImgGry,into_Img565)(&img_font, &info_MainScreen, x_fs, y_fs, cl_text[ st_button ], 100);
         
     #elif ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_RGB888 )
-        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, (dataScr->cmd == true)?config->bk_color:config->obj_color, 100);
+        BLK_FUNC(ImgGry,into_Img888)(&img_font, &info_MainScreen, x_fs, y_fs, cl_text[ st_button ], 100);
         
     #else
          
@@ -1491,7 +1529,7 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     }
     
     // 绘制激活态, 即边框
-    if( dataScr->active ){
+    if( dataScr->frame ){
         BLK_FUNC( Graph, set_penColor)( config->obj_color );
         BLK_FUNC( Graph, rect_raw    )( (int)( config->area.xs+cache->margin    ),\
                                         (int)( config->area.ys+cache->margin    ),\
@@ -1501,22 +1539,22 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     }
     
     cache->radius = dataScr->radius;
-    cache->cmd    = dataScr->cmd;
-    cache->active = dataScr->active;
+    cache->state  = dataScr->state;
+    cache->frame  = dataScr->frame;
     
     BLK_FUNC( Graph, restoreCache )();
     
 }
 static void __gui_adjust_object_button    ( const GLU_SRCT(Object)* config ){
     struct{
-        bool   cmd;
-        bool   active;
+        int8_t state;
+        bool   frame;
         var    margin;
         var    radius;
     }*cache = (void*)config->cache;
     const __GUI_ObjDataScr_button* dataScr = config->dataScr;
     
-    if( dataScr->cmd!=cache->cmd || dataScr->active!=cache->active || dataScr->radius!=cache->radius ){
+    if( dataScr->state!=cache->state || dataScr->frame!=cache->frame || dataScr->radius!=cache->radius ){
         __gui_insert_object_button( config );
     }
 }
@@ -1646,8 +1684,8 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
             
             ALLOCATE_DATA_SOURCE( m_config, __GUI_ObjDataScr_button ); 
             if( !dataScr ){
-                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->active = true;
-                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->cmd    = true;
+                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->frame  = false;
+                ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->state  = 0;
                 ((struct __GUI_ObjDataScr_button*)m_config->dataScr)->radius = 126;
             }else{
                 memcpy(m_config->dataScr, dataScr, sizeof(struct __GUI_ObjDataScr_button));

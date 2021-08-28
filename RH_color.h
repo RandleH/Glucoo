@@ -37,7 +37,7 @@ extern "C" {
   #define COLOR_MASK_GREEN                 0x0000FF00
   #define COLOR_MASK_BLUE                  0x000000FF
   
-  #define REVERSE_COLOR( M_COLOR )         (uint32_t)( (0x00FF0000-(M_COLOR)&(0x00FF0000)) | (0x0000FF00-(M_COLOR)&(0x0000FF00)) | (0x000000FF-(M_COLOR)&0x000000FF) )
+  #define REVERSE_COLOR( M_COLOR )         (uint32_t)( (0x00FF0000-((M_COLOR)&(0x00FF0000))) | (0x0000FF00-((M_COLOR)&(0x0000FF00))) | (0x000000FF-((M_COLOR)&0x000000FF)) )
 
   #define DARKEN_COLOR_1Bit(C)             (uint32_t)( ((((C)&COLOR_MASK_RED)>>1)&(COLOR_MASK_RED))|((((C)&COLOR_MASK_GREEN)>>1)&(COLOR_MASK_GREEN))|((((C)&COLOR_MASK_BLUE)>>1)&(COLOR_MASK_BLUE)) )
   #define DARKEN_COLOR_2Bit(C)             (uint32_t)( ((((C)&COLOR_MASK_RED)>>2)&(COLOR_MASK_RED))|((((C)&COLOR_MASK_GREEN)>>2)&(COLOR_MASK_GREEN))|((((C)&COLOR_MASK_BLUE)>>2)&(COLOR_MASK_BLUE)) )

@@ -122,9 +122,9 @@ struct __GUI_ObjDataScr_spinbox{
 typedef struct __GUI_ObjDataScr_spinbox __GUI_ObjDataScr_spinbox;
 
 struct __GUI_ObjDataScr_button{
-    bool        cmd;           // 按钮状态
+    int8_t      state;         // 状态
     var         radius;        // 按钮边缘半径
-    bool        active;        // 激活态
+    bool        frame;         // 显示边框
 };
 typedef struct __GUI_ObjDataScr_button __GUI_ObjDataScr_button;
 
