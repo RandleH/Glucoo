@@ -34,6 +34,12 @@ int main(int argc, char const *argv[]){
     
     GLU_GUI_autoDisplay(true);
     
+
+    GLU_TYPE(Color) color[] = { M_COLOR_DARKBLUE };
+
+    GLU_Image_profile( kGLU_ImageStyle_aurora, &color, 1, NULL, 100 );
+
+
     
     S_GLU_Object_t config = {0};
     GLU_Object_template( &config, kGLU_ObjWidget_button);

@@ -1456,6 +1456,8 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
                                                      REVERSE_COLOR(config->text.color) };
 
     // 绘制按钮
+
+    BLK_FUNC( Graph, set_penOpaque )(13);                                                 
     
     // 绘制实心圆角矩形
     var roundRadius = RH_LIMIT( dataScr->radius, 0, RH_MIN(config->area.h>>1, config->area.w>>1) );

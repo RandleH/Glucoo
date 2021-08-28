@@ -18,7 +18,7 @@ enum GLU_ENUM(ImageStyle){
 };
 typedef enum GLU_ENUM(ImageStyle) GLU_ENUM(ImageStyle);
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* text, uint8_t alpha_100 );
+void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 );
 
 
 

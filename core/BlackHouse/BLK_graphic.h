@@ -62,6 +62,7 @@ typedef enum{
 
 E_Status_t      BLK_FUNC( Graph , init              ) (void);
 void            BLK_FUNC( Graph , set_penSize       ) (size_t         penSize      );
+void            BLK_FUNC( Graph , set_penOpaque     ) (uint8_t        opaque       );
 void            BLK_FUNC( Graph , set_penColor      ) (uint32_t       penColor     );
 void            BLK_FUNC( Graph , set_blurSize      ) (size_t         size_0_65535 );
 void            BLK_FUNC( Graph , set_blurBr        ) (size_t         br_100       );

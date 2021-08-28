@@ -1,13 +1,14 @@
 #include "BLK_graphic.h"
 
 #ifdef __cplusplus
-extern "C" ??????
+extern "C" {
 #endif
     
 
 struct __GraphConfig_t{
     BLK_UION(Pixel888) penColorRaw;
     uint32_t           penColor;
+    uint8_t            penOpaque;
     size_t             penSize;
     
     unsigned int       blur_br_100;
@@ -158,7 +159,15 @@ static struct __GraphConfig_t GCFG = {
         BLK_GRAPH_ASSERT(pInfo->ptr);
     #endif
         __exit( x>=pInfo->w || y>=pInfo->h || x<0 || y<0 );
-        pInfo->ptr[y*pInfo->w+x].data = (BLK_TYPE(Pixel888))GCFG.penColor;
+        if( GCFG.penOpaque==0xff )
+            pInfo->ptr[y*pInfo->w+x].data = (BLK_TYPE(Pixel888))GCFG.penColor;
+        else{
+            BLK_UION(Pixel888) color = {.data = GCFG.penColor};
+            pInfo->ptr[y*pInfo->w+x].R = pInfo->ptr[y*pInfo->w+x].R + ( (signed)( ( color.R-pInfo->ptr[y*pInfo->w+x].R )*GCFG.penOpaque )>>8 );
+            pInfo->ptr[y*pInfo->w+x].G = pInfo->ptr[y*pInfo->w+x].G + ( (signed)( ( color.G-pInfo->ptr[y*pInfo->w+x].G )*GCFG.penOpaque )>>8 );
+            pInfo->ptr[y*pInfo->w+x].B = pInfo->ptr[y*pInfo->w+x].B + ( (signed)( ( color.B-pInfo->ptr[y*pInfo->w+x].B )*GCFG.penOpaque )>>8 );
+        }
+
     }
     static void __render_24bit_light   (int x, int y, void* pIMG){
         BLK_SRCT(Img888)* pInfo = pIMG;
@@ -194,9 +203,10 @@ static struct __GraphConfig_t GCFG_copy = {0};
 
      
 E_Status_t      BLK_FUNC( Graph, init          )  (void){
-    GCFG.blur_br_100 = 100;
-    GCFG.blur_size   = 44100;
-    GCFG.penSize     = 3;
+    GCFG.blur_br_100  = 100;
+    GCFG.blur_size    = 44100;
+    GCFG.penSize      = 3;
+    GCFG.penOpaque    = 255;
     
     GCFG.blur_tmp.ptr = NULL;
     GCFG.blur_tmp.h   = 0;
@@ -207,6 +217,10 @@ E_Status_t      BLK_FUNC( Graph, init          )  (void){
     BLK_FUNC(Graph,set_render_method) ( kBLK_RenderMethod_fill );
     
     return MAKE_ENUM( kStatus_Success );
+}
+
+void            BLK_FUNC( Graph, set_penOpaque )  (uint8_t        opaque){
+    GCFG.penOpaque = opaque;
 }
  
 void            BLK_FUNC( Graph, set_penSize   )  (size_t         penSize      ){
@@ -596,10 +610,39 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,    
         while(cnt--){
             callback(x-x_tmp,y-cnt,pIMG );
         }
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
 
-        cnt = x_tmp+1;
-        while(cnt--){
-            callback(x-y_tmp,y-cnt,pIMG );
+    /*
+    * 
+    * Draw this part:
+    *
+    *              ----|
+    *           ---    |
+    *         ||       |
+    *       ||||       |
+    *     ||||||       |
+    *    |||||||       |
+    *    |||||||       | 
+    *   ||||||||       |
+    *   ||||||||_______|
+    *
+    *
+    */
+
+    
+    const int x_45 = x_tmp;  // <- very important
+    x_tmp = 0,y_tmp = (r-1);
+    p = 3-((r-1)<<1);
+
+    for(;x_tmp<=y_tmp;x_tmp++){
+        for( int i=x-y_tmp; i<=x-x_45; i++ ){
+            callback(i,y-x_tmp,pIMG );
         }
 
         if(p <= 0){
@@ -609,6 +652,8 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,    
             y_tmp--;
         }
     }
+    #error "Fix the rest of them."
+
     return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
