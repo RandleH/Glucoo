@@ -498,20 +498,30 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
         {// 字符横向间隙和宽度
             int advanceWidth,leftSideBearing;
             (*FCFG.method->_GetCodepointHMetrics)(&FCFG.stb_info, str[cnt], &advanceWidth, &leftSideBearing );
+//            advanceWidth    = roundf( advanceWidth*FCFG.scale );
+//
+
+//            sx[cnt+1]  = sx[cnt] - leftSideBearing + advanceWidth + roundf( (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] ) * FCFG.scale) ;
             
-            leftSideBearing = roundf( leftSideBearing*FCFG.scale );
-            advanceWidth    = roundf( advanceWidth*FCFG.scale );
+            int ax;
+            (*FCFG.method->_GetCodepointHMetrics)( &FCFG.stb_info, str[cnt], &ax, 0 );
             
-            sx[cnt]   += leftSideBearing;
             
-            sx[cnt+1]  = sx[cnt] - leftSideBearing + advanceWidth + roundf( (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] ) * FCFG.scale) ;
+            int kern;
+            kern = (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] );
+            
+            sx[cnt+1] = sx[cnt] + (int)lroundf( (ax+kern-leftSideBearing)*FCFG.scale );
+            
+            if( str[cnt+1] == '\0' ){
+                sx[cnt+1] += (int)lroundf( leftSideBearing*FCFG.scale );
+            }
         }
         cnt++;
     }
     
     // 确定绘制出这样的字符串至少需要的图像大小
-    FCFG.img.img_w   = roundf( FCFG.img.img_w*FCFG.scale );
-    FCFG.img.img_w  += sx[cnt];
+    #warning "Why plus 2?"
+    FCFG.img.img_w   = sx[cnt]+2;
     FCFG.img.img_h   = FCFG.ascent-FCFG.descent+FCFG.lineGap;
     FCFG.img.img_buf = RH_CALLOC( FCFG.img.img_w*FCFG.img.img_h, sizeof(uint8_t) );
     
@@ -532,9 +542,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     
     uint8_t *pTmp = RH_CALLOC( cw_max*ch_max, sizeof(uint8_t) );
     while( str[cnt]!='\0' ){
-
-        int byteOffset = sx[cnt] + (cy[cnt]* cw_max);
-        (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pTmp+byteOffset, cw[cnt], ch[cnt], cw_max, FCFG.scale, FCFG.scale, str[cnt] );
+        (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pTmp, cw[cnt], ch[cnt], cw_max, FCFG.scale, FCFG.scale, str[cnt] );
         
         uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + sx[cnt];
         for( int y=0; y<ch[cnt]; y++ ){

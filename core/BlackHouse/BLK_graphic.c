@@ -592,7 +592,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,    
 
     const int xy_45 = x_tmp;
     p = 3-((r-1)<<1);
-    x_tmp = 0,y_tmp = (r-1);
+    x_tmp = 0; y_tmp = (r-1);
     for(;x_tmp<=y_tmp;x_tmp++){
         for( int i=x+xy_45; i<=x+y_tmp; i++ ){
             callback(i,y-x_tmp,pIMG );
@@ -649,7 +649,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,    
 
     
     const int x_45 = x_tmp;  // <- very important
-    x_tmp = 0,y_tmp = (r-1);
+    x_tmp = 0; y_tmp = (r-1);
     p = 3-((r-1)<<1);
 
     for(;x_tmp<=y_tmp;x_tmp++){
@@ -690,7 +690,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,    
     }
     
     const int xy_45 = x_tmp;
-    x_tmp = 0,y_tmp = (r-1);
+    x_tmp = 0; y_tmp = (r-1);
     p = 3-((r-1)<<1);
     for(;x_tmp<=y_tmp;x_tmp++){
         for( int i=x-y_tmp; i<=x-xy_45; i++ ){
@@ -731,7 +731,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,    
 
     const int xy_45 = x_tmp;
     p = 3-((r-1)<<1);
-    x_tmp = 0,y_tmp = (r-1);
+    x_tmp = 0; y_tmp = (r-1);
     for(;x_tmp<=y_tmp;x_tmp++){
         for( int i=x+xy_45; i<=x+y_tmp; i++ ){
             callback(i,y+x_tmp, pIMG );
