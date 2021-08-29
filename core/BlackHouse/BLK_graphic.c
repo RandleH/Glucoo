@@ -582,9 +582,20 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,    
             callback(x+x_tmp,y-cnt,pIMG );
         }
 
-        cnt = x_tmp+1;
-        while(cnt--){
-            callback(x+y_tmp,y-cnt,pIMG );
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+
+    const int xy_45 = x_tmp;
+    p = 3-((r-1)<<1);
+    x_tmp = 0,y_tmp = (r-1);
+    for(;x_tmp<=y_tmp;x_tmp++){
+        for( int i=x+xy_45; i<=x+y_tmp; i++ ){
+            callback(i,y-x_tmp,pIMG );
         }
 
         if(p <= 0){
@@ -594,6 +605,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,    
             y_tmp--;
         }
     }
+
 
     return MAKE_ENUM( kStatus_Success );
 }
@@ -652,7 +664,6 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,    
             y_tmp--;
         }
     }
-    #error "Fix the rest of them."
 
     return MAKE_ENUM( kStatus_Success );
 }
@@ -670,9 +681,20 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,    
             callback(x-x_tmp,y+cnt,pIMG );
         }
 
-        cnt = x_tmp+1;
-        while(cnt--){
-            callback(x-y_tmp,y+cnt,pIMG );
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+    
+    const int xy_45 = x_tmp;
+    x_tmp = 0,y_tmp = (r-1);
+    p = 3-((r-1)<<1);
+    for(;x_tmp<=y_tmp;x_tmp++){
+        for( int i=x-y_tmp; i<=x-xy_45; i++ ){
+            callback(i,y+x_tmp,pIMG );
         }
 
         if(p <= 0){
@@ -682,6 +704,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,    
             y_tmp--;
         }
     }
+
     return MAKE_ENUM( kStatus_Success );
 }
 E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
@@ -698,9 +721,20 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,    
             callback(x+x_tmp,y+cnt, pIMG );
         }
 
-        cnt = x_tmp+1;
-        while(cnt--){
-            callback(x+y_tmp,y+cnt, pIMG );
+        if(p <= 0){
+            p += (x_tmp<<2) + 6;
+        }else{
+            p += ((x_tmp-y_tmp)<<2) + 10;
+            y_tmp--;
+        }
+    }
+
+    const int xy_45 = x_tmp;
+    p = 3-((r-1)<<1);
+    x_tmp = 0,y_tmp = (r-1);
+    for(;x_tmp<=y_tmp;x_tmp++){
+        for( int i=x+xy_45; i<=x+y_tmp; i++ ){
+            callback(i,y+x_tmp, pIMG );
         }
 
         if(p <= 0){

@@ -17,8 +17,8 @@ static void open_img(void){
     const char* name = "snapshot";
     sprintf( path, "%s/%s.bmp", RH_DIR, name );
     
-    char cmd[255+5] = {0};
-    sprintf( cmd, "open %s", path);
+    char cmd[255+9] = {0};
+    sprintf( cmd, "xdg-open %s", path);
     system(cmd);
 }
 
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]){
 
     GLU_TYPE(Color) color[] = { M_COLOR_DARKBLUE };
 
-    GLU_Image_profile( kGLU_ImageStyle_aurora, &color, 1, NULL, 100 );
+    GLU_Image_profile( kGLU_ImageStyle_aurora, color, 1, NULL, 100 );
 
 
     

@@ -190,7 +190,7 @@ static struct{
 }FCFG_copy,FCFG = {0};
 
 
-#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF )
+#if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF    )
     static const char* font_ttf_path[kGLU_NUM_FontStyle] = {
         [ kGLU_Font_Unscii            ] = NULL ,
         [ kGLU_Font_ArialRounded_Bold ] = NULL ,
@@ -202,7 +202,6 @@ static struct{
         [ kGLU_Font_SignPrinter       ] = NULL ,
         [ kGLU_Font_Optima            ] = NULL ,
     };
-
 /*==================================================================================================================================
  * 配置外部TruethType文件方式获取字体数据
  *==================================================================================================================================
@@ -258,8 +257,7 @@ static struct{
         
         return MAKE_ENUM(kStatus_Success);
     }
-
-#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY )
+#elif ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_LOCAL_ARRAY   )
 /*==================================================================================================================================
  * 配置内部TruethType数组方式获取字体数据
  *==================================================================================================================================
@@ -480,6 +478,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     // 采集字符串像素坐标信息
     size_t size = (strlen(str)+1)*sizeof(int);
     int* cx  = alloca(size); memset( cx, 0, size); // 记录每个字母起始绘制的横坐标
+    int* sx  = alloca(size); memset( sx, 0, size); // 记录每个字母起始绘制的横坐标(In string)
     int* cy  = alloca(size); memset( cy, 0, size); // 记录每个字母起始绘制的纵坐标
     int* cw  = alloca(size); memset( cw, 0, size); // 记录每个字母外框宽度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
     int* ch  = alloca(size); memset( ch, 0, size); // 记录每个字母外框高度(不可用于计算起始坐标, 每个字母会有高度和间隙补偿)
@@ -503,16 +502,16 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
             leftSideBearing = roundf( leftSideBearing*FCFG.scale );
             advanceWidth    = roundf( advanceWidth*FCFG.scale );
             
-            cx[cnt]   += leftSideBearing;
+            sx[cnt]   += leftSideBearing;
             
-            cx[cnt+1]  = cx[cnt] - leftSideBearing + advanceWidth + roundf( (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] ) * FCFG.scale) ;
+            sx[cnt+1]  = sx[cnt] - leftSideBearing + advanceWidth + roundf( (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] ) * FCFG.scale) ;
         }
         cnt++;
     }
     
     // 确定绘制出这样的字符串至少需要的图像大小
     FCFG.img.img_w   = roundf( FCFG.img.img_w*FCFG.scale );
-    FCFG.img.img_w  += cx[cnt];
+    FCFG.img.img_w  += sx[cnt];
     FCFG.img.img_h   = FCFG.ascent-FCFG.descent+FCFG.lineGap;
     FCFG.img.img_buf = RH_CALLOC( FCFG.img.img_w*FCFG.img.img_h, sizeof(uint8_t) );
     
@@ -520,7 +519,7 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #if 0 // 较少内存
     cnt = 0;
     while( str[cnt]!='\0' ){
-        uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + cx[cnt];
+        uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + sx[cnt];
         (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pIter, cw[cnt], ch[cnt], (int)FCFG.img.img_w, FCFG.scale, FCFG.scale, str[cnt] );
         cnt++;
     }
@@ -533,15 +532,17 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     
     uint8_t *pTmp = RH_CALLOC( cw_max*ch_max, sizeof(uint8_t) );
     while( str[cnt]!='\0' ){
-        (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pTmp, cw[cnt], ch[cnt], cw_max, FCFG.scale, FCFG.scale, str[cnt] );
+
+        int byteOffset = sx[cnt] + (cy[cnt]* cw_max);
+        (*FCFG.method->_MakeCodepointBitmap)( &FCFG.stb_info, pTmp+byteOffset, cw[cnt], ch[cnt], cw_max, FCFG.scale, FCFG.scale, str[cnt] );
         
-        uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + cx[cnt];
+        uint8_t *pIter = FCFG.img.img_buf + ( FCFG.img.img_w*cy[cnt] ) + sx[cnt];
         for( int y=0; y<ch[cnt]; y++ ){
             for( int x=0; x<cw[cnt]; x++ ){
                 *(pIter+FCFG.img.img_w*y+x) =  RH_LIMIT( *(pIter+FCFG.img.img_w*y+x) + *(pTmp+cw_max*y+x), 0, 0xff );
             }
         }
-//        stbi_write_png("/Users/randle_h/Desktop/s.png", cw_max, ch_max, 1, pTmp, cw_max);
+
         memset(pTmp, 0, cw_max*ch_max*sizeof(uint8_t));
         cnt++;
     }
