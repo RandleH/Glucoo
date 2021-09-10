@@ -7,12 +7,14 @@
 extern "C" {
 #endif
 
-#define RH_CFG_RECORD_VERSION                 "RH_CONFIG - 08/15/2021"
+#define RH_CFG_RECORD_VERSION                 "RH_CONFIG - 09/07/2021"
 
 #define RH_CFG_GRAPHIC_COLOR_BIN              (0U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB565           (1U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_RGB888           (2U)                          // < option >
 #define RH_CFG_GRAPHIC_COLOR_TYPE              2                            // < select > < above option >
+
+#define RH_CFG_GRAPHIC_MALLOC_CACHE           (1U)                          // < select > < 0=disable : 1=enable >
 
 #define RH_CFG_FONT_DATA_EXTERN_TTF           (0U)                          // < option >
 #define RH_CFG_FONT_DATA_LOCAL_ARRAY          (1U)                          // < option >
@@ -43,6 +45,8 @@ extern "C" {
 #define RH_CFG_GRAM_SECTION                   "NonCacheable.init"           // <   ...  > < only useful when RH_CFG_GRAM_TYPE==RH_CFG_GRAM_EXTSECT >
 #define RH_CFG_GRAM_POINTER                   s_psBufferLcd                 // <   ...  > < only useful when RH_CFG_GRAM_TYPE==RH_CFG_GRAM_EXTPTR  >
 extern void* RH_CFG_GRAM_POINTER;
+
+
 
 #define RH_CFG_MALLOC_SIZE__NONE              ((1U)<<0)                     // < option >
 #define RH_CFG_MALLOC_SIZE__64B               ((1U)<<6)                     // < option > 

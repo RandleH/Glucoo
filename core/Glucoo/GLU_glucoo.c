@@ -345,6 +345,11 @@ inline bool GLU_FUNC( GUI, isCacheEmpty   ) ( void ){
     return BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead );
 }
 
+void* GLU_FUNC( GUI, yield_GRAM )( void ){
+    //...//
+    return Screen.GRAM;
+}
+
 
 
 

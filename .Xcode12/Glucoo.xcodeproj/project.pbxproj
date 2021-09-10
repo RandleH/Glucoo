@@ -36,6 +36,7 @@
 		E3896E4F26CDB54B00B0A43E /* GLU_draw.c in Sources */ = {isa = PBXBuildFile; fileRef = E3896E4E26CDB54B00B0A43E /* GLU_draw.c */; };
 		E3896E5426CDB59400B0A43E /* GLU_area.c in Sources */ = {isa = PBXBuildFile; fileRef = E3896E5226CDB59400B0A43E /* GLU_area.c */; };
 		E3896E6426CDC7E000B0A43E /* GLU_api.c in Sources */ = {isa = PBXBuildFile; fileRef = E3896E6326CDC7E000B0A43E /* GLU_api.c */; };
+		E38F478726E86D1E008C3590 /* GLU_render.c in Sources */ = {isa = PBXBuildFile; fileRef = E38F478526E86D1D008C3590 /* GLU_render.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -106,6 +107,8 @@
 		E3896E5A26CDB69400B0A43E /* GLU_api_template.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_api_template.c; path = ../core/Glucoo/GLU_api_template.c; sourceTree = "<group>"; };
 		E3896E6026CDB8A900B0A43E /* RH_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RH_common.h; path = ../RH_common.h; sourceTree = "<group>"; };
 		E3896E6326CDC7E000B0A43E /* GLU_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_api.c; path = ../core/Glucoo/GLU_api.c; sourceTree = "<group>"; };
+		E38F478526E86D1D008C3590 /* GLU_render.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GLU_render.c; path = ../core/Glucoo/draw/GLU_render.c; sourceTree = "<group>"; };
+		E38F478626E86D1D008C3590 /* GLU_render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLU_render.h; path = ../core/Glucoo/draw/GLU_render.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +228,8 @@
 		E3896E1B26CDB49A00B0A43E /* draw */ = {
 			isa = PBXGroup;
 			children = (
+				E38F478526E86D1D008C3590 /* GLU_render.c */,
+				E38F478626E86D1D008C3590 /* GLU_render.h */,
 				E3896E4E26CDB54B00B0A43E /* GLU_draw.c */,
 			);
 			name = draw;
@@ -354,6 +359,7 @@
 				E3896E4226CDB52F00B0A43E /* GLU_font_NewYork_Italic.c in Sources */,
 				E3896E4F26CDB54B00B0A43E /* GLU_draw.c in Sources */,
 				E3896E4326CDB52F00B0A43E /* GLU_font_Optima.c in Sources */,
+				E38F478726E86D1E008C3590 /* GLU_render.c in Sources */,
 				E3896E4526CDB52F00B0A43E /* GLU_font_ArialRoundedBold.c in Sources */,
 				E3896DF726CDB44F00B0A43E /* RH_dummy.c in Sources */,
 				E3896E1826CDB48E00B0A43E /* BLK_dsp.c in Sources */,

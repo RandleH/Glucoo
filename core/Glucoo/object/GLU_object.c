@@ -2,6 +2,7 @@
 #include "RH_common.h"
 #include "RH_config.h"
 
+#include "GLU_render.h"
 #include "GLU_glucoo.h"
 #include "GLU_area.h"
 
@@ -1462,6 +1463,9 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     // 绘制实心圆角矩形
     var roundRadius = RH_LIMIT( dataScr->radius, 0, RH_MIN(config->area.h>>1, config->area.w>>1) );
     BLK_FUNC( Graph, set_penSize  )( roundRadius );
+    
+   
+    
     switch ( dataScr->state%NUM_TOTAL_STATE ) {
         case 0:
             BLK_FUNC( Graph, set_penColor    )( cl_button[0] );
@@ -1887,3 +1891,10 @@ E_Status_t        GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area,
 
     return MAKE_ENUM( kStatus_Success );
 }
+
+
+
+
+
+
+

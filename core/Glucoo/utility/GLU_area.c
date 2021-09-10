@@ -77,6 +77,44 @@ void GLU_FUNC( Utility, area_hdiv    )( const __Area_t* total, __Area_t p[], siz
     }
 }
 
+void GLU_FUNC( Utility, area_vdiv    )( const __Area_t* total, __Area_t p[], size_t size ){
+    RH_ASSERT(total);
+    RH_ASSERT(p);
+    
+    if(size==1){
+        GLU_Utility_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
+        return;
+    }
+    
+    uint32_t length = 0;
+    {
+        __Area_t *iter = p;
+        for( size_t i=0; i<size; i++, iter++ ){
+            length += iter->h;
+        }
+    }
+    
+    RH_ASSERT(length<total->h);
+    
+    int32_t remain = (signed)(total->h) - (signed)(length);
+    {
+        var        y    = total->ys;
+        __Area_t *iter = p;
+        
+        for( size_t i=0; i<size; i++, iter++ ){
+            iter->ys = y;
+
+            y+= iter->w;
+            if( (size-1-i) != 0 ){
+                y      += remain/(size-1-i);
+                remain -= remain/(size-1-i);
+            }
+            
+            GLU_FUNC(Utility,align_area)( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
+        }
+    }
+}
+
 void GLU_FUNC( Utility, optimal_text )( const __Area_t* src, const char* str, GLU_ENUM(Font) font, GLU_SRCT(Text)* dst ){
     RH_ASSERT(src);
     RH_ASSERT(dst);

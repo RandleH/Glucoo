@@ -10,6 +10,7 @@
 #define M_UTILITY_ALIGN_HM        ((uint32_t)( 1<<4 ))
 #define M_UTILITY_ALIGN_VM        ((uint32_t)( 1<<5 ))
 
+
 void GLU_FUNC( Utility, align_area   )( const __Area_t* src, var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx );
 void GLU_FUNC( Utility, align_screen )(                      var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx );
 

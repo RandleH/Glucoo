@@ -132,6 +132,8 @@ void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x
 
 void GLU_FUNC( GUI, screen_fill      )       ( GLU_TYPE(Color) M_COLOR_xxxx );
 
+void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
+
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
