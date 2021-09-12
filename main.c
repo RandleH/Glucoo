@@ -8,12 +8,10 @@
 #include "GLU_glucoo.h"
 #include "GLU_area.h"
 
-
 #include "GLU_image.h"
 #include "GLU_object.h"
 
 #include "GLU_render.h"
-
 
 #include "BLK_graphic.h"
 
@@ -27,48 +25,72 @@ static void open_img(void){
     system(cmd);
 }
 
+//
+//int main(int argc, char const *argv[]){
+//    GLU_GUI_init();
+//
+//    BLK_SRCT(Img888) *pSRC = BLK_Img888_load_jpg("/Users/randle_h/Downloads/IMG_0772.jpg");
+//
+//
+//    BLK_SRCT(Img888) *pDST = BLK_Img888_create(pSRC->w, pSRC->h);
+//
+//    __Area_t area = {
+//        .w = pSRC->w ,
+//        .h = pSRC->h ,
+//        .xs = 0,
+//        .ys = 0
+//    };
+//
+//    BLK_Img888_blur_gussian(pSRC, pDST, &area, 44100, 100);
+//
+//    BLK_Img888_out_bmp("/Users/randle_h/Desktop/summer.bmp", pDST);
+//}
+
+
+# if 1
+
 int main(int argc, char const *argv[]){
     printf("%x\n", REVERSE_COLOR( M_COLOR_WHITE ));
     
     GLU_GUI_init();
     
-    __Area_t area_render = { .xs = 0, .ys = 0, .h = RH_CFG_SCREEN_HEIGHT, .w = RH_CFG_SCREEN_WIDTH };
-    
-    GLU_TYPE(Color) colors[2] = { M_COLOR_DARKVOILET, M_COLOR_BLACK };
-    
-    GLU_Render_set_color ( colors, 2);
-    GLU_Render_set_area  ( &area_render, sizeof(area_render) );
+    GLU_TYPE(Color) colors[2] = { MAKE_COLOR(255,30,90), MAKE_COLOR(255, 205, 50) };
     
     BLK_SRCT(Img888) IMG = {.w = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT, .ptr = GLU_GUI_yield_GRAM() };
 
     BLK_Graph_init();
     
-#define  NUM_RECT_H  5
+    GLU_Render_set_area(90, 100, 500, 700);
+    GLU_Render_set_color(colors, 2);
     
-    __Area_t area_all = { .xs = 0, .ys = 100, .h = 300                 , .w = RH_CFG_SCREEN_WIDTH    };
-    __Area_t area_sub[ NUM_RECT_H ] = {
-        {.h=300, .w=500},
-        {.h=300, .w=500},
-        {.h=300, .w=500},
-        {.h=300, .w=500},
-        {.h=300, .w=500},
-    };
-    GLU_Utility_area_hdiv(&area_all, &area_sub[0], NUM_RECT_H);
+    BLK_Graph_rect_edged(90, 100, 500, 700, &IMG, GLU_Render_24bit_gradient_v );
     
-    BLK_Graph_set_penSize(100);
-    for( int i=0; i<NUM_RECT_H; i++ ){
-        BLK_Graph_EX_rect_round_fill( &area_sub[i], &IMG, GLU_Render_24bit_blur );
-        area_sub[i].ys = RH_CFG_SCREEN_HEIGHT-area_sub[i].h-100;
-        BLK_Graph_EX_rect_round_fill( &area_sub[i], &IMG, GLU_Render_24bit_blur );
-    }
-    GLU_Font_set_font( kGLU_Font_Optima );
-    GLU_Font_set_size( 150 );
+    int d = 400;
+    BLK_Graph_set_penSize(20);
     
-    GLU_SRCT(FontImg)* pFontImg = GLU_Font_out_str_Img("He is sending you instagram!");
-    __Area_t area_tmp;
-    GLU_Utility_align_screen(pFontImg->img_w, pFontImg->img_h, &area_tmp, M_UTILITY_ALIGN_HM|M_UTILITY_ALIGN_VM);
-    BLK_SRCT(ImgGry) FontImg = { .w = pFontImg->img_w, .h = pFontImg->img_h, .ptr = (BLK_UION(PixelGry)*)pFontImg->img_buf,   };
-    BLK_ImgGry_into_Img888( &FontImg, &IMG, area_tmp.xs, area_tmp.ys, M_COLOR_DARKVOILET, 90);
+    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
+    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_v);
+    
+    d = 300;
+    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
+    colors[0] = MAKE_COLOR( 203,  34, 203);
+    colors[1] = MAKE_COLOR( 233, 234, 240);
+    GLU_Render_set_color( colors, 2);
+    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_h);
+    
+    d = 200;
+    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
+    colors[0] = MAKE_COLOR(  40, 175, 203);
+    colors[1] = MAKE_COLOR( 240, 240, 240);
+    GLU_Render_set_color( colors, 2);
+    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_v);
+    
+    d = 100;
+    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
+    colors[0] = MAKE_COLOR( 240,  40, 140);
+    colors[1] = MAKE_COLOR(  40, 125, 203);
+    GLU_Render_set_color( colors, 2);
+    BLK_Graph_circle_fill( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_h);
     
     GLU_GUI_refreashEntireScreen();
     
@@ -78,3 +100,4 @@ int main(int argc, char const *argv[]){
 
 
 
+#endif

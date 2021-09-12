@@ -572,6 +572,10 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, load_jpg )    (const char* RH_RESTRICT path)
     return IMG;
 }
 
+BLK_SRCT(Img888)* BLK_FUNC( Img888, load_png )    (const char* RH_RESTRICT path){
+    return  BLK_FUNC( Img888, load_jpg )(path);
+}
+
 BLK_SRCT(Img888)* BLK_FUNC( Img888, copy     )    (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst){
     __exitReturn( !src || !dst , NULL );
     __exitReturn( !src->ptr || !dst->ptr , NULL );
@@ -1988,6 +1992,127 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur    )
     
 #endif
 
+    return dst;
+}
+
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_gradient_v )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst      );
+    RH_ASSERT( dst->ptr );
+    RH_ASSERT( dst->h   );
+    RH_ASSERT( dst->w   );
+    
+    const BLK_TYPE(Pixel888) *colors_copy = NULL;
+    {
+        if(size<2){
+            BLK_TYPE(Pixel888) *pTmp = alloca( 2*sizeof(BLK_TYPE(Pixel888)) );
+            RH_ASSERT(pTmp);
+            
+            colors_copy = pTmp;
+
+            for( size_t i=0; i<2; i++, pTmp++ ){
+                if(i<size){
+                    *pTmp = *(colors+i);
+                }else{
+                    *pTmp = M_COLOR_WHITE;
+                }
+            }
+        }else{
+            colors_copy = colors;
+        }
+    }
+    
+    BLK_UION(Pixel888) OP   = {.data = colors_copy[0]};
+    BLK_UION(Pixel888) OA   = {.data = colors_copy[0]};
+    BLK_UION(Pixel888) OB   = {.data = colors_copy[1]};
+    
+    uint32_t map_R = OA.R*dst->h;
+    uint32_t map_G = OA.G*dst->h;
+    uint32_t map_B = OA.B*dst->h;
+    
+    BLK_UION(Pixel888) *pIter = dst->ptr;
+    for( var y=0; y<dst->h; y++, pIter+=dst->w){
+        
+#if 0
+        OP.R  =  OA.R + y * (OB.R-OA.R) / dst->h;
+        OP.G  =  OA.G + y * (OB.G-OA.G) / dst->h;
+        OP.B  =  OA.B + y * (OB.B-OA.B) / dst->h;
+#elif 1
+        map_R += OB.R-OA.R;
+        map_G += OB.G-OA.G;
+        map_B += OB.B-OA.B;
+        
+        OP.R  =  map_R/dst->h;
+        OP.G  =  map_G/dst->h;
+        OP.B  =  map_B/dst->h;
+        
+#endif
+
+        BLK_FUNC( Memory, setDWord )( pIter, OP.data, dst->w );
+    }
+    
+    return dst;
+}
+    
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_gradient_h )
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size ){
+    RH_ASSERT( dst      );
+    RH_ASSERT( dst->ptr );
+    RH_ASSERT( dst->h   );
+    RH_ASSERT( dst->w   );
+    
+    const BLK_TYPE(Pixel888) *colors_copy = NULL;
+    {
+        if(size<2){
+            BLK_TYPE(Pixel888) *pTmp = alloca( 2*sizeof(BLK_TYPE(Pixel888)) );
+            RH_ASSERT(pTmp);
+            
+            colors_copy = pTmp;
+
+            for( size_t i=0; i<2; i++, pTmp++ ){
+                if(i<size){
+                    *pTmp = *(colors+i);
+                }else{
+                    *pTmp = M_COLOR_WHITE;
+                }
+            }
+        }else{
+            colors_copy = colors;
+        }
+    }
+    
+    BLK_UION(Pixel888) OP   = {.data = colors_copy[0]};
+    BLK_UION(Pixel888) OA   = {.data = colors_copy[0]};
+    BLK_UION(Pixel888) OB   = {.data = colors_copy[1]};
+    
+    uint32_t map_R = OA.R*dst->w;
+    uint32_t map_G = OA.G*dst->w;
+    uint32_t map_B = OA.B*dst->w;
+    
+    BLK_UION(Pixel888) *pIter = dst->ptr;
+    for( var x=0; x<dst->w; x++, pIter++){
+        
+#if 0
+        OP.R  =  OA.R + x * (OB.R-OA.R) / dst->w;
+        OP.G  =  OA.G + x * (OB.G-OA.G) / dst->w;
+        OP.B  =  OA.B + x * (OB.B-OA.B) / dst->w;
+#elif 1
+        map_R += OB.R-OA.R;
+        map_G += OB.G-OA.G;
+        map_B += OB.B-OA.B;
+        
+        OP.R  =  map_R/dst->w;
+        OP.G  =  map_G/dst->w;
+        OP.B  =  map_B/dst->w;
+        
+        pIter->data = OP.data;
+#endif
+    }
+    
+    for( var y=1; y<dst->h; y++, pIter+=dst->w){
+        memcpy( pIter, dst->ptr, dst->w*sizeof( BLK_TYPE(Pixel888) ));
+    }
+    
     return dst;
 }
 

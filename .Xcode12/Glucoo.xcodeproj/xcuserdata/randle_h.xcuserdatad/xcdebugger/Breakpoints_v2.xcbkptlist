@@ -46,9 +46,9 @@
             filePath = "../core/Glucoo/draw/GLU_render.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "__glu_render_24bit_blur_draw(x, y, ptr)"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "__glu_render_24bit_draw_blur(x, y, ptr)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

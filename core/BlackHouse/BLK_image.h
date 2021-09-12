@@ -172,17 +172,18 @@ BLK_SRCT(Img888)* BLK_FUNC( ImgGry, into_Img888  ) (const BLK_SRCT(ImgGry)* src,
 
 void              BLK_FUNC( Img888, data_OTUS    ) (const BLK_SRCT(Img888)* src,uint8_t* threshold);
 
-BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, draw_img_aurora )( BLK_SRCT(ImgBin)* dst, const BLK_TYPE(PixelBin)* colors, size_t size );
-BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora )( BLK_SRCT(Img565)* dst, const BLK_TYPE(Pixel565)* colors, size_t size );
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(ImgBin)* BLK_FUNC( ImgBin, draw_img_aurora      )( BLK_SRCT(ImgBin)* dst, const BLK_TYPE(PixelBin)* colors, size_t size );
+BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_aurora      )( BLK_SRCT(Img565)* dst, const BLK_TYPE(Pixel565)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_aurora      )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
-BLK_SRCT(ImgGry)* BLK_FUNC( ImgGry, draw_img_radar  )( BLK_SRCT(ImgGry)* dst, const BLK_TYPE(PixelGry)* colors, size_t size );//
-BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_radar  )( BLK_SRCT(Img565)* dst, const BLK_TYPE(Pixel565)* colors, size_t size );//
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_radar  )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(ImgGry)* BLK_FUNC( ImgGry, draw_img_radar       )( BLK_SRCT(ImgGry)* dst, const BLK_TYPE(PixelGry)* colors, size_t size );//
+BLK_SRCT(Img565)* BLK_FUNC( Img565, draw_img_radar       )( BLK_SRCT(Img565)* dst, const BLK_TYPE(Pixel565)* colors, size_t size );//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_radar       )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded  )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
-
-BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur   )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_faded       )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_gradient_v  )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_gradient_h  )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur        )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_       )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
