@@ -78,6 +78,8 @@ typedef struct __Range_t __Range_t;
 #define RH_WEAK       __attribute__((weak))
  
 #define RH_RESTRICT   __restrict
+ 
+#define RH_PROTOTYPE  //__attribute__((deprecated))
 
  extern const char* RH_DIR;           // 当前项目路径
  extern const char* RH_DIR_DESKTOP;

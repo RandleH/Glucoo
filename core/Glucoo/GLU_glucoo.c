@@ -298,6 +298,7 @@ void GLU_FUNC( GUI, EX_addScreenArea )( const __Area_t* area ){
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
 void GLU_FUNC( GUI, refreashEntireScreen )  ( void ){
+//    printf("%d %d\n",GUI_X_WIDTH,GUI_Y_WIDTH);
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __Area_t *p = NULL;
     (*glu_internal_draw_area)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (GLU_TYPE(Pixel)*)Screen.GRAM[M_SCREEN_MAIN][0] );

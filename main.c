@@ -47,57 +47,108 @@ static void open_img(void){
 //}
 
 
+
 # if 1
 
+
+#include "BLK_dsp.h"
+
 int main(int argc, char const *argv[]){
-    printf("%x\n", REVERSE_COLOR( M_COLOR_WHITE ));
+    
+    cvar x[] = { 0,1,2,3,4,5,6,0.8,8,9,10,11,12,13,14,15};
+    BLK_SRCT(Cseq) X    = __BLK_Dsp_dft(x, sizeof(x)/sizeof(*x));
+
+    
+    __BLK_Dsp_fft( NULL, 234);
+    
+    __BLK_Dsp_cseq_free(X);
+    
+    
+    
+#if 0
     
     GLU_GUI_init();
-    
-    GLU_TYPE(Color) colors[2] = { MAKE_COLOR(255,30,90), MAKE_COLOR(255, 205, 50) };
-    
-    BLK_SRCT(Img888) IMG = {.w = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT, .ptr = GLU_GUI_yield_GRAM() };
-
     BLK_Graph_init();
     
-    GLU_Render_set_area(90, 100, 500, 700);
-    GLU_Render_set_color(colors, 2);
+    GLU_TYPE(Color) colors_sky[2] = { MAKE_COLOR( 10, 10, 88 ), MAKE_COLOR( 10, 10, 16) };
+    __Area_t area_sky = {
+        .xs = 0 , .ys = 0,
+        .w  = RH_CFG_SCREEN_WIDTH-1 , .h  = RH_CFG_SCREEN_HEIGHT-1,
+    };
     
-    BLK_Graph_rect_edged(90, 100, 500, 700, &IMG, GLU_Render_24bit_gradient_v );
+    GLU_TYPE(Color) colors_moon[2] = { MAKE_COLOR( 208, 208, 208 ), MAKE_COLOR( 15, 17, 16) };
+    __Area_t area_moon = {
+        .xs = 300 , .ys = 300,
+        .w  = 400 , .h  = 400,
+    };
     
-    int d = 400;
-    BLK_Graph_set_penSize(20);
+    GLU_TYPE(Color) colors_land[2] = { MAKE_COLOR(  24,  44,  21 ), MAKE_COLOR( 20, 20, 20) };
+    __Area_t area_land = {
+        .xs = 0   , .ys = 1790,
+        .w  = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT-1790+1
+    };
     
-    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
-    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_v);
+    GLU_TYPE(Color) colors_roof[2] = { MAKE_COLOR(  31,  31,  31 ), MAKE_COLOR( 11, 10, 20) };
+    __Area_t area_roof = {
+        .xs = 1018 , .ys = 1418,
+        .w  = 660  , .h = 151
+    };
     
-    d = 300;
-    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
-    colors[0] = MAKE_COLOR( 203,  34, 203);
-    colors[1] = MAKE_COLOR( 233, 234, 240);
-    GLU_Render_set_color( colors, 2);
-    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_h);
+    GLU_TYPE(Color) colors_wall[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    __Area_t area_wall = {
+        .xs = area_roof.xs + 100    , .ys = area_roof.ys+area_roof.h,
+        .w  = area_roof.w  - 100*2  , .h  = area_land.ys-(area_roof.ys+area_roof.h)+1
+    };
     
-    d = 200;
-    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
-    colors[0] = MAKE_COLOR(  40, 175, 203);
-    colors[1] = MAKE_COLOR( 240, 240, 240);
-    GLU_Render_set_color( colors, 2);
-    BLK_Graph_circle_edged( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_v);
+    GLU_TYPE(Color) colors_door[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    __Area_t area_door = {
+        .xs = area_wall.xs + 180    , .ys = area_wall.ys+70,
+        .w  = area_wall.w  - 180*2  , .h  = area_wall.h -70
+    };
     
-    d = 100;
-    GLU_Render_set_area(1000-(d>>1), 1000-(d>>1), 1000+(d>>1), 1000+(d>>1));
-    colors[0] = MAKE_COLOR( 240,  40, 140);
-    colors[1] = MAKE_COLOR(  40, 125, 203);
-    GLU_Render_set_color( colors, 2);
-    BLK_Graph_circle_fill( 1000, 1000, d, &IMG, GLU_Render_24bit_gradient_h);
+    // Create a render
+    GLU_Handle_Render_t sky  = GLU_Render_EX_create( &area_sky , colors_sky , 2, kGLU_Render_gradient_v_24bit );
+    GLU_Handle_Render_t moon = GLU_Render_EX_create( &area_moon, colors_moon, 2, kGLU_Render_centered_24bit   );
+    GLU_Handle_Render_t land = GLU_Render_EX_create( &area_land, colors_land, 2, kGLU_Render_gradient_v_24bit );
+    GLU_Handle_Render_t roof = GLU_Render_EX_create( &area_roof, colors_roof, 2, kGLU_Render_gradient_h_24bit );
+    GLU_Handle_Render_t wall = GLU_Render_EX_create( &area_wall, colors_wall, 2, kGLU_Render_gradient_v_24bit );
+    
+    // Given the GRAM
+    BLK_SRCT(Img888) IMG = { .h = RH_CFG_SCREEN_HEIGHT, .w = RH_CFG_SCREEN_WIDTH, .ptr = GLU_GUI_yield_GRAM() };
+    
+    // Draw Sky
+    BLK_Graph_EX_rect_fill(&area_sky, &IMG, GLU_Render_upload(sky) );
+    
+    // Draw Moon
+    BLK_Graph_circle_fill((area_moon.xs+area_moon.w/2), (area_moon.ys+area_moon.h/2), area_moon.w, &IMG, GLU_Render_upload(moon));
+    
+    // Draw land
+    BLK_Graph_EX_rect_fill(&area_land, &IMG, GLU_Render_upload(land) );
+    
+    // Draw roof
+    BLK_Graph_quad_fill(area_roof.xs                  , area_roof.ys+area_roof.h-1,\
+                        area_roof.xs+200              , area_roof.ys              ,\
+                        area_roof.xs+area_roof.w-1    , area_roof.ys+area_roof.h-1, \
+                        area_roof.xs+area_roof.w-200-1, area_roof.ys, &IMG, GLU_Render_upload(roof));
+    
+    // Draw wall
+    BLK_Graph_EX_rect_fill(&area_wall, &IMG, GLU_Render_upload(wall) );
+    
+    // Draw door
+    BLK_Graph_set_penColor(M_COLOR_BLACK);
+    BLK_Graph_EX_rect_fill(&area_door, &IMG, NULL );
     
     GLU_GUI_refreashEntireScreen();
-    
+    GLU_Render_free(moon);
+    GLU_Render_free(land);
+    GLU_Render_free(roof);
     open_img();
+    
     return 0;
+    
+#endif
+    
+    
 }
-
-
 
 #endif

@@ -148,8 +148,8 @@ BLK_FUNC( Math, sigmold       )( double x ){
 long          
 BLK_FUNC( Math, factorial     )( long   x ){ 
     // [!] Limitation: x should be smaller than 20
-    __exitReturn(x<0, -1);
-    
+    __exitReturn(x<0 , -1);
+    __exitReturn(x==0,  1);
     long res = 1;
     while(--x){
         res*=(x+1);
@@ -337,7 +337,15 @@ BLK_FUNC( Math, area_rectangular )(int x1,int y1,int x2,int y2){
     return __abs((x2-x1)*(y2-y1));
 }
 
-
+float
+BLK_FUNC( Math, poisson          )( int xs, int xe, int lamda ){
+    float res = 0.0;
+    for( int i=xs; i<=xe; i++ ){
+        res += powf(lamda,i)/(float)BLK_FUNC(Math,factorial)(i);
+    }
+    res *= exp(-lamda);
+    return res;
+}
 
 double
 BLK_FUNC( Gussian, func_1D    )( long x,long __miu,double __sigma ){

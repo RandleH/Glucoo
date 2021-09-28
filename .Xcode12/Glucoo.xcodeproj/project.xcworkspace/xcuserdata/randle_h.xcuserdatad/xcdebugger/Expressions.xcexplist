@@ -3,6 +3,38 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "main:main.c">
+      </ContextState>
+      <ContextState
+         contextName = "print_cSEQ:BLK_dsp.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "x.D[2]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[0]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[5]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[3]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[1]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[6]">
+            </PersistentString>
+            <PersistentString
+               value = "x.D[4]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__gui_insert_object_button:GLU_object.c">
+      </ContextState>
+      <ContextState
          contextName = "GLU_Utility_optimal_text:GLU_area.c">
          <PersistentStrings>
             <PersistentString
@@ -11,19 +43,30 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__gui_adjust_object_button:GLU_object.c">
-      </ContextState>
-      <ContextState
-         contextName = "__gui_insert_object_button:GLU_object.c">
-      </ContextState>
-      <ContextState
-         contextName = "main:main.c">
-      </ContextState>
-      <ContextState
          contextName = "BLK_Graph_rect_fill:BLK_graphic.c">
       </ContextState>
       <ContextState
+         contextName = "__gui_adjust_object_button:GLU_object.c">
+      </ContextState>
+      <ContextState
          contextName = "__gui_remove_object_button:GLU_object.c">
+      </ContextState>
+      <ContextState
+         contextName = "trans_DFT:BLK_dsp.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "X.D[3]">
+            </PersistentString>
+            <PersistentString
+               value = "X.D[1]">
+            </PersistentString>
+            <PersistentString
+               value = "X.D[4]">
+            </PersistentString>
+            <PersistentString
+               value = "X.D[2]">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>

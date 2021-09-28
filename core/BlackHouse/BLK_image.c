@@ -660,7 +660,19 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer )  (BLK_SRCT(Img888)*      pIMG)
 }
 
 void              BLK_FUNC( Img888, free        )  (BLK_SRCT(Img888)*      ptr){
-    RH_FREE(BLK_FUNC( Img888, free_buffer )(ptr));
+    RH_FREE( BLK_FUNC( Img888, free_buffer )(ptr) );
+}
+    
+
+    
+BLK_SRCT(Img565)* BLK_FUNC( Img565, free_buffer  ) (      BLK_SRCT(Img565)* ptr){
+    return (BLK_SRCT(Img565)*)BLK_FUNC( Img888, free_buffer )  ( (BLK_SRCT(Img888)*) ptr);
+}
+    
+
+    
+void              BLK_FUNC( Img565, free         ) (      BLK_SRCT(Img565)* ptr){
+    RH_FREE( BLK_FUNC( Img565, free_buffer )(ptr) );
 }
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_gray )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint32_t br_100){
@@ -839,7 +851,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
         BLK_UION(Pixel888)* pSrcData = src->ptr;
         BLK_UION(Pixel888)* pDstData = dst->ptr;
         if(pSrcData == dst->ptr){
-            RH_ASSERT(0);
+//            RH_ASSERT(0);
             pDstData = RH_MALLOC(src->h*src->w*sizeof(BLK_UION(Pixel888)));
         }
         
@@ -1062,7 +1074,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
 
 
         if(src->ptr == dst->ptr){
-            RH_ASSERT(0);
+//            RH_ASSERT(0);
             memcpy(dst->ptr,pDstData,src->h*src->w*sizeof(BLK_UION(Pixel888)));
             RH_FREE(pDstData);
         }

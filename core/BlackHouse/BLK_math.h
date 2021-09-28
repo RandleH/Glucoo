@@ -34,6 +34,8 @@ long                  BLK_FUNC( Math, gcd           )   ( long   a,long b     );
       
 long                  BLK_FUNC( Math, factorial     )   ( long   x);
 long                  BLK_FUNC( Math, fibonacci     )   ( long   n);
+
+float                 BLK_FUNC( Math, poisson       )   ( int xs, int xe, int lamda );
       
 double                BLK_FUNC( Gussian, func_1D    )   ( long   x,long __miu  ,double __sigma);
 double                BLK_FUNC( Gussian, func_2D    )   ( long   x,long y      ,double __sigma);

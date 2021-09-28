@@ -50,6 +50,19 @@ struct GLU_SRCT(Text){
 typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
 
 /*===============================================================================================================
+ * GLU_RENDER --- Definition as follow
+===============================================================================================================*/
+typedef enum{
+    kGLU_Render_blur_24bit       ,
+    kGLU_Render_gradient_h_16bit ,
+    kGLU_Render_gradient_h_24bit ,
+    kGLU_Render_gradient_v_16bit ,
+    kGLU_Render_gradient_v_24bit ,
+    kGLU_Render_centered_24bit   ,
+    kGLU_NUM_Render        ,
+}GLU_ENUM(Render);
+
+/*===============================================================================================================
  * GLU_OBJECT --- Definition as follow
 ===============================================================================================================*/
 typedef enum{
@@ -65,7 +78,7 @@ typedef enum{
     kGLU_ObjWidget_joystick ,
     kGLU_ObjWidget_spinbox  ,
     kGLU_ObjWidget_button   ,
-    NUM_kGUI_ObjWidgets    ,
+    NUM_kGUI_ObjWidgets     ,
 }GLU_ENUM(ObjWidget);
 
 /*===============================================================================================================

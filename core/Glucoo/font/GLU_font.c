@@ -14,7 +14,10 @@
 #include "stb_image_write.h"
 #endif
 
-#define MIN_TTF_FONT_SIZE   10
+#define GUI_Y_WIDTH                 RH_CFG_SCREEN_HEIGHT
+#define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
+extern BLK_TYPE(Canvas) info_MainScreen; //...//
+#define canvas info_MainScreen
 
 /*==================================================================================================================================
  *
@@ -498,10 +501,6 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
         {// 字符横向间隙和宽度
             int advanceWidth,leftSideBearing;
             (*FCFG.method->_GetCodepointHMetrics)(&FCFG.stb_info, str[cnt], &advanceWidth, &leftSideBearing );
-//            advanceWidth    = roundf( advanceWidth*FCFG.scale );
-//
-
-//            sx[cnt+1]  = sx[cnt] - leftSideBearing + advanceWidth + roundf( (*FCFG.method->_GetCodepointKernAdvance)( &FCFG.stb_info, str[cnt], str[cnt+1] ) * FCFG.scale) ;
             
             int ax;
             (*FCFG.method->_GetCodepointHMetrics)( &FCFG.stb_info, str[cnt], &ax, 0 );
@@ -565,6 +564,27 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
 #endif
     return &FCFG.img;
 }
+
+void
+GLU_FUNC( Font, out_str    ) ( const char* str, var xs, var ys, F_Render callback ){
+    RH_ASSERT(str);
+    RH_ASSERT(callback);
+    
+    GLU_SRCT(FontImg) *pFontImg = GLU_FUNC( Font, out_str_Img    ) ( str );
+    RH_ASSERT( pFontImg );
+    
+//    GLU_SRCT(FontImg) *pIterFont   = pFontImg;
+//    GLU_UION(Pixel)   *pIterScreen = info_MainScreen.ptr + ys*info_MainScreen.w + xs;
+    
+    // 需要检查渲染器是否已渲染
+    
+//    for(;;){
+//        ...
+//    }
+    
+    
+}
+
 
 #include "BLK_data.h"
 static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){

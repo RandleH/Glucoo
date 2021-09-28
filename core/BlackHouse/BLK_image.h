@@ -147,6 +147,8 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, copy         ) (const BLK_SRCT(Img888)* src,
 BLK_SRCT(Img565)* BLK_FUNC( Img565, conv2D       ) (const BLK_SRCT(Img565)* src,BLK_SRCT(Img565)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100);
 BLK_SRCT(Img888)* BLK_FUNC( Img888, conv2D       ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,const BLK_SRCT(Kernel)* k,uint16_t br_100);
 
+void              BLK_FUNC( Img565, free         ) (      BLK_SRCT(Img565)* ptr);
+BLK_SRCT(Img565)* BLK_FUNC( Img565, free_buffer  ) (      BLK_SRCT(Img565)* ptr);
 void              BLK_FUNC( Img888, free         ) (      BLK_SRCT(Img888)* ptr);
 BLK_SRCT(Img888)* BLK_FUNC( Img888, free_buffer  ) (      BLK_SRCT(Img888)* ptr);
  
