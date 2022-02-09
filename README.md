@@ -2,7 +2,7 @@
 <p align="center">
 <img src="https://raw.githubusercontent.com/RandleH/Glucoo/master/img/glucoo_leopard.bmp" width="400" height="240" border="10">
  </p>
-Express my idea without concern.
+Express ideas without concern.
 
 ---
 
