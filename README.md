@@ -25,14 +25,14 @@ Graph Library for embedded software system.
 | ------------------------- | ---------------------------------------------- |
 | **GUI**                   | **Include `GUI::` as the prefix term.**        |
 | [.init](#GLU_GUI_00)      | Initialize the UI system                       |
-| [.setPenSize](GLU_GUI_01) | Given a pixelwise size of pen, set pen size    |
-| [.setPenColor](GLU_GUI_02)          | Given a RGB color, set it as the pen color     |
-| [.autoDisplay](GLU_GUI_03)          | Refresh the screen automatically               |
-| [.refreashScreen](GLU_GUI_04)       | Refresh the screen from the cache memory       |
-| [.refreashEntireScreen](GLU_GUI_05) | Refresh the screen and empity the cache memory |
-| [.isAutoDisplay](GLU_GUI_06)        | Return the configuration flag                  |
-| [.isInternalGRAM](GLU_GUI_07)       | Return the configuration flag                  |
-| [.isCacheEmpty](GLU_GUI_08)         | Return the configuration flag                  |
+| [.setPenSize](#GLU_GUI_01) | Given a pixelwise size of pen, set pen size    |
+| [.setPenColor](#GLU_GUI_02)          | Given a RGB color, set it as the pen color     |
+| [.autoDisplay](#GLU_GUI_03)          | Refresh the screen automatically               |
+| [.refreashScreen](#GLU_GUI_04)       | Refresh the screen from the cache memory       |
+| [.refreashEntireScreen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
+| [.isAutoDisplay](#GLU_GUI_06)        | Return the configuration flag                  |
+| [.isInternalGRAM](#GLU_GUI_07)       | Return the configuration flag                  |
+| [.isCacheEmpty](#GLU_GUI_08)         | Return the configuration flag                  |
 | **Graph**                 | **Include `GUI::` as the prefix term.**        |
 | [.rect_raw]               |                                                |
 | [.rect_edged]             |                                                |
@@ -206,7 +206,6 @@ bool GLU_GUI_isInternalGRAM( void );
 ```c++
 bool GLU_GUI_isCacheEmpty( void );
 ```
-
 
 
 
