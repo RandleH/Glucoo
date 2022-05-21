@@ -34,29 +34,29 @@ Graph Library for embedded software system.
 | [.isInternalGRAM](#GLU_GUI_07)       | Return the configuration flag                  |
 | [.isCacheEmpty](#GLU_GUI_08)         | Return the configuration flag                  |
 | **Graph**                 | **Include `GUI::` as the prefix term.**        |
-| [.rect_raw]               |                                                |
-| [.rect_edged]             |                                                |
-| [.rect_fill]              |                                                |
-| [.rect_round_fill]        |                                                |
-| [.EX_rect_raw]            |                                                |
-| [.EX_rect_edged]          |                                                |
-| [.EX_rect_fill]           |                                                |
-| [.circle_raw]             |                                                |
-| [.circle_edged]           |                                                |
-| [.circle_fill]            |                                                |
-| [.circle_qrt1_fill]       |                                                |
-| [.circle_qrt2_fill]       |                                                |
-| [.circle_qrt3_fill]       |                                                |
-| [.circle_qrt4_fill]       |                                                |
-| [.circle_qrt1_raw]        |                                                |
-| [.circle_qrt2_raw]        |                                                |
-| [.circle_qrt3_raw]        |                                                |
-| [.circle_qrt4_raw]        |                                                |
-| [.capsule_raw]            |                                                |
-| [.line_raw]               |                                                |
-| [.quad_raw]               |                                                |
-| [.screen_fill]            |                                                |
-| [.yield_GRAM]             |                                                |
+| [.rect_raw]               | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
+| [.rect_edged]             | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
+| [.rect_fill]              | Given the two corners coordinate of its diagnal edge, fill a rectangular area |
+| [.rect_round_fill]        | Given the two corners coordinate of its diagnal edge, draw a rounded rectangular |
+| [.EX_rect_raw]            | Use the `__Area_t` type instead of coordinate |
+| [.EX_rect_edged]          | (same) |
+| [.EX_rect_fill]           | (same) |
+| [.circle_raw]             | Given the radius and (`X` ,`Y`), draw a circle with width `1` |
+| [.circle_edged]           | Given the radius and (`X` ,`Y`), draw a circle with width of pen size. |
+| [.circle_fill]            | Given the radius and (`X` ,`Y`), fill a circle |
+| [.circle_qrt1_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 1st quadrant |
+| [.circle_qrt2_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 2nd quadrant |
+| [.circle_qrt3_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 3rd quadrant |
+| [.circle_qrt4_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 4th quadrant |
+| [.circle_qrt1_raw]        | (same) |
+| [.circle_qrt2_raw]        | (same) |
+| [.circle_qrt3_raw]        | (same) |
+| [.circle_qrt4_raw]        | (same) |
+| [.capsule_raw]            | Given 2 points, draw a line in the shape of capsule |
+| [.line_raw]               | Given 2 points, draw a line |
+| [.quad_raw]               | Given 4 corners coordinate, draw a quadrilateral |
+| [.screen_fill]            | Fill the screen |
+| [.yield_GRAM]             | Export the address of Graph RAM |
 
 
 
