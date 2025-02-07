@@ -31,9 +31,8 @@ Graph Library for embedded software system.
 | [.auto_refreash](#GLU_GUI_03) | Refresh the screen automatically               |
 | [.refreash_screen](#GLU_GUI_04) | Refresh the screen from the cache memory       |
 | [.refreash_full_screen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
-| [.isAutoDisplay](#GLU_GUI_06)        | Return the configuration flag                  |
-| [.isInternalGRAM](#GLU_GUI_07)       | Return the configuration flag                  |
-| [.isCacheEmpty](#GLU_GUI_08)         | Return the configuration flag                  |
+| [glu_dev_is_auto_refreash](#GLU_GUI_06) | Return the configuration flag                  |
+| [glu_dev_is_refreash_done](#GLU_GUI_08) | Return the configuration flag                  |
 | **Graph**                 | **Include `GUI::` as the prefix term.**        |
 | [.rect_raw]               | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
 | [.rect_edged]             | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |

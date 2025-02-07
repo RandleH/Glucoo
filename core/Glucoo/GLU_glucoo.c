@@ -339,19 +339,12 @@ void glu_dev_auto_refreash(cmnBoolean_t flag){
     Screen.config.auto_refreash = flag;
 }
 
-inline bool GLU_FUNC( GUI, isAutoDisplay  ) ( void ){
+inline cmnBoolean_t glu_dev_is_auto_refreash(void){
     return (bool)(Screen.config.auto_refreash==true);
 }
 
-inline bool GLU_FUNC( GUI, isInternalGRAM ) ( void ){
-#if ( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
-    return true;
-#else
-    return false;
-#endif
-}
 
-inline bool GLU_FUNC( GUI, isCacheEmpty   ) ( void ){
+inline cmnBoolean_t glu_dev_is_refreash_done(void){
     return BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead );
 }
 
