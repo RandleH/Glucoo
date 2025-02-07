@@ -105,8 +105,7 @@ void glu_gui_init( void) GLU_API;
 void glu_gui_set_penSize(size_t penSize) GLU_API;
 void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 
-
-void GLU_FUNC( GUI, autoDisplay )            ( bool             cmd      );
+void glu_dev_auto_refreash(cmnBoolean_t flag);
 
 
 void GLU_FUNC( GUI, refreashScreen       )   ( void );

@@ -78,7 +78,14 @@ static struct{
 #endif
     size_t           allocated_byte;
 
-    bool             autoDisplay;
+    cmnBoolean_t     autoRefreash;
+    union{
+        struct{
+            uint8_t auto_refreash : 1;
+            uint8_t reserved      : 7;
+        };
+        uint8_t word;
+    }config;
 
     __LINK_AreaRefreash*     areaNeedRefreashHead;
     size_t                   areaNeedRefreashCnt;
@@ -132,7 +139,7 @@ void glu_gui_init( void){
 #endif
     BLK_FUNC( Graph, set_render_method )  ( kBLK_RenderMethod_fill );
 
-    Screen.autoDisplay = false;
+    Screen.config.auto_refreash = false;
 
     Screen.allocated_byte = 0;
     Screen.areaNeedRefreashHead = BLK_FUNC( Stack, createBase )( NULL );
@@ -320,8 +327,8 @@ void glu_gui_set_penColor(gluColor_t penColor){
 
 
 
-void GLU_FUNC( GUI, autoDisplay )           ( bool      cmd      ){
-    if( cmd ){
+void glu_dev_auto_refreash(cmnBoolean_t flag){
+    if( flag ){
         GLU_FUNC( GUI, refreashScreen )();
 #ifdef RH_DEBUG
         RH_ASSERT( Screen.areaNeedRefreashCnt      == 0 );
@@ -329,11 +336,11 @@ void GLU_FUNC( GUI, autoDisplay )           ( bool      cmd      ){
         RH_ASSERT( BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) );
 #endif
     }
-    Screen.autoDisplay = cmd;
+    Screen.config.auto_refreash = flag;
 }
 
 inline bool GLU_FUNC( GUI, isAutoDisplay  ) ( void ){
-    return (bool)(Screen.autoDisplay==true);
+    return (bool)(Screen.config.auto_refreash==true);
 }
 
 inline bool GLU_FUNC( GUI, isInternalGRAM ) ( void ){

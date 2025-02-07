@@ -370,7 +370,16 @@ typedef volatile uint64_t       vu64;
 #define BLK_API
 #define GLU_API
 #define SMP_API
- 
+
+typedef uint8_t cmnBoolean_t;
+
+#define NO  0
+#define YES 1
+
+#define IDLE 0
+#define BUSY 1
+
+
 #if 0
 #error "Read the following tips and remove this error first."
 

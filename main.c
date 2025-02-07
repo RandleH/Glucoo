@@ -60,7 +60,7 @@ static void open_img(void){
 int main(int argc, char const *argv[]){
     glu_gui_init();
 
-    GLU_GUI_autoDisplay(true);
+    glu_dev_auto_refreash(YES);
     
     GLU_SRCT(Text) text = {
         .str   = "YuanJi"          ,

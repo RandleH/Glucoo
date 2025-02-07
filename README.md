@@ -110,7 +110,7 @@ void GLU_GUI_setPenColor( GLU_TYPE(Color)  penColor );
 <div id="GLU_GUI_03"></div>
 
 ```c++
-void GLU_GUI_autoDisplay( bool cmd );
+void glu_dev_auto_refreash(cmnBoolean_t flag);
 ```
 
 
