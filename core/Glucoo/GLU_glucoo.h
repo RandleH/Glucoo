@@ -41,7 +41,7 @@ typedef enum{
 struct GLU_SRCT(Text){
     GLU_ENUM(Font)   font;
     uint16_t         size;
-    GLU_TYPE(Color)  color;
+    gluColor_t       color;
     GLU_ENUM(Align)  align;
     const char*      str;
     bool             ul;
@@ -102,8 +102,10 @@ typedef enum{
 ===============================================================================================================*/
 void glu_gui_init( void) GLU_API;
 
-void GLU_FUNC( GUI, setPenSize  )            ( size_t           penSize  );
-void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );
+void glu_gui_set_penSize(size_t penSize) GLU_API;
+void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
+
+
 void GLU_FUNC( GUI, autoDisplay )            ( bool             cmd      );
 
 
@@ -143,7 +145,7 @@ void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
 void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4 );
 
-void GLU_FUNC( GUI, screen_fill      )       ( GLU_TYPE(Color) M_COLOR_xxxx );
+void GLU_FUNC( GUI, screen_fill      )       ( gluColor_t M_COLOR_xxxx );
 
 void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
 

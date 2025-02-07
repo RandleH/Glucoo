@@ -206,7 +206,7 @@ void GLU_FUNC( GUI, quad_raw         )   ( int x1,int y1,int x2,int y2,int x3,in
 }
 
 
-void GLU_FUNC( GUI, screen_fill      )   ( GLU_TYPE(Color) M_COLOR_xxxx ){
+void GLU_FUNC( GUI, screen_fill      )   ( gluColor_t M_COLOR_xxxx ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
 
     GLU_TYPE(Pixel) color = COLOR_1BIT(M_COLOR_xxxx);

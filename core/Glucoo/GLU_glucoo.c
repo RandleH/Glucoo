@@ -309,13 +309,16 @@ void GLU_FUNC( GUI, refreashEntireScreen )  ( void ){
     (*glu_internal_user_disp)();
 }
 
-void GLU_FUNC( GUI, setPenSize  )           ( size_t    penSize  ){
+
+void glu_gui_set_penSize(size_t penSize){
     BLK_FUNC( Graph, set_penSize ) ( penSize );
 }
 
-void GLU_FUNC( GUI, setPenColor )           ( uint32_t penColor ){
+void glu_gui_set_penColor(gluColor_t penColor){
     BLK_FUNC( Graph, set_penColor )(penColor);
 }
+
+
 
 void GLU_FUNC( GUI, autoDisplay )           ( bool      cmd      ){
     if( cmd ){

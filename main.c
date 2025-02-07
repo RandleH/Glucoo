@@ -70,7 +70,7 @@ int main(int argc, char const *argv[]){
         .font  = kGLU_Font_Optima  ,
     };
 
-    GLU_TYPE(Color) color[] = {
+    gluColor_t color[] = {
         M_COLOR_RED,
         M_COLOR_YELLOW,
         M_COLOR_GREEN,
@@ -99,37 +99,37 @@ int main(int argc, char const *argv[]){
     GLU_GUI_init();
     BLK_Graph_init();
     
-    GLU_TYPE(Color) colors_sky[2] = { MAKE_COLOR( 10, 10, 88 ), MAKE_COLOR( 10, 10, 16) };
+    gluColor_t colors_sky[2] = { MAKE_COLOR( 10, 10, 88 ), MAKE_COLOR( 10, 10, 16) };
     __Area_t area_sky = {
         .xs = 0 , .ys = 0,
         .w  = RH_CFG_SCREEN_WIDTH-1 , .h  = RH_CFG_SCREEN_HEIGHT-1,
     };
     
-    GLU_TYPE(Color) colors_moon[2] = { MAKE_COLOR( 208, 208, 208 ), MAKE_COLOR( 15, 17, 16) };
+    gluColor_t colors_moon[2] = { MAKE_COLOR( 208, 208, 208 ), MAKE_COLOR( 15, 17, 16) };
     __Area_t area_moon = {
         .xs = 300 , .ys = 300,
         .w  = 400 , .h  = 400,
     };
     
-    GLU_TYPE(Color) colors_land[2] = { MAKE_COLOR(  24,  44,  21 ), MAKE_COLOR( 20, 20, 20) };
+    gluColor_t colors_land[2] = { MAKE_COLOR(  24,  44,  21 ), MAKE_COLOR( 20, 20, 20) };
     __Area_t area_land = {
         .xs = 0   , .ys = 1790,
         .w  = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT-1790+1
     };
     
-    GLU_TYPE(Color) colors_roof[2] = { MAKE_COLOR(  31,  31,  31 ), MAKE_COLOR( 11, 10, 20) };
+    gluColor_t colors_roof[2] = { MAKE_COLOR(  31,  31,  31 ), MAKE_COLOR( 11, 10, 20) };
     __Area_t area_roof = {
         .xs = 1018 , .ys = 1418,
         .w  = 660  , .h = 151
     };
     
-    GLU_TYPE(Color) colors_wall[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    gluColor_t colors_wall[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
     __Area_t area_wall = {
         .xs = area_roof.xs + 100    , .ys = area_roof.ys+area_roof.h,
         .w  = area_roof.w  - 100*2  , .h  = area_land.ys-(area_roof.ys+area_roof.h)+1
     };
     
-    GLU_TYPE(Color) colors_door[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    gluColor_t colors_door[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
     __Area_t area_door = {
         .xs = area_wall.xs + 180    , .ys = area_wall.ys+70,
         .w  = area_wall.w  - 180*2  , .h  = area_wall.h -70

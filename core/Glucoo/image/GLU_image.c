@@ -12,7 +12,7 @@ extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var 
 extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
 extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
-static void __draw_aurora( const GLU_TYPE(Color)* colors, uint8_t size ){
+static void __draw_aurora( const gluColor_t* colors, uint8_t size ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_TYPE(Pixel)* colors_1Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
     for( uint8_t i=0; i<size; i++){
@@ -32,7 +32,7 @@ static void __draw_aurora( const GLU_TYPE(Color)* colors, uint8_t size ){
 #endif
 }
 
-static void __draw_blur( const GLU_TYPE(Color)* colors, uint8_t size ){
+static void __draw_blur( const gluColor_t* colors, uint8_t size ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_TYPE(Pixel)* colors_1Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
     for( uint8_t i=0; i<size; i++){
@@ -52,7 +52,7 @@ static void __draw_blur( const GLU_TYPE(Color)* colors, uint8_t size ){
 #endif
 }
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 ){
+void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const gluColor_t* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 ){
     
     RH_ASSERT(colors);
     RH_ASSERT(size);
