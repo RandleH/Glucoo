@@ -215,7 +215,7 @@ void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area ){
 }
 
 /*==============================================================================================================
- * GLU_FUNC( GUI, refreashScreen )
+ * glu_dev_refreash_screen()
  ===============================================================================================================
  * 此函数将会根据缓存情况进行屏幕刷新.
  *
@@ -227,7 +227,7 @@ void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area ){
    <__Area_t>结构体指针不会有图像数据.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
-void GLU_FUNC( GUI, refreashScreen )         ( void ){
+void glu_dev_refreash_screen(void){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __exit( Screen.areaNeedRefreashHead == NULL );
     __Area_t *p = NULL;
@@ -303,7 +303,7 @@ void GLU_FUNC( GUI, EX_addScreenArea )( const __Area_t* area ){
  * 如果配置为内置显存, 那么将会把Screen中的显存全部刷新, 无论是否有待刷新区域, 都会执行整屏刷新.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
-void GLU_FUNC( GUI, refreashEntireScreen )  ( void ){
+void glu_dev_refreash_full_screen(void){
 //    printf("%d %d\n",GUI_X_WIDTH,GUI_Y_WIDTH);
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __Area_t *p = NULL;
@@ -329,7 +329,7 @@ void glu_gui_set_penColor(gluColor_t penColor){
 
 void glu_dev_auto_refreash(cmnBoolean_t flag){
     if( flag ){
-        GLU_FUNC( GUI, refreashScreen )();
+        glu_dev_refreash_screen();
 #ifdef RH_DEBUG
         RH_ASSERT( Screen.areaNeedRefreashCnt      == 0 );
         RH_ASSERT( Screen.areaNeedRefreashPixelCnt == 0 );

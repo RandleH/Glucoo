@@ -25,11 +25,12 @@ Graph Library for embedded software system.
 | ------------------------- | ---------------------------------------------- |
 | **GUI**                   | **Include `GUI::` as the prefix term.**        |
 | [.init](#GLU_GUI_00)      | Initialize the UI system                       |
-| [.setPenSize](#GLU_GUI_01) | Given a pixelwise size of pen, set pen size    |
-| [.setPenColor](#GLU_GUI_02)          | Given a RGB color, set it as the pen color     |
-| [.autoDisplay](#GLU_GUI_03)          | Refresh the screen automatically               |
-| [.refreashScreen](#GLU_GUI_04)       | Refresh the screen from the cache memory       |
-| [.refreashEntireScreen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
+| [.set_penSize](#GLU_GUI_01) | Given a pixelwise size of pen, set pen size    |
+| [.set_penColor](#GLU_GUI_02)          | Given a RGB color, set it as the pen color     |
+| **DEV** | **Include `DEV::` as the prefix term.** |
+| [.auto_refreash](#GLU_GUI_03) | Refresh the screen automatically               |
+| [.refreash_screen](#GLU_GUI_04) | Refresh the screen from the cache memory       |
+| [.refreash_full_screen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
 | [.isAutoDisplay](#GLU_GUI_06)        | Return the configuration flag                  |
 | [.isInternalGRAM](#GLU_GUI_07)       | Return the configuration flag                  |
 | [.isCacheEmpty](#GLU_GUI_08)         | Return the configuration flag                  |
@@ -119,13 +120,13 @@ void glu_dev_auto_refreash(cmnBoolean_t flag);
 
 
 
-### `GUI::refreashScreen` 
+### `DEV::refreashScreen` 
 
 ---
 <div id="GLU_GUI_04"></div>
 
 ```c++
-void GLU_GUI_refreashScreen( void );
+void glu_dev_refreash_screen(void);
 ```
 
 
@@ -134,13 +135,13 @@ void GLU_GUI_refreashScreen( void );
 
 
 
-### `GUI::refreashEntireScreen` 
+### `DEV::refreash_full_screen` 
 
 ---
 <div id="GLU_GUI_05"></div>
 
 ```c++
-void GLU_GUI_refreashEntireScreen( void );
+void glu_dev_refreash_full_screen(void);
 ```
 
 
@@ -206,7 +207,6 @@ bool GLU_GUI_isInternalGRAM( void );
 ```c++
 bool GLU_GUI_isCacheEmpty( void );
 ```
-
 
 
 

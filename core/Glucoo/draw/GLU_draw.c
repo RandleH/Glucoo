@@ -243,7 +243,7 @@ void GLU_FUNC( GUI, screen_fill      )   ( gluColor_t M_COLOR_xxxx ){
 #endif
 
     GLU_FUNC( GUI, isAutoDisplay )() ? \
-        GLU_FUNC( GUI, refreashEntireScreen )()
+        glu_dev_refreash_full_screen()
         :
         GLU_FUNC( GUI, addScreenArea      )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
 
