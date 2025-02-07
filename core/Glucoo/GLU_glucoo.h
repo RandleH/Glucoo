@@ -100,7 +100,7 @@ typedef enum{
 /*===============================================================================================================
  * 定义于 [ ./GLU_glucoo.c ]
 ===============================================================================================================*/
-void GLU_FUNC( GUI, init )        ( void );
+void glu_gui_init( void) GLU_API;
 
 void GLU_FUNC( GUI, setPenSize  )            ( size_t           penSize  );
 void GLU_FUNC( GUI, setPenColor )            ( GLU_TYPE(Color)  penColor );

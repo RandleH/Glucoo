@@ -93,8 +93,7 @@ BLK_TYPE(Canvas) info_MainScreen = { //...//
     .w  = GUI_X_WIDTH ,
 };
 
-void GLU_FUNC( GUI, init )        ( void ){
-    
+void glu_gui_init( void){
     extern GLU_API void GLU_API_draw_area  ( var x1, var y1, var x2, var y2, const GLU_TYPE(Pixel)* pixData );
     extern GLU_API void GLU_API_draw_pixel ( var x, var y, const GLU_TYPE(Pixel) pixData );
     extern GLU_API void GLU_API_user_init  ( void );

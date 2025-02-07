@@ -2,7 +2,7 @@
 #include "RH_common.h"
 #include "RH_config.h"
 
-#include "GLU_render.h"
+// #include "GLU_render.h"
 #include "GLU_glucoo.h"
 #include "GLU_area.h"
 

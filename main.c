@@ -11,7 +11,7 @@
 #include "GLU_image.h"
 #include "GLU_object.h"
 
-#include "GLU_render.h"
+// #include "GLU_render.h"
 
 #include "BLK_graphic.h"
 
@@ -53,8 +53,35 @@ static void open_img(void){
 
 #include "BLK_dsp.h"
 
+
+
+
+
 int main(int argc, char const *argv[]){
+    glu_gui_init();
+
+    GLU_GUI_autoDisplay(true);
     
+    GLU_SRCT(Text) text = {
+        .str   = "YuanJi"          ,
+        .size  = 700               ,
+        .color = M_COLOR_BLACK     ,
+        .align = kGLU_Align_Middle ,
+        .font  = kGLU_Font_Optima  ,
+    };
+
+    GLU_TYPE(Color) color[] = {
+        M_COLOR_RED,
+        M_COLOR_YELLOW,
+        M_COLOR_GREEN,
+        M_COLOR_CYAN,
+        M_COLOR_BLUE
+    };
+
+    GLU_Image_profile( kGLU_ImageStyle_aurora, &color[0], sizeof(color)/sizeof(*color), NULL, 45 );
+
+
+#if 0
     cvar x[] = { 0,1,2,3,4,5,6,0.8,8,9,10,11,12,13,14,15};
     BLK_SRCT(Cseq) X    = __BLK_Dsp_dft(x, sizeof(x)/sizeof(*x));
 
@@ -62,6 +89,8 @@ int main(int argc, char const *argv[]){
     __BLK_Dsp_fft( NULL, 234);
     
     __BLK_Dsp_cseq_free(X);
+
+#endif
     
     
     

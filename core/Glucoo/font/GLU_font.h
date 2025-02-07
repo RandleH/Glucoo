@@ -7,7 +7,7 @@
 
 #include "BLK_graphic.h"
 #include "GLU_pixel.h"
-#include "GLU_render.h"
+// #include "GLU_render.h"
 #include "GLU_glucoo.h"
 
 #ifdef __cpluplus

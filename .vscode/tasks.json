@@ -1,0 +1,9 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "Rebuild",
+        "command": "sh",
+        "args": ["${workspaceFolder}/rebuild.sh"],
+        "type": "shell"
+    }]
+}
