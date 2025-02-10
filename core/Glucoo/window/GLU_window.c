@@ -7,10 +7,6 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
-extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
 static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #ifdef RH_DEBUG
@@ -418,8 +414,8 @@ E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
 #endif
     (*((__GUI_Window_t*)ID)->insert_func)( (__GUI_Window_t*)ID );
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &((__GUI_Window_t*)ID)->area )
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &((__GUI_Window_t*)ID)->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex( &((__GUI_Window_t*)ID)->area )
+                                     : glu_dev_add_refreash_area_ex( &((__GUI_Window_t*)ID)->area );
     
     return MAKE_ENUM( kStatus_Success );
 }

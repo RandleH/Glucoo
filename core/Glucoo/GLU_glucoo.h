@@ -106,22 +106,26 @@ void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 
 void glu_dev_auto_refreash(cmnBoolean_t flag);
 void glu_dev_refreash_screen(void);
+void glu_dev_refreash_partial_screen( int xs, int ys, int xe, int ye);
+void glu_dev_refreash_partial_screen_ex( const __Area_t* area);
 void glu_dev_refreash_full_screen(void);
-inline cmnBoolean_t glu_dev_is_auto_refreash(void);
-inline cmnBoolean_t glu_dev_is_refreash_done(void);
+void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye);
+void glu_dev_add_refreash_area_ex( const __Area_t* area);
+
+cmnBoolean_t glu_dev_is_auto_refreash(void);
+cmnBoolean_t glu_dev_is_refreash_done(void);
 
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_draw.c ]
 ===============================================================================================================*/
-void GLU_FUNC( GUI, rect_raw         )       ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, rect_edged       )       ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, rect_fill        )       ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, rect_round_fill  )       ( int xs,int ys,int xe,int ye );
 
-void GLU_FUNC( GUI, EX_rect_raw      )       ( const __Area_t* pArea );
-void GLU_FUNC( GUI, EX_rect_edged    )       ( const __Area_t* pArea );
-void GLU_FUNC( GUI, EX_rect_fill     )       ( const __Area_t* pArea );
+void glu_draw_rectangle         ( int xs, int ys, int xe, int ye);
+void glu_draw_rectangle_edged   ( int xs, int ys, int xe, int ye);
+void glu_draw_rectangle_filled  ( int xs, int ys, int xe, int ye);
+void glu_draw_rectangle_rounded ( int xs, int ys, int xe, int ye);
+
+
 
 void GLU_FUNC( GUI, circle_raw       )       ( int x ,int y ,int d );
 void GLU_FUNC( GUI, circle_edged     )       ( int x ,int y ,int d );

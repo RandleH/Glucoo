@@ -12,10 +12,6 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
-extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
 
 static void __gui_remove_object_text      ( const GLU_SRCT(Object)* config ){
@@ -1819,8 +1815,8 @@ E_Status_t        GLU_FUNC( Object, frame    )  ( ID_t ID  , bool  cmd   ){
     }
     p->showFrame = cmd;
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &p->area )\
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &p->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&p->area)\
+                                     : glu_dev_add_refreash_area_ex(&p->area);
     return MAKE_ENUM( kStatus_Success );
 }
 
@@ -1832,8 +1828,8 @@ E_Status_t        GLU_FUNC( Object, insert   )  ( ID_t ID ){
 #endif
     
     (*config->insert_func)( config );
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )\
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&config->area)\
+                                     : glu_dev_add_refreash_area_ex(&config->area);
     return MAKE_ENUM( kStatus_Success );
 }
 
@@ -1846,8 +1842,8 @@ E_Status_t        GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, siz
 #endif
     memcpy(config->dataScr, dataScr, dataSize);
     (*config->adjust_func)(config);
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )\
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&config->area)\
+                                     : glu_dev_add_refreash_area_ex(&config->area);
     return MAKE_ENUM( kStatus_Success );
 }
 
@@ -1863,8 +1859,8 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
     
     BLK_FUNC( Graph, EX_rect_fill )( &config->area, &info_MainScreen, NULL);
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &config->area )
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &config->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&config->area)
+                                     : glu_dev_add_refreash_area_ex(&config->area);
     
     RH_FREE( config );
     BLK_FUNC( Graph, restoreCache )();

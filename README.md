@@ -32,7 +32,7 @@ Graph Library for embedded software system.
 | [.refreash_screen](#GLU_GUI_04) | Refresh the screen from the cache memory       |
 | [.refreash_full_screen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
 | [glu_dev_is_auto_refreash](#GLU_GUI_06) | Return the configuration flag                  |
-| [glu_dev_is_refreash_done](#GLU_GUI_08) | Return the configuration flag                  |
+| [glu_dev_is_refreash_done](#GLU_GUI_07) | Return the configuration flag                  |
 | **Graph**                 | **Include `GUI::` as the prefix term.**        |
 | [.rect_raw]               | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
 | [.rect_edged]             | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
@@ -66,7 +66,7 @@ Graph Library for embedded software system.
 <div id="GLU_GUI_00"></div>
 
 ```c++
-void GLU_GUI_init( void );
+void glu_gui_init( void) GLU_API;
 ```
 
 
@@ -81,7 +81,7 @@ void GLU_GUI_init( void );
 <div id="GLU_GUI_01"></div>
 
 ```c++
-void GLU_GUI_setPenSize( size_t penSize );
+void glu_gui_set_penSize(size_t penSize) GLU_API;
 ```
 
 
@@ -96,7 +96,7 @@ void GLU_GUI_setPenSize( size_t penSize );
 <div id="GLU_GUI_02"></div>
 
 ```c++
-void GLU_GUI_setPenColor( GLU_TYPE(Color)  penColor );
+void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 ```
 
 
@@ -105,17 +105,13 @@ void GLU_GUI_setPenColor( GLU_TYPE(Color)  penColor );
 
 
 
-### `GUI::autoDisplay` 
+### `DEV::auto_refreash` 
 ---
 <div id="GLU_GUI_03"></div>
 
 ```c++
 void glu_dev_auto_refreash(cmnBoolean_t flag);
 ```
-
-
-
-
 
 
 
@@ -127,12 +123,6 @@ void glu_dev_auto_refreash(cmnBoolean_t flag);
 ```c++
 void glu_dev_refreash_screen(void);
 ```
-
-
-
-
-
-
 
 ### `DEV::refreash_full_screen` 
 
@@ -148,63 +138,23 @@ void glu_dev_refreash_full_screen(void);
 
 
 
-
-
-
-### `GUI::refreashEntireScreen` 
-
----
-<div id="GLU_GUI_05"></div>
-
-```c++
-void GLU_GUI_refreashEntireScreen( void );
-```
-
-
-
-
-
-
-
-### `GUI::isAutoDisplay` 
+### `DEV::is_auto_refreash`
 
 ---
 <div id="GLU_GUI_06"></div>
 
 ```c++
-bool GLU_GUI_isAutoDisplay( void );
+inline cmnBoolean_t glu_dev_is_auto_refreash(void)
 ```
 
 
-
-
-
-
-
-### `GUI::isInternalGRAM` 
+### `DEV::is_refreash_done`
 
 ---
 <div id="GLU_GUI_07"></div>
 
 ```c++
-bool GLU_GUI_isInternalGRAM( void );
-```
-
-
-
-
-
-
-
-
-
-### `GUI::isCacheEmpty` 
-
----
-<div id="GLU_GUI_08"></div>
-
-```c++
-bool GLU_GUI_isCacheEmpty( void );
+inline cmnBoolean_t glu_dev_is_refreash_done(void);
 ```
 
 

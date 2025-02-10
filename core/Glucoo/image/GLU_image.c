@@ -7,10 +7,6 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
-extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
 static void __draw_aurora( const gluColor_t* colors, uint8_t size ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
@@ -113,11 +109,10 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const gluColor_t* c
         GLU_FUNC( Font , restoreCache )();
     }
 
-    if(GLU_FUNC( GUI, isAutoDisplay ))
-        GLU_FUNC( GUI, refreashScreenArea )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
+    if(glu_dev_is_auto_refreash())
+        glu_dev_refreash_partial_screen(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
     else
-        GLU_FUNC( GUI, addScreenArea      )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
-
+        glu_dev_add_refreash_area(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
 }
 
 
