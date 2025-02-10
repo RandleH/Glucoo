@@ -104,13 +104,13 @@ void glu_gui_init( void) GLU_API;
 void glu_gui_set_penSize(size_t penSize) GLU_API;
 void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 
-void glu_dev_auto_refreash(cmnBoolean_t flag);
-void glu_dev_refreash_screen(void);
-void glu_dev_refreash_partial_screen( int xs, int ys, int xe, int ye);
-void glu_dev_refreash_partial_screen_ex( const __Area_t* area);
-void glu_dev_refreash_full_screen(void);
-void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye);
-void glu_dev_add_refreash_area_ex( const __Area_t* area);
+void glu_dev_auto_refreash(cmnBoolean_t flag) GLU_API;
+void glu_dev_refreash_screen(void) GLU_API;
+void glu_dev_refreash_partial_screen( int xs, int ys, int xe, int ye) GLU_API;
+void glu_dev_refreash_partial_screen_ex( const __Area_t* area) GLU_API;
+void glu_dev_refreash_full_screen(void) GLU_API;
+void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye) GLU_API;
+void glu_dev_add_refreash_area_ex( const __Area_t* area) GLU_API;
 
 cmnBoolean_t glu_dev_is_auto_refreash(void);
 cmnBoolean_t glu_dev_is_refreash_done(void);
@@ -125,19 +125,17 @@ void glu_draw_rectangle_edged   ( int xs, int ys, int xe, int ye);
 void glu_draw_rectangle_filled  ( int xs, int ys, int xe, int ye);
 void glu_draw_rectangle_rounded ( int xs, int ys, int xe, int ye);
 
-
-
-void GLU_FUNC( GUI, circle_raw       )       ( int x ,int y ,int d );
-void GLU_FUNC( GUI, circle_edged     )       ( int x ,int y ,int d );
-void GLU_FUNC( GUI, circle_fill      )       ( int x ,int y ,int d );
-void GLU_FUNC( GUI, circle_qrt1_fill )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt2_fill )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt3_fill )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt4_fill )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt1_raw  )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt2_raw  )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt3_raw  )       ( int x ,int y ,int r );
-void GLU_FUNC( GUI, circle_qrt4_raw  )       ( int x ,int y ,int r );
+void glu_draw_circle           ( int x ,int y ,int d);
+void glu_draw_circle_edged     ( int x ,int y ,int d);
+void glu_draw_circle_fill      ( int x ,int y ,int d);
+void glu_draw_circle_qrt1      ( int x ,int y ,int r);
+void glu_draw_circle_qrt2      ( int x ,int y ,int r);
+void glu_draw_circle_qrt3      ( int x ,int y ,int r);
+void glu_draw_circle_qrt4      ( int x ,int y ,int r);
+void glu_draw_circle_qrt1_fill ( int x ,int y ,int r);
+void glu_draw_circle_qrt2_fill ( int x ,int y ,int r);
+void glu_draw_circle_qrt3_fill ( int x ,int y ,int r);
+void glu_draw_circle_qrt4_fill ( int x ,int y ,int r);
 
 void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
 void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );

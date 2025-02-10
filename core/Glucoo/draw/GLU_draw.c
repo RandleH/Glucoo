@@ -41,7 +41,7 @@ void glu_draw_rectangle_rounded( int xs, int ys, int xe, int ye){
 }
 
 
-void GLU_FUNC( GUI, circle_raw       )   ( int x , int y , int d ){
+void glu_draw_circle( int x ,int y ,int d){
     int xs = RH_LIMIT( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
     int xe = RH_LIMIT( (x+(d>>1)+1), 0, GUI_X_WIDTH-1 );
     int ys = RH_LIMIT( (y-(d>>1)-1), 0, GUI_Y_WIDTH-1 );
@@ -50,7 +50,7 @@ void GLU_FUNC( GUI, circle_raw       )   ( int x , int y , int d ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_edged     )   ( int x , int y , int d ){
+void glu_draw_circle_edged( int x , int y , int d){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
@@ -61,7 +61,7 @@ void GLU_FUNC( GUI, circle_edged     )   ( int x , int y , int d ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_fill      )   ( int x , int y , int d ){
+void glu_draw_circle_fill( int x , int y , int d){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-(d>>1)-1), 0, GUI_X_WIDTH-1 );
@@ -72,7 +72,7 @@ void GLU_FUNC( GUI, circle_fill      )   ( int x , int y , int d ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_qrt1_fill )   ( int x , int y , int r ){
+void glu_draw_circle_qrt1_fill( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x    ), 0, GUI_X_WIDTH-1 );
@@ -83,7 +83,7 @@ void GLU_FUNC( GUI, circle_qrt1_fill )   ( int x , int y , int r ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_qrt2_fill )   ( int x , int y , int r ){
+void glu_draw_circle_qrt2_fill( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -94,7 +94,7 @@ void GLU_FUNC( GUI, circle_qrt2_fill )   ( int x , int y , int r ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_qrt3_fill )   ( int x , int y , int r ){
+void glu_draw_circle_qrt3_fill( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -105,7 +105,7 @@ void GLU_FUNC( GUI, circle_qrt3_fill )   ( int x , int y , int r ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_qrt4_fill )   ( int x , int y , int r ){
+void glu_draw_circle_qrt4_fill( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x    ), 0, GUI_X_WIDTH-1 );
@@ -116,7 +116,7 @@ void GLU_FUNC( GUI, circle_qrt4_fill )   ( int x , int y , int r ){
     glu_draw_done(xs, ys, xe, ye);
 }
 
-void GLU_FUNC( GUI, circle_qrt1_raw  )   ( int x , int y , int r ){
+void glu_draw_circle_qrt1( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x    ), 0, GUI_X_WIDTH-1 );
@@ -126,7 +126,7 @@ void GLU_FUNC( GUI, circle_qrt1_raw  )   ( int x , int y , int r ){
     BLK_FUNC( Graph, circle_qrt1_raw )( x, y, r, &info_MainScreen, NULL );
     glu_draw_done(xs, ys, xe, ye);
 }
-void GLU_FUNC( GUI, circle_qrt2_raw  )   ( int x , int y , int r ){
+void glu_draw_circle_qrt2( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -136,7 +136,7 @@ void GLU_FUNC( GUI, circle_qrt2_raw  )   ( int x , int y , int r ){
     BLK_FUNC( Graph, circle_qrt2_raw )( x, y, r, &info_MainScreen, NULL );
     glu_draw_done(xs, ys, xe, ye);
 }
-void GLU_FUNC( GUI, circle_qrt3_raw  )   ( int x , int y , int r ){
+void glu_draw_circle_qrt3( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x-r-1), 0, GUI_X_WIDTH-1 );
@@ -146,7 +146,7 @@ void GLU_FUNC( GUI, circle_qrt3_raw  )   ( int x , int y , int r ){
     BLK_FUNC( Graph, circle_qrt3_raw )( x, y, r, &info_MainScreen, NULL );
     glu_draw_done(xs, ys, xe, ye);
 }
-void GLU_FUNC( GUI, circle_qrt4_raw  )   ( int x , int y , int r ){
+void glu_draw_circle_qrt4( int x , int y , int r){
 #ifdef RH_DEBUG
 #endif
     int xs = RH_LIMIT( (x    ), 0, GUI_X_WIDTH-1 );
