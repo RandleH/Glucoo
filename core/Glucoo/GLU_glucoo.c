@@ -337,7 +337,7 @@ cmnBoolean_t glu_dev_is_refreash_done(void){
     return BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead );
 }
 
-void* GLU_FUNC( GUI, yield_GRAM )( void ){
+void* glu_dev_get_gram( void ){
     //...//
     return Screen.GRAM;
 }

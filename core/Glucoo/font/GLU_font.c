@@ -856,8 +856,7 @@ glu_font_restore_cache ( void ){
 // 仅供开发者使用
 #if 1
 
-size_t
-GLU_FUNC( Font, out_ttf_array )( const char* ttf_path, const char* dst ){
+size_t glu_font_out_ttf_array( const char* ttf_path, const char* dst ){
     FILE* fontFile = fopen( ttf_path , "rb" );
     
 #ifdef RH_DEBUG

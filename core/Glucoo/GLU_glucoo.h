@@ -144,19 +144,19 @@ void glu_draw_line( int x1, int y1, int x2, int y2);
 void glu_draw_quad( int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
 
-void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
+void* glu_dev_get_gram(void);
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
-gluHandle_t            RH_RESULT glu_gui_object_create ( const tGluObject* config, const void* RH_NULLABLE dataScr );
-gluStatus_t                glu_gui_object_template      ( tGluObject* config, tGluWidgetEnum widget );
-gluStatus_t                glu_gui_object_adjust        ( gluHandle_t ID  , void*  dataScr, size_t dataSize);
-gluStatus_t                glu_gui_object_frame         ( gluHandle_t ID  , bool   cmd);
-gluStatus_t                glu_gui_object_insert        ( gluHandle_t ID);
-gluStatus_t                glu_gui_object_delete        ( gluHandle_t ID);
-gluStatus_t                glu_gui_object_default_area  ( gluArea_t* preferred_area, tGluWidgetEnum widget );
+gluHandle_t RH_RESULT glu_gui_object_create ( const tGluObject* config, const void* RH_NULLABLE dataScr );
+gluStatus_t glu_gui_object_template      ( tGluObject* config, tGluWidgetEnum widget );
+gluStatus_t glu_gui_object_adjust        ( gluHandle_t ID  , void*  dataScr, size_t dataSize);
+gluStatus_t glu_gui_object_frame         ( gluHandle_t ID  , bool   cmd);
+gluStatus_t glu_gui_object_insert        ( gluHandle_t ID);
+gluStatus_t glu_gui_object_delete        ( gluHandle_t ID);
+gluStatus_t glu_gui_object_default_area  ( gluArea_t* preferred_area, tGluWidgetEnum widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]

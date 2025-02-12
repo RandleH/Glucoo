@@ -56,7 +56,7 @@ Graph Library for embedded software system.
 | [`glu_draw_line`]()                     | Given 2 points, draw a line |
 | [`glu_draw_quad`]()                     | Given 4 corners coordinate, draw a quadrilateral |
 | [`glu_dev_fill_full_screen`]()          | Fill the screen |
-| [.yield_GRAM]                           | Export the address of Graph RAM |
+| [`glu_dev_get_gram`]()                  | Export the address of Graph RAM |
 | [`glu_gui_object_create`]()             |   |
 | [`glu_gui_object_template`]()           |   |
 | [`glu_gui_object_adjust`]()             |   |

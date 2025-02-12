@@ -109,7 +109,7 @@ void glu_font_init(void);
 ```
 * 默认的初始配置如下:
 
-* 该方法已嵌套在`GLU_FUNC(GUI, init)`中. 当然重复一次初始化也没什么后果.
+* 该方法已嵌套在`glu_gui_init()`中. 当然重复一次初始化也没什么后果.
 
 
 ### <u>Font Style</u> <div id="lk_set_style"></div><div id="lk_get_style"></div>
