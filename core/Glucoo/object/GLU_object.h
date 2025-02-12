@@ -18,10 +18,10 @@ struct tGluObject{
     
     /*===================================================================================
      * widget --- This is a REQUIRED param. You must give a valid widget in the form of
-                  <GLU_ENUM(ObjWidget)> enumeration. The widget determine lots of
+                  <tGluWidgetEnum> enumeration. The widget determine lots of
                   attributions of an object.
      ===================================================================================*/
-    GLU_ENUM(ObjWidget)    widget;
+    tGluWidgetEnum    widget;
         
     /*===================================================================================
      * text --- This is an optional param. Only available when this widget has text

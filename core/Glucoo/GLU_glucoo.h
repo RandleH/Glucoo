@@ -79,7 +79,7 @@ typedef enum{
     kGLU_ObjWidget_spinbox  ,
     kGLU_ObjWidget_button   ,
     NUM_kGUI_ObjWidgets     ,
-}GLU_ENUM(ObjWidget);
+}tGluWidgetEnum;
 
 /*===============================================================================================================
  * GLU_WINDOW --- Definition as follow
@@ -152,12 +152,12 @@ void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
 ID_t            RH_RESULT glu_gui_object_create   ( const tGluObject* config, const void* RH_NULLABLE dataScr );
-E_Status_t                glu_gui_object_template (       tGluObject* config, GLU_ENUM(ObjWidget) widget );
+E_Status_t                glu_gui_object_template (       tGluObject* config, tGluWidgetEnum widget );
 E_Status_t                glu_gui_object_adjust   ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                glu_gui_object_frame    ( ID_t ID  , bool   cmd   );
 E_Status_t                glu_gui_object_insert   ( ID_t ID );
 E_Status_t                glu_gui_object_delete   ( ID_t ID );
-E_Status_t                glu_gui_object_default_area( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget );
+E_Status_t                glu_gui_object_default_area( __Area_t* preferred_area, tGluWidgetEnum widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]

@@ -1706,7 +1706,7 @@ ID_t RH_RESULT glu_gui_object_create( const tGluObject* config, const void* data
     return (ID_t)m_config;
 }
 
-E_Status_t glu_gui_object_template( tGluObject* config, GLU_ENUM(ObjWidget) widget ){
+E_Status_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1870,7 +1870,7 @@ E_Status_t glu_gui_bject_delete( ID_t ID ){
 }
 
 
-E_Status_t glu_gui_object_default_area( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget ){
+E_Status_t glu_gui_object_default_area( __Area_t* preferred_area, tGluWidgetEnum widget ){
     
     RH_ASSERT( preferred_area );
     
