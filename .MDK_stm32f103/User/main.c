@@ -48,7 +48,7 @@ int main(void){
     
     cfg.menuList = m;
     
-    ID_t MENU = GUI_menu_create(&cfg);
+    gluHandle_t MENU = GUI_menu_create(&cfg);
     GUI_menu_frame( MENU, 1 );
     GUI_menu_insert(MENU);
     GUI_RefreashScreen();

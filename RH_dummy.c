@@ -216,7 +216,7 @@ tGluWindow cfg;
     cfg.title       = "Text";
 
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
-    ID_t ID_Window1 = GUI_create_window(&cfg);
+    gluHandle_t ID_Window1 = GUI_create_window(&cfg);
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
     GUI_insert_window( ID_Window1 );
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
@@ -245,7 +245,7 @@ cfg2.title       = "To: Pr.WenKai";
 cfg2.text_size   = 20;
 cfg2.text_font   = kGUI_FontStyle_Arial_Unicode;//kGUI_FontStyle_NewYork;
 cfg2.text        = "Hello, this is not a regular dialog box and either not a snapshot from my computer. It is a simple UI designed for my command desk which is a embedded device targeting on STM32. This UI project named ""Glucoo"". It has been published on my GitHub website and the link is attached in the E-mail. If you view carefully, you will find out an another secrete repository reference from 'Glucoo'. That's right-> BlackHouse!!! Honestly, Glucoo doesn't work very well. Those functions are still limited-useed or poor-proformance. Me now writting English as a Chinese friend is one of those that it doesn't support any charactor beyond the ASCII. Anyway, I made this simply not for any competition, rewords or research. I just assume that I am a novelist or king of my own Digital-Empire. I create my own data structure like building an architecture or managing a beautiful city. This sounds a little bit aggressive. I used to be solo and I tried to work togeither with friends, but maybe I laid the standard so high that no one can meet it even for myself. Anyway, It will be my honor if you take a look of my project. ";
-ID_t ID_Window2 = GUI_create_window(&cfg2);
+gluHandle_t ID_Window2 = GUI_create_window(&cfg2);
 
 GUI_insert_window( ID_Window2 );
 GUI_RefreashScreen();
@@ -300,7 +300,7 @@ cfg.title       = "Text";
 cfg.text        = NULL;
 cfg.text_size   = 8;
 
-ID_t ID_Window1 = GUI_window_create(&cfg);
+gluHandle_t ID_Window1 = GUI_window_create(&cfg);
 GUI_window_insert( ID_Window1 );
 
 
@@ -326,7 +326,7 @@ cfg_obj.bk_color    = M_COLOR_TAN;
 
 cfg_obj.val         = 129;
 
-ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
+gluHandle_t ID_Obj1 = GUI_object_create( &cfg_obj );
 GUI_object_insert(ID_Obj1);
 GUI_RefreashScreen();
 

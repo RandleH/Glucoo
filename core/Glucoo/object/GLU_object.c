@@ -1573,7 +1573,7 @@ static inline void __gui_check_object     ( const tGluObject* config ){
 }
 #endif
 
-ID_t RH_RESULT glu_gui_object_create( const tGluObject* config, const void* dataScr ){
+gluHandle_t RH_RESULT glu_gui_object_create( const tGluObject* config, const void* dataScr ){
     tGluObject* m_config = (tGluObject*)RH_MALLOC( sizeof(tGluObject) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -1703,7 +1703,7 @@ ID_t RH_RESULT glu_gui_object_create( const tGluObject* config, const void* data
 
     }
     
-    return (ID_t)m_config;
+    return (gluHandle_t)m_config;
 }
 
 E_Status_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
@@ -1799,7 +1799,7 @@ E_Status_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_frame( ID_t ID  , bool  cmd   ){
+E_Status_t glu_gui_object_frame( gluHandle_t ID  , bool  cmd   ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -1820,7 +1820,7 @@ E_Status_t glu_gui_object_frame( ID_t ID  , bool  cmd   ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_insert( ID_t ID ){
+E_Status_t glu_gui_object_insert( gluHandle_t ID ){
     tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1833,7 +1833,7 @@ E_Status_t glu_gui_object_insert( ID_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_adjust( ID_t ID  , void*  dataScr, size_t dataSize ){
+E_Status_t glu_gui_object_adjust( gluHandle_t ID  , void*  dataScr, size_t dataSize ){
     tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1847,7 +1847,7 @@ E_Status_t glu_gui_object_adjust( ID_t ID  , void*  dataScr, size_t dataSize ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_bject_delete( ID_t ID ){
+E_Status_t glu_gui_bject_delete( gluHandle_t ID ){
     tGluObject* config = (tGluObject*)( ID );
     RH_FREE( (void*)config->cache );
     RH_FREE( (void*)config->dataScr );
