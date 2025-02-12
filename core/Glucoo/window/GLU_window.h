@@ -10,7 +10,7 @@
 
 struct tGluWindow{
     __Area_t             area;
-    E_GUI_WindowStyle_t  type;
+    tGluWindowEnum  type;
     tGluThemeEnum   appearance;
     var                  size;
     
