@@ -58,7 +58,7 @@ struct __Region_t{
     size_t height;
 };
 typedef struct __Region_t __Region_t;
-typedef struct __Region_t __Area_t;
+typedef struct __Region_t gluArea_t;
  
  
 

@@ -9,7 +9,7 @@
 
 
 struct tGluWindow{
-    __Area_t             area;
+    gluArea_t             area;
     tGluWindowEnum  type;
     tGluThemeEnum   appearance;
     var                  size;

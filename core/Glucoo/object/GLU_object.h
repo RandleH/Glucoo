@@ -14,7 +14,7 @@ struct tGluObject{
                 Once you submit the object infomation by using GUI_object_create, it
                 can not be modified.
      ===================================================================================*/
-    __Area_t             area;
+    gluArea_t             area;
     
     /*===================================================================================
      * widget --- This is a REQUIRED param. You must give a valid widget in the form of

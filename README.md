@@ -38,7 +38,7 @@ Graph Library for embedded software system.
 | [`glu_draw_rectangle_edged`]()          | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
 | [`glu_draw_rectangle_filled`]()         | Given the two corners coordinate of its diagnal edge, fill a rectangular area |
 | [`glu_draw_rectangle_rounded`]()        | Given the two corners coordinate of its diagnal edge, draw a rounded rectangular |
-| [.EX_rect_raw]                          | Use the `__Area_t` type instead of coordinate |
+| [.EX_rect_raw]                          | Use the `gluArea_t` type instead of coordinate |
 | [.EX_rect_edged]                        | (same) |
 | [.EX_rect_fill]                         | (same) |
 | [`glu_draw_circle`]()                   | Given the radius and (`X` ,`Y`), draw a circle with width `1` |

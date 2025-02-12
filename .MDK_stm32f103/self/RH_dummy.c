@@ -22,7 +22,7 @@ __ImageRGB888_t out = {
     .width   = 3,
     .height  = 3
 };
-__Area_t AREA = {
+gluArea_t AREA = {
     .xs = 2,
     .ys = 2,
     .width  = 3,
@@ -45,7 +45,7 @@ const char* __restrict__ src  = "/Users/randle_h/desktop/lenna.bmp";
 const char* __restrict__ des  = "/Users/randle_h/desktop/lenna_.bmp";
 
 __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
-__Area_t         AREA    = {
+gluArea_t         AREA    = {
     .xs = 1,
     .ys = 1,
     .width  = 300,

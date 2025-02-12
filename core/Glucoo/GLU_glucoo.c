@@ -211,7 +211,7 @@ void glu_dev_refreash_partial_screen( int xs, int ys, int xe, int ye){
 }
 
 
-void glu_dev_refreash_partial_screen_ex( const __Area_t* area ){
+void glu_dev_refreash_partial_screen_ex( const gluArea_t* area ){
     glu_dev_refreash_partial_screen( area->xs, area->ys, area->xs+area->w-1, area->ys+area->h-1 );
 }
 
@@ -224,14 +224,14 @@ void glu_dev_refreash_partial_screen_ex( const __Area_t* area ){
    该链表表头于 GLU_FUNC( GUI, init ) 中被初始化. 该链表为栈链表, 类型为 <BLK_SRCT(Stack)>.
    GUI_RefreashScreenArea并且完成后将会释放其中的缓存图像数据及结构体自身.
  * 如果配置为内置显存, 那么将会判断屏幕总体待刷新像素点是否超过了屏幕像素总和, 如果超过了, 则释放所有链表节点,并刷新
-   全屏幕,没有超过则将链表节点中数据即 <__Area_t> 结构体指针传入给 glu_dev_refreash_partial_screen(), 由于内置显存, 因此
-   <__Area_t>结构体指针不会有图像数据.
+   全屏幕,没有超过则将链表节点中数据即 <gluArea_t> 结构体指针传入给 glu_dev_refreash_partial_screen(), 由于内置显存, 因此
+   <gluArea_t>结构体指针不会有图像数据.
  * 如果配置为外置显存, 进死循环,暂未开发.
 ===============================================================================================================*/
 void glu_dev_refreash_screen(void){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     __exit( Screen.areaNeedRefreashHead == NULL );
-    __Area_t *p = NULL;
+    gluArea_t *p = NULL;
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
         glu_dev_refreash_partial_screen( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1 );
         while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
@@ -254,7 +254,7 @@ void glu_dev_refreash_screen(void){
 }
 
 void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye){
-    __Area_t area = {
+    gluArea_t area = {
         .xs = xs,
         .ys = ys,
         .w  = xe-xs+1,
@@ -263,10 +263,10 @@ void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye){
     glu_dev_add_refreash_area_ex(&area);
 }
 
-void glu_dev_add_refreash_area_ex( const __Area_t* area){
+void glu_dev_add_refreash_area_ex( const gluArea_t* area){
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
     if( Screen.areaNeedRefreashPixelCnt >= GUI_X_WIDTH*GUI_Y_WIDTH ){
-        __Area_t *p = NULL;
+        gluArea_t *p = NULL;
         while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
             p = BLK_FUNC( Stack, pop )( Screen.areaNeedRefreashHead );
             RH_FREE(p);
@@ -275,8 +275,8 @@ void glu_dev_add_refreash_area_ex( const __Area_t* area){
     }
     
     RH_ASSERT(area);
-    __Area_t* pArea = (__Area_t*)RH_MALLOC( sizeof(__Area_t) );
-    memcpy( pArea, area, sizeof(__Area_t) );
+    gluArea_t* pArea = (gluArea_t*)RH_MALLOC( sizeof(gluArea_t) );
+    memcpy( pArea, area, sizeof(gluArea_t) );
     Screen.areaNeedRefreashPixelCnt += pArea->w*pArea->h;
     if( Screen.areaNeedRefreashPixelCnt < GUI_X_WIDTH*GUI_Y_WIDTH )
         BLK_FUNC( Stack, push )( Screen.areaNeedRefreashHead, (void*)pArea );
@@ -295,7 +295,7 @@ void glu_dev_add_refreash_area_ex( const __Area_t* area){
 void glu_dev_refreash_full_screen(void){
 //    printf("%d %d\n",GUI_X_WIDTH,GUI_Y_WIDTH);
 #if( RH_CFG_GRAM_TYPE == RH_CFG_GRAM_INTERNAL )
-    __Area_t *p = NULL;
+    gluArea_t *p = NULL;
     (*glu_internal_draw_area)( 0, 0, GUI_X_WIDTH-1, GUI_Y_WIDTH-1, (GLU_TYPE(Pixel)*)Screen.GRAM[M_SCREEN_MAIN][0] );
     while( !BLK_FUNC( Stack, empty )( Screen.areaNeedRefreashHead ) ){
         p = BLK_FUNC( Stack, pop   )( Screen.areaNeedRefreashHead );

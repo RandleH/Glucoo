@@ -106,10 +106,10 @@ void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 void glu_dev_auto_refreash(cmnBoolean_t flag) GLU_API;
 void glu_dev_refreash_screen(void) GLU_API;
 void glu_dev_refreash_partial_screen( int xs, int ys, int xe, int ye) GLU_API;
-void glu_dev_refreash_partial_screen_ex( const __Area_t* area) GLU_API;
+void glu_dev_refreash_partial_screen_ex( const gluArea_t* area) GLU_API;
 void glu_dev_refreash_full_screen(void) GLU_API;
 void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye) GLU_API;
-void glu_dev_add_refreash_area_ex( const __Area_t* area) GLU_API;
+void glu_dev_add_refreash_area_ex( const gluArea_t* area) GLU_API;
 void glu_dev_fill_full_screen( const gluColor_t color) GLU_API;
 
 cmnBoolean_t glu_dev_is_auto_refreash(void);
@@ -156,14 +156,14 @@ E_Status_t                glu_gui_object_adjust   ( ID_t ID  , void*  dataScr, s
 E_Status_t                glu_gui_object_frame    ( ID_t ID  , bool   cmd   );
 E_Status_t                glu_gui_object_insert   ( ID_t ID );
 E_Status_t                glu_gui_object_delete   ( ID_t ID );
-E_Status_t                glu_gui_object_default_area( __Area_t* preferred_area, tGluWidgetEnum widget );
+E_Status_t                glu_gui_object_default_area( gluArea_t* preferred_area, tGluWidgetEnum widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]
 ===============================================================================================================*/
 #include "./window/GLU_window.h"
 ID_t            RH_RESULT glu_gui_window_create  ( const tGluWindow* config );
-tGluWindow*           glu_gui_window_template(       tGluWindow* config );
+tGluWindow*               glu_gui_window_template(       tGluWindow* config );
 E_Status_t                glu_gui_window_insert  ( ID_t ID );
 E_Status_t                glu_gui_window_delete  ( ID_t ID );
 

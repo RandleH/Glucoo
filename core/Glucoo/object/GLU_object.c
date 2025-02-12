@@ -16,7 +16,7 @@ extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 static void __gui_remove_object_text      ( const tGluObject* config ){
     struct{
-        __Area_t area;
+        gluArea_t area;
         bool     showFrame;
     }*pHistory = (void*)config->cache;
     
@@ -79,7 +79,7 @@ static void __gui_insert_object_text      ( const tGluObject* config ){
     __gui_remove_object_text(config);
 
     struct{
-        __Area_t area;
+        gluArea_t area;
         bool     showFrame;
     }*pHistory = (void*)config->cache;
     
@@ -188,7 +188,7 @@ static void __gui_insert_object_num       ( const tGluObject* config ){
     BLK_FUNC( Graph, backupCache )();
     
     struct{
-        __Area_t area;
+        gluArea_t area;
         bool     showFrame;
     }*pHistory = (void*)config->cache;
     
@@ -295,7 +295,7 @@ static void __gui_insert_object_fnum      ( const tGluObject* config ){
     
     // 记录历史改动区域
     struct{
-        __Area_t area;
+        gluArea_t area;
         bool     showFrame;
     }*pHistory = (void*)config->cache;
     
@@ -759,7 +759,7 @@ static void __gui_adjust_object_bar_v     ( const tGluObject* config ){
 static void __gui_remove_object_joystick  ( const tGluObject* config ){
     struct{
         int      cord; // (x,y)象限信息
-        __Area_t area;
+        gluArea_t area;
     }*pHistory = (void*)config->cache;
     GLU_FUNC( Font, backupCache )();
     BLK_FUNC( Graph, backupCache )();
@@ -775,7 +775,7 @@ static void __gui_remove_object_joystick  ( const tGluObject* config ){
 static void __gui_insert_object_joystick  ( const tGluObject* config ){
     struct{
         int      cord; // (x,y)象限信息
-        __Area_t area;
+        gluArea_t area;
     }*pHistory = (void*)config->cache;
     
     
@@ -1075,7 +1075,7 @@ static void __gui_remove_object_spinbox   ( const tGluObject* config ){
         var        lineDN;
         var        textXS;
         var        textYS;
-        __Area_t   num;
+        gluArea_t   num;
         bool       active;
     }*cache = (void*)config->cache;
     
@@ -1178,7 +1178,7 @@ static void __gui_insert_object_spinbox   ( const tGluObject* config ){
         var        lineDN;
         var        textXS;
         var        textYS;
-        __Area_t   num;
+        gluArea_t   num;
         bool       active;
     }*cache = (void*)config->cache;
     
@@ -1870,7 +1870,7 @@ E_Status_t glu_gui_bject_delete( ID_t ID ){
 }
 
 
-E_Status_t glu_gui_object_default_area( __Area_t* preferred_area, tGluWidgetEnum widget ){
+E_Status_t glu_gui_object_default_area( gluArea_t* preferred_area, tGluWidgetEnum widget ){
     
     RH_ASSERT( preferred_area );
     

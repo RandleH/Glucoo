@@ -98,11 +98,11 @@ E_Status_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int 
 E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
 E_Status_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
 E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
  
 E_Status_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
 E_Status_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );

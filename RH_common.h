@@ -61,7 +61,7 @@ struct __Region_t{
     var    h;
 };
 typedef struct __Region_t __Region_t;
-typedef struct __Region_t __Area_t;
+typedef struct __Region_t gluArea_t;
  
 struct __Range_t{
     int   val;

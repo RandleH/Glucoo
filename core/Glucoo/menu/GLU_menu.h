@@ -18,7 +18,7 @@ struct tGluMenu{
     
     GLU_ENUM(Font)        font;                 /* 菜单字体 */
     
-    __Area_t              area;                 /* 菜单屏幕所占区域 */
+    gluArea_t              area;                 /* 菜单屏幕所占区域 */
     int8_t                nItem;                /* 菜单栏目条数 */
     __GUI_MenuParam_t*    menuList;             /* 菜单栏目配置数组 */
     

@@ -159,9 +159,9 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, filter_OTUS  ) (const BLK_SRCT(Img888)* src,
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,uint8_t HV);
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast    ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100);//
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100);
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast    ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100);//
 
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, insert_NstNeighbor ) (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,size_t height,size_t width);
@@ -189,7 +189,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_blur        )( BLK_SRCT(Img888)* ds
 
 BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_       )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size );
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, spy_img_blur    )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size, const __Area_t* area );
+BLK_SRCT(Img888)* BLK_FUNC( Img888, spy_img_blur    )( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size, const gluArea_t* area );
 
 #ifdef __cplusplus
 }

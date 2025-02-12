@@ -22,7 +22,7 @@ __ImageRGB888_t out = {
     .width   = 3,
     .height  = 3
 };
-__Area_t AREA = {
+gluArea_t AREA = {
     .xs = 2,
     .ys = 2,
     .width  = 3,
@@ -45,7 +45,7 @@ const char* __restrict__ src  = "/Users/randle_h/desktop/lenna.bmp";
 const char* __restrict__ des  = "/Users/randle_h/desktop/lenna_.bmp";
 
 __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
-__Area_t         AREA    = {
+gluArea_t         AREA    = {
     .xs = 1,
     .ys = 1,
     .width  = 300,
@@ -275,7 +275,7 @@ struct __GUI_MenuCFG_t{
 typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
 
 struct tGluMenu{
-    __Area_t             area;
+    gluArea_t             area;
     E_GUI_MenuStyle_t    style;
     tGluThemeEnum   appearance;
     size_t               size;
@@ -1327,15 +1327,15 @@ volatile long* __pascal_triangle_row( long row , size_t* returnSize ){
 
 
 // Sample for <GLU_Utility_align_screen> <GLU_Utility_area_hdiv>
-__Area_t a = { .xs = 500, .ys = 500, .w = 300, .h = 400 };
-__Area_t b = { 0 };
+gluArea_t a = { .xs = 500, .ys = 500, .w = 300, .h = 400 };
+gluArea_t b = { 0 };
 
 GLU_Utility_align_screen( 400, 300, &b, M_UTILITY_ALIGN_VM | M_UTILITY_ALIGN_HM );
 
 GLU_GUI_autoDisplay(false);
 
 
-__Area_t c[10] = {
+gluArea_t c[10] = {
     {.w=10,.h=10},{.w=20,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},\
     {.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10},{.w=10,.h=10}
 };
