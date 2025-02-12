@@ -16,7 +16,7 @@ struct tGluMenu{
     GLU_TYPE(Pixel)       text_color;           /* 菜单栏字体颜色 */
     GLU_TYPE(Pixel)       sl_color;             /* 菜单栏选中色 */
     
-    GLU_ENUM(Font)        font;                 /* 菜单字体 */
+    tGluFontEnum        font;                 /* 菜单字体 */
     
     gluArea_t              area;                 /* 菜单屏幕所占区域 */
     int8_t                nItem;                /* 菜单栏目条数 */

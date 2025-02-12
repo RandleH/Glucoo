@@ -15,10 +15,10 @@ struct tGluWindow{
     var                  size;
     
     const char*          title;
-    GLU_ENUM(Font)       title_font;
+    tGluFontEnum       title_font;
     
     const char*          text;
-    GLU_ENUM(Font)       text_font;
+    tGluFontEnum       text_font;
     GLU_ENUM(Align)    text_align;
     var                  text_size;
     //...//

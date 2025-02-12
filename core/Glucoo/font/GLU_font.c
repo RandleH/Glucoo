@@ -179,7 +179,7 @@ static __Method rhtt  = {   // Present by Randle Hemlslay  --> rh
 
 static struct{
     GLU_SRCT(FontImg)    img;
-    GLU_ENUM(Font)       style;
+    tGluFontEnum       style;
     uint16_t             size;
     float                scale;
     int                  ascent;
@@ -356,7 +356,7 @@ GLU_FUNC( Font, init           ) ( void ){
 }
 
 void
-GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
+GLU_FUNC( Font, set_font      ) ( tGluFontEnum style   ){
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     // 确认字体解析库 stbtt为使用STB库, rhtt为使用自研库
     FCFG.method = &stbtt;
@@ -435,7 +435,7 @@ GLU_FUNC( Font, get_size       ) ( void ){
     return FCFG.size;
 }
 
-GLU_ENUM(Font)
+tGluFontEnum
 GLU_FUNC( Font, get_font      ) ( void ){
     return FCFG.style;
 }

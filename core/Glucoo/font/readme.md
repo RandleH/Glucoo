@@ -33,7 +33,7 @@ Glucoo所支持的Align对齐方式有:
 
 
 ### <u>Font</u> 
-`GLU_ENUM(Font)`
+`tGluFontEnum`
 
 Glucoo所支持的Font类型有:
 
@@ -57,7 +57,7 @@ Glucoo所支持的Font类型有:
 
 |  成员 <div style="width: 50pt">   | 类型<div style="width: 130pt">  | 解释 <div style="width: 350pt">  |
 | :----: | ------------------ | :----------------   |
-| font   |   GLU_ENUM(Font)   | 该文本使用的字体类型, 可在枚举列表中选择对应的字体    |
+| font   |   tGluFontEnum   | 该文本使用的字体类型, 可在枚举列表中选择对应的字体    |
 | size   |   uint8_t          | 该文本的字体大小       |
 | color  |   GLU_TYPE(Pixel)  | 该文本使用的颜色, 颜色对应项目配置       |
 | align  |   GLU_ENUM(Align)  | 该文本的对齐方式       |
@@ -115,8 +115,8 @@ void GLU_FUNC(Font, init)  (void);
 ### <u>Font Style</u> <div id="lk_set_style"></div><div id="lk_get_style"></div>
 设置字体类型
 ```C
-void             GLU_FUNC(Font, set_style) ( GLU_ENUM(Font) font );
-GLU_ENUM(Font)   GLU_FUNC(Font, get_style) ( void                );
+void             GLU_FUNC(Font, set_style) ( tGluFontEnum font );
+tGluFontEnum   GLU_FUNC(Font, get_style) ( void                );
 ```
 
 * *font* 是你想要设置成的字体类型, 请在GLU_ENUM(Font)枚举列表中查找.

@@ -29,7 +29,7 @@ typedef enum{
     kGLU_Font_Optima            ,
     kGLU_Font_SignPrinter       ,
     kGLU_NUM_FontStyle
-}GLU_ENUM(Font);
+}tGluFontEnum;
 
 typedef enum{
     kGLU_Align_Right   ,
@@ -39,7 +39,7 @@ typedef enum{
 }GLU_ENUM(Align);
 
 struct GLU_SRCT(Text){
-    GLU_ENUM(Font)   font;
+    tGluFontEnum   font;
     uint16_t         size;
     gluColor_t       color;
     GLU_ENUM(Align)  align;
