@@ -213,7 +213,7 @@ static struct{
  * 根据宏 RH_CFG_FONT_STYLE__xxxx 进行初始化, 如果未开启该字体宏, 则路径将为NULL
  * __read_ttf_file 为字体ttf文件读取函数, 将数据拷贝至FCFG.ttf中
  ==================================================================================================================================*/
-    static E_Status_t __read_ttf_file( const char* path ){
+    static gluStatus_t __read_ttf_file( const char* path ){
         FILE* fontFile = fopen( path , "rb" );
         
         RH_ASSERT( fontFile );
@@ -234,7 +234,7 @@ static struct{
         return MAKE_ENUM(kStatus_Success);
     }
 
-    static E_Status_t __make_ttf_path( void ){
+    static gluStatus_t __make_ttf_path( void ){
 
     #define MAX_PATH_SIZE 255
         char path_tmp[MAX_PATH_SIZE] = {0};

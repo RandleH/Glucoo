@@ -541,7 +541,7 @@ E_GUI_FontStyle_t __Font_getStyle(void){
 }
 
 
-static E_Status_t __read_ttf_file( const char* path, void** buf ){
+static gluStatus_t __read_ttf_file( const char* path, void** buf ){
     FILE* fontFile = fopen( path , "rb" );
 #ifdef RH_DEBUG
     RH_ASSERT( fontFile );

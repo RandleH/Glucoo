@@ -408,7 +408,7 @@ tGluWindow* glu_gui_window_template( tGluWindow* config){
     return config;
 }
 
-E_Status_t glu_gui_window_insert( gluHandle_t ID){
+gluStatus_t glu_gui_window_insert( gluHandle_t ID){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -420,7 +420,7 @@ E_Status_t glu_gui_window_insert( gluHandle_t ID){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_window_delete( gluHandle_t ID){
+gluStatus_t glu_gui_window_delete( gluHandle_t ID){
     RH_FREE((void*)ID);
     //...//
     return MAKE_ENUM( kStatus_Success );

@@ -105,7 +105,7 @@ typedef struct __Range_t __Range_t;
      MAKE_ENUM( kStatus_NotFound  )    ,
      MAKE_ENUM( kStatus_Warning   )    ,
      MAKE_ENUM( kStatus_Empty     )
- }E_Status_t;
+ }gluStatus_t;
  
 #define MAKE_FUNC( class , method )          __##class##_##method  // Function like this: __XXXX_xxxxx();
 #define CALL_FUNC                            MAKE_FUNC             // exactly the same but has semantic difference.

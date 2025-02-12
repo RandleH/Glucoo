@@ -48,7 +48,7 @@ typedef enum{
     MAKE_ENUM( kStatus_NotFound  )    ,
     MAKE_ENUM( kStatus_Warning   )    ,
     MAKE_ENUM( kStatus_Empty     )
-}E_Status_t;
+}gluStatus_t;
 
  
 struct __Region_t{

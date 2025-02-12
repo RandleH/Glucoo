@@ -509,7 +509,7 @@ gluHandle_t       glu_gui_menu_create( const tGluMenu* config ){
     return (gluHandle_t)m_config;
 }
 
-E_Status_t glu_gui_menu_insert( gluHandle_t ID ){
+gluStatus_t glu_gui_menu_insert( gluHandle_t ID ){
     
     tGluMenu* config = (tGluMenu* )ID;
     
@@ -557,7 +557,7 @@ E_Status_t glu_gui_menu_insert( gluHandle_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_menu_frame( gluHandle_t ID, bool  cmd    ){
+gluStatus_t glu_gui_menu_frame( gluHandle_t ID, bool  cmd    ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -606,7 +606,7 @@ int        glu_gui_menu_scroll( gluHandle_t ID, int cmd ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_menu_delete( gluHandle_t ID ){
+gluStatus_t glu_gui_menu_delete( gluHandle_t ID ){
     tGluMenu* config = (tGluMenu* )ID;
     
     RH_FREE( (void*)config->history );

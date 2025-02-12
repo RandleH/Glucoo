@@ -1706,7 +1706,7 @@ gluHandle_t RH_RESULT glu_gui_object_create( const tGluObject* config, const voi
     return (gluHandle_t)m_config;
 }
 
-E_Status_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
+gluStatus_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1799,7 +1799,7 @@ E_Status_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_frame( gluHandle_t ID  , bool  cmd   ){
+gluStatus_t glu_gui_object_frame( gluHandle_t ID  , bool  cmd   ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -1820,7 +1820,7 @@ E_Status_t glu_gui_object_frame( gluHandle_t ID  , bool  cmd   ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_insert( gluHandle_t ID ){
+gluStatus_t glu_gui_object_insert( gluHandle_t ID ){
     tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1833,7 +1833,7 @@ E_Status_t glu_gui_object_insert( gluHandle_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_object_adjust( gluHandle_t ID  , void*  dataScr, size_t dataSize ){
+gluStatus_t glu_gui_object_adjust( gluHandle_t ID  , void*  dataScr, size_t dataSize ){
     tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1847,7 +1847,7 @@ E_Status_t glu_gui_object_adjust( gluHandle_t ID  , void*  dataScr, size_t dataS
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t glu_gui_bject_delete( gluHandle_t ID ){
+gluStatus_t glu_gui_bject_delete( gluHandle_t ID ){
     tGluObject* config = (tGluObject*)( ID );
     RH_FREE( (void*)config->cache );
     RH_FREE( (void*)config->dataScr );
@@ -1870,7 +1870,7 @@ E_Status_t glu_gui_bject_delete( gluHandle_t ID ){
 }
 
 
-E_Status_t glu_gui_object_default_area( gluArea_t* preferred_area, tGluWidgetEnum widget ){
+gluStatus_t glu_gui_object_default_area( gluArea_t* preferred_area, tGluWidgetEnum widget ){
     
     RH_ASSERT( preferred_area );
     
