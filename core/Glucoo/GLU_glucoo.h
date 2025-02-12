@@ -87,8 +87,7 @@ typedef enum{
 typedef enum{
     kGUI_Appearance_Light  ,
     kGUI_Appearance_Dark   ,
-    
-}E_GUI_Appearance_t;
+}tGluThemeEnum;
 
 typedef enum{
     kGUI_WindowType_macOS  ,

@@ -277,7 +277,7 @@ typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
 struct tGluMenu{
     __Area_t             area;
     E_GUI_MenuStyle_t    style;
-    E_GUI_Appearance_t   appearance;
+    tGluThemeEnum   appearance;
     size_t               size;
     
     __GUI_MenuCFG_t*     config;

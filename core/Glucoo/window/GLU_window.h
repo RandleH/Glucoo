@@ -11,7 +11,7 @@
 struct tGluWindow{
     __Area_t             area;
     E_GUI_WindowStyle_t  type;
-    E_GUI_Appearance_t   appearance;
+    tGluThemeEnum   appearance;
     var                  size;
     
     const char*          title;
