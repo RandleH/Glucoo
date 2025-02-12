@@ -48,7 +48,7 @@ static void __draw_blur( const gluColor_t* colors, uint8_t size ){
 #endif
 }
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const gluColor_t* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 ){
+void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const gluColor_t* colors, uint8_t size, const tGluTextInfo* RH_NULLABLE text, uint8_t alpha_100 ){
     
     RH_ASSERT(colors);
     RH_ASSERT(size);

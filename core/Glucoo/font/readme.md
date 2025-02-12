@@ -50,7 +50,7 @@ Glucoo所支持的Font类型有:
 
 
 ### <u>Text</u> 
-`GLU_SRCT(Text)`
+`tGluTextInfo`
 
 
 在Glucoo中, 完整的Text需要包含以下信息: <br>

@@ -19,5 +19,5 @@ bool GLU_FUNC( Utility, pt_in_area   )( var x, var y, const gluArea_t* pArea );
 void GLU_FUNC( Utility, area_hdiv    )( const gluArea_t* all, gluArea_t sub[], size_t size );
 void GLU_FUNC( Utility, area_vdiv    )( const gluArea_t* all, gluArea_t sub[], size_t size );//
 
-void GLU_FUNC( Utility, optimal_text )( const gluArea_t* src, const char* str, tGluFontEnum font, GLU_SRCT(Text)* dst );
+void GLU_FUNC( Utility, optimal_text )( const gluArea_t* src, const char* str, tGluFontEnum font, tGluTextInfo* dst );
 

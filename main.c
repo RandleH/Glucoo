@@ -62,7 +62,7 @@ int main(int argc, char const *argv[]){
 
     glu_dev_auto_refreash(YES);
     
-    GLU_SRCT(Text) text = {
+    tGluTextInfo text = {
         .str   = "YuanJi"          ,
         .size  = 700               ,
         .color = M_COLOR_BLACK     ,

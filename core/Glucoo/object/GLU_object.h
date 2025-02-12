@@ -27,7 +27,7 @@ struct tGluObject{
      * text --- This is an optional param. Only available when this widget has text
                 (or number) to show.
      ===================================================================================*/
-    GLU_SRCT(Text)       text;
+    tGluTextInfo       text;
     
     /*===================================================================================
      * Color --- Every objects has its background color.

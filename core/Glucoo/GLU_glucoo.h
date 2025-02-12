@@ -38,7 +38,7 @@ typedef enum{
     kGLU_Align_Justify
 }tGluTextAlignEnum;
 
-struct GLU_SRCT(Text){
+struct tGluTextInfo{
     tGluFontEnum   font;
     uint16_t         size;
     gluColor_t       color;
@@ -47,7 +47,7 @@ struct GLU_SRCT(Text){
     bool             ul;
     bool             ml;
 };
-typedef struct GLU_SRCT(Text) GLU_SRCT(Text);
+typedef struct tGluTextInfo tGluTextInfo;
 
 /*===============================================================================================================
  * GLU_RENDER --- Definition as follow
