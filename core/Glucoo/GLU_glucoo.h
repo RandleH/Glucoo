@@ -111,6 +111,7 @@ void glu_dev_refreash_partial_screen_ex( const __Area_t* area) GLU_API;
 void glu_dev_refreash_full_screen(void) GLU_API;
 void glu_dev_add_refreash_area( int xs, int ys, int xe, int ye) GLU_API;
 void glu_dev_add_refreash_area_ex( const __Area_t* area) GLU_API;
+void glu_dev_fill_full_screen( const gluColor_t color) GLU_API;
 
 cmnBoolean_t glu_dev_is_auto_refreash(void);
 cmnBoolean_t glu_dev_is_refreash_done(void);
@@ -137,11 +138,12 @@ void glu_draw_circle_qrt2_fill ( int x ,int y ,int r);
 void glu_draw_circle_qrt3_fill ( int x ,int y ,int r);
 void glu_draw_circle_qrt4_fill ( int x ,int y ,int r);
 
-void GLU_FUNC( GUI, capsule_raw      )       ( int xs,int ys,int xe,int ye );
-void GLU_FUNC( GUI, line_raw         )       ( int x1,int y1,int x2,int y2 );
-void GLU_FUNC( GUI, quad_raw         )       ( int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4 );
+void glu_draw_capsule( int xs,int ys,int xe,int ye);
 
-void GLU_FUNC( GUI, screen_fill      )       ( gluColor_t M_COLOR_xxxx );
+void glu_draw_line( int x1, int y1, int x2, int y2);
+
+void glu_draw_quad( int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
+
 
 void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
 
