@@ -162,10 +162,10 @@ gluStatus_t glu_gui_object_default_area  ( gluArea_t* preferred_area, tGluWidget
  * 定义于 [ ./draw/GLU_window.c ]
 ===============================================================================================================*/
 #include "./window/GLU_window.h"
-gluHandle_t            RH_RESULT glu_gui_window_create  ( const tGluWindow* config );
-tGluWindow*               glu_gui_window_template( tGluWindow* config );
-gluStatus_t                glu_gui_window_insert  ( gluHandle_t ID );
-gluStatus_t                glu_gui_window_delete  ( gluHandle_t ID );
+gluHandle_t RH_RESULT glu_gui_window_create  ( const tGluWindow* config );
+tGluWindow*           glu_gui_window_template( tGluWindow* config );
+gluStatus_t           glu_gui_window_insert  ( gluHandle_t ID );
+gluStatus_t           glu_gui_window_delete  ( gluHandle_t ID );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_menu.c ]

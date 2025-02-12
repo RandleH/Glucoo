@@ -24,23 +24,20 @@ Graph Library for embedded software system.
 | Name                                    | Description                                    |
 | --------------------------------------- | ---------------------------------------------- |
 | **GUI**                                 | **Include `GUI::` as the prefix term.**        |
-| [.init](#GLU_GUI_00)                    | Initialize the UI system                       |
-| [.set_penSize](#GLU_GUI_01)             | Given a pixelwise size of pen, set pen size    |
-| [.set_penColor](#GLU_GUI_02)            | Given a RGB color, set it as the pen color     |
-| **DEV**                                 | **Include `DEV::` as the prefix term.** |
-| [.auto_refreash](#GLU_GUI_03)           | Refresh the screen automatically               |
-| [.refreash_screen](#GLU_GUI_04)         | Refresh the screen from the cache memory       |
-| [.refreash_full_screen](#GLU_GUI_05)    | Refresh the screen and empity the cache memory |
-| [glu_dev_is_auto_refreash](#GLU_GUI_06) | Return the configuration flag                  |
-| [glu_dev_is_refreash_done](#GLU_GUI_07) | Return the configuration flag                  |
+| [`glu_gui_init`](#GLU_GUI_00)                    | Initialize the UI system                       |
+| [`glu_gui_set_penSize`](#GLU_GUI_01)             | Given a pixelwise size of pen, set pen size    |
+| [`glu_gui_set_penColor`](#GLU_GUI_02)            | Given a RGB color, set it as the pen color     |
+| **DEV**                                          | **Include `DEV::` as the prefix term.**        |
+| [`glu_dev_auto_refreash`](#GLU_GUI_03)           | Refresh the screen automatically               |
+| [`glu_dev_refreash_screen`](#GLU_GUI_04)         | Refresh the screen from the cache memory       |
+| [`glu_dev_refreash_full_screen`](#GLU_GUI_05)    | Refresh the screen and empity the cache memory |
+| [`glu_dev_is_auto_refreash`](#GLU_GUI_06)        | Return the configuration flag                  |
+| [`glu_dev_is_refreash_done`](#GLU_GUI_07)        | Return the configuration flag                  |
 | **Graph**                               | **Include `GUI::` as the prefix term.**        |
 | [`glu_draw_rectangle`]()                | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
 | [`glu_draw_rectangle_edged`]()          | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
 | [`glu_draw_rectangle_filled`]()         | Given the two corners coordinate of its diagnal edge, fill a rectangular area |
 | [`glu_draw_rectangle_rounded`]()        | Given the two corners coordinate of its diagnal edge, draw a rounded rectangular |
-| [.EX_rect_raw]                          | Use the `gluArea_t` type instead of coordinate |
-| [.EX_rect_edged]                        | (same) |
-| [.EX_rect_fill]                         | (same) |
 | [`glu_draw_circle`]()                   | Given the radius and (`X` ,`Y`), draw a circle with width `1` |
 | [`glu_draw_circle_edged`]()             | Given the radius and (`X` ,`Y`), draw a circle with width of pen size. |
 | [`glu_draw_circle_fill`]()              | Given the radius and (`X` ,`Y`), fill a circle |
