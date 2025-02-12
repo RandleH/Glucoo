@@ -172,7 +172,7 @@ E_Status_t                glu_gui_window_delete  ( ID_t ID );
  * 定义于 [ ./draw/GLU_menu.c ]
 ===============================================================================================================*/
 #include "./menu/GLU_menu.h"
-ID_t            RH_RESULT glu_gui_menu_create( const __GUI_Menu_t* config );
+ID_t            RH_RESULT glu_gui_menu_create( const tGluMenu* config );
 E_Status_t                glu_gui_menu_insert( ID_t ID );
 E_Status_t                glu_gui_menu_frame ( ID_t ID , bool cmd );
 int                       glu_gui_menu_scroll( ID_t ID , int  cmd );

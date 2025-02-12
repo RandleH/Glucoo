@@ -8,7 +8,7 @@ struct __GUI_MenuParam_t{
 };
 typedef struct __GUI_MenuParam_t __GUI_MenuParam_t;
 
-struct __GUI_Menu_t{
+struct tGluMenu{
     const char*           title;                /* 菜单标题名字 */
     GLU_TYPE(Pixel)       color_title;          /* 菜单标题栏字体颜色 */
     GLU_TYPE(Pixel)       bk_color_title;       /* 菜单标题栏背景色 */
@@ -29,6 +29,6 @@ struct __GUI_Menu_t{
     
     const void*  const    history;              /* [内部使用] 缓存入口 */
 };
-typedef struct __GUI_Menu_t __GUI_Menu_t;
+typedef struct tGluMenu tGluMenu;
 
 #endif

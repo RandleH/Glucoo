@@ -8,7 +8,7 @@
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 
-static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
+static void __gui_insert_menu_title    ( const tGluMenu* config ){
     struct{
         var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
         var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
@@ -56,7 +56,7 @@ static void __gui_insert_menu_title    ( const __GUI_Menu_t* config ){
     
 }
 
-static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
+static void __gui_insert_menu_bar      ( const tGluMenu* config ){
     struct{
         var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
         var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
@@ -130,7 +130,7 @@ static void __gui_insert_menu_bar      ( const __GUI_Menu_t* config ){
     }
 }
 
-static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
+static void __gui_scroll_menu_up       ( const tGluMenu* config ){
     struct{
         var idx;          // 上一次选中的菜单索引(一定小于config->nItem)
         var cur;          // 选中的菜单实际索引(一定小于 nIterPer)
@@ -312,7 +312,7 @@ static void __gui_scroll_menu_up       ( const __GUI_Menu_t* config ){
     }
 }
 
-static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
+static void __gui_scroll_menu_down     ( const tGluMenu* config ){
     struct{
         var idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
         var cur;          // 选中的菜单行(一定小于 nIterPer)
@@ -493,25 +493,25 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     }
 }
 
-ID_t       glu_gui_menu_create( const __GUI_Menu_t* config ){
-    __GUI_Menu_t* m_config = (__GUI_Menu_t*)RH_MALLOC( sizeof(__GUI_Menu_t) );
+ID_t       glu_gui_menu_create( const tGluMenu* config ){
+    tGluMenu* m_config = (tGluMenu*)RH_MALLOC( sizeof(tGluMenu) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
 #endif
-    memmove(m_config, config, sizeof(__GUI_Menu_t));
+    memmove(m_config, config, sizeof(tGluMenu));
 
     m_config->menuList = RH_MALLOC( config->nItem*sizeof(__GUI_MenuParam_t) );
     memmove(m_config->menuList, config->menuList, config->nItem*sizeof(__GUI_MenuParam_t));
 
-    __SET_STRUCT_MB(__GUI_Menu_t, void*, m_config, history, NULL);
+    __SET_STRUCT_MB(tGluMenu, void*, m_config, history, NULL);
     
     return (ID_t)m_config;
 }
 
 E_Status_t glu_gui_menu_insert( ID_t ID ){
     
-    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    tGluMenu* config = (tGluMenu* )ID;
     
     struct{
         var idx;          // 该屏第一条菜单栏的索引(一定小于等于config->nItem-nIterPer)
@@ -532,7 +532,7 @@ E_Status_t glu_gui_menu_insert( ID_t ID ){
     #ifdef RH_DEBUG
         RH_ASSERT( pHistory );
     #endif
-        __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, pHistory);
+        __SET_STRUCT_MB(tGluMenu, void*, config, history, pHistory);
         pHistory->bSize     = 12;//
         pHistory->tSize     = 12;//
         pHistory->idx       = 0;
@@ -561,7 +561,7 @@ E_Status_t glu_gui_menu_frame( ID_t ID, bool  cmd    ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
-    __GUI_Menu_t* p = (__GUI_Menu_t*)(ID);
+    tGluMenu* p = (tGluMenu*)(ID);
     
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
@@ -576,7 +576,7 @@ E_Status_t glu_gui_menu_frame( ID_t ID, bool  cmd    ){
 }
 
 int        glu_gui_menu_scroll( ID_t ID, int cmd ){
-    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    tGluMenu* config = (tGluMenu* )ID;
     
     if( config->history == NULL )
         return 0;
@@ -607,11 +607,11 @@ int        glu_gui_menu_scroll( ID_t ID, int cmd ){
 }
 
 E_Status_t glu_gui_menu_delete( ID_t ID ){
-    __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
+    tGluMenu* config = (tGluMenu* )ID;
     
     RH_FREE( (void*)config->history );
     RH_FREE( config->menuList );
-    __SET_STRUCT_MB(__GUI_Menu_t, void*, config, history, NULL);
+    __SET_STRUCT_MB(tGluMenu, void*, config, history, NULL);
     
     BLK_FUNC( Graph, backupCache  )();
     BLK_FUNC( Graph, set_penColor )(config->bk_color);

@@ -274,7 +274,7 @@ struct __GUI_MenuCFG_t{
 };
 typedef struct __GUI_MenuCFG_t __GUI_MenuCFG_t;
 
-struct __GUI_Menu_t{
+struct tGluMenu{
     __Area_t             area;
     E_GUI_MenuStyle_t    style;
     E_GUI_Appearance_t   appearance;
@@ -285,7 +285,7 @@ struct __GUI_Menu_t{
     
     
 };
-typedef struct __GUI_Menu_t __GUI_Menu_t;
+typedef struct tGluMenu tGluMenu;
 
 tGluWindow cfg;
 GUI_window_quickSet(&cfg);

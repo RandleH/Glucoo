@@ -19,7 +19,7 @@ int main(void){
     GUI_API_Init ();
     GUI_Init();
 
-    __GUI_Menu_t cfg = {0};
+    tGluMenu cfg = {0};
     
     cfg.area.xs = 10;
     cfg.area.ys = 10;
