@@ -1573,7 +1573,7 @@ static inline void __gui_check_object     ( const GLU_SRCT(Object)* config ){
 }
 #endif
 
-ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* dataScr ){
+ID_t RH_RESULT glu_gui_object_create( const GLU_SRCT(Object)* config, const void* dataScr ){
     GLU_SRCT(Object)* m_config = (GLU_SRCT(Object)*)RH_MALLOC( sizeof(GLU_SRCT(Object)) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -1706,7 +1706,7 @@ ID_t RH_RESULT    GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config
     return (ID_t)m_config;
 }
 
-E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget ){
+E_Status_t glu_gui_object_template( GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1786,7 +1786,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, GLU_
             config->text.align  = kGLU_Align_Left;
             break;
         case kGLU_ObjWidget_button:
-            GLU_FUNC( Object, preferred_area )( &config->area, widget );
+            glu_gui_object_default_area( &config->area, widget );
             GLU_FUNC( Utility, optimal_text )( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
             config->text.align   = kGLU_Align_Middle;
             
@@ -1799,7 +1799,7 @@ E_Status_t        GLU_FUNC( Object, template )  ( GLU_SRCT(Object)* config, GLU_
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GLU_FUNC( Object, frame    )  ( ID_t ID  , bool  cmd   ){
+E_Status_t glu_gui_object_frame( ID_t ID  , bool  cmd   ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -1820,7 +1820,7 @@ E_Status_t        GLU_FUNC( Object, frame    )  ( ID_t ID  , bool  cmd   ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GLU_FUNC( Object, insert   )  ( ID_t ID ){
+E_Status_t glu_gui_object_insert( ID_t ID ){
     GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1833,7 +1833,7 @@ E_Status_t        GLU_FUNC( Object, insert   )  ( ID_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize ){
+E_Status_t glu_gui_object_adjust( ID_t ID  , void*  dataScr, size_t dataSize ){
     GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
@@ -1847,7 +1847,7 @@ E_Status_t        GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, siz
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
+E_Status_t glu_gui_bject_delete( ID_t ID ){
     GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)( ID );
     RH_FREE( (void*)config->cache );
     RH_FREE( (void*)config->dataScr );
@@ -1870,7 +1870,7 @@ E_Status_t        GLU_FUNC( Object, delete   )  ( ID_t ID ){
 }
 
 
-E_Status_t        GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget ){
+E_Status_t glu_gui_object_default_area( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget ){
     
     RH_ASSERT( preferred_area );
     

@@ -325,7 +325,7 @@ static inline void __gui_check_window  ( const __GUI_Window_t* config ){
 }
 #endif
 
-ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config ){
+ID_t RH_RESULT  glu_gui_window_create( const __GUI_Window_t* config){
     __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
 
     GLU_FUNC( Font, backupCache )();
@@ -379,7 +379,7 @@ ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config )
     return (ID_t)m_config;
 }
 
-__GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config ){
+__GUI_Window_t* glu_gui_window_template( __GUI_Window_t* config){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 #else
@@ -408,7 +408,7 @@ __GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config )
     return config;
 }
 
-E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
+E_Status_t glu_gui_window_insert( ID_t ID){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -420,7 +420,7 @@ E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t      GLU_FUNC( Window, delete   )    ( ID_t ID ){
+E_Status_t glu_gui_window_delete( ID_t ID){
     RH_FREE((void*)ID);
     //...//
     return MAKE_ENUM( kStatus_Success );

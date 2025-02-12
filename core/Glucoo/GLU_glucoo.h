@@ -151,33 +151,32 @@ void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
-ID_t            RH_RESULT GLU_FUNC( Object, create   )  ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
-E_Status_t                GLU_FUNC( Object, template )  (       GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget );
-E_Status_t                GLU_FUNC( Object, adjust   )  ( ID_t ID  , void*  dataScr, size_t dataSize );
-E_Status_t                GLU_FUNC( Object, frame    )  ( ID_t ID  , bool   cmd   );
-E_Status_t                GLU_FUNC( Object, insert   )  ( ID_t ID );
-E_Status_t                GLU_FUNC( Object, delete   )  ( ID_t ID );
-
-E_Status_t                GLU_FUNC( Object, preferred_area ) ( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget );
+ID_t            RH_RESULT glu_gui_object_create   ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
+E_Status_t                glu_gui_object_template (       GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget );
+E_Status_t                glu_gui_object_adjust   ( ID_t ID  , void*  dataScr, size_t dataSize );
+E_Status_t                glu_gui_object_frame    ( ID_t ID  , bool   cmd   );
+E_Status_t                glu_gui_object_insert   ( ID_t ID );
+E_Status_t                glu_gui_object_delete   ( ID_t ID );
+E_Status_t                glu_gui_object_default_area( __Area_t* preferred_area, GLU_ENUM(ObjWidget) widget );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_window.c ]
 ===============================================================================================================*/
 #include "./window/GLU_window.h"
-ID_t            RH_RESULT GLU_FUNC( Window, create   )  ( const __GUI_Window_t* config );
-__GUI_Window_t*           GLU_FUNC( Window, template )  (       __GUI_Window_t* config );
-E_Status_t                GLU_FUNC( Window, insert   )  ( ID_t ID );
-E_Status_t                GLU_FUNC( Window, delete   )  ( ID_t ID );
+ID_t            RH_RESULT glu_gui_window_create  ( const __GUI_Window_t* config );
+__GUI_Window_t*           glu_gui_window_template(       __GUI_Window_t* config );
+E_Status_t                glu_gui_window_insert  ( ID_t ID );
+E_Status_t                glu_gui_window_delete  ( ID_t ID );
 
 /*===============================================================================================================
  * 定义于 [ ./draw/GLU_menu.c ]
 ===============================================================================================================*/
 #include "./menu/GLU_menu.h"
-ID_t            RH_RESULT GLU_FUNC( Menu, create     )  ( const __GUI_Menu_t* config );
-E_Status_t                GLU_FUNC( Menu, insert     )  ( ID_t ID );
-E_Status_t                GLU_FUNC( Menu, frame      )  ( ID_t ID , bool cmd );
-int                       GLU_FUNC( Menu, scroll     )  ( ID_t ID , int  cmd );
-E_Status_t                GLU_FUNC( Menu, delete     )  ( ID_t ID );
+ID_t            RH_RESULT glu_gui_menu_create( const __GUI_Menu_t* config );
+E_Status_t                glu_gui_menu_insert( ID_t ID );
+E_Status_t                glu_gui_menu_frame ( ID_t ID , bool cmd );
+int                       glu_gui_menu_scroll( ID_t ID , int  cmd );
+E_Status_t                glu_gui_menu_delete( ID_t ID );
 
 #ifdef __cplusplus
 }

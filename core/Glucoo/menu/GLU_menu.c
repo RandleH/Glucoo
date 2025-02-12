@@ -493,7 +493,7 @@ static void __gui_scroll_menu_down     ( const __GUI_Menu_t* config ){
     }
 }
 
-ID_t       GLU_FUNC( Menu, create )    ( const __GUI_Menu_t* config ){
+ID_t       glu_gui_menu_create( const __GUI_Menu_t* config ){
     __GUI_Menu_t* m_config = (__GUI_Menu_t*)RH_MALLOC( sizeof(__GUI_Menu_t) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
@@ -509,7 +509,7 @@ ID_t       GLU_FUNC( Menu, create )    ( const __GUI_Menu_t* config ){
     return (ID_t)m_config;
 }
 
-E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
+E_Status_t glu_gui_menu_insert( ID_t ID ){
     
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
@@ -557,7 +557,7 @@ E_Status_t GLU_FUNC( Menu, insert )    ( ID_t ID ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
+E_Status_t glu_gui_menu_frame( ID_t ID, bool  cmd    ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
@@ -575,7 +575,7 @@ E_Status_t GLU_FUNC( Menu, frame  )    ( ID_t ID, bool  cmd    ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
+int        glu_gui_menu_scroll( ID_t ID, int cmd ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     if( config->history == NULL )
@@ -606,7 +606,7 @@ int        GLU_FUNC( Menu, scroll )    ( ID_t ID, int cmd ){
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t GLU_FUNC( Menu, delete )    ( ID_t ID ){
+E_Status_t glu_gui_menu_delete( ID_t ID ){
     __GUI_Menu_t* config = (__GUI_Menu_t* )ID;
     
     RH_FREE( (void*)config->history );

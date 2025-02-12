@@ -70,7 +70,14 @@ struct __Range_t{
 };
 typedef struct __Range_t __Range_t;
 
- 
+
+#define ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define ATTR_PRE_MAIN           __attribute__((constructor))
+#define ATTR_POST_MAIN          __attribute__((destructor))
+#define ATTR_CONST              __attribute__((const))
+#define ATTR_WEAK
+
+
 #define RH_RESULT     __attribute__((warn_unused_result))
 #define RH_PREMAIN    __attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
