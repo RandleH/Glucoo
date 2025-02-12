@@ -20,15 +20,15 @@ static void __gui_insert_menu_title    ( const tGluMenu* config ){
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
-    GLU_FUNC( Font, set_size )( pHistory->tFontH );
+    glu_font_set_size( pHistory->tFontH );
     
-    int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->title ); // 计算最多可容纳的字符个数
+    int cnt = glu_font_get_str_word_cnt( config->area.w, config->title ); // 计算最多可容纳的字符个数
     char* p = NULL;
     if( cnt>0 ){
         p = alloca( cnt+sizeof('\0') );  // 分配空间
         strncpy(p, config->title, cnt);  // 截取字符串到该空间
         p[cnt] = '\0';                   // 末尾取0
-        GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+        tGluFontImg* pF = glu_font_out_str_img(p);
         var x_fs = RH_LIMIT( config->area.xs +((config->area.w - pF->img_w)>>1)        , 0, GUI_X_WIDTH-1 );
         var y_fs = RH_LIMIT( config->area.ys +((pHistory->tSize - pHistory->tFontH)>>1), 0, GUI_Y_WIDTH-1 );
         
@@ -68,7 +68,7 @@ static void __gui_insert_menu_bar      ( const tGluMenu* config ){
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
-    GLU_FUNC( Font, set_size )( pHistory->bFontH );
+    glu_font_set_size( pHistory->bFontH );
     
     // 菜单内容字体的起始绘制坐标
     var x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
@@ -82,7 +82,7 @@ static void __gui_insert_menu_bar      ( const tGluMenu* config ){
     GLU_UION(Pixel) text_color = {.data = config->text_color};
     
     for ( int8_t i=0; i<pHistory->nItemPer&&i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+        int cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         
         if( i == pHistory->cur ){  // 该行被选中, 颜色选反色
@@ -104,7 +104,7 @@ static void __gui_insert_menu_bar      ( const tGluMenu* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            tGluFontImg* pF = glu_font_out_str_img(p);
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
@@ -142,7 +142,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
-    GLU_FUNC( Font, set_size )( pHistory->bFontH );
+    glu_font_set_size( pHistory->bFontH );
     // 菜单内容字体的起始绘制坐标
     int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
     int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
@@ -159,7 +159,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
             pHistory->idx--;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == 0 ){        // 首行颜色选反色
@@ -181,7 +181,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
-                    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                    tGluFontImg* pF = glu_font_out_str_img(p);
                     
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
@@ -216,7 +216,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
     }else{                          //  游标未到顶端, 先移动游标
         pHistory->cur--;
         // 绘制之前选中,现在未选中的那条菜单栏
-        int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
+        int cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+pHistory->cur+1].text ); // 计算最多可容纳的字符个数
         char* p = NULL;
         // 配置画笔颜色
         text_color.data = config->text_color;
@@ -237,7 +237,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur+1].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            tGluFontImg* pF = glu_font_out_str_img(p);
             
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
@@ -265,7 +265,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
         }
         
         // 绘制之前未选中,现在选中的那条菜单栏
-        cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+        cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
         p = NULL;
         // 配置画笔颜色
         text_color.data = REVERSE_COLOR( config->text_color );
@@ -286,7 +286,7 @@ static void __gui_scroll_menu_up       ( const tGluMenu* config ){
             p = alloca( cnt+sizeof('\0') );             // 分配空间
             strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
             p[cnt] = '\0';                              // 末尾取0
-            GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+            tGluFontImg* pF = glu_font_out_str_img(p);
             // 引用灰度字体图像(类型信息复制转换)
             BLK_SRCT(ImgGry) img_font = {
                 .h   = pF->img_h,
@@ -324,7 +324,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
     }*pHistory = (void*)config->history;
     
     // 配置字体大小
-    GLU_FUNC( Font, set_size )( pHistory->bFontH );
+    glu_font_set_size( pHistory->bFontH );
     // 菜单内容字体的起始绘制坐标
     int x_fs = RH_LIMIT( config->area.xs +(((int)(pHistory->bSize - pHistory->bFontH))>>1)                    , 0, GUI_X_WIDTH-1 );
     int y_fs = RH_LIMIT( config->area.ys + pHistory->tSize + (((int)(pHistory->bSize - pHistory->tFontH))>>1) , 0, GUI_Y_WIDTH-1 );
@@ -341,7 +341,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
             pHistory->idx++;
             
             for ( int8_t i=0; i<pHistory->nItemPer&&pHistory->idx+i<config->nItem; i++, y_fs+=pHistory->bSize, ys+=pHistory->bSize ) {
-                int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
+                int cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+i].text ); // 计算最多可容纳的字符个数
                 char* p = NULL;
                 
                 if( i == pHistory->nItemPer-1 ){        // 首行颜色选反色
@@ -363,7 +363,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
                     p = alloca( cnt+sizeof('\0') );             // 分配空间
                     strncpy(p, config->menuList[pHistory->idx+i].text, cnt);  // 截取字符串到该空间
                     p[cnt] = '\0';                              // 末尾取0
-                    GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                    tGluFontImg* pF = glu_font_out_str_img(p);
                     // 引用灰度字体图像(类型信息复制转换)
                     BLK_SRCT(ImgGry) img_font = {
                         .h   = pF->img_h,
@@ -394,7 +394,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
         if( pHistory->cur+1 != config->nItem ){// 判断游标是否为菜单底端, 菜单栏数可能小于屏幕所容纳的最大栏目数
             pHistory->cur++;                   // 移动游标
             // 绘制之前选中,现在未选中的那条菜单栏
-            int cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
+            int cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+pHistory->cur-1].text ); // 计算最多可容纳的字符个数
             char* p = NULL;
             // 配置画笔颜色
             text_color.data = config->text_color;
@@ -415,7 +415,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur-1].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
-                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                tGluFontImg* pF = glu_font_out_str_img(p);
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
@@ -440,7 +440,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
             }
             
             // 绘制之前未选中,现在选中的那条菜单栏
-            cnt = GLU_FUNC( Font, get_str_WordCnt )( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
+            cnt = glu_font_get_str_word_cnt( config->area.w, config->menuList[pHistory->idx+pHistory->cur].text ); // 计算最多可容纳的字符个数
             p = NULL;
             // 配置画笔颜色
             text_color.data = REVERSE_COLOR( config->text_color );
@@ -461,7 +461,7 @@ static void __gui_scroll_menu_down     ( const tGluMenu* config ){
                 p = alloca( cnt+sizeof('\0') );             // 分配空间
                 strncpy(p, config->menuList[pHistory->idx+pHistory->cur].text, cnt);  // 截取字符串到该空间
                 p[cnt] = '\0';                              // 末尾取0
-                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )(p);
+                tGluFontImg* pF = glu_font_out_str_img(p);
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
@@ -524,8 +524,8 @@ gluStatus_t glu_gui_menu_insert( gluHandle_t ID ){
     }*pHistory = (void*)config->history;
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
-    GLU_FUNC( Font, set_font )( config->font );
+    glu_font_backup_cache();
+    glu_font_set_style( config->font );
     
     if( pHistory == NULL ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
@@ -549,7 +549,7 @@ gluStatus_t glu_gui_menu_insert( gluHandle_t ID ){
     // 绘制菜单栏
     __gui_insert_menu_bar( config );
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
     
     glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&config->area)
                                      : glu_dev_add_refreash_area_ex(&config->area);
@@ -564,14 +564,14 @@ gluStatus_t glu_gui_menu_frame( gluHandle_t ID, bool  cmd    ){
     tGluMenu* p = (tGluMenu*)(ID);
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     if( cmd ){
         BLK_FUNC( Graph, EX_rect_raw )( &p->area, &info_MainScreen, NULL);
     }
 
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
     return MAKE_ENUM( kStatus_Success );
 }
 
@@ -582,7 +582,7 @@ int        glu_gui_menu_scroll( gluHandle_t ID, int cmd ){
         return 0;
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     switch(cmd){
         default:
@@ -598,7 +598,7 @@ int        glu_gui_menu_scroll( gluHandle_t ID, int cmd ){
             break;
     }
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
     
     glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex(&config->area)
                                : glu_dev_add_refreash_area_ex(&config->area);

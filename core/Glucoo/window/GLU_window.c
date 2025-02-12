@@ -39,7 +39,7 @@ static void __gui_insert_window_MacOS  (tGluWindow* config){
 #endif
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     // Window Bar
     BLK_FUNC( Graph, set_penColor   )( color_bar.data);
@@ -56,9 +56,9 @@ static void __gui_insert_window_MacOS  (tGluWindow* config){
     
     // Title
     if( config->title != NULL ){
-        GLU_FUNC( Font, set_size )( (int)(config->size>>1) );
-        GLU_FUNC( Font, set_font )( config->title_font );
-        GLU_SRCT(FontImg)* pFontInfo = GLU_FUNC( Font, out_str_Img )( config->title );
+        glu_font_set_size( (int)(config->size>>1) );
+        glu_font_set_style( config->title_font );
+        tGluFontImg* pFontInfo = glu_font_out_str_img( config->title );
         const int font_xs = RH_MID(xs,xe)-(int)((pFontInfo->img_w)>>1);
         const int font_ys = ys + bar_size_4;
         
@@ -168,7 +168,7 @@ static void __gui_insert_window_MacOS  (tGluWindow* config){
     BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.ptr, NULL);
     
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
 
 }
 static void __gui_insert_window_Win10  (tGluWindow* config){
@@ -204,7 +204,7 @@ static void __gui_insert_window_Win10  (tGluWindow* config){
 #endif
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     BLK_FUNC( Graph, set_penColor ) (color_bar.data);
     BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, info_MainScreen.ptr, NULL );
@@ -308,7 +308,7 @@ static void __gui_insert_window_Win10  (tGluWindow* config){
     }
     
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
 }
 
 static void __gui_remove_window_MacOS  (tGluWindow* config){
@@ -328,7 +328,7 @@ static inline void __gui_check_window  ( const tGluWindow* config ){
 gluHandle_t RH_RESULT  glu_gui_window_create( const tGluWindow* config){
     tGluWindow* m_config = (tGluWindow*)RH_MALLOC( sizeof(tGluWindow) );
 
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
@@ -356,13 +356,13 @@ gluHandle_t RH_RESULT  glu_gui_window_create( const tGluWindow* config){
     }
     
     if( m_config->text != NULL ){
-        GLU_FUNC( Font, set_font )(m_config->text_font);
-        GLU_FUNC( Font, set_size )(m_config->text_size);
+        glu_font_set_style(m_config->text_font);
+        glu_font_set_size(m_config->text_size);
         __SET_STRUCT_MB(tGluWindow, int  , m_config, text_margin, 5        );
 
         size_t fontW = m_config->area.w-((m_config->win_edge+m_config->text_margin)<<1);
         
-        GLU_SRCT(FontImg)* p = GLU_FUNC( Font, out_txt_Img )( m_config->text, fontW, kGLU_Align_Justify );
+        tGluFontImg* p = glu_font_out_txt_img( m_config->text, fontW, kGLU_Align_Justify );
         
         __SET_STRUCT_MB(tGluWindow, void*, m_config, text_bitMap, RH_MALLOC(p->img_w*p->img_h*sizeof(*(p->img_buf))));
 #ifdef RH_DEBUG
@@ -375,7 +375,7 @@ gluHandle_t RH_RESULT  glu_gui_window_create( const tGluWindow* config){
         //...//
     }
     
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
     return (gluHandle_t)m_config;
 }
 

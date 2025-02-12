@@ -66,7 +66,7 @@ Glucoo所支持的Font类型有:
 * 关于*color*的选型配置, 另请参阅...
 
 ### <u>Image</u>
-`GLU_SRCT(FontImg)`
+`tGluFontImg`
 
 Glucoo的字体最终呈现形式是定长定宽的[0:255]级的灰度图像.
 
@@ -87,25 +87,25 @@ Glucoo的字体最终呈现形式是定长定宽的[0:255]级的灰度图像.
 
 | 声明位置       | 方法 <div style="width: 350pt">    |
 |:--------------|:----------------------------------|
-| GLU_font.h    | [init](#lk_init)                  |
-| GLU_font.h    | [set_style](#lk_set_style)        |
-| GLU_font.h    | [get_style](#lk_get_style)        |
-| GLU_font.h    | [set_size](#lk_set_size)          |
-| GLU_font.h    | [get_size](#lk_get_size)          |
-| GLU_font.h    | [backupCache](#lk_backupCache)    |
-| GLU_font.h    | [restoreCache](#lk_restoreCache)  |
-| GLU_font.h    | [out_chr_Img](#lk_out_chr_Img)    |
-| GLU_font.h    | [out_str_Img](#lk_out_str_Img)    |
-| GLU_font.h    | [out_txt_Img](#lk_out_txt_Img)    |
-| GLU_font.h    | [get_chr_ImgInfo](#lk_get_chr_ImgInfo)    |
-| GLU_font.h    | [get_str_ImgInfo](#lk_get_str_ImgInfo)    |
-| GLU_font.h    | [get_str_WordCnt](#lk_get_str_WordCnt)    |
+| GLU_font.h    | [`glu_font_init`](#lk_init)                  |
+| GLU_font.h    | [`glu_font_set_style`](#lk_set_style)        |
+| GLU_font.h    | [`glu_font_get_style`](#lk_get_style)        |
+| GLU_font.h    | [`glu_font_set_size`](#lk_set_size)          |
+| GLU_font.h    | [`glu_font_get_size`](#lk_get_size)          |
+| GLU_font.h    | [`glu_font_backup_cache`](#lk_backupCache)    |
+| GLU_font.h    | [`glu_font_restore_cache`](#lk_restoreCache)  |
+| GLU_font.h    | [`glu_font_out_chr_img`](#lk_out_chr_Img)    |
+| GLU_font.h    | [`glu_font_out_str_img`](#lk_out_str_Img)    |
+| GLU_font.h    | [`glu_font_out_txt_img`](#lk_out_txt_Img)    |
+| GLU_font.h    | [`glu_font_get_chr_img_info`](#lk_get_chr_ImgInfo)    |
+| GLU_font.h    | [`glu_font_get_str_img_info`](#lk_get_str_ImgInfo)    |
+| GLU_font.h    | [`glu_font_get_str_word_cnt`](#lk_get_str_WordCnt)    |
 
 
 ### <u>Initialization</u> <div id="lk_init"></div>
 字体模块初始化.
 ```C
-void GLU_FUNC(Font, init)  (void);
+void glu_font_init(void);
 ```
 * 默认的初始配置如下:
 
@@ -115,8 +115,8 @@ void GLU_FUNC(Font, init)  (void);
 ### <u>Font Style</u> <div id="lk_set_style"></div><div id="lk_get_style"></div>
 设置字体类型
 ```C
-void             GLU_FUNC(Font, set_style) ( tGluFontEnum font );
-tGluFontEnum   GLU_FUNC(Font, get_style) ( void                );
+void glu_font_set_style( tGluFontEnum font);
+tGluFontEnum glu_font_get_style(void);
 ```
 
 * *font* 是你想要设置成的字体类型, 请在GLU_ENUM(Font)枚举列表中查找.
@@ -126,8 +126,8 @@ tGluFontEnum   GLU_FUNC(Font, get_style) ( void                );
 ### <u>Font Size</u>  <div id="lk_set_size"></div><div id="lk_get_size"></div>
 设置字体大小
 ```C
-void    GLU_FUNC(Font, set_size) ( uint8_t size );
-uint8_t GLU_FUNC(Font, get_size) ( void         );
+void glu_font_set_size( uint16_t size);
+uint8_t glu_font_get_size (void);
 ```
 
 * *size* 是你想要设置成的字体大小, 请设置合适的大小, 过大的字体可能会被报错.
@@ -137,8 +137,8 @@ uint8_t GLU_FUNC(Font, get_size) ( void         );
 ### <u>Cache</u> <div id="lk_backupCache"></div><div id="lk_restoreCache"></div>
 保存当前的字体设置. 恢复上一次保存的配置.
 ```C
-void    GLU_FUNC(Font, backupCache ) ( void );
-void    GLU_FUNC(Font, restoreCache) ( void );
+void glu_font_backup_cache(void);
+void glu_font_restore_cache(void);
 ```
 * 有些情况下, 你可能在之后还会使用到当前的配置, 因此可以保存,在之后被还原.
 * 如果连续多次调用backupCache, 则之前的未被restore的缓存将会被覆盖.
@@ -146,7 +146,7 @@ void    GLU_FUNC(Font, restoreCache) ( void );
 ### <u>Output Image</u> 
 输出单个字符的灰度图像. <div id="lk_out_chr_Img"></div>
 ```C
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_chr_Img) ( uint16_t    chr );
+tGluFontImg*  RH_RESULT RH_NULLABLE glu_font_out_chr_img ( uint16_t    chr);
 ```
 * *chr*是你想要打印的字符.
 * 返回文字图像.
@@ -154,7 +154,7 @@ GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_chr_Img) ( uint16_t
 
 输出字符串的灰度图像. <div id="lk_out_str_Img"></div>
 ```C
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_str_Img) ( const char* str );
+tGluFontImg*  RH_RESULT RH_NULLABLE glu_font_out_str_img ( const char* str);
 ```
 * *str*是你想要打印的字符串.
 * 返回文字图像.
@@ -162,7 +162,7 @@ GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_str_Img) ( const ch
 
 输出整个文本的灰度图像. <div id="lk_out_txt_Img"></div>
 ```C
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_txt_Img) ( const char* str, size_t width, tGluTextAlignEnum align );
+tGluFontImg*  RH_RESULT RH_NULLABLE glu_font_out_txt_img ( const char* str, size_t width, tGluTextAlignEnum align);
 ```
 * *str*是你想要打印的文本.
 * *width*是你想要指定的宽度.
@@ -172,7 +172,7 @@ GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_txt_Img) ( const ch
 ### <u>Info</u>
 查询输出字符变量 *c* 图像的长宽. <div id="lk_get_chr_ImgInfo"></div>
 ```C
-void GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, char        c   );
+void glu_font_get_chr_img_info( var RH_NULLABLE *width, var RH_NULLABLE *height, char        c   );
 ```
 * *width*是获取到的宽度, 给NULL将被忽略.
 * *height*是获取到的高度, 给NULL将被忽略.
@@ -181,7 +181,7 @@ void GLU_FUNC( Font, get_chr_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NUL
 
 查询输出字符串 *str* 图像的长宽. <div id="lk_get_str_ImgInfo"></div>
 ```C
-void GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NULLABLE *height, const char* str );
+void glu_font_get_str_img_info( var RH_NULLABLE *width, var RH_NULLABLE *height, const char* str );
 ```
 * *width*是获取到的宽度, 给NULL将被忽略.
 * *height*是获取到的高度, 给NULL将被忽略.
@@ -190,7 +190,7 @@ void GLU_FUNC( Font, get_str_ImgInfo) ( size_t RH_NULLABLE *width, size_t RH_NUL
 
 查询在限定宽度 *width* 的条件下, 可以输出字符串 *str* 中多少个字符. <div id="lk_get_str_WordCnt"></div>
 ```C
-int GLU_FUNC( Font, get_str_WordCnt) ( size_t width, const char* str );
+int glu_font_get_str_word_cnt( var width, const char* str );
 ```
 * *width* 你所限定的宽度.
 * *str* 是你想要针对的字符串.
@@ -199,7 +199,6 @@ int GLU_FUNC( Font, get_str_WordCnt) ( size_t width, const char* str );
 
 
 ## Examples
-
 
 
 

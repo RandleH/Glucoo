@@ -674,7 +674,7 @@ BLK_SRCT( ImgBin )* IMG1= BLK_FUNC( ImgBin, create   )( 300, 200 );
 
 GLU_FUNC(Font, set_size )(45);
 GLU_FUNC(Font, set_style)(kGLU_Font_NewYork);
-GLU_SRCT(FontImg)* pFImg = GLU_FUNC(Font, out_str_Img)("Hello world.");
+tGluFontImg* pFImg = GLU_FUNC(Font, out_str_Img)("Hello world.");
 
 BLK_SRCT( ImgGry ) SCR = {
     .pBuffer = (BLK_UION(PixelGry)*)pFImg->img_buf ,

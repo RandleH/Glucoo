@@ -123,7 +123,7 @@ void glu_gui_init( void){
     Screen.GRAM = (GLU_UION(Pixel) (*)[GUI_Y_WIDTH][GUI_X_WIDTH])RH_CFG_GRAM_POINTER;
 #endif
     BLK_FUNC( Graph, init )();
-    GLU_FUNC( Font , init )();
+    glu_font_init();
 
     info_MainScreen.ptr = Screen.GRAM[M_SCREEN_MAIN][0];
     
@@ -221,7 +221,7 @@ void glu_dev_refreash_partial_screen_ex( const gluArea_t* area ){
  * 此函数将会根据缓存情况进行屏幕刷新.
  *
  * Screen.areaNeedRefreashHead 是用于记载屏幕待刷新区域的链表表头, 表头本身不存储数据, 有效数据从下一节点开始.
-   该链表表头于 GLU_FUNC( GUI, init ) 中被初始化. 该链表为栈链表, 类型为 <BLK_SRCT(Stack)>.
+   该链表表头于 glu_gui_init 中被初始化. 该链表为栈链表, 类型为 <BLK_SRCT(Stack)>.
    GUI_RefreashScreenArea并且完成后将会释放其中的缓存图像数据及结构体自身.
  * 如果配置为内置显存, 那么将会判断屏幕总体待刷新像素点是否超过了屏幕像素总和, 如果超过了, 则释放所有链表节点,并刷新
    全屏幕,没有超过则将链表节点中数据即 <gluArea_t> 结构体指针传入给 glu_dev_refreash_partial_screen(), 由于内置显存, 因此

@@ -123,17 +123,17 @@ void GLU_FUNC( Utility, optimal_text )( const gluArea_t* src, const char* str, t
     dst->str  = str;
     dst->font = font;
     
-    GLU_Font_backupCache();
+    glu_font_backup_cache();
     
-    GLU_Font_set_font(font);
+    glu_font_set_style(font);
     
     var l=8,r=RH_MIN(src->w,src->h);
     dst->size = ((r+l)>>1);
     var w=0, h=0;
     while( r-l>1 ){
         
-        GLU_Font_set_size(dst->size);
-        GLU_Font_get_str_ImgInfo( &w, &h, str);
+        glu_font_set_size(dst->size);
+        glu_font_get_str_img_info( &w, &h, str);
         if( w<((src->w*3)>>2) && h<(src->h/3) ){
             l = dst->size;
         }else{
@@ -143,6 +143,6 @@ void GLU_FUNC( Utility, optimal_text )( const gluArea_t* src, const char* str, t
         dst->size = ((r+l)>>1);
     }
     
-    GLU_Font_restoreCache();
+    glu_font_restore_cache();
 }
 

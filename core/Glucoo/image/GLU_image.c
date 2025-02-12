@@ -67,15 +67,15 @@ void glu_gui_image_profile( tGluImageThemeEnum style, const gluColor_t* colors, 
     
     
     if( text!=NULL && text->str!=NULL ){
-        GLU_FUNC( Font, backupCache )();
-        GLU_FUNC( Font, set_font )( text->font );
-        GLU_FUNC( Font, set_size )( text->size );
+        glu_font_backup_cache();
+        glu_font_set_style( text->font );
+        glu_font_set_size( text->size );
         
         switch( text->align ){
             case kGLU_Align_Left:
                 break;
             case kGLU_Align_Middle:{
-                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( text->str );
+                tGluFontImg* pF = glu_font_out_str_img( text->str );
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
@@ -84,7 +84,7 @@ void glu_gui_image_profile( tGluImageThemeEnum style, const gluColor_t* colors, 
                     .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 var w,h;
-                GLU_FUNC(Font, get_str_ImgInfo)(&w, &h, text->str);
+                glu_font_get_str_img_info(&w, &h, text->str);
                 
                 var fs_x = RH_LIMIT( ((info_MainScreen.w - w)>>1), 0, GUI_X_WIDTH-1);
                 var fs_y = RH_LIMIT( ((info_MainScreen.h - h)>>1), 0, GUI_Y_WIDTH-1);
@@ -105,7 +105,7 @@ void glu_gui_image_profile( tGluImageThemeEnum style, const gluColor_t* colors, 
             case kGLU_Align_Justify:
                 break;
         }
-        GLU_FUNC( Font , restoreCache )();
+        glu_font_restore_cache();
     }
 
     if(glu_dev_is_auto_refreash())
