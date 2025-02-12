@@ -1787,7 +1787,7 @@ gluStatus_t glu_gui_object_template( tGluObject* config, tGluWidgetEnum widget )
             break;
         case kGLU_ObjWidget_button:
             glu_gui_object_default_area( &config->area, widget );
-            GLU_FUNC( Utility, optimal_text )( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
+            glu_util_optimal_text( &config->area, config->text.str, kGLU_Font_ArialRounded_Bold, &config->text );
             config->text.align   = kGLU_Align_Middle;
             
             break;
@@ -1883,7 +1883,7 @@ gluStatus_t glu_gui_object_default_area( gluArea_t* preferred_area, tGluWidgetEn
             return MAKE_ENUM( kStatus_NotFound );
     }
 
-    GLU_FUNC( Utility, align_screen )( preferred_area->w, preferred_area->h, preferred_area, M_UTILITY_ALIGN_VM|M_UTILITY_ALIGN_HM );
+    glu_util_align_screen( preferred_area->w, preferred_area->h, preferred_area, M_UTILITY_ALIGN_VM|M_UTILITY_ALIGN_HM );
 
     return MAKE_ENUM( kStatus_Success );
 }

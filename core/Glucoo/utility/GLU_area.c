@@ -2,7 +2,7 @@
 
 
 
-void GLU_FUNC( Utility, align_area )( const gluArea_t* src, var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
+void glu_util_align_area( const gluArea_t* src, var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
     RH_ASSERT(src);
     RH_ASSERT(dst);
     M_UTILITY_ALIGN_xx &= 0x0000003f;
@@ -28,23 +28,23 @@ void GLU_FUNC( Utility, align_area )( const gluArea_t* src, var w, var h, gluAre
     dst->h = h;
 }
 
-void GLU_FUNC( Utility, align_screen )( var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
+void glu_util_align_screen( var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx ){
     gluArea_t src = {.xs = 0, .ys = 0, .w = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT };
-    GLU_FUNC( Utility, align_area )( &src, w, h, dst, M_UTILITY_ALIGN_xx );
+    glu_util_align_area( &src, w, h, dst, M_UTILITY_ALIGN_xx );
 }
 
-bool GLU_FUNC( Utility, pt_in_area   )( var x, var y, const gluArea_t* pArea ){
+bool glu_util_is_pt_inside( var x, var y, const gluArea_t* pArea ){
     RH_ASSERT(pArea);
     
     return (bool)((x>=pArea->xs)&&(x<pArea->xs+pArea->w)&&(y>=pArea->ys)&&(y<pArea->ys+pArea->h));
 }
 
-void GLU_FUNC( Utility, area_hdiv    )( const gluArea_t* total, gluArea_t p[], size_t size ){
+void glu_util_area_hdiv( const gluArea_t* total, gluArea_t p[], size_t size ){
     RH_ASSERT(total);
     RH_ASSERT(p);
     
     if(size==1){
-        GLU_Utility_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
+        glu_util_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
         return;
     }
     
@@ -72,17 +72,17 @@ void GLU_FUNC( Utility, area_hdiv    )( const gluArea_t* total, gluArea_t p[], s
                 remain -= remain/(size-1-i);
             }
             
-            GLU_FUNC(Utility,align_area)( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
+            glu_util_align_area( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
         }
     }
 }
 
-void GLU_FUNC( Utility, area_vdiv    )( const gluArea_t* total, gluArea_t p[], size_t size ){
+void glu_util_area_vdiv( const gluArea_t* total, gluArea_t p[], size_t size ){
     RH_ASSERT(total);
     RH_ASSERT(p);
     
     if(size==1){
-        GLU_Utility_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
+        glu_util_align_area( total, p->w, p->h, p, M_UTILITY_ALIGN_VM );
         return;
     }
     
@@ -110,12 +110,12 @@ void GLU_FUNC( Utility, area_vdiv    )( const gluArea_t* total, gluArea_t p[], s
                 remain -= remain/(size-1-i);
             }
             
-            GLU_FUNC(Utility,align_area)( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
+            glu_util_align_area( total, iter->w, iter->h, iter, M_UTILITY_ALIGN_VM );
         }
     }
 }
 
-void GLU_FUNC( Utility, optimal_text )( const gluArea_t* src, const char* str, tGluFontEnum font, tGluTextInfo* dst ){
+void glu_util_optimal_text( const gluArea_t* src, const char* str, tGluFontEnum font, tGluTextInfo* dst ){
     RH_ASSERT(src);
     RH_ASSERT(dst);
     RH_ASSERT(str);

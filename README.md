@@ -75,6 +75,13 @@ Graph Library for embedded software system.
 | [`glu_gui_menu_frame`]()                |   |
 | [`glu_gui_menu_scroll`]()               |   |
 | [`glu_gui_menu_delete`]()               |   |
+| **Utility**                             | **?**        |
+| [`glu_util_align_area`]()               |   |
+| [`glu_util_align_screen`]()             |   |
+| [`glu_util_is_pt_inside`]()             |   |
+| [`glu_util_area_hdiv`]()                |   |
+| [`glu_util_area_vdiv`]()                |   |
+| [`glu_util_optimal_text`]()             |   |
 
 
 
