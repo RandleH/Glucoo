@@ -18,7 +18,7 @@ Font 模块可以完成对字体文件的读取, 解析以及图像输出
 
 
 ### <u>Align</u> 
-`GLU_ENUM(Align)`
+`tGluTextAlignEnum`
 
 Glucoo所支持的Align对齐方式有:
 
@@ -60,7 +60,7 @@ Glucoo所支持的Font类型有:
 | font   |   tGluFontEnum   | 该文本使用的字体类型, 可在枚举列表中选择对应的字体    |
 | size   |   uint8_t          | 该文本的字体大小       |
 | color  |   GLU_TYPE(Pixel)  | 该文本使用的颜色, 颜色对应项目配置       |
-| align  |   GLU_ENUM(Align)  | 该文本的对齐方式       |
+| align  |   tGluTextAlignEnum  | 该文本的对齐方式       |
 | str    |   const char*      | 文本文字字符串         |
 
 * 关于*color*的选型配置, 另请参阅...
@@ -162,7 +162,7 @@ GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_str_Img) ( const ch
 
 输出整个文本的灰度图像. <div id="lk_out_txt_Img"></div>
 ```C
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_txt_Img) ( const char* str, size_t width, GLU_ENUM(Align) align );
+GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE GLU_FUNC(Font, out_txt_Img) ( const char* str, size_t width, tGluTextAlignEnum align );
 ```
 * *str*是你想要打印的文本.
 * *width*是你想要指定的宽度.

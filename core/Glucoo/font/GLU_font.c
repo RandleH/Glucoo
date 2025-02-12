@@ -767,7 +767,7 @@ static GLU_SRCT(FontImg)*  __out_txt_Middle   ( const char* str, var width ){
 }//
 
 GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE
-GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align) align ){
+GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, tGluTextAlignEnum align ){
     switch(align){
         case kGLU_Align_Justify:
             return __out_txt_Justify( str, width );

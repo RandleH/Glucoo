@@ -19,7 +19,7 @@ struct tGluWindow{
     
     const char*          text;
     tGluFontEnum       text_font;
-    GLU_ENUM(Align)    text_align;
+    tGluTextAlignEnum    text_align;
     var                  text_size;
     //...//
     

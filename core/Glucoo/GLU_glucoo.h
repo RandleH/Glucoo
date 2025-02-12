@@ -36,13 +36,13 @@ typedef enum{
     kGLU_Align_Left    ,
     kGLU_Align_Middle  ,
     kGLU_Align_Justify
-}GLU_ENUM(Align);
+}tGluTextAlignEnum;
 
 struct GLU_SRCT(Text){
     tGluFontEnum   font;
     uint16_t         size;
     gluColor_t       color;
-    GLU_ENUM(Align)  align;
+    tGluTextAlignEnum  align;
     const char*      str;
     bool             ul;
     bool             ml;
