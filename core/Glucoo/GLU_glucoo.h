@@ -60,7 +60,7 @@ typedef enum{
     kGLU_Render_gradient_v_24bit ,
     kGLU_Render_centered_24bit   ,
     kGLU_NUM_Render        ,
-}GLU_ENUM(Render);
+}tGluRenderEnum;
 
 /*===============================================================================================================
  * GLU_OBJECT --- Definition as follow
