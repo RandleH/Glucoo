@@ -163,8 +163,8 @@ E_Status_t                glu_gui_object_default_area( __Area_t* preferred_area,
  * 定义于 [ ./draw/GLU_window.c ]
 ===============================================================================================================*/
 #include "./window/GLU_window.h"
-ID_t            RH_RESULT glu_gui_window_create  ( const __GUI_Window_t* config );
-__GUI_Window_t*           glu_gui_window_template(       __GUI_Window_t* config );
+ID_t            RH_RESULT glu_gui_window_create  ( const tGluWindow* config );
+tGluWindow*           glu_gui_window_template(       tGluWindow* config );
 E_Status_t                glu_gui_window_insert  ( ID_t ID );
 E_Status_t                glu_gui_window_delete  ( ID_t ID );
 

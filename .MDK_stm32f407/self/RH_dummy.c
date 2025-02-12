@@ -205,7 +205,7 @@ for(int i=0; i<size; i++){
 
 fclose(fontTxt);
 
-__GUI_Window_t cfg;
+tGluWindow cfg;
     cfg.area.xs     = 30;
     cfg.area.ys     = 40;
     cfg.area.height = 300;
@@ -232,7 +232,7 @@ Simul_API_Init();
 GUI_RefreashScreen();
 
 
-__GUI_Window_t cfg2;
+tGluWindow cfg2;
 GUI_easySet_window(&cfg2);
 cfg2.area.xs     = 100;
 cfg2.area.ys     = 50;
