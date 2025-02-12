@@ -78,7 +78,7 @@ int main(int argc, char const *argv[]){
         M_COLOR_BLUE
     };
 
-    GLU_Image_profile( kGLU_ImageStyle_aurora, &color[0], sizeof(color)/sizeof(*color), NULL, 45 );
+    glu_gui_image_profile( kGLU_ImageStyle_aurora, &color[0], sizeof(color)/sizeof(*color), NULL, 45 );
 
 
 #if 0
