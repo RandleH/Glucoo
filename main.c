@@ -11,7 +11,7 @@
 #include "GLU_image.h"
 #include "GLU_object.h"
 
-#include "GLU_render.h"
+// #include "GLU_render.h"
 
 #include "BLK_graphic.h"
 
@@ -34,7 +34,7 @@ static void open_img(void){
 //
 //    BLK_SRCT(Img888) *pDST = BLK_Img888_create(pSRC->w, pSRC->h);
 //
-//    __Area_t area = {
+//    gluArea_t area = {
 //        .w = pSRC->w ,
 //        .h = pSRC->h ,
 //        .xs = 0,
@@ -53,8 +53,35 @@ static void open_img(void){
 
 #include "BLK_dsp.h"
 
+
+
+
+
 int main(int argc, char const *argv[]){
+    glu_gui_init();
+
+    glu_dev_auto_refreash(YES);
     
+    tGluTextInfo text = {
+        .str   = "YuanJi"          ,
+        .size  = 700               ,
+        .color = M_COLOR_BLACK     ,
+        .align = kGLU_Align_Middle ,
+        .font  = kGLU_Font_Optima  ,
+    };
+
+    gluColor_t color[] = {
+        M_COLOR_RED,
+        M_COLOR_YELLOW,
+        M_COLOR_GREEN,
+        M_COLOR_CYAN,
+        M_COLOR_BLUE
+    };
+
+    glu_gui_image_profile( kGLU_ImageStyle_aurora, &color[0], sizeof(color)/sizeof(*color), NULL, 45 );
+
+
+#if 0
     cvar x[] = { 0,1,2,3,4,5,6,0.8,8,9,10,11,12,13,14,15};
     BLK_SRCT(Cseq) X    = __BLK_Dsp_dft(x, sizeof(x)/sizeof(*x));
 
@@ -62,6 +89,8 @@ int main(int argc, char const *argv[]){
     __BLK_Dsp_fft( NULL, 234);
     
     __BLK_Dsp_cseq_free(X);
+
+#endif
     
     
     
@@ -70,38 +99,38 @@ int main(int argc, char const *argv[]){
     GLU_GUI_init();
     BLK_Graph_init();
     
-    GLU_TYPE(Color) colors_sky[2] = { MAKE_COLOR( 10, 10, 88 ), MAKE_COLOR( 10, 10, 16) };
-    __Area_t area_sky = {
+    gluColor_t colors_sky[2] = { MAKE_COLOR( 10, 10, 88 ), MAKE_COLOR( 10, 10, 16) };
+    gluArea_t area_sky = {
         .xs = 0 , .ys = 0,
         .w  = RH_CFG_SCREEN_WIDTH-1 , .h  = RH_CFG_SCREEN_HEIGHT-1,
     };
     
-    GLU_TYPE(Color) colors_moon[2] = { MAKE_COLOR( 208, 208, 208 ), MAKE_COLOR( 15, 17, 16) };
-    __Area_t area_moon = {
+    gluColor_t colors_moon[2] = { MAKE_COLOR( 208, 208, 208 ), MAKE_COLOR( 15, 17, 16) };
+    gluArea_t area_moon = {
         .xs = 300 , .ys = 300,
         .w  = 400 , .h  = 400,
     };
     
-    GLU_TYPE(Color) colors_land[2] = { MAKE_COLOR(  24,  44,  21 ), MAKE_COLOR( 20, 20, 20) };
-    __Area_t area_land = {
+    gluColor_t colors_land[2] = { MAKE_COLOR(  24,  44,  21 ), MAKE_COLOR( 20, 20, 20) };
+    gluArea_t area_land = {
         .xs = 0   , .ys = 1790,
         .w  = RH_CFG_SCREEN_WIDTH, .h = RH_CFG_SCREEN_HEIGHT-1790+1
     };
     
-    GLU_TYPE(Color) colors_roof[2] = { MAKE_COLOR(  31,  31,  31 ), MAKE_COLOR( 11, 10, 20) };
-    __Area_t area_roof = {
+    gluColor_t colors_roof[2] = { MAKE_COLOR(  31,  31,  31 ), MAKE_COLOR( 11, 10, 20) };
+    gluArea_t area_roof = {
         .xs = 1018 , .ys = 1418,
         .w  = 660  , .h = 151
     };
     
-    GLU_TYPE(Color) colors_wall[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
-    __Area_t area_wall = {
+    gluColor_t colors_wall[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    gluArea_t area_wall = {
         .xs = area_roof.xs + 100    , .ys = area_roof.ys+area_roof.h,
         .w  = area_roof.w  - 100*2  , .h  = area_land.ys-(area_roof.ys+area_roof.h)+1
     };
     
-    GLU_TYPE(Color) colors_door[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
-    __Area_t area_door = {
+    gluColor_t colors_door[2] = { MAKE_COLOR(  21,  21,  21 ), MAKE_COLOR( 11, 10, 20) };
+    gluArea_t area_door = {
         .xs = area_wall.xs + 180    , .ys = area_wall.ys+70,
         .w  = area_wall.w  - 180*2  , .h  = area_wall.h -70
     };

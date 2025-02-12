@@ -178,8 +178,8 @@ static __Method rhtt  = {   // Present by Randle Hemlslay  --> rh
 #endif
 
 static struct{
-    GLU_SRCT(FontImg)    img;
-    GLU_ENUM(Font)       style;
+    tGluFontImg    img;
+    tGluFontEnum       style;
     uint16_t             size;
     float                scale;
     int                  ascent;
@@ -213,7 +213,7 @@ static struct{
  * 根据宏 RH_CFG_FONT_STYLE__xxxx 进行初始化, 如果未开启该字体宏, 则路径将为NULL
  * __read_ttf_file 为字体ttf文件读取函数, 将数据拷贝至FCFG.ttf中
  ==================================================================================================================================*/
-    static E_Status_t __read_ttf_file( const char* path ){
+    static gluStatus_t __read_ttf_file( const char* path ){
         FILE* fontFile = fopen( path , "rb" );
         
         RH_ASSERT( fontFile );
@@ -234,7 +234,7 @@ static struct{
         return MAKE_ENUM(kStatus_Success);
     }
 
-    static E_Status_t __make_ttf_path( void ){
+    static gluStatus_t __make_ttf_path( void ){
 
     #define MAX_PATH_SIZE 255
         char path_tmp[MAX_PATH_SIZE] = {0};
@@ -343,20 +343,18 @@ static const rhtt_fontinfo* font_bit_array[kGLU_NUM_FontStyle] = {
 
 
 
-void
-GLU_FUNC( Font, init           ) ( void ){
+void glu_font_init(void){
     FCFG.style     = kGLU_Font_Unscii;
     FCFG.size      = 24;
     
     __make_ttf_path();
     
-    GLU_FUNC( Font, set_font )( kGLU_Font_Unscii );
+    glu_font_set_style( kGLU_Font_Unscii );
     
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
 }
 
-void
-GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
+void glu_font_set_style( tGluFontEnum style){
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     // 确认字体解析库 stbtt为使用STB库, rhtt为使用自研库
     FCFG.method = &stbtt;
@@ -402,7 +400,7 @@ GLU_FUNC( Font, set_font      ) ( GLU_ENUM(Font) style   ){
 }
 
 void
-GLU_FUNC( Font, set_size       ) ( uint16_t        size    ){
+glu_font_set_size ( uint16_t        size    ){
 
 #if   ( RH_CFG_FONT_DATA_TYPE == RH_CFG_FONT_DATA_EXTERN_TTF   )
     FCFG.method = &stbtt;
@@ -431,17 +429,17 @@ GLU_FUNC( Font, set_size       ) ( uint16_t        size    ){
 }
 
 uint8_t
-GLU_FUNC( Font, get_size       ) ( void ){
+glu_font_get_size ( void ){
     return FCFG.size;
 }
 
-GLU_ENUM(Font)
-GLU_FUNC( Font, get_font      ) ( void ){
+tGluFontEnum
+glu_font_get_style ( void ){
     return FCFG.style;
 }
 
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE 
-GLU_FUNC( Font, out_chr_Img    ) ( uint16_t    chr ){
+tGluFontImg*  RH_RESULT RH_NULLABLE 
+glu_font_out_chr_img ( uint16_t    chr ){
     int c_x1 , c_y1 , c_x2 , c_y2;
     (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, chr, FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     FCFG.img.img_h = c_y2-c_y1;
@@ -471,8 +469,8 @@ GLU_FUNC( Font, out_chr_Img    ) ( uint16_t    chr ){
     return &FCFG.img;
 }
 
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE
-GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
+tGluFontImg*  RH_RESULT RH_NULLABLE
+glu_font_out_str_img ( const char* str ){
     if( FCFG.img.img_buf ){
         RH_FREE(FCFG.img.img_buf);
         FCFG.img.img_buf = NULL;
@@ -565,15 +563,14 @@ GLU_FUNC( Font, out_str_Img    ) ( const char* str ){
     return &FCFG.img;
 }
 
-void
-GLU_FUNC( Font, out_str    ) ( const char* str, var xs, var ys, F_Render callback ){
+void glu_font_out_str( const char* str, var xs, var ys, F_Render callback ){
     RH_ASSERT(str);
     RH_ASSERT(callback);
     
-    GLU_SRCT(FontImg) *pFontImg = GLU_FUNC( Font, out_str_Img    ) ( str );
+    tGluFontImg *pFontImg = glu_font_out_str_img ( str );
     RH_ASSERT( pFontImg );
     
-//    GLU_SRCT(FontImg) *pIterFont   = pFontImg;
+//    tGluFontImg *pIterFont   = pFontImg;
 //    GLU_UION(Pixel)   *pIterScreen = info_MainScreen.ptr + ys*info_MainScreen.w + xs;
     
     // 需要检查渲染器是否已渲染
@@ -587,12 +584,12 @@ GLU_FUNC( Font, out_str    ) ( const char* str, var xs, var ys, F_Render callbac
 
 
 #include "BLK_data.h"
-static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){
+static tGluFontImg*  __out_txt_Justify  ( const char* str, var width ){
 
     // 获取空格的最小像素宽度,为改字体下的空格所占宽度的一半.
     var spW = 0;
     var spH = 0;
-    GLU_FUNC( Font, get_chr_ImgInfo )(&spW, &spH, 'r' );
+    glu_font_get_chr_img_info(&spW, &spH, 'r' );
     
     // 定义词汇数据结构,字符串及所需绘制的像素点宽度.
     struct WordInfo_t{
@@ -607,7 +604,7 @@ static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){
     
     // 获取句子中的单词信息,每个单词单独存储在链表节点中,节点中包含单词字符串以及其所需绘制的像素点个数.
     WordInfo_t WordInfo = {.str = strtok(pSentence," "), .pixsW = 0};
-    GLU_FUNC( Font, get_str_ImgInfo )( &WordInfo.pixsW, NULL, WordInfo.str );
+    glu_font_get_str_img_info( &WordInfo.pixsW, NULL, WordInfo.str );
     
     BLK_SRCT(LinkDB)* pTextHead = BLK_FUNC( LinkDB, createHead )( &WordInfo );
 
@@ -616,7 +613,7 @@ static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){
         WordInfo_t* pWordInfo = alloca(sizeof(WordInfo_t));
         pWordInfo->str   = p;
         pWordInfo->pixsW = 0;
-        GLU_FUNC( Font, get_str_ImgInfo )( &pWordInfo->pixsW, NULL, pWordInfo->str );
+        glu_font_get_str_img_info( &pWordInfo->pixsW, NULL, pWordInfo->str );
         
         BLK_FUNC( LinkDB, addTail )( pTextHead, pWordInfo );
     }
@@ -756,18 +753,18 @@ static GLU_SRCT(FontImg)*  __out_txt_Justify  ( const char* str, var width ){
     BLK_FUNC( LinkDB, removeAll )(pTextHead);
     return &FCFG.img;
 }
-static GLU_SRCT(FontImg)*  __out_txt_Left     ( const char* str, var width ){
+static tGluFontImg*  __out_txt_Left     ( const char* str, var width ){
     return NULL;
 }//
-static GLU_SRCT(FontImg)*  __out_txt_Right    ( const char* str, var width ){
+static tGluFontImg*  __out_txt_Right    ( const char* str, var width ){
     return NULL;
 }//
-static GLU_SRCT(FontImg)*  __out_txt_Middle   ( const char* str, var width ){
+static tGluFontImg*  __out_txt_Middle   ( const char* str, var width ){
     return NULL;
 }//
 
-GLU_SRCT(FontImg)*  RH_RESULT RH_NULLABLE
-GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align) align ){
+tGluFontImg*  RH_RESULT RH_NULLABLE
+glu_font_out_txt_img ( const char* str, size_t width, tGluTextAlignEnum align ){
     switch(align){
         case kGLU_Align_Justify:
             return __out_txt_Justify( str, width );
@@ -782,8 +779,7 @@ GLU_FUNC( Font, out_txt_Img    ) ( const char* str, size_t width, GLU_ENUM(Align
     }
 }
 
-void
-GLU_FUNC( Font, get_chr_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, char        c   ){
+void glu_font_get_chr_img_info( var RH_NULLABLE *width, var RH_NULLABLE *height, char c){
     int c_x1 , c_y1 , c_x2 , c_y2;
     (*FCFG.method->_GetCodepointBitmapBox)(&FCFG.stb_info, c, FCFG.scale, FCFG.scale, &c_x1, &c_y1, &c_x2, &c_y2);
     if( width )
@@ -793,8 +789,7 @@ GLU_FUNC( Font, get_chr_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *heig
         *height = c_y2-c_y1;
 }
 
-void
-GLU_FUNC( Font, get_str_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *height, const char* str ){
+void glu_font_get_str_img_info( var RH_NULLABLE *width, var RH_NULLABLE *height, const char* str ){
     
     if( height ){
         *height = FCFG.ascent-FCFG.descent+FCFG.lineGap;
@@ -816,8 +811,7 @@ GLU_FUNC( Font, get_str_ImgInfo) ( var RH_NULLABLE *width, var RH_NULLABLE *heig
     }
 }
 
-int
-GLU_FUNC( Font, get_str_WordCnt) ( var width, const char* str ){
+int glu_font_get_str_word_cnt( var width, const char* str){
     int cnt=0, w=0;
     
     int advanceWidth,leftSideBearing;
@@ -839,21 +833,21 @@ GLU_FUNC( Font, get_str_WordCnt) ( var width, const char* str ){
 
 static bool backFCFG = false;
 void
-GLU_FUNC( Font, backupCache    ) ( void ){
+glu_font_backup_cache ( void ){
     memcpy(&FCFG_copy, &FCFG, sizeof(FCFG_copy));
     backFCFG = true;
 }
 
 void
-GLU_FUNC( Font, restoreCache   ) ( void ){
+glu_font_restore_cache ( void ){
     if( backFCFG ){
         if( FCFG.img.img_buf ){
             RH_FREE(FCFG.img.img_buf);
             FCFG.img.img_buf=NULL;
         }
         memcpy(&FCFG, &FCFG_copy, sizeof(FCFG));
-        GLU_FUNC( Font, set_font )( FCFG.style );
-        GLU_FUNC( Font, set_size  )( FCFG.size  );
+        glu_font_set_style( FCFG.style );
+        glu_font_set_size( FCFG.size  );
         backFCFG = false;
     }
 }
@@ -862,8 +856,7 @@ GLU_FUNC( Font, restoreCache   ) ( void ){
 // 仅供开发者使用
 #if 1
 
-size_t
-GLU_FUNC( Font, out_ttf_array )( const char* ttf_path, const char* dst ){
+size_t glu_font_out_ttf_array( const char* ttf_path, const char* dst ){
     FILE* fontFile = fopen( ttf_path , "rb" );
     
 #ifdef RH_DEBUG

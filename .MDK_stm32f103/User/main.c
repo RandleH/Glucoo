@@ -19,7 +19,7 @@ int main(void){
     GUI_API_Init ();
     GUI_Init();
 
-    __GUI_Menu_t cfg = {0};
+    tGluMenu cfg = {0};
     
     cfg.area.xs = 10;
     cfg.area.ys = 10;
@@ -48,7 +48,7 @@ int main(void){
     
     cfg.menuList = m;
     
-    ID_t MENU = GUI_menu_create(&cfg);
+    gluHandle_t MENU = GUI_menu_create(&cfg);
     GUI_menu_frame( MENU, 1 );
     GUI_menu_insert(MENU);
     GUI_RefreashScreen();

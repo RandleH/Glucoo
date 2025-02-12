@@ -22,7 +22,7 @@ __ImageRGB888_t out = {
     .width   = 3,
     .height  = 3
 };
-__Area_t AREA = {
+gluArea_t AREA = {
     .xs = 2,
     .ys = 2,
     .width  = 3,
@@ -45,7 +45,7 @@ const char* __restrict__ src  = "/Users/randle_h/desktop/lenna.bmp";
 const char* __restrict__ des  = "/Users/randle_h/desktop/lenna_.bmp";
 
 __ImageRGB888_t* IMG_IN  = __LoadBMP_ImgRGB888(src);
-__Area_t         AREA    = {
+gluArea_t         AREA    = {
     .xs = 1,
     .ys = 1,
     .width  = 300,
@@ -205,7 +205,7 @@ for(int i=0; i<size; i++){
 
 fclose(fontTxt);
 
-__GUI_Window_t cfg;
+tGluWindow cfg;
     cfg.area.xs     = 30;
     cfg.area.ys     = 40;
     cfg.area.height = 300;
@@ -216,7 +216,7 @@ __GUI_Window_t cfg;
     cfg.title       = "Text";
 
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
-    ID_t ID_Window1 = GUI_create_window(&cfg);
+    gluHandle_t ID_Window1 = GUI_create_window(&cfg);
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
     GUI_insert_window( ID_Window1 );
     printf("Alloced Memory: %ld B\n",RH_alloc_byte);
@@ -232,7 +232,7 @@ Simul_API_Init();
 GUI_RefreashScreen();
 
 
-__GUI_Window_t cfg2;
+tGluWindow cfg2;
 GUI_easySet_window(&cfg2);
 cfg2.area.xs     = 100;
 cfg2.area.ys     = 50;
@@ -245,7 +245,7 @@ cfg2.title       = "To: Pr.WenKai";
 cfg2.text_size   = 20;
 cfg2.text_font   = kGUI_FontStyle_Arial_Unicode;//kGUI_FontStyle_NewYork;
 cfg2.text        = "Hello, this is not a regular dialog box and either not a snapshot from my computer. It is a simple UI designed for my command desk which is a embedded device targeting on STM32. This UI project named ""Glucoo"". It has been published on my GitHub website and the link is attached in the E-mail. If you view carefully, you will find out an another secrete repository reference from 'Glucoo'. That's right-> BlackHouse!!! Honestly, Glucoo doesn't work very well. Those functions are still limited-useed or poor-proformance. Me now writting English as a Chinese friend is one of those that it doesn't support any charactor beyond the ASCII. Anyway, I made this simply not for any competition, rewords or research. I just assume that I am a novelist or king of my own Digital-Empire. I create my own data structure like building an architecture or managing a beautiful city. This sounds a little bit aggressive. I used to be solo and I tried to work togeither with friends, but maybe I laid the standard so high that no one can meet it even for myself. Anyway, It will be my honor if you take a look of my project. ";
-ID_t ID_Window2 = GUI_create_window(&cfg2);
+gluHandle_t ID_Window2 = GUI_create_window(&cfg2);
 
 GUI_insert_window( ID_Window2 );
 GUI_RefreashScreen();
@@ -273,7 +273,7 @@ GUI_delete_window( ID_Window2 );
 
 GUI_Init();
     GUI_set_penSize(5);
-    __GUI_Window_t cfg;
+    tGluWindow cfg;
     GUI_window_quickSet(&cfg);
     cfg.area.xs     = 20;
     cfg.area.ys     = 20;
@@ -286,7 +286,7 @@ GUI_Init();
     cfg.text        = "Hello world";
     cfg.text_size   = 8;
 
-    ID_t ID_Window1 = GUI_window_create(&cfg);
+    gluHandle_t ID_Window1 = GUI_window_create(&cfg);
     GUI_window_insert( ID_Window1 );
 
     GUI_RefreashScreen();
@@ -316,17 +316,17 @@ GUI_Init();
     cfg_obj.val[0]      = joystick_data[0];
     cfg_obj.val[1]      = joystick_data[1];
     
-    ID_t ID_JOY         = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_JOY         = GUI_object_create( &cfg_obj );
     
     cfg_obj.style       = kGUI_ObjStyle_num;
     cfg_obj.area.xs     = 90;
     cfg_obj.area.ys     = 20;
     cfg_obj.area.width  = 35;
     cfg_obj.area.height = 12;
-    ID_t ID_NUM_1       = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_NUM_1       = GUI_object_create( &cfg_obj );
     
     cfg_obj.area.ys    += cfg_obj.area.height;
-    ID_t ID_NUM_2       = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_NUM_2       = GUI_object_create( &cfg_obj );
 
     cfg_obj.style       = kGUI_ObjStyle_text;
     
@@ -334,11 +334,11 @@ GUI_Init();
     cfg_obj.area.width  = 10;
     cfg_obj.area.xs    -= cfg_obj.area.width-1;
     cfg_obj.text        = "Y";
-    ID_t ID_TXT_Y       = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_TXT_Y       = GUI_object_create( &cfg_obj );
     
     cfg_obj.area.ys    -= cfg_obj.area.height;
     cfg_obj.text        = "X";
-    ID_t ID_TXT_X       = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_TXT_X       = GUI_object_create( &cfg_obj );
 
     GUI_object_insert(ID_JOY);
     GUI_object_insert(ID_NUM_1);

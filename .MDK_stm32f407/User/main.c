@@ -77,7 +77,7 @@ int main(void)
 
     cfg_obj.val         = 129;
     
-    ID_t ID_Obj1 = GUI_object_create( &cfg_obj );
+    gluHandle_t ID_Obj1 = GUI_object_create( &cfg_obj );
     GUI_object_insert(ID_Obj1);
     GUI_object_frame(ID_Obj1,true);
     

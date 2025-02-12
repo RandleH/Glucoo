@@ -11,13 +11,13 @@
 #define M_UTILITY_ALIGN_VM        ((uint32_t)( 1<<5 ))
 
 
-void GLU_FUNC( Utility, align_area   )( const __Area_t* src, var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx );
-void GLU_FUNC( Utility, align_screen )(                      var w, var h, __Area_t* dst, uint32_t M_UTILITY_ALIGN_xx );
+void glu_util_align_area( const gluArea_t* src, var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx );
+void glu_util_align_screen( var w, var h, gluArea_t* dst, uint32_t M_UTILITY_ALIGN_xx );
 
-bool GLU_FUNC( Utility, pt_in_area   )( var x, var y, const __Area_t* pArea );
+bool glu_util_is_pt_inside( var x, var y, const gluArea_t* pArea );
 
-void GLU_FUNC( Utility, area_hdiv    )( const __Area_t* all, __Area_t sub[], size_t size );
-void GLU_FUNC( Utility, area_vdiv    )( const __Area_t* all, __Area_t sub[], size_t size );//
+void glu_util_area_hdiv( const gluArea_t* all, gluArea_t sub[], size_t size );
+void glu_util_area_vdiv( const gluArea_t* all, gluArea_t sub[], size_t size );//
 
-void GLU_FUNC( Utility, optimal_text )( const __Area_t* src, const char* str, GLU_ENUM(Font) font, GLU_SRCT(Text)* dst );
+void glu_util_optimal_text( const gluArea_t* src, const char* str, tGluFontEnum font, tGluTextInfo* dst );
 

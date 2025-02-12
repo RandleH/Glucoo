@@ -814,7 +814,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, trans_mirror)  (const BLK_SRCT(Img888)* src,
     return dst;
 }
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100){
     static BLK_SRCT(Kernel) gus_kernel = {
         .pBuffer = NULL,
         .order   = 0,
@@ -845,7 +845,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_gussian)  (const BLK_SRCT(Img888)* src,
 
 }
     
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100){
     __exitReturn(src == NULL || dst == NULL , NULL);
         
         BLK_UION(Pixel888)* pSrcData = src->ptr;
@@ -860,7 +860,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
             order--;
         
         if( area==NULL ){
-            area = alloca( sizeof(__Area_t) );
+            area = alloca( sizeof(gluArea_t) );
             area->h = (var)src->h;
             area->w = (var)src->w;
             area->xs = area->ys = 0;
@@ -1081,7 +1081,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_average)  (const BLK_SRCT(Img888)* src,
     return dst;
 }
 
-BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,__Area_t* area,uint32_t radSize, uint16_t br_100){
+BLK_SRCT(Img888)* BLK_FUNC( Img888, blur_fast   )  (const BLK_SRCT(Img888)* src,BLK_SRCT(Img888)* dst,gluArea_t* area,uint32_t radSize, uint16_t br_100){
     __exitReturn( !src || !dst || !src->ptr || !dst->ptr, NULL );
         
         const int xs = area->xs;
@@ -2153,7 +2153,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, draw_img_center1 )
 }
     
 BLK_SRCT(Img888)* BLK_FUNC( Img888, spy_img_blur     )
-( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size, const __Area_t* pArea ){
+( BLK_SRCT(Img888)* dst, const BLK_TYPE(Pixel888)* colors, size_t size, const gluArea_t* pArea ){
     
     RH_ASSERT(dst);
 //    RH_ASSERT(dst->ptr);
@@ -2167,7 +2167,7 @@ BLK_SRCT(Img888)* BLK_FUNC( Img888, spy_img_blur     )
     const BLK_UION(Pixel888) colorB = {.data=colors[0]};
     const BLK_UION(Pixel888) colorA = {.data=colors[1]};
     
-    __Area_t area = *pArea;
+    gluArea_t area = *pArea;
     if( pArea->xs+pArea->w > dst->w )
         area.w = dst->w-pArea->xs;
     if( pArea->ys+pArea->h > dst->h )

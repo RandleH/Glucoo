@@ -14,7 +14,7 @@ struct __GraphConfig_t{
     unsigned int       blur_br_100;
     unsigned int       blur_size;
     BLK_TYPE(Canvas)   blur_tmp;
-    __Area_t           blur_area;
+    gluArea_t           blur_area;
 
     F_Render           callbacks[NUM_kBLK_RenderMethod];
     BLK_ENUM(RenderMethod) method;
@@ -202,7 +202,7 @@ static struct __GraphConfig_t GCFG_copy = {0};
 
 
      
-E_Status_t      BLK_FUNC( Graph, init          )  (void){
+gluStatus_t      BLK_FUNC( Graph, init          )  (void){
     GCFG.blur_br_100  = 100;
     GCFG.blur_size    = 44100;
     GCFG.penSize      = 3;
@@ -352,7 +352,7 @@ void            BLK_FUNC( Graph, restoreCache ) (void){
 /*===========================================
  > 插入一个空心圆,线宽为1
 ============================================*/
-E_Status_t      BLK_FUNC( Graph , circle_raw        ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_raw        ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int r    = d>>1;
     int p    = 3-2*r;
     bool eps = (d%2==0);
@@ -385,7 +385,7 @@ E_Status_t      BLK_FUNC( Graph , circle_raw        ) (int x ,int y ,int d ,    
 /*====================================
  > 插入一个空心圆,线宽随设定
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , circle_edged      ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_edged      ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int r = d>>1;
     int r_ex  = r;
     int r_in  = (int)(r-GCFG.penSize);
@@ -435,7 +435,7 @@ E_Status_t      BLK_FUNC( Graph , circle_edged      ) (int x ,int y ,int d ,    
 /*====================================
  > 插入一个填充圆
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , circle_fill       ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_fill       ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int r = d>>1;
     int p = 3-(r<<1);
     int x_tmp = 0,y_tmp = r;
@@ -476,7 +476,7 @@ E_Status_t      BLK_FUNC( Graph , circle_fill       ) (int x ,int y ,int d ,    
 /*====================================
  > 插入一个1/4圆
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , circle_qrt1_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt1_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -498,7 +498,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt1_raw   ) (int x ,int y ,int r ,    
     
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt2_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt2_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -520,7 +520,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_raw   ) (int x ,int y ,int r ,    
 
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt3_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt3_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -542,7 +542,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt3_raw   ) (int x ,int y ,int r ,    
     
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt4_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt4_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -568,7 +568,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt4_raw   ) (int x ,int y ,int r ,    
 /*====================================
  > 插入一个填充1/4圆
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -609,7 +609,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,    
 
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
     
@@ -667,7 +667,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,    
 
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -707,7 +707,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,    
 
     return MAKE_ENUM( kStatus_Success );
 }
-E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback ){
     int p = 3-((r-1)<<1);
     int x_tmp = 0,y_tmp = (r-1);
 
@@ -750,7 +750,7 @@ E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,    
 /*====================================
  > 插入一个空心长方形,线宽为1
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     
     if( !callback ){
         callback = GCFG.callbacks[ GCFG.method ];
@@ -771,7 +771,7 @@ E_Status_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int 
 /*====================================
  > 插入一个实心长方形
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     
     if( !callback ){
         callback = GCFG.callbacks[ GCFG.method ];
@@ -852,7 +852,7 @@ E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int 
 /*====================================
  > 插入一个空心长发形,线宽随设定
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     int loop = 0;
     
     if( !callback ){
@@ -882,7 +882,7 @@ E_Status_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int 
 /*====================================
  > 插入圆角长方形
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     int r = RH_LIMIT((signed)GCFG.penSize, 0, (RH_MIN((xe-xs), (ye-ys)))/2 );
     
     BLK_FUNC( Graph, rect_fill )(xs+r+1, ys    , xe-r-1, ye    , pIMG, callback );
@@ -900,7 +900,7 @@ E_Status_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int 
 /*====================================
  > 插入空心圆角长方形
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     int r = RH_LIMIT((signed)GCFG.penSize, 0, (RH_MIN((xe-xs), (ye-ys)))/2 );
     
     BLK_FUNC( Graph, line_raw )(xs+r+1, ys    , xe-r-1, ys    , pIMG, callback );
@@ -919,7 +919,7 @@ E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int 
 /*====================================
  > 插入空心长方形(使用__Area_t参数)
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , EX_rect_raw       ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC(Graph,rect_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
                                       RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
@@ -930,7 +930,7 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,    
 /*====================================
  > 插入实心长方形(使用__Area_t参数)
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , EX_rect_fill      ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC(Graph,rect_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
                                       RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                       RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
@@ -941,7 +941,7 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,    
 /*====================================
  > 插入一个空心长发形,线宽随设定(使用__Area_t参数)
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , EX_rect_edged     ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC(Graph,rect_edged)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
                                        RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                        RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
@@ -952,7 +952,7 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,    
 /*====================================
  > 插入填充圆角长方形(使用__Area_t参数)
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , EX_rect_round_fill) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC(Graph,rect_round_fill)( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
                                             RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
@@ -963,7 +963,7 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,    
 /*====================================
  > 插入空心圆角长方形(使用__Area_t参数)
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC(Graph,rect_round_raw )( RH_LIMIT( (signed)( area->xs          ), 0, RH_CFG_SCREEN_WIDTH -1 ),\
                                             RH_LIMIT( (signed)( area->ys          ), 0, RH_CFG_SCREEN_HEIGHT-1 ),\
                                             RH_LIMIT( (signed)( area->xs+area->w-1), 0, RH_CFG_SCREEN_WIDTH -1 ),\
@@ -974,7 +974,7 @@ E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,    
 /*====================================
  > 插入直线，线宽为1
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
     int x_min = (int)(RH_MIN(x1,x2));
     int x_max = (int)(RH_MAX(x1,x2));
     int y_min = (int)(RH_MIN(y1,y2));
@@ -1019,7 +1019,7 @@ E_Status_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int 
 /*====================================
  > 插入直线，线宽随设定
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
     BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pIMG,callback);
     
     if( GCFG.penSize > 1 ){
@@ -1112,7 +1112,7 @@ E_Status_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int 
 /*====================================
  > 插入香肠线，线宽随设定
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
     BLK_FUNC( Graph, line_raw )(x1,y1,x2,y2,pIMG,callback);
     int dir_line = BLK_FUNC( Math, dir_line )(x1, y1, x2, y2);
     
@@ -1232,14 +1232,14 @@ E_Status_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int 
 /*====================================
  > 插入直线，线宽随设定
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , line_fill         ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , line_fill         ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
     return BLK_FUNC( Graph, line_edged  ) (x1,y1,x2,y2,pIMG,callback);
 }
     
 /*====================================
  > 画任意四边形,线宽为1
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback ){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
     
@@ -1280,7 +1280,7 @@ E_Status_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int 
 /*====================================
  > 填充任意四边形
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback ){
     int tmp_y[] = {y1,y2,y3,y4};
     int tmp_x[] = {x1,x2,x3,x4};
     
@@ -1372,7 +1372,7 @@ E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int 
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback ){
     int d = ye-ys+1;
     int r = d>>1;
 
@@ -1415,7 +1415,7 @@ E_Status_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int 
 /*====================================
  > 画空心香肠,线宽为1
 =====================================*/
-E_Status_t      BLK_FUNC( Graph , capsule_fill      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , capsule_fill      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback ){
     
     
     int xs = RH_MIN(x1, x2);
@@ -1527,13 +1527,13 @@ E_Status_t      BLK_FUNC( Graph , capsule_fill      ) (int x1,int y1,int x2,int 
 }
     
     
-E_Status_t      BLK_FUNC( Graph , triangle_raw      ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , triangle_raw      ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback ){
     BLK_FUNC(Graph,line_raw)( x1, y1, x2, y2, pIMG, callback );
     BLK_FUNC(Graph,line_raw)( x2, y2, x3, y3, pIMG, callback );
     return BLK_FUNC(Graph,line_raw)( x3, y3, x1, y1, pIMG, callback );
 }
     
-E_Status_t      BLK_FUNC( Graph , triangle_fill     ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback ){
+gluStatus_t      BLK_FUNC( Graph , triangle_fill     ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback ){
     
     int xs = RH_MIN(x1, RH_MIN(x2, x3));
     int xe = RH_MAX(x1, RH_MAX(x2, x3));

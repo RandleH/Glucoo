@@ -48,7 +48,7 @@ typedef enum{
     MAKE_ENUM( kStatus_NotFound  )    ,
     MAKE_ENUM( kStatus_Warning   )    ,
     MAKE_ENUM( kStatus_Empty     )
-}E_Status_t;
+}gluStatus_t;
 
  
 struct __Region_t{
@@ -58,7 +58,7 @@ struct __Region_t{
     size_t height;
 };
 typedef struct __Region_t __Region_t;
-typedef struct __Region_t __Area_t;
+typedef struct __Region_t gluArea_t;
  
  
 

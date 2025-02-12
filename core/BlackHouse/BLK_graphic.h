@@ -60,7 +60,7 @@ typedef enum{
     NUM_kBLK_ColorDepth   ,
 }BLK_ENUM(ColorDepth);
 
-E_Status_t      BLK_FUNC( Graph , init              ) (void);
+gluStatus_t      BLK_FUNC( Graph , init              ) (void);
 void            BLK_FUNC( Graph , set_penSize       ) (size_t         penSize      );
 void            BLK_FUNC( Graph , set_penOpaque     ) (uint8_t        opaque       );
 void            BLK_FUNC( Graph , set_penColor      ) (uint32_t       penColor     );
@@ -81,44 +81,44 @@ typedef void (*F_Render)(int x, int y, void* pIMG);
 
 
  
-E_Status_t      BLK_FUNC( Graph , circle_raw        ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_edged      ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_fill       ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt1_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt2_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt3_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt4_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_raw        ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_edged      ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_fill       ) (int x ,int y ,int d ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt1_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt2_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt3_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt4_raw   ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt1_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt2_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt3_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , circle_qrt4_fill  ) (int x ,int y ,int r ,        void* pIMG, F_Render RH_NULLABLE callback );
  
-E_Status_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_raw       ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_edged     ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_fill      ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_fill) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const __Area_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , rect_raw          ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , rect_edged        ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , rect_fill         ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , rect_round_fill   ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , rect_round_raw    ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , EX_rect_raw       ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , EX_rect_edged     ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , EX_rect_fill      ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , EX_rect_round_fill) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , EX_rect_round_raw ) (const gluArea_t* area,        void* pIMG, F_Render RH_NULLABLE callback );
  
-E_Status_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , line_fill         ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , line_raw          ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , line_edged        ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , line_fill         ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , line_sausage      ) (int x1,int y1,int x2,int y2, void* pIMG, F_Render RH_NULLABLE callback );
  
  
-E_Status_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , quad_raw          ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , quad_fill         ) (int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,void* pIMG, F_Render RH_NULLABLE callback );
  
-E_Status_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , capsule_fill      ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , capsule_raw       ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , capsule_fill      ) (int xs,int ys,int xe,int ye, void* pIMG, F_Render RH_NULLABLE callback );
 
-E_Status_t      BLK_FUNC( Graph , triangle_raw      ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );
-E_Status_t      BLK_FUNC( Graph , triangle_fill     ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );//
-E_Status_t      BLK_FUNC( Graph , triangle_edged    ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );//
+gluStatus_t      BLK_FUNC( Graph , triangle_raw      ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );
+gluStatus_t      BLK_FUNC( Graph , triangle_fill     ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );//
+gluStatus_t      BLK_FUNC( Graph , triangle_edged    ) (int x1,int y1,int x2,int y2,int x3,int y3, void*pIMG, F_Render RH_NULLABLE callback );//
 
 #ifdef __cplusplus
 }

@@ -7,12 +7,8 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
-extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
-static void __draw_aurora( const GLU_TYPE(Color)* colors, uint8_t size ){
+static void __draw_aurora( const gluColor_t* colors, uint8_t size ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_TYPE(Pixel)* colors_1Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
     for( uint8_t i=0; i<size; i++){
@@ -32,7 +28,7 @@ static void __draw_aurora( const GLU_TYPE(Color)* colors, uint8_t size ){
 #endif
 }
 
-static void __draw_blur( const GLU_TYPE(Color)* colors, uint8_t size ){
+static void __draw_blur( const gluColor_t* colors, uint8_t size ){
 #if   ( RH_CFG_GRAPHIC_COLOR_TYPE == RH_CFG_GRAPHIC_COLOR_BIN    )
     GLU_TYPE(Pixel)* colors_1Bit = alloca(sizeof(GLU_TYPE(Pixel))*size);
     for( uint8_t i=0; i<size; i++){
@@ -52,8 +48,7 @@ static void __draw_blur( const GLU_TYPE(Color)* colors, uint8_t size ){
 #endif
 }
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 ){
-    
+void glu_gui_image_profile( tGluImageThemeEnum style, const gluColor_t* colors, uint8_t size, const tGluTextInfo* RH_NULLABLE text, uint8_t alpha_100 ){
     RH_ASSERT(colors);
     RH_ASSERT(size);
     
@@ -72,15 +67,15 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
     
     
     if( text!=NULL && text->str!=NULL ){
-        GLU_FUNC( Font, backupCache )();
-        GLU_FUNC( Font, set_font )( text->font );
-        GLU_FUNC( Font, set_size )( text->size );
+        glu_font_backup_cache();
+        glu_font_set_style( text->font );
+        glu_font_set_size( text->size );
         
         switch( text->align ){
             case kGLU_Align_Left:
                 break;
             case kGLU_Align_Middle:{
-                GLU_SRCT(FontImg)* pF = GLU_FUNC( Font, out_str_Img )( text->str );
+                tGluFontImg* pF = glu_font_out_str_img( text->str );
                 
                 // 引用灰度字体图像(类型信息复制转换)
                 BLK_SRCT(ImgGry) img_font = {
@@ -89,7 +84,7 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
                     .ptr = (BLK_UION(PixelGry)*)pF->img_buf
                 };
                 var w,h;
-                GLU_FUNC(Font, get_str_ImgInfo)(&w, &h, text->str);
+                glu_font_get_str_img_info(&w, &h, text->str);
                 
                 var fs_x = RH_LIMIT( ((info_MainScreen.w - w)>>1), 0, GUI_X_WIDTH-1);
                 var fs_y = RH_LIMIT( ((info_MainScreen.h - h)>>1), 0, GUI_Y_WIDTH-1);
@@ -110,14 +105,13 @@ void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Colo
             case kGLU_Align_Justify:
                 break;
         }
-        GLU_FUNC( Font , restoreCache )();
+        glu_font_restore_cache();
     }
 
-    if(GLU_FUNC( GUI, isAutoDisplay ))
-        GLU_FUNC( GUI, refreashScreenArea )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
+    if(glu_dev_is_auto_refreash())
+        glu_dev_refreash_partial_screen(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
     else
-        GLU_FUNC( GUI, addScreenArea      )(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
-
+        glu_dev_add_refreash_area(0,0,RH_CFG_SCREEN_WIDTH-1,RH_CFG_SCREEN_HEIGHT-1);
 }
 
 

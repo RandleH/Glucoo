@@ -7,12 +7,8 @@
 #define GUI_X_WIDTH                 RH_CFG_SCREEN_WIDTH
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
-extern void GLU_FUNC( GUI, refreashScreenArea    )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, addScreenArea         )   ( var xs,var ys,var xe,var ye );
-extern void GLU_FUNC( GUI, EX_refreashScreenArea )   ( const __Area_t* area );
-extern void GLU_FUNC( GUI, EX_addScreenArea      )   ( const __Area_t* area );
 
-static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
+static void __gui_insert_window_MacOS  (tGluWindow* config){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 
@@ -43,7 +39,7 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
 #endif
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     // Window Bar
     BLK_FUNC( Graph, set_penColor   )( color_bar.data);
@@ -60,9 +56,9 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     
     // Title
     if( config->title != NULL ){
-        GLU_FUNC( Font, set_size )( (int)(config->size>>1) );
-        GLU_FUNC( Font, set_font )( config->title_font );
-        GLU_SRCT(FontImg)* pFontInfo = GLU_FUNC( Font, out_str_Img )( config->title );
+        glu_font_set_size( (int)(config->size>>1) );
+        glu_font_set_style( config->title_font );
+        tGluFontImg* pFontInfo = glu_font_out_str_img( config->title );
         const int font_xs = RH_MID(xs,xe)-(int)((pFontInfo->img_w)>>1);
         const int font_ys = ys + bar_size_4;
         
@@ -172,10 +168,10 @@ static void __gui_insert_window_MacOS  (__GUI_Window_t* config){
     BLK_FUNC( Graph, circle_fill )  (xs+(bar_size<<1), RH_MID(ys,ys+bar_size), bar_size_2 , info_MainScreen.ptr, NULL);
     
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
 
 }
-static void __gui_insert_window_Win10  (__GUI_Window_t* config){
+static void __gui_insert_window_Win10  (tGluWindow* config){
 #ifdef RH_DEBUG
     RH_ASSERT(config);
 #else
@@ -208,7 +204,7 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
 #endif
     
     BLK_FUNC( Graph, backupCache )();
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
     
     BLK_FUNC( Graph, set_penColor ) (color_bar.data);
     BLK_FUNC( Graph, rect_fill )    ( xs, ys, xe, ys+bar_size, info_MainScreen.ptr, NULL );
@@ -312,16 +308,16 @@ static void __gui_insert_window_Win10  (__GUI_Window_t* config){
     }
     
     BLK_FUNC( Graph, restoreCache )();
-    GLU_FUNC( Font, restoreCache )();
+    glu_font_restore_cache();
 }
 
-static void __gui_remove_window_MacOS  (__GUI_Window_t* config){
+static void __gui_remove_window_MacOS  (tGluWindow* config){
     
 }
-static void __gui_remove_window_Win10  (__GUI_Window_t* config){}
+static void __gui_remove_window_Win10  (tGluWindow* config){}
 
 #ifdef RH_DEBUG
-static inline void __gui_check_window  ( const __GUI_Window_t* config ){
+static inline void __gui_check_window  ( const tGluWindow* config ){
     RH_ASSERT( config->size      > 5                   );  /* Too small */
     RH_ASSERT( config->text_size > 5                   );  /* Too small */
     RH_ASSERT( config->type      < NUM_kGUI_WindowType );  /* Wrong enumeration reference */
@@ -329,27 +325,27 @@ static inline void __gui_check_window  ( const __GUI_Window_t* config ){
 }
 #endif
 
-ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config ){
-    __GUI_Window_t* m_config = (__GUI_Window_t*)RH_MALLOC( sizeof(__GUI_Window_t) );
+gluHandle_t RH_RESULT  glu_gui_window_create( const tGluWindow* config){
+    tGluWindow* m_config = (tGluWindow*)RH_MALLOC( sizeof(tGluWindow) );
 
-    GLU_FUNC( Font, backupCache )();
+    glu_font_backup_cache();
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
     __gui_check_window(config);
 #endif
-    memcpy(m_config, config, sizeof( __GUI_Window_t ));
+    memcpy(m_config, config, sizeof( tGluWindow ));
     
     switch( m_config->type ){
         case kGUI_WindowType_macOS:
             m_config->insert_func = __gui_insert_window_MacOS;
             m_config->remove_func = __gui_remove_window_MacOS;
-            __SET_STRUCT_MB(__GUI_Window_t, int, m_config, win_edge  , 2);
+            __SET_STRUCT_MB(tGluWindow, int, m_config, win_edge  , 2);
             break;
         case kGUI_WindowType_win10:
             m_config->insert_func = __gui_insert_window_Win10;
             m_config->remove_func = __gui_remove_window_Win10;
-            __SET_STRUCT_MB(__GUI_Window_t, int, m_config, win_edge  , 2);
+            __SET_STRUCT_MB(tGluWindow, int, m_config, win_edge  , 2);
             break;
         default:
 #ifdef RH_DEBUG
@@ -360,30 +356,30 @@ ID_t RH_RESULT  GLU_FUNC( Window, create   )    ( const __GUI_Window_t* config )
     }
     
     if( m_config->text != NULL ){
-        GLU_FUNC( Font, set_font )(m_config->text_font);
-        GLU_FUNC( Font, set_size )(m_config->text_size);
-        __SET_STRUCT_MB(__GUI_Window_t, int  , m_config, text_margin, 5        );
+        glu_font_set_style(m_config->text_font);
+        glu_font_set_size(m_config->text_size);
+        __SET_STRUCT_MB(tGluWindow, int  , m_config, text_margin, 5        );
 
         size_t fontW = m_config->area.w-((m_config->win_edge+m_config->text_margin)<<1);
         
-        GLU_SRCT(FontImg)* p = GLU_FUNC( Font, out_txt_Img )( m_config->text, fontW, kGLU_Align_Justify );
+        tGluFontImg* p = glu_font_out_txt_img( m_config->text, fontW, kGLU_Align_Justify );
         
-        __SET_STRUCT_MB(__GUI_Window_t, void*, m_config, text_bitMap, RH_MALLOC(p->img_w*p->img_h*sizeof(*(p->img_buf))));
+        __SET_STRUCT_MB(tGluWindow, void*, m_config, text_bitMap, RH_MALLOC(p->img_w*p->img_h*sizeof(*(p->img_buf))));
 #ifdef RH_DEBUG
         RH_ASSERT( m_config->text_bitMap );
 #endif
         memcpy((void*)m_config->text_bitMap, p->img_buf, p->img_w*p->img_h*sizeof(*(p->img_buf)) );
 
-        __SET_STRUCT_MB(__GUI_Window_t, int, m_config, text_bitH  , p->img_h);
-        __SET_STRUCT_MB(__GUI_Window_t, int, m_config, text_bitW  , p->img_w );
+        __SET_STRUCT_MB(tGluWindow, int, m_config, text_bitH  , p->img_h);
+        __SET_STRUCT_MB(tGluWindow, int, m_config, text_bitW  , p->img_w );
         //...//
     }
     
-    GLU_FUNC( Font, restoreCache )();
-    return (ID_t)m_config;
+    glu_font_restore_cache();
+    return (gluHandle_t)m_config;
 }
 
-__GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config ){
+tGluWindow* glu_gui_window_template( tGluWindow* config){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
 #else
@@ -404,27 +400,27 @@ __GUI_Window_t* GLU_FUNC( Window, template )    (       __GUI_Window_t* config )
     config->text_align   = kGLU_Align_Justify;
     config->text_size    = 40;
     
-    __SET_STRUCT_MB(__GUI_Window_t, int   , config, text_rs    , 0    );
-    __SET_STRUCT_MB(__GUI_Window_t, void* , config, text_bitMap, NULL );
-    __SET_STRUCT_MB(__GUI_Window_t, size_t, config, text_bitH  , 0    );
-    __SET_STRUCT_MB(__GUI_Window_t, size_t, config, text_bitW  , 0    );
-    __SET_STRUCT_MB(__GUI_Window_t, int   , config, text_margin, 0    );
+    __SET_STRUCT_MB(tGluWindow, int   , config, text_rs    , 0    );
+    __SET_STRUCT_MB(tGluWindow, void* , config, text_bitMap, NULL );
+    __SET_STRUCT_MB(tGluWindow, size_t, config, text_bitH  , 0    );
+    __SET_STRUCT_MB(tGluWindow, size_t, config, text_bitW  , 0    );
+    __SET_STRUCT_MB(tGluWindow, int   , config, text_margin, 0    );
     return config;
 }
 
-E_Status_t      GLU_FUNC( Window, insert   )    ( ID_t ID ){
+gluStatus_t glu_gui_window_insert( gluHandle_t ID){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
-    (*((__GUI_Window_t*)ID)->insert_func)( (__GUI_Window_t*)ID );
+    (*((tGluWindow*)ID)->insert_func)( (tGluWindow*)ID );
     
-    GLU_FUNC( GUI, isAutoDisplay )() ? GLU_FUNC( GUI, EX_refreashScreenArea )( &((__GUI_Window_t*)ID)->area )
-                                     : GLU_FUNC( GUI, EX_addScreenArea      )( &((__GUI_Window_t*)ID)->area );
+    glu_dev_is_auto_refreash() ? glu_dev_refreash_partial_screen_ex( &((tGluWindow*)ID)->area )
+                                     : glu_dev_add_refreash_area_ex( &((tGluWindow*)ID)->area );
     
     return MAKE_ENUM( kStatus_Success );
 }
 
-E_Status_t      GLU_FUNC( Window, delete   )    ( ID_t ID ){
+gluStatus_t glu_gui_window_delete( gluHandle_t ID){
     RH_FREE((void*)ID);
     //...//
     return MAKE_ENUM( kStatus_Success );

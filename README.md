@@ -21,42 +21,67 @@ Graph Library for embedded software system.
 
 ## Member Functions & Variables
 
-| Name                      | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-| **GUI**                   | **Include `GUI::` as the prefix term.**        |
-| [.init](#GLU_GUI_00)      | Initialize the UI system                       |
-| [.setPenSize](#GLU_GUI_01) | Given a pixelwise size of pen, set pen size    |
-| [.setPenColor](#GLU_GUI_02)          | Given a RGB color, set it as the pen color     |
-| [.autoDisplay](#GLU_GUI_03)          | Refresh the screen automatically               |
-| [.refreashScreen](#GLU_GUI_04)       | Refresh the screen from the cache memory       |
-| [.refreashEntireScreen](#GLU_GUI_05) | Refresh the screen and empity the cache memory |
-| [.isAutoDisplay](#GLU_GUI_06)        | Return the configuration flag                  |
-| [.isInternalGRAM](#GLU_GUI_07)       | Return the configuration flag                  |
-| [.isCacheEmpty](#GLU_GUI_08)         | Return the configuration flag                  |
-| **Graph**                 | **Include `GUI::` as the prefix term.**        |
-| [.rect_raw]               | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
-| [.rect_edged]             | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
-| [.rect_fill]              | Given the two corners coordinate of its diagnal edge, fill a rectangular area |
-| [.rect_round_fill]        | Given the two corners coordinate of its diagnal edge, draw a rounded rectangular |
-| [.EX_rect_raw]            | Use the `__Area_t` type instead of coordinate |
-| [.EX_rect_edged]          | (same) |
-| [.EX_rect_fill]           | (same) |
-| [.circle_raw]             | Given the radius and (`X` ,`Y`), draw a circle with width `1` |
-| [.circle_edged]           | Given the radius and (`X` ,`Y`), draw a circle with width of pen size. |
-| [.circle_fill]            | Given the radius and (`X` ,`Y`), fill a circle |
-| [.circle_qrt1_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 1st quadrant |
-| [.circle_qrt2_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 2nd quadrant |
-| [.circle_qrt3_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 3rd quadrant |
-| [.circle_qrt4_fill]       | Given the radius and (`X` ,`Y`), fill a quarter circle at 4th quadrant |
-| [.circle_qrt1_raw]        | (same) |
-| [.circle_qrt2_raw]        | (same) |
-| [.circle_qrt3_raw]        | (same) |
-| [.circle_qrt4_raw]        | (same) |
-| [.capsule_raw]            | Given 2 points, draw a line in the shape of capsule |
-| [.line_raw]               | Given 2 points, draw a line |
-| [.quad_raw]               | Given 4 corners coordinate, draw a quadrilateral |
-| [.screen_fill]            | Fill the screen |
-| [.yield_GRAM]             | Export the address of Graph RAM |
+| Name                                    | Description                                    |
+| --------------------------------------- | ---------------------------------------------- |
+| **GUI**                                 | **Include `GUI::` as the prefix term.**        |
+| [`glu_gui_init`](#GLU_GUI_00)                    | Initialize the UI system                       |
+| [`glu_gui_set_penSize`](#GLU_GUI_01)             | Given a pixelwise size of pen, set pen size    |
+| [`glu_gui_set_penColor`](#GLU_GUI_02)            | Given a RGB color, set it as the pen color     |
+| **DEV**                                          | **Include `DEV::` as the prefix term.**        |
+| [`glu_dev_auto_refreash`](#GLU_GUI_03)           | Refresh the screen automatically               |
+| [`glu_dev_refreash_screen`](#GLU_GUI_04)         | Refresh the screen from the cache memory       |
+| [`glu_dev_refreash_full_screen`](#GLU_GUI_05)    | Refresh the screen and empity the cache memory |
+| [`glu_dev_is_auto_refreash`](#GLU_GUI_06)        | Return the configuration flag                  |
+| [`glu_dev_is_refreash_done`](#GLU_GUI_07)        | Return the configuration flag                  |
+| **Graph**                               | **Include `GUI::` as the prefix term.**        |
+| [`glu_draw_rectangle`]()                | Given the two corners coordinate of its diagnal edge, draw a rectangular with width `1` |
+| [`glu_draw_rectangle_edged`]()          | Given the two corners coordinate of its diagnal edge, draw a rectangular with width of pen size |
+| [`glu_draw_rectangle_filled`]()         | Given the two corners coordinate of its diagnal edge, fill a rectangular area |
+| [`glu_draw_rectangle_rounded`]()        | Given the two corners coordinate of its diagnal edge, draw a rounded rectangular |
+| [`glu_draw_circle`]()                   | Given the radius and (`X` ,`Y`), draw a circle with width `1` |
+| [`glu_draw_circle_edged`]()             | Given the radius and (`X` ,`Y`), draw a circle with width of pen size. |
+| [`glu_draw_circle_fill`]()              | Given the radius and (`X` ,`Y`), fill a circle |
+| [`glu_draw_circle_qrt1_fill`]()         | Given the radius and (`X` ,`Y`), fill a quarter circle at 1st quadrant |
+| [`glu_draw_circle_qrt2_fill`]()         | Given the radius and (`X` ,`Y`), fill a quarter circle at 2nd quadrant |
+| [`glu_draw_circle_qrt3_fill`]()         | Given the radius and (`X` ,`Y`), fill a quarter circle at 3rd quadrant |
+| [`glu_draw_circle_qrt4_fill`]()         | Given the radius and (`X` ,`Y`), fill a quarter circle at 4th quadrant |
+| [`glu_draw_circle_qrt1`]()              | (same) |
+| [`glu_draw_circle_qrt2`]()              | (same) |
+| [`glu_draw_circle_qrt3`]()              | (same) |
+| [`glu_draw_circle_qrt4`]()              | (same) |
+| [`glu_draw_capsule`]()                  | Given 2 points, draw a line in the shape of capsule |
+| [`glu_draw_line`]()                     | Given 2 points, draw a line |
+| [`glu_draw_quad`]()                     | Given 4 corners coordinate, draw a quadrilateral |
+| [`glu_dev_fill_full_screen`]()          | Fill the screen |
+| [`glu_dev_get_gram`]()                  | Export the address of Graph RAM |
+| [`glu_gui_object_create`]()             |   |
+| [`glu_gui_object_template`]()           |   |
+| [`glu_gui_object_adjust`]()             |   |
+| [`glu_gui_object_frame`]()              |   |                   
+| [`glu_gui_object_insert`]()             |   |
+| [`glu_gui_object_delete`]()             |   |
+| [`glu_gui_object_default_area`]()       |   |
+| **Window**                              | **?**        |
+| [`glu_gui_window_create`]()             |   |
+| [`glu_gui_window_template`]()           |   |
+| [`glu_gui_window_insert`]()             |   |
+| [`glu_gui_window_delete`]()             |   |
+| **Menu**                                | **?**        |
+| [`glu_gui_menu_create`]()               |   |
+| [`glu_gui_menu_insert`]()               |   |
+| [`glu_gui_menu_frame`]()                |   |
+| [`glu_gui_menu_scroll`]()               |   |
+| [`glu_gui_menu_delete`]()               |   |
+| **Utility**                             | **?**        |
+| [`glu_util_align_area`]()               |   |
+| [`glu_util_align_screen`]()             |   |
+| [`glu_util_is_pt_inside`]()             |   |
+| [`glu_util_area_hdiv`]()                |   |
+| [`glu_util_area_vdiv`]()                |   |
+| [`glu_util_optimal_text`]()             |   |
+
+
+
 
 
 
@@ -66,7 +91,7 @@ Graph Library for embedded software system.
 <div id="GLU_GUI_00"></div>
 
 ```c++
-void GLU_GUI_init( void );
+void glu_gui_init( void) GLU_API;
 ```
 
 
@@ -81,7 +106,7 @@ void GLU_GUI_init( void );
 <div id="GLU_GUI_01"></div>
 
 ```c++
-void GLU_GUI_setPenSize( size_t penSize );
+void glu_gui_set_penSize(size_t penSize) GLU_API;
 ```
 
 
@@ -96,7 +121,7 @@ void GLU_GUI_setPenSize( size_t penSize );
 <div id="GLU_GUI_02"></div>
 
 ```c++
-void GLU_GUI_setPenColor( GLU_TYPE(Color)  penColor );
+void glu_gui_set_penColor(gluColor_t penColor) GLU_API;
 ```
 
 
@@ -105,42 +130,32 @@ void GLU_GUI_setPenColor( GLU_TYPE(Color)  penColor );
 
 
 
-### `GUI::autoDisplay` 
+### `DEV::auto_refreash` 
 ---
 <div id="GLU_GUI_03"></div>
 
 ```c++
-void GLU_GUI_autoDisplay( bool cmd );
+void glu_dev_auto_refreash(cmnBoolean_t flag);
 ```
 
 
 
-
-
-
-
-### `GUI::refreashScreen` 
+### `DEV::refreashScreen` 
 
 ---
 <div id="GLU_GUI_04"></div>
 
 ```c++
-void GLU_GUI_refreashScreen( void );
+void glu_dev_refreash_screen(void);
 ```
 
-
-
-
-
-
-
-### `GUI::refreashEntireScreen` 
+### `DEV::refreash_full_screen` 
 
 ---
 <div id="GLU_GUI_05"></div>
 
 ```c++
-void GLU_GUI_refreashEntireScreen( void );
+void glu_dev_refreash_full_screen(void);
 ```
 
 
@@ -148,65 +163,24 @@ void GLU_GUI_refreashEntireScreen( void );
 
 
 
-
-
-
-### `GUI::refreashEntireScreen` 
-
----
-<div id="GLU_GUI_05"></div>
-
-```c++
-void GLU_GUI_refreashEntireScreen( void );
-```
-
-
-
-
-
-
-
-### `GUI::isAutoDisplay` 
+### `DEV::is_auto_refreash`
 
 ---
 <div id="GLU_GUI_06"></div>
 
 ```c++
-bool GLU_GUI_isAutoDisplay( void );
+inline cmnBoolean_t glu_dev_is_auto_refreash(void)
 ```
 
 
-
-
-
-
-
-### `GUI::isInternalGRAM` 
+### `DEV::is_refreash_done`
 
 ---
 <div id="GLU_GUI_07"></div>
 
 ```c++
-bool GLU_GUI_isInternalGRAM( void );
+inline cmnBoolean_t glu_dev_is_refreash_done(void);
 ```
-
-
-
-
-
-
-
-
-
-### `GUI::isCacheEmpty` 
-
----
-<div id="GLU_GUI_08"></div>
-
-```c++
-bool GLU_GUI_isCacheEmpty( void );
-```
-
 
 
 

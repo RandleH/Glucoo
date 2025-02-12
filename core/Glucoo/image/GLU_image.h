@@ -11,14 +11,14 @@
 extern "C"{
 #endif
 
-enum GLU_ENUM(ImageStyle){
+enum tGluImageThemeEnum{
     kGLU_ImageStyle_aurora ,
     kGLU_ImageStyle_blur   ,
     NUM_kGLU_ImageStyles   ,
 };
-typedef enum GLU_ENUM(ImageStyle) GLU_ENUM(ImageStyle);
+typedef enum tGluImageThemeEnum tGluImageThemeEnum;
 
-void GLU_FUNC( Image, profile )( GLU_ENUM(ImageStyle) style, const GLU_TYPE(Color)* colors, uint8_t size, const GLU_SRCT(Text)* RH_NULLABLE text, uint8_t alpha_100 );
+void glu_gui_image_profile( tGluImageThemeEnum style, const gluColor_t* colors, uint8_t size, const tGluTextInfo* RH_NULLABLE text, uint8_t alpha_100 );
 
 
 

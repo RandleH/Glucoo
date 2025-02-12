@@ -61,7 +61,7 @@ struct __Region_t{
     var    h;
 };
 typedef struct __Region_t __Region_t;
-typedef struct __Region_t __Area_t;
+typedef struct __Region_t gluArea_t;
  
 struct __Range_t{
     int   val;
@@ -70,7 +70,14 @@ struct __Range_t{
 };
 typedef struct __Range_t __Range_t;
 
- 
+
+#define ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define ATTR_PRE_MAIN           __attribute__((constructor))
+#define ATTR_POST_MAIN          __attribute__((destructor))
+#define ATTR_CONST              __attribute__((const))
+#define ATTR_WEAK
+
+
 #define RH_RESULT     __attribute__((warn_unused_result))
 #define RH_PREMAIN    __attribute__((constructor))
 #define RH_AFTMAIN    __attribute__((destructor))
@@ -98,7 +105,7 @@ typedef struct __Range_t __Range_t;
      MAKE_ENUM( kStatus_NotFound  )    ,
      MAKE_ENUM( kStatus_Warning   )    ,
      MAKE_ENUM( kStatus_Empty     )
- }E_Status_t;
+ }gluStatus_t;
  
 #define MAKE_FUNC( class , method )          __##class##_##method  // Function like this: __XXXX_xxxxx();
 #define CALL_FUNC                            MAKE_FUNC             // exactly the same but has semantic difference.
@@ -370,7 +377,16 @@ typedef volatile uint64_t       vu64;
 #define BLK_API
 #define GLU_API
 #define SMP_API
- 
+
+typedef uint8_t cmnBoolean_t;
+
+#define NO  0
+#define YES 1
+
+#define IDLE 0
+#define BUSY 1
+
+
 #if 0
 #error "Read the following tips and remove this error first."
 

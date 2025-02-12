@@ -8,18 +8,18 @@
 
 
 
-struct __GUI_Window_t{
-    __Area_t             area;
-    E_GUI_WindowStyle_t  type;
-    E_GUI_Appearance_t   appearance;
+struct tGluWindow{
+    gluArea_t             area;
+    tGluWindowEnum  type;
+    tGluThemeEnum   appearance;
     var                  size;
     
     const char*          title;
-    GLU_ENUM(Font)       title_font;
+    tGluFontEnum       title_font;
     
     const char*          text;
-    GLU_ENUM(Font)       text_font;
-    GLU_ENUM(Align)    text_align;
+    tGluFontEnum       text_font;
+    tGluTextAlignEnum    text_align;
     var                  text_size;
     //...//
     
@@ -31,10 +31,10 @@ struct __GUI_Window_t{
     
     const var            win_edge;     // DO NOT MODIFY
     
-    void (*insert_func)(struct __GUI_Window_t*);  // DO NOT MODIFY
-    void (*remove_func)(struct __GUI_Window_t*);  // DO NOT MODIFY
+    void (*insert_func)(struct tGluWindow*);  // DO NOT MODIFY
+    void (*remove_func)(struct tGluWindow*);  // DO NOT MODIFY
 };
-typedef struct __GUI_Window_t __GUI_Window_t;
+typedef struct tGluWindow tGluWindow;
 
 
 #endif
