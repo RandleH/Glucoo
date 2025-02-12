@@ -151,8 +151,8 @@ void* GLU_FUNC( GUI, yield_GRAM      )       ( void );
  * 定义于 [ ./draw/GLU_object.c ]
 ===============================================================================================================*/
 #include "./object/GLU_object.h"
-ID_t            RH_RESULT glu_gui_object_create   ( const GLU_SRCT(Object)* config, const void* RH_NULLABLE dataScr );
-E_Status_t                glu_gui_object_template (       GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget );
+ID_t            RH_RESULT glu_gui_object_create   ( const tGluObject* config, const void* RH_NULLABLE dataScr );
+E_Status_t                glu_gui_object_template (       tGluObject* config, GLU_ENUM(ObjWidget) widget );
 E_Status_t                glu_gui_object_adjust   ( ID_t ID  , void*  dataScr, size_t dataSize );
 E_Status_t                glu_gui_object_frame    ( ID_t ID  , bool   cmd   );
 E_Status_t                glu_gui_object_insert   ( ID_t ID );

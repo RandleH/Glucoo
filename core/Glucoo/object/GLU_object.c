@@ -14,7 +14,7 @@
 extern BLK_TYPE(Canvas) info_MainScreen; //...//
 
 
-static void __gui_remove_object_text      ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_text      ( const tGluObject* config ){
     struct{
         __Area_t area;
         bool     showFrame;
@@ -68,7 +68,7 @@ static void __gui_remove_object_text      ( const GLU_SRCT(Object)* config ){
     
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_text      ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_text      ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
@@ -85,7 +85,7 @@ static void __gui_insert_object_text      ( const GLU_SRCT(Object)* config ){
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory);
     }
     
     BLK_FUNC( Graph, backupCache )();
@@ -166,17 +166,17 @@ static void __gui_insert_object_text      ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     
 }
-static void __gui_adjust_object_text      ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_text      ( const tGluObject* config ){
     struct __GUI_ObjDataScr_text* p = config->dataScr;
 //    config->text = p->text;
-    __SET_STRUCT_MB(GLU_SRCT(Object), char*, config, text, p->text);
+    __SET_STRUCT_MB(tGluObject, char*, config, text, p->text);
     __gui_insert_object_text( config );
 }
 
-static void __gui_remove_object_num       ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_num       ( const tGluObject* config ){
     __gui_remove_object_text(config);
 }
-static void __gui_insert_object_num       ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_num       ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
@@ -194,7 +194,7 @@ static void __gui_insert_object_num       ( const GLU_SRCT(Object)* config ){
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory);
     }
     
     // 绘制数字
@@ -278,14 +278,14 @@ static void __gui_insert_object_num       ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_adjust_object_num       ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_num       ( const tGluObject* config ){
     __gui_insert_object_num( config );
 }
 
-static void __gui_remove_object_fnum      ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_fnum      ( const tGluObject* config ){
     __gui_remove_object_text(config);
 }
-static void __gui_insert_object_fnum      ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_fnum      ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->text.font < kGLU_NUM_FontStyle );
@@ -301,7 +301,7 @@ static void __gui_insert_object_fnum      ( const GLU_SRCT(Object)* config ){
     
     if( !pHistory ){
         pHistory = RH_MALLOC(sizeof(*pHistory));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory);
     }
     
     
@@ -390,11 +390,11 @@ static void __gui_insert_object_fnum      ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_adjust_object_fnum      ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_fnum      ( const tGluObject* config ){
     __gui_insert_object_fnum( config );
 }
 
-static void __gui_remove_object_switch    ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_switch    ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_switch );
@@ -432,7 +432,7 @@ static void __gui_remove_object_switch    ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_switch    ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_switch    ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_switch );
@@ -532,16 +532,16 @@ static void __gui_insert_object_switch    ( const GLU_SRCT(Object)* config ){
         pHistory->cmd = false;
     }
     
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
+    __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory);
     
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_adjust_object_switch    ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_switch    ( const tGluObject* config ){
     __gui_insert_object_switch(config);
 }
 
-static void __gui_remove_object_bar_h     ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_bar_h     ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_barH );
@@ -588,7 +588,7 @@ static void __gui_remove_object_bar_h     ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_bar_h     ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_barH );
@@ -607,7 +607,7 @@ static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
         RH_ASSERT( pHistory );
     #endif
         pHistory->bar_pos = config->area.xs;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory );
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory );
     }
 
     GLU_FUNC( Font, backupCache )();
@@ -645,11 +645,11 @@ static void __gui_insert_object_bar_h     ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_adjust_object_bar_h     ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_bar_h     ( const tGluObject* config ){
     __gui_insert_object_bar_h(config);
 }
 
-static void __gui_remove_object_bar_v     ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_bar_v     ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_barV );
@@ -694,7 +694,7 @@ static void __gui_remove_object_bar_v     ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_bar_v     ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_barV );
@@ -713,7 +713,7 @@ static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
         RH_ASSERT( pHistory );
     #endif
         pHistory->bar_pos = config->area.ys+config->area.h-1;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory );
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory );
     }
     
     int32_t val = ((struct __GUI_ObjDataScr_barH*)config->dataScr)->value;
@@ -752,11 +752,11 @@ static void __gui_insert_object_bar_v     ( const GLU_SRCT(Object)* config ){
     BLK_FUNC( Graph, restoreCache )();
     
 }
-static void __gui_adjust_object_bar_v     ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_bar_v     ( const tGluObject* config ){
     __gui_insert_object_bar_v(config);
 }
 
-static void __gui_remove_object_joystick  ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_joystick  ( const tGluObject* config ){
     struct{
         int      cord; // (x,y)象限信息
         __Area_t area;
@@ -772,7 +772,7 @@ static void __gui_remove_object_joystick  ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_joystick  ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_joystick  ( const tGluObject* config ){
     struct{
         int      cord; // (x,y)象限信息
         __Area_t area;
@@ -871,7 +871,7 @@ static void __gui_insert_object_joystick  ( const GLU_SRCT(Object)* config ){
     #ifdef RH_DEBUG
         RH_ASSERT( pHistory );
     #endif
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, pHistory);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, pHistory);
     }
     pHistory->cord     = cord;
     pHistory->area.xs  = (X+px-(pd>>1)+eps);
@@ -883,11 +883,11 @@ static void __gui_insert_object_joystick  ( const GLU_SRCT(Object)* config ){
     BLK_FUNC( Graph, restoreCache )();
     
 }
-static void __gui_adjust_object_joystick  ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_joystick  ( const tGluObject* config ){
     __gui_insert_object_joystick(config);
 }
 
-static void __gui_remove_object_trunk     ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_trunk     ( const tGluObject* config ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->widget == kGLU_ObjWidget_trunk );
@@ -940,7 +940,7 @@ static void __gui_remove_object_trunk     ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_trunk     ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_trunk     ( const tGluObject* config ){
     // 记录历史改动区域
     struct{
         var     bar_s;   /* 进度条的起始位置 */
@@ -960,7 +960,7 @@ static void __gui_insert_object_trunk     ( const GLU_SRCT(Object)* config ){
         cache->bar_s = config->area.ys + config->text.size + cache->margin;
         cache->bar_e = config->area.ys + config->area.h-1-1;
         cache->bar_pos = cache->bar_e;
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache );
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, cache );
     }
     
     int32_t min = ((__GUI_ObjDataScr_trunk*)config->dataScr)->min;
@@ -1061,11 +1061,11 @@ static void __gui_insert_object_trunk     ( const GLU_SRCT(Object)* config ){
     BLK_FUNC( Graph, restoreCache )();
     
 }
-static void __gui_adjust_object_trunk     ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_trunk     ( const tGluObject* config ){
     __gui_insert_object_trunk(config);
 }
 
-static void __gui_remove_object_spinbox   ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_spinbox   ( const tGluObject* config ){
     struct{
         int32_t    value;
         var        margin;
@@ -1166,7 +1166,7 @@ static void __gui_remove_object_spinbox   ( const GLU_SRCT(Object)* config ){
     
     BLK_FUNC( Graph, restoreCache )();
 }
-static void __gui_insert_object_spinbox   ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_spinbox   ( const tGluObject* config ){
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
     struct{
@@ -1245,7 +1245,7 @@ static void __gui_insert_object_spinbox   ( const GLU_SRCT(Object)* config ){
                 
             }
         }
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, cache);
     }else{
         __gui_remove_object_spinbox( config );
     }
@@ -1384,11 +1384,11 @@ static void __gui_insert_object_spinbox   ( const GLU_SRCT(Object)* config ){
     GLU_FUNC( Font, restoreCache )();
     
 }
-static void __gui_adjust_object_spinbox   ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_spinbox   ( const tGluObject* config ){
     __gui_insert_object_spinbox( config );
 }
 
-static void __gui_remove_object_button    ( const GLU_SRCT(Object)* config ){
+static void __gui_remove_object_button    ( const tGluObject* config ){
     struct{
         int8_t state;
         bool   frame;
@@ -1405,7 +1405,7 @@ static void __gui_remove_object_button    ( const GLU_SRCT(Object)* config ){
     }
     
 }
-static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
+static void __gui_insert_object_button    ( const tGluObject* config ){
     struct{
         int8_t state;
         bool   frame;
@@ -1417,7 +1417,7 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     
     if( !cache ){
         cache = RH_CALLOC( 1, sizeof(*cache));
-        __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, cache);
+        __SET_STRUCT_MB(tGluObject, void*, config, cache, cache);
         cache->margin = 1;
         cache->state  = !dataScr->state;
     }else{
@@ -1549,7 +1549,7 @@ static void __gui_insert_object_button    ( const GLU_SRCT(Object)* config ){
     #undef NUM_TOTAL_STATE 
     
 }
-static void __gui_adjust_object_button    ( const GLU_SRCT(Object)* config ){
+static void __gui_adjust_object_button    ( const tGluObject* config ){
     struct{
         int8_t state;
         bool   frame;
@@ -1565,7 +1565,7 @@ static void __gui_adjust_object_button    ( const GLU_SRCT(Object)* config ){
 
 
 #ifdef RH_DEBUG
-static inline void __gui_check_object     ( const GLU_SRCT(Object)* config ){
+static inline void __gui_check_object     ( const tGluObject* config ){
     RH_ASSERT( config );
     RH_ASSERT( config->widget <  NUM_kGUI_ObjWidgets );
     RH_ASSERT( config->area.xs + config->area.w-1 < GUI_X_WIDTH   ); // Can be compromised, no need to abort the program.
@@ -1573,15 +1573,15 @@ static inline void __gui_check_object     ( const GLU_SRCT(Object)* config ){
 }
 #endif
 
-ID_t RH_RESULT glu_gui_object_create( const GLU_SRCT(Object)* config, const void* dataScr ){
-    GLU_SRCT(Object)* m_config = (GLU_SRCT(Object)*)RH_MALLOC( sizeof(GLU_SRCT(Object)) );
+ID_t RH_RESULT glu_gui_object_create( const tGluObject* config, const void* dataScr ){
+    tGluObject* m_config = (tGluObject*)RH_MALLOC( sizeof(tGluObject) );
 #ifdef RH_DEBUG
     RH_ASSERT( m_config );
     RH_ASSERT( config );
     __gui_check_object(config);
 #endif
-    memmove(m_config, config, sizeof(GLU_SRCT(Object)));
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, m_config, cache, NULL);
+    memmove(m_config, config, sizeof(tGluObject));
+    __SET_STRUCT_MB(tGluObject, void*, m_config, cache, NULL);
 
 
     
@@ -1706,7 +1706,7 @@ ID_t RH_RESULT glu_gui_object_create( const GLU_SRCT(Object)* config, const void
     return (ID_t)m_config;
 }
 
-E_Status_t glu_gui_object_template( GLU_SRCT(Object)* config, GLU_ENUM(ObjWidget) widget ){
+E_Status_t glu_gui_object_template( tGluObject* config, GLU_ENUM(ObjWidget) widget ){
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( widget < NUM_kGUI_ObjWidgets );
@@ -1803,7 +1803,7 @@ E_Status_t glu_gui_object_frame( ID_t ID  , bool  cmd   ){
 #ifdef RH_DEBUG
     RH_ASSERT( ID );
 #endif
-    GLU_SRCT(Object)* p = (GLU_SRCT(Object)*)(ID);
+    tGluObject* p = (tGluObject*)(ID);
     
     BLK_FUNC( Graph, backupCache )();
     if( cmd ){
@@ -1821,7 +1821,7 @@ E_Status_t glu_gui_object_frame( ID_t ID  , bool  cmd   ){
 }
 
 E_Status_t glu_gui_object_insert( ID_t ID ){
-    GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)ID;
+    tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->insert_func );
@@ -1834,7 +1834,7 @@ E_Status_t glu_gui_object_insert( ID_t ID ){
 }
 
 E_Status_t glu_gui_object_adjust( ID_t ID  , void*  dataScr, size_t dataSize ){
-    GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)ID;
+    tGluObject* config = (tGluObject*)ID;
 #ifdef RH_DEBUG
     RH_ASSERT( config );
     RH_ASSERT( config->insert_func );
@@ -1848,10 +1848,10 @@ E_Status_t glu_gui_object_adjust( ID_t ID  , void*  dataScr, size_t dataSize ){
 }
 
 E_Status_t glu_gui_bject_delete( ID_t ID ){
-    GLU_SRCT(Object)* config = (GLU_SRCT(Object)*)( ID );
+    tGluObject* config = (tGluObject*)( ID );
     RH_FREE( (void*)config->cache );
     RH_FREE( (void*)config->dataScr );
-    __SET_STRUCT_MB(GLU_SRCT(Object), void*, config, cache, NULL);
+    __SET_STRUCT_MB(tGluObject, void*, config, cache, NULL);
     
     BLK_FUNC( Graph, backupCache )();
     GLU_FUNC( Font, backupCache )();
